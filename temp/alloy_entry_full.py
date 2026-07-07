@@ -11,9 +11,7 @@ Full alloy entry tool with:
 from alloy_calculator import parse_composition_with_unit, calculate_masses, ElementComponent
 from alloy_db import get_db
 from alloy_screening import screen_composition, interpret_screening
-from mp_lookup import lookup as mp_lookup, print_report as mp_print_report
-from oqmd_lookup import lookup as oqmd_lookup, print_report as oqmd_print_report
-from lookup_common import from_mp_results, from_oqmd_results, dedup_by_formula
+from mp_lookup import lookup, print_report
 from datetime import datetime
 from pathlib import Path
 
@@ -55,20 +53,10 @@ def interactive_add_alloy_full():
     print("\n🔍 Checking Materials Project...")
     api_key = get_api_key()
     if api_key:
-        mp_results = mp_lookup(comp_frac, api_key=api_key)
-        mp_print_report(comp_frac, mp_results)
+        mp_results = lookup(comp_frac, api_key=api_key)
+        print_report(comp_frac, mp_results)
     else:
         print("   ⚠️  No API key found. Skipping MP lookup.")
-        mp_results = None
-
-    # Step 4b: OQMD Lookup (no API key needed)
-    print("\n🔍 Checking OQMD...")
-    try:
-        oqmd_results = oqmd_lookup(comp_frac)
-        oqmd_print_report(comp_frac, oqmd_results)
-    except Exception as e:
-        print(f"   ⚠️  OQMD lookup failed: {e}")
-        oqmd_results = None
     
     # Step 5: Mass calculation
     mass = input("\nTarget total mass in grams [10.0]: ").strip()
@@ -144,16 +132,13 @@ def interactive_add_alloy_full():
             return
     
     composition_frac = {k: v/100 for k, v in at_composition.items()}
-    sample_db_id = db.add_sample(
+    db.add_sample(
         sample_id=sample_id,
         composition=composition_frac,
         material_class=material_class,
         source_type='experimental',
         mass_grams=mass,
-        notes=f"Full workflow: {formula} as {unit}",
-        vec=screening_results['VEC'],
-        delta=screening_results['delta'],
-        delta_h_mix=screening_results['Delta_H_mix']
+        notes=f"Full workflow: {formula} as {unit}. VEC={screening_results['VEC']:.2f}, δ={screening_results['delta']:.3f}"
     )
     
     print(f"\n✅ Alloy added successfully!")
@@ -162,27 +147,7 @@ def interactive_add_alloy_full():
     print(f"   Class: {material_class}")
     print(f"   VEC: {screening_results['VEC']:.2f}")
     print(f"   δ: {screening_results['delta']:.3f}")
-    print(f"   ΔH_mix: {screening_results['Delta_H_mix']:.2f} kJ/mol")
-
-    # Step 12: Store deduped literature check results, linked to this sample
-    print("\n💾 Storing literature check results...")
-    if mp_results:
-        for c in dedup_by_formula(from_mp_results(mp_results)):
-            db.add_literature_check(
-                sample_db_id=sample_db_id, source_db='materials_project',
-                tier=c.tier, match_formula=c.formula, match_id=c.match_id,
-                stability=c.stability, experimentally_known=c.experimentally_known,
-                composition_distance=c.composition_distance
-            )
-    if oqmd_results:
-        for c in dedup_by_formula(from_oqmd_results(oqmd_results)):
-            db.add_literature_check(
-                sample_db_id=sample_db_id, source_db='oqmd',
-                tier=c.tier, match_formula=c.formula, match_id=c.match_id,
-                stability=c.stability, experimentally_known=c.experimentally_known,
-                composition_distance=c.composition_distance
-            )
-
+    
     db.close()
 
 if __name__ == "__main__":

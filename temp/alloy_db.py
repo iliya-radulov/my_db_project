@@ -43,8 +43,7 @@ class AlloyDB:
     def add_sample(self, sample_id: str, composition: Dict, 
                    material_class: str, source_type: str = 'experimental',
                    mass_grams: float = None, parent_sample_id: str = None,
-                   notes: str = None, vec: float = None, delta: float = None,
-                   delta_h_mix: float = None) -> int:
+                   notes: str = None) -> int:
         parent_id = None
         if parent_sample_id:
             self.cursor.execute(
@@ -58,20 +57,18 @@ class AlloyDB:
         query = """
             INSERT INTO samples (
                 sample_id, composition, material_class_id, 
-                mass_grams, source_type, parent_sample_id, notes,
-                vec, delta, delta_h_mix
+                mass_grams, source_type, parent_sample_id, notes
             )
             VALUES (
                 %s, %s, 
                 (SELECT id FROM material_classes WHERE class_name = %s),
-                %s, %s, %s, %s, %s, %s, %s
+                %s, %s, %s, %s
             )
             RETURNING id
         """
         self.cursor.execute(query, (
             sample_id, Json(composition), material_class,
-            mass_grams, source_type, parent_id, notes,
-            vec, delta, delta_h_mix
+            mass_grams, source_type, parent_id, notes
         ))
         self.commit()
         sample_db_id = self.cursor.fetchone()['id']
@@ -192,27 +189,6 @@ class AlloyDB:
         print(f"Added synthesis record (ID: {syn_id}) for {sample_id}")
         return syn_id
     
-    def add_literature_check(self, sample_db_id: int, source_db: str, tier: int,
-                            match_formula: str = None, match_id: str = None,
-                            stability: float = None, experimentally_known: bool = None,
-                            composition_distance: float = None) -> int:
-        query = """
-            INSERT INTO literature_checks (
-                sample_id, source_db, tier, match_formula, match_id,
-                stability, experimentally_known, composition_distance
-            )
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
-            RETURNING id
-        """
-        self.cursor.execute(query, (
-            sample_db_id, source_db, tier, match_formula, match_id,
-            stability, experimentally_known, composition_distance
-        ))
-        self.commit()
-        check_id = self.cursor.fetchone()['id']
-        print(f"  Logged {source_db} tier {tier}: {match_formula}")
-        return check_id
-
     def get_family_tree(self, sample_id: str) -> List[Dict]:
         query = """
             WITH RECURSIVE family AS (
