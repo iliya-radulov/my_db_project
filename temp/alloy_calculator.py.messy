@@ -1,0 +1,613 @@
+"""
+alloy_calculator.py
+
+Converts alloy stoichiometry given in atomic percent into element masses
+in grams, given a target total sample mass. Supports pre-alloys (master
+alloys) as components, where a pre-alloy contributes a share of the final
+alloy's total atoms and is itself defined by its own atomic-percent
+composition.
+
+Meant to be dropped into the same project as alloy_db.py / db_config.py.
+No external dependencies beyond the standard library.
+"""
+
+from dataclasses import dataclass, field
+from typing import Dict, List, Optional
+
+# Standard atomic weights (g/mol), IUPAC conventional values.
+# Extend as needed -- this covers common structural / magnetic / HEA elements.
+ATOMIC_WEIGHTS: Dict[str, float] = {
+    "H": 1.008, "He": 4.003, "Li": 6.94, "Be": 9.012, "B": 10.81, "C": 12.011,
+    "N": 14.007, "O": 15.999, "F": 18.998, "Ne": 20.180, "Na": 22.990,
+    "Mg": 24.305, "Al": 26.982, "Si": 28.085, "P": 30.974, "S": 32.06,
+    "Cl": 35.45, "Ar": 39.948, "K": 39.098, "Ca": 40.078, "Sc": 44.956,
+    "Ti": 47.867, "V": 50.942, "Cr": 51.996, "Mn": 54.938, "Fe": 55.845,
+    "Co": 58.933, "Ni": 58.693, "Cu": 63.546, "Zn": 65.38, "Ga": 69.723,
+    "Ge": 72.630, "As": 74.922, "Se": 78.971, "Br": 79.904, "Kr": 83.798,
+    "Rb": 85.468, "Sr": 87.62, "Y": 88.906, "Zr": 91.224, "Nb": 92.906,
+    "Mo": 95.95, "Tc": 98.0, "Ru": 101.07, "Rh": 102.906, "Pd": 106.42,
+    "Ag": 107.868, "Cd": 112.414, "In": 114.818, "Sn": 118.710,
+    "Sb": 121.760, "Te": 127.60, "I": 126.904, "Xe": 131.293, "Cs": 132.905,
+    "Ba": 137.327, "La": 138.905, "Ce": 140.116, "Pr": 140.908,
+    "Nd": 144.242, "Pm": 145.0, "Sm": 150.36, "Eu": 151.964, "Gd": 157.25,
+    "Tb": 158.925, "Dy": 162.500, "Ho": 164.930, "Er": 167.259,
+    "Tm": 168.934, "Yb": 173.045, "Lu": 174.967, "Hf": 178.49,
+    "Ta": 180.948, "W": 183.84, "Re": 186.207, "Os": 190.23, "Ir": 192.217,
+    "Pt": 195.084, "Au": 196.967, "Hg": 200.592, "Tl": 204.38, "Pb": 207.2,
+    "Bi": 208.980, "Th": 232.038, "Pa": 231.036, "U": 238.029,
+}
+
+
+@dataclass
+class ElementComponent:
+    """A pure element making up part of the final alloy.
+
+    excess_pct adds extra weighed mass on top of the target amount, to
+    compensate for losses (e.g. evaporation during melting), WITHOUT
+    changing the recorded/target composition. E.g. excess_pct=5 means you
+    weigh in 5% more of this element than the stoichiometric target calls
+    for. Does not apply to pre-alloy components, since those are treated
+    as fixed, already-made stock.
+    """
+    symbol: str
+    at_pct: float  # atomic percent share of the FINAL alloy's total atoms
+    excess_pct: float = 0.0
+
+
+@dataclass
+class PreAlloyComponent:
+    """
+    A pre-alloy (master alloy) making up part of the final alloy.
+
+    at_pct is this pre-alloy's share of the final alloy's total atoms.
+    composition is the pre-alloy's OWN internal atomic-percent makeup
+    (e.g. {'Fe': 70, 'Al': 15, 'Ni': 15}), which does not need to sum
+    to exactly 100 -- it is normalized internally.
+    """
+    name: str
+    at_pct: float
+    composition: Dict[str, float]
+
+
+@dataclass
+class ElementResult:
+    symbol: str
+    at_pct: float
+    wt_pct: float
+    grams: float          # target/nominal mass, as recorded in the DB composition
+    weigh_grams: float     # actual mass to weigh in, including any excess_pct
+
+
+@dataclass
+class PreAlloyResult:
+    name: str
+    grams: float
+
+
+@dataclass
+class CalculationResult:
+    total_mass_g: float
+    effective_molar_mass: float
+    elements: List[ElementResult]
+    pre_alloys: List[PreAlloyResult]
+
+    def as_composition_dict(self) -> Dict[str, float]:
+        """Element -> atomic fraction (0-1), suitable for the `composition`
+        JSONB column in alloy_lab.samples."""
+        return {e.symbol: round(e.at_pct / 100, 6) for e in self.elements}
+
+    def as_mass_dict(self) -> Dict[str, float]:
+        """Element -> target/nominal grams (no excess). Use this for records."""
+        return {e.symbol: round(e.grams, 6) for e in self.elements}
+
+    def as_weigh_dict(self) -> Dict[str, float]:
+        """Element -> actual grams to weigh in, including excess_pct."""
+        return {e.symbol: round(e.weigh_grams, 6) for e in self.elements}
+
+
+def calculate_masses(
+    total_mass_g: float,
+    elements: Optional[List[ElementComponent]] = None,
+    pre_alloys: Optional[List[PreAlloyComponent]] = None,
+) -> CalculationResult:
+    """
+    Given a total target sample mass and a set of components (pure elements
+    and/or pre-alloys) described by atomic percent, compute:
+      - the consolidated final atomic %/ weight % / grams per element
+      - the grams of each pre-alloy to weigh out
+
+    at_pct across all top-level components does not need to sum to exactly
+    100; it is normalized automatically.
+    """
+    elements = elements or []
+    pre_alloys = pre_alloys or []
+
+    top_sum = sum(e.at_pct for e in elements) + sum(p.at_pct for p in pre_alloys)
+    if top_sum <= 0:
+        raise ValueError("Total atomic percent across all components must be > 0")
+
+    final_at_frac: Dict[str, float] = {}
+    # (symbol, atomic_fraction_contributed, excess_pct) -- kept per-component so
+    # excess can be applied to just the grams that component contributes,
+    # without shifting the normalized target composition.
+    contributions: List[tuple] = []
+    pre_alloy_info = []  # (name, top_frac, effective_molar_mass_of_prealloy)
+
+    for e in elements:
+        if e.symbol not in ATOMIC_WEIGHTS:
+            raise ValueError(f"Unknown element symbol: {e.symbol}")
+        top_frac = e.at_pct / top_sum
+        final_at_frac[e.symbol] = final_at_frac.get(e.symbol, 0.0) + top_frac
+        contributions.append((e.symbol, top_frac, e.excess_pct))
+
+    for p in pre_alloys:
+        top_frac = p.at_pct / top_sum
+        sub_sum = sum(p.composition.values())
+        if sub_sum <= 0:
+            raise ValueError(f"Pre-alloy '{p.name}' has no valid composition")
+        pre_molar_mass = 0.0
+        for sym, sub_pct in p.composition.items():
+            if sym not in ATOMIC_WEIGHTS:
+                raise ValueError(f"Unknown element symbol: {sym}")
+            sub_frac = sub_pct / sub_sum
+            at_frac = top_frac * sub_frac
+            final_at_frac[sym] = final_at_frac.get(sym, 0.0) + at_frac
+            # pre-alloy composition is fixed/already-made stock -- no excess here
+            contributions.append((sym, at_frac, 0.0))
+            pre_molar_mass += sub_frac * ATOMIC_WEIGHTS[sym]
+        pre_alloy_info.append((p.name, top_frac, pre_molar_mass))
+
+    total_molar_mass = sum(
+        frac * ATOMIC_WEIGHTS[sym] for sym, frac in final_at_frac.items()
+    )
+
+    nominal_grams: Dict[str, float] = {}
+    weigh_grams: Dict[str, float] = {}
+    for sym, at_frac, excess_pct in contributions:
+        g = total_mass_g * at_frac * ATOMIC_WEIGHTS[sym] / total_molar_mass
+        nominal_grams[sym] = nominal_grams.get(sym, 0.0) + g
+        weigh_grams[sym] = weigh_grams.get(sym, 0.0) + g * (1 + excess_pct / 100)
+
+    element_results = []
+    for sym, frac in sorted(final_at_frac.items(), key=lambda kv: -kv[1]):
+        wt_frac = (frac * ATOMIC_WEIGHTS[sym]) / total_molar_mass
+        element_results.append(ElementResult(
+            symbol=sym, at_pct=frac * 100, wt_pct=wt_frac * 100,
+            grams=nominal_grams[sym], weigh_grams=weigh_grams[sym],
+        ))
+
+    pre_alloy_results = []
+    for name, top_frac, pre_molar_mass in pre_alloy_info:
+        wt_frac = (top_frac * pre_molar_mass) / total_molar_mass
+        grams = total_mass_g * wt_frac
+        pre_alloy_results.append(PreAlloyResult(name=name, grams=grams))
+
+    return CalculationResult(
+        total_mass_g=total_mass_g,
+        effective_molar_mass=total_molar_mass,
+        elements=element_results,
+        pre_alloys=pre_alloy_results,
+    )
+
+
+if __name__ == "__main__":
+    # Example: Fe70 Al15 Ni15 target, with 5% extra Al weighed in to
+    # compensate for evaporation during melting. The recorded target
+    # composition is unchanged; only the Al weigh-in mass increases.
+    result = calculate_masses(
+        total_mass_g=10.0,
+        elements=[
+            ElementComponent(symbol="La", at_pct=1),
+            ElementComponent(symbol="Fe", at_pct=11.6, excess_pct=0),
+            ElementComponent(symbol="Si", at_pct=1.4),
+        ],
+    )
+
+    print(f"Effective molar mass: {result.effective_molar_mass:.3f} g/mol\n")
+    print(f"{'Element':<8}{'at%':>8}{'wt%':>8}{'target(g)':>10}{'weigh(g)':>10}")
+    for e in result.elements:
+        print(f"{e.symbol:<8}{e.at_pct:>8.2f}{e.wt_pct:>8.2f}{e.grams:>10.4f}{e.weigh_grams:>10.4f}")
+
+    if result.pre_alloys:
+        print("\nPre-alloys to weigh out:")
+        for p in result.pre_alloys:
+            print(f"  {p.name}: {p.grams:.4f} g")
+
+    print(f"\nTarget total: {sum(e.grams for e in result.elements):.4f} g "
+          f"(should equal total_mass_g)")
+    print(f"Actually weighed: {sum(e.weigh_grams for e in result.elements):.4f} g "
+          f"(includes excess)")
+
+    # Ready for the DB -- record the TARGET composition, not the weigh-in
+    # amounts, since as_composition_dict()/as_mass_dict() reflect the
+    # intended stoichiometry:
+    # db.add_sample(
+    #     sample_id="TEST-002",
+    #     composition=result.as_composition_dict(),
+    #     material_class="Permanent Magnet",
+    #     mass_grams=result.total_mass_g,
+    #     notes="Al weighed in with +5% excess for evaporation loss",
+    # )
+
+# ============================================
+# NEW: String parser for formula input
+# ============================================
+
+def parse_formula(formula: str) -> Dict[str, float]:
+    """
+    Parse a formula string like 'Fe65Nd30Co5' into atomic percent dict.
+    
+    Returns: {'Fe': 65.0, 'Nd': 30.0, 'Co': 5.0}
+    """
+    import re
+    
+    # Find all element symbols and their percentages
+    # Pattern: uppercase letter, optional lowercase letter, then number
+    pattern = r'([A-Z][a-z]?)(\d*\.?\d+)'
+    matches = re.findall(pattern, formula)
+    
+    if not matches:
+        raise ValueError(f"Could not parse formula: {formula}")
+    
+    result = {}
+    for symbol, pct in matches:
+        # Convert to float, default to 1.0 if no number
+        value = float(pct) if pct else 1.0
+        # Capitalize correctly (e.g., 'fe' → 'Fe')
+        symbol = symbol.capitalize()
+        result[symbol] = value
+    
+    # Normalize to sum to 100 if they don't already
+    total = sum(result.values())
+    if abs(total - 100) > 0.01:
+        # Scale to 100%
+        result = {k: v / total * 100 for k, v in result.items()}
+    
+    return result
+
+# Quick test
+if __name__ == "__main__":
+    # Test string parser
+    test_formula = 'Fe65Nd30Co5'
+    parsed = parse_formula(test_formula)
+    print(f"Parsed: {parsed}")
+
+# ============================================
+# NEW: String parser for formula input
+# ============================================
+
+def parse_formula(formula: str) -> Dict[str, float]:
+    """
+    Parse a formula string like 'Fe65Nd30Co5' into atomic percent dict.
+    
+    Returns: {'Fe': 65.0, 'Nd': 30.0, 'Co': 5.0}
+    """
+    import re
+    
+    # Find all element symbols and their percentages
+    # Pattern: uppercase letter, optional lowercase letter, then number
+    pattern = r'([A-Z][a-z]?)(\d*\.?\d+)'
+    matches = re.findall(pattern, formula)
+    
+    if not matches:
+        raise ValueError(f"Could not parse formula: {formula}")
+    
+    result = {}
+    for symbol, pct in matches:
+        # Convert to float, default to 1.0 if no number
+        value = float(pct) if pct else 1.0
+        # Capitalize correctly (e.g., 'fe' → 'Fe')
+        symbol = symbol.capitalize()
+        result[symbol] = value
+    
+    # Normalize to sum to 100 if they don't already
+    total = sum(result.values())
+    if abs(total - 100) > 0.01:
+        # Scale to 100%
+        result = {k: v / total * 100 for k, v in result.items()}
+    
+    return result
+
+# Quick test
+if __name__ == "__main__":
+    # Test string parser
+    test_formula = 'Fe65Nd30Co5'
+    parsed = parse_formula(test_formula)
+    print(f"Parsed: {parsed}")
+
+# ============================================
+# NEW: String parser for formula input
+# ============================================
+
+def parse_formula(formula: str) -> Dict[str, float]:
+    """
+    Parse a formula string like 'Fe65Nd30Co5' into atomic percent dict.
+    
+    Returns: {'Fe': 65.0, 'Nd': 30.0, 'Co': 5.0}
+    """
+    import re
+    
+    # Find all element symbols and their percentages
+    # Pattern: uppercase letter, optional lowercase letter, then number
+    pattern = r'([A-Z][a-z]?)(\d*\.?\d+)'
+    matches = re.findall(pattern, formula)
+    
+    if not matches:
+        raise ValueError(f"Could not parse formula: {formula}")
+    
+    result = {}
+    for symbol, pct in matches:
+        # Convert to float, default to 1.0 if no number
+        value = float(pct) if pct else 1.0
+        # Capitalize correctly (e.g., 'fe' → 'Fe')
+        symbol = symbol.capitalize()
+        result[symbol] = value
+    
+    # Normalize to sum to 100 if they don't already
+    total = sum(result.values())
+    if abs(total - 100) > 0.01:
+        # Scale to 100%
+        result = {k: v / total * 100 for k, v in result.items()}
+    
+    return result
+
+# Quick test
+if __name__ == "__main__":
+    # Test string parser
+    test_formula = 'Fe65Nd30Co5'
+    parsed = parse_formula(test_formula)
+    print(f"Parsed: {parsed}")
+        result = {k: v / total * 100 for k, v in result.items()}
+    
+    return result
+
+# Test
+if __name__ == "__main__":
+    # Test various formats
+    print("at% input:", parse_composition_input('Fe65Nd30Co5', unit='at%'))
+    print("Lowercase:", parse_composition_input('fe65nd30co5', unit='at%'))
+
+# ============================================
+# NEW: Convert between atomic % and weight %
+# ============================================
+
+def at_to_wt(at_composition: Dict[str, float]) -> Dict[str, float]:
+    """
+    Convert atomic percent to weight percent.
+    
+    Args:
+        at_composition: {'Fe': 65.0, 'Nd': 30.0, 'Co': 5.0}
+    
+    Returns:
+        wt_composition: {'Fe': 61.4, 'Nd': 30.8, 'Co': 5.2}
+    """
+    total_at = sum(at_composition.values())
+    if abs(total_at - 100) > 0.01:
+        # Normalize to 100%
+        at_composition = {k: v / total_at * 100 for k, v in at_composition.items()}
+    
+    # Calculate mass contribution of each element
+    mass_contrib = {}
+    total_mass = 0.0
+    for symbol, at_pct in at_composition.items():
+        if symbol not in ATOMIC_WEIGHTS:
+            raise ValueError(f"Unknown element: {symbol}")
+        weight = at_pct * ATOMIC_WEIGHTS[symbol]
+        mass_contrib[symbol] = weight
+        total_mass += weight
+    
+    # Convert to weight percent
+    wt_composition = {}
+    for symbol, weight in mass_contrib.items():
+        wt_composition[symbol] = (weight / total_mass) * 100
+    
+    return wt_composition
+
+
+def wt_to_at(wt_composition: Dict[str, float]) -> Dict[str, float]:
+    """
+    Convert weight percent to atomic percent.
+    
+    Args:
+        wt_composition: {'Fe': 61.4, 'Nd': 30.8, 'Co': 5.2}
+    
+    Returns:
+        at_composition: {'Fe': 65.0, 'Nd': 30.0, 'Co': 5.0}
+    """
+    total_wt = sum(wt_composition.values())
+    if abs(total_wt - 100) > 0.01:
+        wt_composition = {k: v / total_wt * 100 for k, v in wt_composition.items()}
+    
+    # Calculate atom contribution of each element
+    atom_contrib = {}
+    total_atoms = 0.0
+    for symbol, wt_pct in wt_composition.items():
+        if symbol not in ATOMIC_WEIGHTS:
+            raise ValueError(f"Unknown element: {symbol}")
+        atoms = wt_pct / ATOMIC_WEIGHTS[symbol]
+        atom_contrib[symbol] = atoms
+        total_atoms += atoms
+    
+    # Convert to atomic percent
+    at_composition = {}
+    for symbol, atoms in atom_contrib.items():
+        at_composition[symbol] = (atoms / total_atoms) * 100
+    
+    return at_composition
+
+
+def parse_composition_with_unit(
+    formula: str,
+    unit: str = 'at%'
+) -> Dict[str, float]:
+    """
+    Parse a formula string and return atomic percent (always at% for DB).
+    
+    Args:
+        formula: String like 'Fe65Nd30Co5'
+        unit: 'at%' or 'wt%' - what the input numbers represent
+    
+    Returns:
+        Atomic percent dict (always at%)
+    """
+    # Parse the raw numbers
+    raw = parse_composition_input(formula, unit=unit)
+    
+    if unit.lower() == 'wt%':
+        # Input is in weight %, convert to atomic %
+        return wt_to_at(raw)
+    else:
+        # Input is already atomic %
+        return raw
+
+# Test
+if __name__ == "__main__":
+    # Test at% → wt% conversion
+    at_comp = {'Fe': 65.0, 'Nd': 30.0, 'Co': 5.0}
+    wt_comp = at_to_wt(at_comp)
+    print(f"at%: {at_comp}")
+    print(f"wt%: {wt_comp}")
+    
+    # Test wt% → at% conversion (should reverse)
+    at_back = wt_to_at(wt_comp)
+    print(f"back to at%: {at_back}")
+
+# ============================================
+# FIXED: parse_composition_with_unit
+# ============================================
+
+def parse_composition_with_unit(
+    formula: str,
+    unit: str = 'at%'
+) -> Dict[str, float]:
+    """
+    Parse a formula string and return atomic percent (always at% for DB).
+    
+    Args:
+        formula: String like 'Fe65Nd30Co5'
+        unit: 'at%' or 'wt%' - what the input numbers represent
+    
+    Returns:
+        Atomic percent dict (always at%)
+    """
+    # Parse the raw numbers
+    raw = parse_composition_input(formula, unit=unit)
+    
+    if unit.lower() == 'wt%':
+        # Input is in weight %, convert to atomic %
+        return wt_to_at(raw)
+    else:
+        # Input is already atomic %
+        return raw
+
+# Quick test
+if __name__ == "__main__":
+    print("Testing at% input:")
+    print(parse_composition_with_unit('Fe65Nd30Co5', 'at%'))
+    
+    print("\nTesting wt% input (should give atomic %):")
+    print(parse_composition_with_unit('Fe61Nd31Co5', 'wt%'))
+
+# ============================================
+# FIXED: parse_composition_input with better 2-letter handling
+# ============================================
+
+        # Convert to proper case (Fe, Nd, Co) if not case sensitive
+def parse_composition_input(
+    formula: str, 
+    unit: str = 'at%',
+    case_sensitive: bool = False
+) -> Dict[str, float]:
+    """
+    Parse a formula string like 'Fe65Nd30Co5' into a composition dict.
+    Handles 2-letter symbols correctly (La, Nd, Co, Fe, Si, etc.)
+    Also handles lowercase input like 'lafe11.6si1.4'
+    """
+    # List of known two-letter elements (for pattern matching)
+    TWO_LETTER = {
+        'la', 'ce', 'pr', 'nd', 'pm', 'sm', 'eu', 'gd', 'tb', 'dy', 'ho',
+        'er', 'tm', 'yb', 'lu', 'he', 'li', 'be', 'ne', 'na', 'mg', 'al',
+        'si', 'cl', 'ar', 'ca', 'sc', 'ti', 'cr', 'mn', 'fe', 'co', 'ni',
+        'cu', 'zn', 'ga', 'ge', 'as', 'se', 'br', 'kr', 'rb', 'sr', 'y',
+        'zr', 'nb', 'mo', 'tc', 'ru', 'rh', 'pd', 'ag', 'cd', 'in', 'sn',
+        'sb', 'te', 'xe', 'cs', 'ba', 'hf', 'ta', 're', 'os', 'ir', 'pt',
+        'au', 'hg', 'tl', 'pb', 'bi', 'po', 'at', 'rn', 'fr', 'ra', 'rf',
+        'db', 'sg', 'bh', 'hs', 'mt', 'ds', 'rg', 'cn', 'nh', 'fl', 'mc',
+        'lv', 'ts', 'og'
+    }
+    
+    # Step 1: Find all element symbols and numbers
+    i = 0
+    elements = []
+    numbers = []
+    current_num = ""
+    
+    while i < len(formula):
+        char = formula[i]
+        
+        if char.isdigit() or char == '.':
+            current_num += char
+            i += 1
+        else:
+            # It's a letter
+            if current_num:
+                numbers.append(float(current_num))
+                current_num = ""
+            
+            # Check for two-letter element (case-insensitive)
+            if i + 1 < len(formula):
+                two_letter = formula[i:i+2].lower()
+                if two_letter in TWO_LETTER:
+                    # Capitalize properly (e.g., La, Nd, Fe)
+                    elem = two_letter[0].upper() + two_letter[1]
+                    elements.append(elem)
+                    i += 2
+                    continue
+            
+            # Single letter element
+            if char.isalpha():
+                elements.append(char.upper())
+                i += 1
+            else:
+                i += 1
+    
+    # Add last number if exists
+    if current_num:
+        numbers.append(float(current_num))
+    
+    # If no numbers, assume 1 for each
+    if not numbers:
+        numbers = [1.0] * len(elements)
+    
+    # If more elements than numbers, append 1s
+    while len(numbers) < len(elements):
+        numbers.append(1.0)
+    
+    # Build result
+    result = {}
+    for elem, num in zip(elements, numbers):
+        result[elem] = result.get(elem, 0.0) + num
+    
+    # Normalize to sum to 100 (only if they don't already sum to ~100)
+    total = sum(result.values())
+    if total > 0 and abs(total - 100) > 0.01:
+        result = {k: v / total * 100 for k, v in result.items()}
+    
+    return result
+        if not case_sensitive:
+            symbol = symbol.capitalize()
+        value = float(pct) if pct else 1.0
+        result[symbol] = value
+    
+    # Normalize to sum to 100
+    total = sum(result.values())
+    if abs(total - 100) > 0.01:
+        result = {k: v / total * 100 for k, v in result.items()}
+    
+    return result
+
+# Test
+if __name__ == "__main__":
+    print("Test 1: 'Lafe11.6si1.4' →", parse_composition_input('Lafe11.6si1.4'))
+    print("Test 2: 'LaFe11.6Si1.4' →", parse_composition_input('LaFe11.6Si1.4'))
+    print("Test 3: 'fe65nd30co5' →", parse_composition_input('fe65nd30co5'))

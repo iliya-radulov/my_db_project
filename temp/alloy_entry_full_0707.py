@@ -10,7 +10,7 @@ Full alloy entry tool with:
 
 from alloy_calculator import parse_composition_with_unit, calculate_masses, ElementComponent
 from alloy_db import get_db
-from alloy_screening import screen_composition, interpret_screening, IncompleteElementDataError
+from alloy_screening import screen_composition, interpret_screening
 from mp_lookup import lookup as mp_lookup, print_report as mp_print_report
 from oqmd_lookup import lookup as oqmd_lookup, print_report as oqmd_print_report
 from lookup_common import from_mp_results, from_oqmd_results, dedup_by_formula
@@ -45,15 +45,11 @@ def interactive_add_alloy_full():
     at_composition = parse_composition_with_unit(formula, unit)
     print(f"   Atomic %: {', '.join([f'{k}={v:.2f}' for k,v in at_composition.items()])}")
     
-    # Step 3: VEC/δ/ΔH_mix screening
+    # Step 3: VEC/δ/ΔH_mix screening (NEW)
     print("\n📐 Running VEC/δ/ΔH_mix screening...")
     comp_frac = {k: v/100 for k, v in at_composition.items()}
-    try:
-        screening_results = screen_composition(comp_frac)
-        interpret_screening(screening_results)
-    except IncompleteElementDataError as e:
-        print(f"   ⚠️  Skipping screening: {e}")
-        screening_results = None
+    screening_results = screen_composition(comp_frac)
+    interpret_screening(screening_results)
     
     # Step 4: MP Lookup
     print("\n🔍 Checking Materials Project...")
@@ -155,21 +151,18 @@ def interactive_add_alloy_full():
         source_type='experimental',
         mass_grams=mass,
         notes=f"Full workflow: {formula} as {unit}",
-        vec=screening_results['VEC'] if screening_results else None,
-        delta=screening_results['delta'] if screening_results else None,
-        delta_h_mix=screening_results['Delta_H_mix'] if screening_results else None
+        vec=screening_results['VEC'],
+        delta=screening_results['delta'],
+        delta_h_mix=screening_results['Delta_H_mix']
     )
     
     print(f"\n✅ Alloy added successfully!")
     print(f"   Sample ID: {sample_id}")
     print(f"   Mass: {mass}g")
     print(f"   Class: {material_class}")
-    if screening_results:
-        print(f"   VEC: {screening_results['VEC']:.2f}")
-        print(f"   δ: {screening_results['delta']:.3f}")
-        print(f"   ΔH_mix: {screening_results['Delta_H_mix']:.2f} kJ/mol")
-    else:
-        print(f"   Screening: skipped (missing element data)")
+    print(f"   VEC: {screening_results['VEC']:.2f}")
+    print(f"   δ: {screening_results['delta']:.3f}")
+    print(f"   ΔH_mix: {screening_results['Delta_H_mix']:.2f} kJ/mol")
 
     # Step 12: Store deduped literature check results, linked to this sample
     print("\n💾 Storing literature check results...")
