@@ -57,37 +57,6 @@ def from_oqmd_results(results: List) -> List[DedupCandidate]:
     ]
 
 
-def from_alexandria_results(results: List) -> List[DedupCandidate]:
-    """Adapts alexandria_lookup.AlexandriaMatchResult objects. Skips tier-4
-    (nothing found) placeholders. experimentally_known is always False --
-    Alexandria is a purely computational database, see its module
-    docstring."""
-    return [
-        DedupCandidate(
-            formula=r.formula,
-            match_id=str(r.entry_id),
-            tier=r.tier,
-            stability=r.hull_distance,
-            experimentally_known=r.experimentally_known,
-            composition_distance=r.composition_distance,
-        )
-        for r in results if r.tier != 4
-    ]
-
-
-def filter_by_distance(candidates: List[DedupCandidate], max_distance: float) -> List[DedupCandidate]:
-    """Drops tier-2 (and tier-1, though its 0.05 near-match threshold
-    means this rarely matters) candidates whose composition_distance
-    exceeds max_distance. Tier-3 and tier-4 candidates have no
-    composition_distance (they're subsystem/no-info matches, a different
-    kind of result) and are never filtered by this -- the cutoff is only
-    about "how different is the ratio", which doesn't apply to them."""
-    return [
-        c for c in candidates
-        if c.composition_distance is None or c.composition_distance <= max_distance
-    ]
-
-
 def _is_better(candidate: DedupCandidate, current: DedupCandidate) -> bool:
     if candidate.experimentally_known != current.experimentally_known:
         return candidate.experimentally_known  # True beats False

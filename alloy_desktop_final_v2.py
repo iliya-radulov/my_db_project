@@ -1,37 +1,21 @@
 #!/usr/bin/env python3
 """
-Alloy Lab Desktop App - with dynamic material classes from database
+Alloy Lab Desktop App - with Import Tab
+Fixed initialization order
 """
 
 import customtkinter as ctk
-from tkinter import messagebox, scrolledtext
+from tkinter import messagebox, scrolledtext, filedialog
 import sys
 import io
 import re
+import os
 from datetime import datetime
+from pathlib import Path
 
 from alloy_db import get_db
 from alloy_screening import screen_composition
 from alloy_calculator import ATOMIC_WEIGHTS
-from lookup_common import (
-    from_mp_results, from_oqmd_results, from_alexandria_results,
-    dedup_by_formula, filter_by_distance
-)
-
-# Human-readable labels and default cutoffs, based on what was actually
-# observed testing each database against real compositions: MP rarely
-# floods (small curated dataset), OQMD is moderate, Alexandria's much
-# larger dataset (2.5M+ entries) genuinely needed a tighter default.
-LIT_DB_LABELS = {
-    'materials_project': 'Materials Project',
-    'oqmd': 'OQMD',
-    'alexandria': 'Alexandria',
-}
-LIT_DB_DEFAULT_CUTOFFS = {
-    'materials_project': 0.5,
-    'oqmd': 0.4,
-    'alexandria': 0.3,
-}
 
 # Set theme
 ctk.set_appearance_mode("dark")
@@ -42,17 +26,12 @@ class AlloyLabApp(ctk.CTk):
         super().__init__()
         
         self.title("🧪 Alloy Lab Database")
-        self.geometry("950x750")
-
-        # Cached literature-check results, fetched once per Calculate &
-        # Preview click, keyed by source db. Populated by run_calculation(),
-        # re-filtered live by the radio buttons / cutoff slider without
-        # re-querying the network.
-        self.lit_results = {'materials_project': [], 'oqmd': [], 'alexandria': []}
-        self.lit_cutoffs = dict(LIT_DB_DEFAULT_CUTOFFS)
-        self.last_calc_output = []  # cached screening/mass-calc text, kept
-                                     # stable while the literature section
-                                     # below it gets re-rendered
+        self.geometry("1000x750")
+        
+        # Track current import folder
+        self.import_folder = None
+        self.current_files = []
+        self.selected_files = {}  # file_path -> sample_id
         
         # Main frame
         self.main_frame = ctk.CTkFrame(self)
@@ -79,13 +58,22 @@ class AlloyLabApp(ctk.CTk):
         self.tab_view = ctk.CTkTabview(self.main_frame)
         self.tab_view.pack(fill="both", expand=True, padx=10, pady=10)
         
+        # --- Tab 1: New Entry ---
         self.tab_new = self.tab_view.add("📝 New Entry")
-        self.setup_new_entry_tab()
         
+        # --- Tab 2: Import Files ---
+        self.tab_import = self.tab_view.add("📂 Import Files")
+        
+        # --- Tab 3: Quick Lookup ---
         self.tab_lookup = self.tab_view.add("🔍 Quick Lookup")
-        self.setup_lookup_tab()
         
+        # --- Tab 4: Summary ---
         self.tab_summary = self.tab_view.add("📊 Summary")
+        
+        # Now setup all tabs (after all tabs are created)
+        self.setup_new_entry_tab()
+        self.setup_import_tab()
+        self.setup_lookup_tab()
         self.setup_summary_tab()
     
     # ============================================
@@ -95,63 +83,50 @@ class AlloyLabApp(ctk.CTk):
     def setup_new_entry_tab(self):
         frame = self.tab_new
         
-        # Formula input with validation
+        # Formula input
         ctk.CTkLabel(frame, text="Alloy Formula:", font=ctk.CTkFont(size=14)).grid(row=0, column=0, padx=10, pady=10, sticky="w")
         self.formula_entry = ctk.CTkEntry(frame, width=300, placeholder_text="e.g., Fe65Nd30Co5")
         self.formula_entry.grid(row=0, column=1, padx=10, pady=10, sticky="w")
         self.formula_entry.bind("<KeyRelease>", self.validate_formula)
         
-        # Validation status label
         self.validation_label = ctk.CTkLabel(frame, text="", font=ctk.CTkFont(size=12))
         self.validation_label.grid(row=1, column=1, padx=10, pady=0, sticky="w")
         
-        # Unit selection
         ctk.CTkLabel(frame, text="Unit:", font=ctk.CTkFont(size=14)).grid(row=2, column=0, padx=10, pady=10, sticky="w")
         self.unit_var = ctk.StringVar(value="at%")
         self.unit_menu = ctk.CTkOptionMenu(frame, values=["at%", "wt%"], variable=self.unit_var)
         self.unit_menu.grid(row=2, column=1, padx=10, pady=10, sticky="w")
         
-        # Mass input
         ctk.CTkLabel(frame, text="Target Mass (g):", font=ctk.CTkFont(size=14)).grid(row=3, column=0, padx=10, pady=10, sticky="w")
         self.mass_entry = ctk.CTkEntry(frame, width=100, placeholder_text="10.0")
         self.mass_entry.grid(row=3, column=1, padx=10, pady=10, sticky="w")
         self.mass_entry.insert(0, "10.0")
         
-        # Material class - dynamically loaded
+        # Material class with Custom support
         ctk.CTkLabel(frame, text="Material Class:", font=ctk.CTkFont(size=14)).grid(row=4, column=0, padx=10, pady=10, sticky="w")
-        
-        self.class_var = ctk.StringVar(value="")
-        self.class_menu = ctk.CTkOptionMenu(
-            frame, 
-            values=["Loading..."],
-            variable=self.class_var,
-            command=self.on_class_change
-        )
+        self.class_options = ["Permanent Magnet", "Soft Magnetic", "High Entropy Alloy", "Heusler", "Single Crystal", "Custom..."]
+        self.class_var = ctk.StringVar(value="Permanent Magnet")
+        self.class_menu = ctk.CTkOptionMenu(frame, values=self.class_options, variable=self.class_var, command=self.on_class_change)
         self.class_menu.grid(row=4, column=1, padx=10, pady=10, sticky="w")
         
-        # Custom class entry (hidden initially)
         self.custom_class_entry = ctk.CTkEntry(frame, width=200, placeholder_text="Enter custom class name")
         self.custom_class_entry.grid(row=5, column=1, padx=10, pady=5, sticky="w")
         self.custom_class_entry.grid_remove()
         
-        # Load material classes from database
-        self.load_material_classes()
-        
-        # Excess input
         ctk.CTkLabel(frame, text="Excess (e.g., Nd:3):", font=ctk.CTkFont(size=14)).grid(row=6, column=0, padx=10, pady=10, sticky="w")
         self.excess_entry = ctk.CTkEntry(frame, width=200, placeholder_text="e.g., Nd:3, Co:2")
         self.excess_entry.grid(row=6, column=1, padx=10, pady=10, sticky="w")
         
-        # Sample ID
         ctk.CTkLabel(frame, text="Sample ID:", font=ctk.CTkFont(size=14)).grid(row=7, column=0, padx=10, pady=10, sticky="w")
         self.sample_id_entry = ctk.CTkEntry(frame, width=300, placeholder_text="Auto-generated")
         self.sample_id_entry.grid(row=7, column=1, padx=10, pady=10, sticky="w")
-        self.sample_id_entry.insert(0, self.generate_sample_id())
         
         self.auto_id_btn = ctk.CTkButton(frame, text="🔄 Auto-generate ID", command=self.auto_generate_id, width=150)
         self.auto_id_btn.grid(row=7, column=2, padx=10, pady=10)
         
-        # Buttons
+        # Initial sample ID generation (after widget is created)
+        self.auto_generate_id()
+        
         btn_frame = ctk.CTkFrame(frame)
         btn_frame.grid(row=8, column=0, columnspan=3, pady=20)
         
@@ -161,73 +136,340 @@ class AlloyLabApp(ctk.CTk):
         self.submit_btn = ctk.CTkButton(btn_frame, text="💾 Submit to Database", command=self.submit_to_db, width=200, state="disabled")
         self.submit_btn.pack(side="left", padx=10)
         
-        # Literature database controls -- radio buttons pick which cached
-        # result set to display, slider sets that database's own cutoff.
-        # "Calculate & Preview" fetches all three upfront; switching here
-        # just re-filters/re-renders the already-fetched data, no network
-        # calls.
-        lit_frame = ctk.CTkFrame(frame)
-        lit_frame.grid(row=9, column=0, columnspan=3, padx=10, pady=(0, 5), sticky="ew")
-
-        ctk.CTkLabel(lit_frame, text="Literature DB:", font=ctk.CTkFont(size=13)).pack(side="left", padx=(10, 5))
-
-        self.lit_db_var = ctk.StringVar(value='materials_project')
-        for db_key in ('materials_project', 'oqmd', 'alexandria'):
-            ctk.CTkRadioButton(
-                lit_frame, text=LIT_DB_LABELS[db_key], variable=self.lit_db_var,
-                value=db_key, command=self.on_lit_db_change
-            ).pack(side="left", padx=8)
-
-        ctk.CTkLabel(lit_frame, text="  Cutoff:", font=ctk.CTkFont(size=13)).pack(side="left", padx=(20, 5))
-        self.lit_cutoff_slider = ctk.CTkSlider(
-            lit_frame, from_=0.05, to=1.0, number_of_steps=19,
-            command=self.on_lit_cutoff_change, width=180
-        )
-        self.lit_cutoff_slider.set(LIT_DB_DEFAULT_CUTOFFS['materials_project'])
-        self.lit_cutoff_slider.pack(side="left", padx=5)
-
-        self.lit_cutoff_label = ctk.CTkLabel(lit_frame, text="", font=ctk.CTkFont(size=13))
-        self.lit_cutoff_label.pack(side="left", padx=10)
-
-        # Results area
         self.result_text = scrolledtext.ScrolledText(frame, height=15, width=80, bg="#1e1e1e", fg="#ffffff", font=("Courier", 10))
-        self.result_text.grid(row=10, column=0, columnspan=3, padx=10, pady=10, sticky="nsew")
+        self.result_text.grid(row=9, column=0, columnspan=3, padx=10, pady=10, sticky="nsew")
         
-        frame.grid_rowconfigure(10, weight=1)
+        frame.grid_rowconfigure(9, weight=1)
         frame.grid_columnconfigure(1, weight=1)
-
-        self.update_lit_cutoff_label()
     
-    def load_material_classes(self):
-        """Load material classes from database"""
+    # ============================================
+    # Tab 2: Import Files
+    # ============================================
+    
+    def setup_import_tab(self):
+        frame = self.tab_import
+        
+        # Top row: Folder selection
+        ctk.CTkLabel(frame, text="Select Folder:", font=ctk.CTkFont(size=14)).grid(row=0, column=0, padx=10, pady=10, sticky="w")
+        self.folder_path_var = ctk.StringVar(value="")
+        self.folder_entry = ctk.CTkEntry(frame, width=400, textvariable=self.folder_path_var, placeholder_text="Path to sorted folder...")
+        self.folder_entry.grid(row=0, column=1, padx=10, pady=10, sticky="w")
+        
+        self.browse_btn = ctk.CTkButton(frame, text="📁 Browse", command=self.browse_folder, width=100)
+        self.browse_btn.grid(row=0, column=2, padx=10, pady=10)
+        
+        self.refresh_btn = ctk.CTkButton(frame, text="🔄 Refresh", command=self.refresh_files, width=100)
+        self.refresh_btn.grid(row=0, column=3, padx=10, pady=10)
+        
+        # File list frame
+        list_frame = ctk.CTkFrame(frame)
+        list_frame.grid(row=1, column=0, columnspan=4, padx=10, pady=10, sticky="nsew")
+        list_frame.grid_rowconfigure(0, weight=1)
+        list_frame.grid_columnconfigure(0, weight=1)
+        
+        # Create scrollable frame for file list
+        self.file_list_container = ctk.CTkScrollableFrame(list_frame, height=250)
+        self.file_list_container.pack(fill="both", expand=True, padx=5, pady=5)
+        
+        # This will hold the file widgets
+        self.file_widgets = []
+        
+        # Action buttons
+        action_frame = ctk.CTkFrame(frame)
+        action_frame.grid(row=2, column=0, columnspan=4, pady=10)
+        
+        self.auto_detect_btn = ctk.CTkButton(action_frame, text="🔍 Auto-detect Samples", command=self.auto_detect_samples, width=180)
+        self.auto_detect_btn.pack(side="left", padx=10)
+        
+        self.import_all_btn = ctk.CTkButton(action_frame, text="📥 Import Selected", command=self.import_selected, width=180)
+        self.import_all_btn.pack(side="left", padx=10)
+        
+        self.select_all_btn = ctk.CTkButton(action_frame, text="☑️ Select All", command=self.select_all_files, width=120)
+        self.select_all_btn.pack(side="left", padx=10)
+        
+        self.deselect_all_btn = ctk.CTkButton(action_frame, text="☐ Deselect All", command=self.deselect_all_files, width=120)
+        self.deselect_all_btn.pack(side="left", padx=10)
+        
+        # Import log
+        ctk.CTkLabel(frame, text="Import Log:", font=ctk.CTkFont(size=14)).grid(row=3, column=0, padx=10, pady=5, sticky="w")
+        
+        self.import_log = scrolledtext.ScrolledText(frame, height=10, width=80, bg="#1e1e1e", fg="#ffffff", font=("Courier", 10))
+        self.import_log.grid(row=4, column=0, columnspan=4, padx=10, pady=10, sticky="nsew")
+        
+        frame.grid_rowconfigure(4, weight=1)
+        frame.grid_columnconfigure(1, weight=1)
+    
+    def browse_folder(self):
+        """Open folder dialog to select import folder"""
+        folder = filedialog.askdirectory(title="Select folder with files to import")
+        if folder:
+            self.folder_path_var.set(folder)
+            self.import_folder = folder
+            self.refresh_files()
+    
+    def refresh_files(self):
+        """Refresh the file list in the import tab"""
+        # Clear existing widgets
+        for widget in self.file_widgets:
+            for child in widget.values():
+                if hasattr(child, 'destroy'):
+                    child.destroy()
+        self.file_widgets = []
+        
+        folder = self.folder_path_var.get()
+        if not folder or not os.path.exists(folder):
+            self.import_log.insert("end", "⚠️ No folder selected or folder does not exist\n")
+            return
+        
+        # Get all files in folder
+        files = []
+        for f in os.listdir(folder):
+            f_path = os.path.join(folder, f)
+            if os.path.isfile(f_path):
+                # Get file info
+                ext = os.path.splitext(f)[1].lower()
+                size = os.path.getsize(f_path)
+                mod_time = datetime.fromtimestamp(os.path.getmtime(f_path)).strftime("%Y-%m-%d %H:%M")
+                files.append({
+                    'name': f,
+                    'path': f_path,
+                    'ext': ext,
+                    'size': size,
+                    'modified': mod_time
+                })
+        
+        # Sort by name
+        files.sort(key=lambda x: x['name'])
+        self.current_files = files
+        
+        if not files:
+            self.import_log.insert("end", "📂 No files found in this folder\n")
+            return
+        
+        # Create a header
+        header = ctk.CTkFrame(self.file_list_container)
+        header.pack(fill="x", padx=2, pady=2)
+        
+        ctk.CTkLabel(header, text="Import", width=50, font=ctk.CTkFont(size=12, weight="bold")).pack(side="left", padx=5)
+        ctk.CTkLabel(header, text="File Name", width=250, font=ctk.CTkFont(size=12, weight="bold")).pack(side="left", padx=5)
+        ctk.CTkLabel(header, text="Type", width=80, font=ctk.CTkFont(size=12, weight="bold")).pack(side="left", padx=5)
+        ctk.CTkLabel(header, text="Size", width=80, font=ctk.CTkFont(size=12, weight="bold")).pack(side="left", padx=5)
+        ctk.CTkLabel(header, text="Modified", width=120, font=ctk.CTkFont(size=12, weight="bold")).pack(side="left", padx=5)
+        ctk.CTkLabel(header, text="Sample ID", width=120, font=ctk.CTkFont(size=12, weight="bold")).pack(side="left", padx=5)
+        
+        # Create a row for each file
+        for f in files:
+            row = ctk.CTkFrame(self.file_list_container)
+            row.pack(fill="x", padx=2, pady=1)
+            
+            # Checkbox
+            check_var = ctk.StringVar(value="0")
+            cb = ctk.CTkCheckBox(row, text="", variable=check_var, onvalue="1", offvalue="0", width=40)
+            cb.pack(side="left", padx=5)
+            
+            # File name
+            name_label = ctk.CTkLabel(row, text=f['name'], width=250, anchor="w")
+            name_label.pack(side="left", padx=5)
+            
+            # File type
+            type_label = ctk.CTkLabel(row, text=f['ext'][1:] if f['ext'] else "unknown", width=80)
+            type_label.pack(side="left", padx=5)
+            
+            # Size
+            size_str = f"{f['size']/1024:.1f} KB" if f['size'] < 1024*1024 else f"{f['size']/(1024*1024):.1f} MB"
+            size_label = ctk.CTkLabel(row, text=size_str, width=80)
+            size_label.pack(side="left", padx=5)
+            
+            # Modified
+            mod_label = ctk.CTkLabel(row, text=f['modified'], width=120)
+            mod_label.pack(side="left", padx=5)
+            
+            # Sample dropdown - try to auto-detect
+            sample_id = self.detect_sample_from_filename(f['name'])
+            
+            sample_options = [""] + self.get_all_sample_ids()
+            sample_var = ctk.StringVar(value=sample_id if sample_id else "")
+            sample_menu = ctk.CTkOptionMenu(row, values=sample_options, variable=sample_var, width=120)
+            sample_menu.pack(side="left", padx=5)
+            
+            # Store reference
+            self.file_widgets.append({
+                'frame': row,
+                'check_var': check_var,
+                'file': f,
+                'sample_var': sample_var
+            })
+        
+        self.import_log.insert("end", f"📂 Loaded {len(files)} files from {os.path.basename(folder)}\n")
+        self.import_log.see("end")
+    
+    def get_all_sample_ids(self) -> list:
+        """Get all sample IDs from database for dropdown"""
         try:
             db = get_db()
-            db.cursor.execute("SELECT class_name FROM material_classes ORDER BY class_name")
+            db.cursor.execute("SELECT sample_id FROM samples ORDER BY sample_id LIMIT 100")
             results = db.cursor.fetchall()
             db.close()
-            
-            classes = [row['class_name'] for row in results]
-            if not classes:
-                classes = ["Permanent Magnet", "Soft Magnetic", "High Entropy Alloy", "Heusler", "Single Crystal"]
-            
-            # Add "Custom..." option
-            classes.append("Custom...")
-            
-            self.class_menu.configure(values=classes)
-            if not self.class_var.get() or self.class_var.get() not in classes:
-                self.class_var.set(classes[0])
-            
-            print(f"✅ Loaded {len(classes)} material classes from database")
-            
+            return [r['sample_id'] for r in results]
         except Exception as e:
-            print(f"⚠️ Could not load material classes: {e}")
-            # Fallback to defaults
-            defaults = ["Permanent Magnet", "Soft Magnetic", "High Entropy Alloy", "Heusler", "Single Crystal", "Custom..."]
-            self.class_menu.configure(values=defaults)
-            self.class_var.set(defaults[0])
+            print(f"Error fetching samples: {e}")
+            return []
+    
+    def detect_sample_from_filename(self, filename: str) -> str:
+        """Try to detect sample ID from filename"""
+        # Patterns to match
+        patterns = [
+            r'(RP\d+[a-z]?)',
+            r'(HCS\d+[a-z]?)',
+            r'(HDS\d+[a-z]?)',
+            r'(\d{4})\.raw',
+            r'(\d{4})\.xy',
+            r'Sample\s*(\d+)',
+            r'S(\d+)_',
+            r'Sample\s*(\d+[a-z]?)',
+            r'_(\d{4})\.tif',
+        ]
+        
+        for pattern in patterns:
+            match = re.search(pattern, filename, re.IGNORECASE)
+            if match:
+                detected = match.group(1)
+                # Check if this sample exists in database
+                try:
+                    db = get_db()
+                    db.cursor.execute("SELECT sample_id FROM samples WHERE sample_id = %s", (detected,))
+                    result = db.cursor.fetchone()
+                    db.close()
+                    if result:
+                        return detected
+                    # If not found, return the detected value anyway (user can confirm)
+                    return detected
+                except:
+                    return detected
+        
+        # Check if it starts with a date
+        date_match = re.search(r'^(\d{8})', filename)
+        if date_match:
+            return f"SAMPLE-{date_match.group(1)}"
+        
+        return None
+    
+    def auto_detect_samples(self):
+        """Auto-detect samples for all files in the list"""
+        count = 0
+        for widget in self.file_widgets:
+            filename = widget['file']['name']
+            detected = self.detect_sample_from_filename(filename)
+            if detected:
+                widget['sample_var'].set(detected)
+                count += 1
+        self.import_log.insert("end", f"🔍 Auto-detected samples for {count} files\n")
+        self.import_log.see("end")
+    
+    def select_all_files(self):
+        """Select all files"""
+        for widget in self.file_widgets:
+            widget['check_var'].set("1")
+    
+    def deselect_all_files(self):
+        """Deselect all files"""
+        for widget in self.file_widgets:
+            widget['check_var'].set("0")
+    
+    def import_selected(self):
+        """Import selected files to database"""
+        selected = []
+        for widget in self.file_widgets:
+            if widget['check_var'].get() == "1":
+                sample_id = widget['sample_var'].get()
+                if not sample_id:
+                    # Skip if no sample selected
+                    continue
+                selected.append({
+                    'file': widget['file'],
+                    'sample_id': sample_id
+                })
+        
+        if not selected:
+            messagebox.showwarning("No files", "No files selected for import.\n\nSelect files and assign sample IDs first.")
+            return
+        
+        # Confirm
+        count = len(selected)
+        if not messagebox.askyesno("Confirm Import", f"Import {count} file(s) to database?"):
+            return
+        
+        # Import
+        db = get_db()
+        imported = 0
+        errors = 0
+        
+        for item in selected:
+            file_path = item['file']['path']
+            filename = item['file']['name']
+            sample_id = item['sample_id']
+            ext = item['file']['ext']
+            
+            try:
+                # Determine characterization type
+                char_type = self.detect_char_type(ext, filename)
+                
+                # Add characterization record
+                db.add_characterization(
+                    sample_id=sample_id,
+                    char_type=char_type,
+                    file_path=file_path,
+                    instrument=self.detect_instrument(filename, ext),
+                    notes=f"Imported from folder: {os.path.basename(os.path.dirname(file_path))}"
+                )
+                imported += 1
+                self.import_log.insert("end", f"✅ Imported: {filename} → {sample_id} ({char_type})\n")
+                
+            except Exception as e:
+                errors += 1
+                self.import_log.insert("end", f"❌ Error importing {filename}: {str(e)}\n")
+        
+        db.close()
+        self.import_log.insert("end", f"\n📊 Import complete: {imported} imported, {errors} errors\n")
+        self.import_log.see("end")
+        
+        messagebox.showinfo("Import Complete", f"Imported {imported} files\nErrors: {errors}")
+    
+    def detect_char_type(self, ext: str, filename: str) -> str:
+        """Detect characterization type from file extension"""
+        ext_lower = ext.lower()
+        if ext_lower in ['.raw', '.xy', '.xrdml']:
+            return 'XRD'
+        elif ext_lower in ['.tif', '.tiff', '.hdr']:
+            return 'SEM'
+        elif ext_lower in ['.dat']:
+            if 'MH' in filename.upper() or 'MAG' in filename.upper() or 'VSM' in filename.upper():
+                return 'VSM'
+            return 'MH'
+        elif ext_lower in ['.csv', '.xlsx']:
+            if 'ICP' in filename.upper() or 'ICPOES' in filename.upper():
+                return 'EDS'
+            if 'DISPLACEMENT' in filename.upper() or 'SPS' in filename.upper():
+                return 'Process'
+            return 'CSV'
+        else:
+            return 'Other'
+    
+    def detect_instrument(self, filename: str, ext: str) -> str:
+        """Detect instrument from filename or extension"""
+        if ext.lower() in ['.raw', '.xy', '.xrdml']:
+            return 'Bruker D8'
+        if ext.lower() in ['.tif', '.tiff']:
+            return 'Zeiss SEM'
+        if '.dat' in filename.lower():
+            return 'PPMS/VSM'
+        return 'Unknown'
+    
+    # ============================================
+    # Helper methods for New Entry tab
+    # ============================================
     
     def validate_formula(self, event=None):
-        """Real-time validation of formula input"""
         formula = self.formula_entry.get().strip()
         if not formula:
             self.validation_label.configure(text="", text_color="gray")
@@ -315,9 +557,6 @@ class AlloyLabApp(ctk.CTk):
         return selected
     
     def run_calculation(self):
-        """Run the calculation, fetch all three literature databases
-        upfront, and show results (screening/mass calc + whichever
-        database is currently selected by the radio buttons)."""
         self.result_text.delete(1.0, "end")
         self.status_label.configure(text="⏳ Calculating...")
         
@@ -330,7 +569,6 @@ class AlloyLabApp(ctk.CTk):
             
             from alloy_calculator import parse_composition_input, parse_composition_with_unit, calculate_masses, ElementComponent
             
-            # Validate formula first
             try:
                 parsed = parse_composition_input(formula)
                 invalid = [e for e in parsed.keys() if e not in ATOMIC_WEIGHTS]
@@ -353,10 +591,7 @@ class AlloyLabApp(ctk.CTk):
             
             at_composition = parse_composition_with_unit(formula, unit)
             comp_frac = {k: v/100 for k, v in at_composition.items()}
-
-            # Screening -- gracefully skip (don't abort the whole preview)
-            # if the composition includes an element outside
-            # ELEMENT_PROPERTIES, same handling as the CLI tool.
+            
             from alloy_screening import IncompleteElementDataError
             try:
                 screening = screen_composition(comp_frac)
@@ -366,7 +601,6 @@ class AlloyLabApp(ctk.CTk):
             else:
                 screening_warning = None
             
-            # Mass calculation
             elements = []
             excess_input = self.excess_entry.get().strip()
             excess_dict = {}
@@ -390,6 +624,7 @@ class AlloyLabApp(ctk.CTk):
             output.append(f"Target mass: {mass}g")
             output.append(f"Material class: {material_class}")
             output.append(f"Sample ID: {self.sample_id_entry.get()}")
+            
             if screening is not None:
                 output.append(f"\n📊 Screening Results:")
                 output.append(f"  VEC = {screening['VEC']:.2f}")
@@ -405,104 +640,16 @@ class AlloyLabApp(ctk.CTk):
                 output.append(f"{e.symbol:<10}{e.at_pct:>8.2f}{e.wt_pct:>8.2f}{e.grams:>10.4f}{e.weigh_grams:>10.4f}")
             
             output.append("\n" + "="*60)
-
-            self.last_calc_output = output
-
-            # Fetch all three literature databases upfront and cache the
-            # deduped (but not yet distance-filtered) results. Switching
-            # radio buttons / dragging the cutoff slider afterward just
-            # re-filters this cache -- no repeat network calls.
-            self.status_label.configure(text="⏳ Checking literature databases...")
-
-            try:
-                from alloy_entry_full import get_api_key
-                from mp_lookup import lookup as mp_lookup_fn
-                api_key = get_api_key()
-                if api_key:
-                    mp_raw = mp_lookup_fn(comp_frac, api_key=api_key)
-                    self.lit_results['materials_project'] = dedup_by_formula(from_mp_results(mp_raw))
-                else:
-                    self.lit_results['materials_project'] = []
-            except Exception as e:
-                print(f"MP lookup failed: {e}")
-                self.lit_results['materials_project'] = []
-
-            try:
-                from oqmd_lookup import lookup as oqmd_lookup_fn
-                oqmd_raw = oqmd_lookup_fn(comp_frac)
-                self.lit_results['oqmd'] = dedup_by_formula(from_oqmd_results(oqmd_raw))
-            except Exception as e:
-                print(f"OQMD lookup failed: {e}")
-                self.lit_results['oqmd'] = []
-
-            try:
-                from alexandria_lookup import lookup as alexandria_lookup_fn
-                alexandria_raw = alexandria_lookup_fn(comp_frac)
-                self.lit_results['alexandria'] = dedup_by_formula(from_alexandria_results(alexandria_raw))
-            except Exception as e:
-                print(f"Alexandria lookup failed: {e}")
-                self.lit_results['alexandria'] = []
-
-            self.render_lit_section()
+            
+            self.result_text.insert("end", "\n".join(output))
             self.submit_btn.configure(state="normal")
             self.status_label.configure(text="✅ Calculation complete - ready to submit")
             
         except Exception as e:
             self.result_text.insert("end", f"❌ Error: {str(e)}")
             self.status_label.configure(text=f"❌ Error: {str(e)}")
-
-    def render_lit_section(self):
-        """Combines the cached calc output with the literature-check
-        section for whichever database is currently selected, filtered by
-        that database's own cutoff. Called on Calculate & Preview, and
-        again (with no re-fetching) whenever the radio buttons or cutoff
-        slider change."""
-        db_key = self.lit_db_var.get()
-        cutoff = self.lit_cutoffs[db_key]
-        all_candidates = self.lit_results.get(db_key, [])
-        shown = filter_by_distance(all_candidates, cutoff)
-
-        lines = []
-        lines.append(f"\n🔍 {LIT_DB_LABELS[db_key]} literature check "
-                      f"(cutoff={cutoff:.2f}) -- {len(shown)} of {len(all_candidates)} shown")
-        lines.append("-" * 60)
-        if not shown:
-            lines.append("  (none within cutoff)" if all_candidates else "  (no results)")
-        for c in shown:
-            stability = "stable" if c.stability == 0 else (
-                f"{c.stability:.3f} eV/atom" if c.stability is not None else "unknown"
-            )
-            known = "known" if c.experimentally_known else "computed only"
-            dist_str = f", distance={c.composition_distance:.3f}" if c.composition_distance is not None else ""
-            lines.append(f"  Tier {c.tier}  {c.formula:<15} {stability:<18} ({known}){dist_str}")
-
-        self.result_text.delete(1.0, "end")
-        self.result_text.insert("end", "\n".join(self.last_calc_output + [""] + lines))
-
-    def on_lit_db_change(self):
-        """Radio button changed -- move the slider to this database's own
-        remembered cutoff, then re-render from the cache."""
-        db_key = self.lit_db_var.get()
-        self.lit_cutoff_slider.set(self.lit_cutoffs[db_key])
-        self.update_lit_cutoff_label()
-        if any(self.lit_results.values()):
-            self.render_lit_section()
-
-    def on_lit_cutoff_change(self, value):
-        """Slider dragged -- update this database's cutoff and re-render
-        live from the cache, no re-fetching."""
-        db_key = self.lit_db_var.get()
-        self.lit_cutoffs[db_key] = float(value)
-        self.update_lit_cutoff_label()
-        if any(self.lit_results.values()):
-            self.render_lit_section()
-
-    def update_lit_cutoff_label(self):
-        db_key = self.lit_db_var.get()
-        self.lit_cutoff_label.configure(text=f"{self.lit_cutoffs[db_key]:.2f}")
     
     def submit_to_db(self):
-        """Submit the calculated alloy to the database"""
         self.status_label.configure(text="⏳ Submitting to database...")
         
         try:
@@ -541,7 +688,7 @@ class AlloyLabApp(ctk.CTk):
                 elements.append(ElementComponent(symbol=symbol, at_pct=at_pct, excess_pct=excess))
             
             result = calculate_masses(total_mass_g=mass, elements=elements)
-
+            
             from alloy_screening import IncompleteElementDataError
             try:
                 screening = screen_composition(comp_frac)
@@ -574,7 +721,6 @@ class AlloyLabApp(ctk.CTk):
                 )
                 db.commit()
                 print(f"✅ Added new material class: {material_class}")
-                # Reload classes for dropdown
                 self.load_material_classes()
             
             sample_db_id = db.add_sample(
@@ -588,24 +734,6 @@ class AlloyLabApp(ctk.CTk):
                 delta_h_mix=screening['Delta_H_mix'] if screening else None,
                 notes=f"Added via Desktop App: {formula} as {unit}"
             )
-            
-            # Store literature checks from all three databases, each using
-            # its own cutoff as currently set on the slider (not just
-            # whichever one happens to be displayed right now). Reuses the
-            # cache from Calculate & Preview -- no re-querying here.
-            for db_key in ('materials_project', 'oqmd', 'alexandria'):
-                candidates = filter_by_distance(self.lit_results.get(db_key, []), self.lit_cutoffs[db_key])
-                for c in candidates:
-                    db.add_literature_check(
-                        sample_db_id=sample_db_id,
-                        source_db=db_key,
-                        tier=c.tier,
-                        match_formula=c.formula,
-                        match_id=c.match_id,
-                        stability=c.stability,
-                        experimentally_known=c.experimentally_known,
-                        composition_distance=c.composition_distance
-                    )
             
             self.result_text.insert("end", f"\n\n✅ Successfully added sample: {sample_id}")
             self.status_label.configure(text=f"✅ Sample {sample_id} added to database")
@@ -621,8 +749,26 @@ class AlloyLabApp(ctk.CTk):
             self.status_label.configure(text=f"❌ Error: {str(e)}")
             messagebox.showerror("Error", str(e))
     
+    def load_material_classes(self):
+        """Load material classes from database for dropdown"""
+        try:
+            db = get_db()
+            db.cursor.execute("SELECT class_name FROM material_classes ORDER BY class_name")
+            results = db.cursor.fetchall()
+            db.close()
+            
+            classes = [row['class_name'] for row in results]
+            if not classes:
+                classes = ["Permanent Magnet", "Soft Magnetic", "High Entropy Alloy", "Heusler", "Single Crystal"]
+            
+            classes.append("Custom...")
+            self.class_menu.configure(values=classes)
+            
+        except Exception as e:
+            print(f"Could not load material classes: {e}")
+    
     # ============================================
-    # Tab 2: Quick Lookup
+    # Tab 3: Quick Lookup
     # ============================================
     
     def setup_lookup_tab(self):
@@ -699,7 +845,7 @@ class AlloyLabApp(ctk.CTk):
             self.status_label.configure(text=f"❌ Error: {str(e)}")
     
     # ============================================
-    # Tab 3: Summary
+    # Tab 4: Summary
     # ============================================
     
     def setup_summary_tab(self):

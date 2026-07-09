@@ -13,25 +13,6 @@ from datetime import datetime
 from alloy_db import get_db
 from alloy_screening import screen_composition
 from alloy_calculator import ATOMIC_WEIGHTS
-from lookup_common import (
-    from_mp_results, from_oqmd_results, from_alexandria_results,
-    dedup_by_formula, filter_by_distance
-)
-
-# Human-readable labels and default cutoffs, based on what was actually
-# observed testing each database against real compositions: MP rarely
-# floods (small curated dataset), OQMD is moderate, Alexandria's much
-# larger dataset (2.5M+ entries) genuinely needed a tighter default.
-LIT_DB_LABELS = {
-    'materials_project': 'Materials Project',
-    'oqmd': 'OQMD',
-    'alexandria': 'Alexandria',
-}
-LIT_DB_DEFAULT_CUTOFFS = {
-    'materials_project': 0.5,
-    'oqmd': 0.4,
-    'alexandria': 0.3,
-}
 
 # Set theme
 ctk.set_appearance_mode("dark")
@@ -43,16 +24,6 @@ class AlloyLabApp(ctk.CTk):
         
         self.title("🧪 Alloy Lab Database")
         self.geometry("950x750")
-
-        # Cached literature-check results, fetched once per Calculate &
-        # Preview click, keyed by source db. Populated by run_calculation(),
-        # re-filtered live by the radio buttons / cutoff slider without
-        # re-querying the network.
-        self.lit_results = {'materials_project': [], 'oqmd': [], 'alexandria': []}
-        self.lit_cutoffs = dict(LIT_DB_DEFAULT_CUTOFFS)
-        self.last_calc_output = []  # cached screening/mass-calc text, kept
-                                     # stable while the literature section
-                                     # below it gets re-rendered
         
         # Main frame
         self.main_frame = ctk.CTkFrame(self)
@@ -161,42 +132,12 @@ class AlloyLabApp(ctk.CTk):
         self.submit_btn = ctk.CTkButton(btn_frame, text="💾 Submit to Database", command=self.submit_to_db, width=200, state="disabled")
         self.submit_btn.pack(side="left", padx=10)
         
-        # Literature database controls -- radio buttons pick which cached
-        # result set to display, slider sets that database's own cutoff.
-        # "Calculate & Preview" fetches all three upfront; switching here
-        # just re-filters/re-renders the already-fetched data, no network
-        # calls.
-        lit_frame = ctk.CTkFrame(frame)
-        lit_frame.grid(row=9, column=0, columnspan=3, padx=10, pady=(0, 5), sticky="ew")
-
-        ctk.CTkLabel(lit_frame, text="Literature DB:", font=ctk.CTkFont(size=13)).pack(side="left", padx=(10, 5))
-
-        self.lit_db_var = ctk.StringVar(value='materials_project')
-        for db_key in ('materials_project', 'oqmd', 'alexandria'):
-            ctk.CTkRadioButton(
-                lit_frame, text=LIT_DB_LABELS[db_key], variable=self.lit_db_var,
-                value=db_key, command=self.on_lit_db_change
-            ).pack(side="left", padx=8)
-
-        ctk.CTkLabel(lit_frame, text="  Cutoff:", font=ctk.CTkFont(size=13)).pack(side="left", padx=(20, 5))
-        self.lit_cutoff_slider = ctk.CTkSlider(
-            lit_frame, from_=0.05, to=1.0, number_of_steps=19,
-            command=self.on_lit_cutoff_change, width=180
-        )
-        self.lit_cutoff_slider.set(LIT_DB_DEFAULT_CUTOFFS['materials_project'])
-        self.lit_cutoff_slider.pack(side="left", padx=5)
-
-        self.lit_cutoff_label = ctk.CTkLabel(lit_frame, text="", font=ctk.CTkFont(size=13))
-        self.lit_cutoff_label.pack(side="left", padx=10)
-
         # Results area
         self.result_text = scrolledtext.ScrolledText(frame, height=15, width=80, bg="#1e1e1e", fg="#ffffff", font=("Courier", 10))
-        self.result_text.grid(row=10, column=0, columnspan=3, padx=10, pady=10, sticky="nsew")
+        self.result_text.grid(row=9, column=0, columnspan=3, padx=10, pady=10, sticky="nsew")
         
-        frame.grid_rowconfigure(10, weight=1)
+        frame.grid_rowconfigure(9, weight=1)
         frame.grid_columnconfigure(1, weight=1)
-
-        self.update_lit_cutoff_label()
     
     def load_material_classes(self):
         """Load material classes from database"""
@@ -269,10 +210,10 @@ class AlloyLabApp(ctk.CTk):
             formula = re.sub(r'[^A-Za-z0-9]', '', formula)[:20]
         
         date_str = datetime.now().strftime('%Y%m%d')
-        prefix = f"{formula}-{date_str}"
         
         try:
             db = get_db()
+            prefix = f"{formula}-{date_str}"
             db.cursor.execute(
                 "SELECT sample_id FROM samples WHERE sample_id LIKE %s ORDER BY sample_id DESC LIMIT 1",
                 (f"{prefix}%",)
@@ -315,9 +256,7 @@ class AlloyLabApp(ctk.CTk):
         return selected
     
     def run_calculation(self):
-        """Run the calculation, fetch all three literature databases
-        upfront, and show results (screening/mass calc + whichever
-        database is currently selected by the radio buttons)."""
+        """Run the calculation and show results"""
         self.result_text.delete(1.0, "end")
         self.status_label.configure(text="⏳ Calculating...")
         
@@ -353,18 +292,7 @@ class AlloyLabApp(ctk.CTk):
             
             at_composition = parse_composition_with_unit(formula, unit)
             comp_frac = {k: v/100 for k, v in at_composition.items()}
-
-            # Screening -- gracefully skip (don't abort the whole preview)
-            # if the composition includes an element outside
-            # ELEMENT_PROPERTIES, same handling as the CLI tool.
-            from alloy_screening import IncompleteElementDataError
-            try:
-                screening = screen_composition(comp_frac)
-            except IncompleteElementDataError as e:
-                screening = None
-                screening_warning = str(e)
-            else:
-                screening_warning = None
+            screening = screen_composition(comp_frac)
             
             # Mass calculation
             elements = []
@@ -390,13 +318,10 @@ class AlloyLabApp(ctk.CTk):
             output.append(f"Target mass: {mass}g")
             output.append(f"Material class: {material_class}")
             output.append(f"Sample ID: {self.sample_id_entry.get()}")
-            if screening is not None:
-                output.append(f"\n📊 Screening Results:")
-                output.append(f"  VEC = {screening['VEC']:.2f}")
-                output.append(f"  δ = {screening['delta']:.3f}")
-                output.append(f"  ΔH_mix = {screening['Delta_H_mix']:.1f} kJ/mol")
-            else:
-                output.append(f"\n⚠️  Screening skipped: {screening_warning}")
+            output.append(f"\n📊 Screening Results:")
+            output.append(f"  VEC = {screening['VEC']:.2f}")
+            output.append(f"  δ = {screening['delta']:.3f}")
+            output.append(f"  ΔH_mix = {screening['Delta_H_mix']:.1f} kJ/mol")
             
             output.append(f"\n📐 Mass Breakdown:")
             output.append(f"{'Element':<10}{'at%':>8}{'wt%':>8}{'target(g)':>10}{'weigh(g)':>10}")
@@ -405,101 +330,14 @@ class AlloyLabApp(ctk.CTk):
                 output.append(f"{e.symbol:<10}{e.at_pct:>8.2f}{e.wt_pct:>8.2f}{e.grams:>10.4f}{e.weigh_grams:>10.4f}")
             
             output.append("\n" + "="*60)
-
-            self.last_calc_output = output
-
-            # Fetch all three literature databases upfront and cache the
-            # deduped (but not yet distance-filtered) results. Switching
-            # radio buttons / dragging the cutoff slider afterward just
-            # re-filters this cache -- no repeat network calls.
-            self.status_label.configure(text="⏳ Checking literature databases...")
-
-            try:
-                from alloy_entry_full import get_api_key
-                from mp_lookup import lookup as mp_lookup_fn
-                api_key = get_api_key()
-                if api_key:
-                    mp_raw = mp_lookup_fn(comp_frac, api_key=api_key)
-                    self.lit_results['materials_project'] = dedup_by_formula(from_mp_results(mp_raw))
-                else:
-                    self.lit_results['materials_project'] = []
-            except Exception as e:
-                print(f"MP lookup failed: {e}")
-                self.lit_results['materials_project'] = []
-
-            try:
-                from oqmd_lookup import lookup as oqmd_lookup_fn
-                oqmd_raw = oqmd_lookup_fn(comp_frac)
-                self.lit_results['oqmd'] = dedup_by_formula(from_oqmd_results(oqmd_raw))
-            except Exception as e:
-                print(f"OQMD lookup failed: {e}")
-                self.lit_results['oqmd'] = []
-
-            try:
-                from alexandria_lookup import lookup as alexandria_lookup_fn
-                alexandria_raw = alexandria_lookup_fn(comp_frac)
-                self.lit_results['alexandria'] = dedup_by_formula(from_alexandria_results(alexandria_raw))
-            except Exception as e:
-                print(f"Alexandria lookup failed: {e}")
-                self.lit_results['alexandria'] = []
-
-            self.render_lit_section()
+            
+            self.result_text.insert("end", "\n".join(output))
             self.submit_btn.configure(state="normal")
             self.status_label.configure(text="✅ Calculation complete - ready to submit")
             
         except Exception as e:
             self.result_text.insert("end", f"❌ Error: {str(e)}")
             self.status_label.configure(text=f"❌ Error: {str(e)}")
-
-    def render_lit_section(self):
-        """Combines the cached calc output with the literature-check
-        section for whichever database is currently selected, filtered by
-        that database's own cutoff. Called on Calculate & Preview, and
-        again (with no re-fetching) whenever the radio buttons or cutoff
-        slider change."""
-        db_key = self.lit_db_var.get()
-        cutoff = self.lit_cutoffs[db_key]
-        all_candidates = self.lit_results.get(db_key, [])
-        shown = filter_by_distance(all_candidates, cutoff)
-
-        lines = []
-        lines.append(f"\n🔍 {LIT_DB_LABELS[db_key]} literature check "
-                      f"(cutoff={cutoff:.2f}) -- {len(shown)} of {len(all_candidates)} shown")
-        lines.append("-" * 60)
-        if not shown:
-            lines.append("  (none within cutoff)" if all_candidates else "  (no results)")
-        for c in shown:
-            stability = "stable" if c.stability == 0 else (
-                f"{c.stability:.3f} eV/atom" if c.stability is not None else "unknown"
-            )
-            known = "known" if c.experimentally_known else "computed only"
-            dist_str = f", distance={c.composition_distance:.3f}" if c.composition_distance is not None else ""
-            lines.append(f"  Tier {c.tier}  {c.formula:<15} {stability:<18} ({known}){dist_str}")
-
-        self.result_text.delete(1.0, "end")
-        self.result_text.insert("end", "\n".join(self.last_calc_output + [""] + lines))
-
-    def on_lit_db_change(self):
-        """Radio button changed -- move the slider to this database's own
-        remembered cutoff, then re-render from the cache."""
-        db_key = self.lit_db_var.get()
-        self.lit_cutoff_slider.set(self.lit_cutoffs[db_key])
-        self.update_lit_cutoff_label()
-        if any(self.lit_results.values()):
-            self.render_lit_section()
-
-    def on_lit_cutoff_change(self, value):
-        """Slider dragged -- update this database's cutoff and re-render
-        live from the cache, no re-fetching."""
-        db_key = self.lit_db_var.get()
-        self.lit_cutoffs[db_key] = float(value)
-        self.update_lit_cutoff_label()
-        if any(self.lit_results.values()):
-            self.render_lit_section()
-
-    def update_lit_cutoff_label(self):
-        db_key = self.lit_db_var.get()
-        self.lit_cutoff_label.configure(text=f"{self.lit_cutoffs[db_key]:.2f}")
     
     def submit_to_db(self):
         """Submit the calculated alloy to the database"""
@@ -541,13 +379,7 @@ class AlloyLabApp(ctk.CTk):
                 elements.append(ElementComponent(symbol=symbol, at_pct=at_pct, excess_pct=excess))
             
             result = calculate_masses(total_mass_g=mass, elements=elements)
-
-            from alloy_screening import IncompleteElementDataError
-            try:
-                screening = screen_composition(comp_frac)
-            except IncompleteElementDataError as e:
-                screening = None
-                print(f"Screening skipped: {e}")
+            screening = screen_composition(comp_frac)
             
             db = get_db()
             
@@ -583,29 +415,34 @@ class AlloyLabApp(ctk.CTk):
                 material_class=material_class,
                 source_type='experimental',
                 mass_grams=mass,
-                vec=screening['VEC'] if screening else None,
-                delta=screening['delta'] if screening else None,
-                delta_h_mix=screening['Delta_H_mix'] if screening else None,
+                vec=screening['VEC'],
+                delta=screening['delta'],
+                delta_h_mix=screening['Delta_H_mix'],
                 notes=f"Added via Desktop App: {formula} as {unit}"
             )
             
-            # Store literature checks from all three databases, each using
-            # its own cutoff as currently set on the slider (not just
-            # whichever one happens to be displayed right now). Reuses the
-            # cache from Calculate & Preview -- no re-querying here.
-            for db_key in ('materials_project', 'oqmd', 'alexandria'):
-                candidates = filter_by_distance(self.lit_results.get(db_key, []), self.lit_cutoffs[db_key])
-                for c in candidates:
-                    db.add_literature_check(
-                        sample_db_id=sample_db_id,
-                        source_db=db_key,
-                        tier=c.tier,
-                        match_formula=c.formula,
-                        match_id=c.match_id,
-                        stability=c.stability,
-                        experimentally_known=c.experimentally_known,
-                        composition_distance=c.composition_distance
-                    )
+            # Add MP lookup
+            try:
+                from alloy_entry_full import get_api_key
+                from mp_lookup import lookup
+                api_key = get_api_key()
+                if api_key:
+                    mp_results = lookup(comp_frac, api_key=api_key)
+                    from lookup_common import dedup_by_formula, from_mp_results
+                    deduped = dedup_by_formula(from_mp_results(mp_results))
+                    for match in deduped[:5]:
+                        db.add_literature_check(
+                            sample_db_id=sample_db_id,
+                            source_db='materials_project',
+                            tier=match.tier,
+                            match_formula=match.formula,
+                            match_id=match.material_id,
+                            stability=match.energy_above_hull,
+                            experimentally_known=not match.theoretical,
+                            composition_distance=match.composition_distance
+                        )
+            except Exception as e:
+                print(f"MP lookup skipped: {e}")
             
             self.result_text.insert("end", f"\n\n✅ Successfully added sample: {sample_id}")
             self.status_label.configure(text=f"✅ Sample {sample_id} added to database")
