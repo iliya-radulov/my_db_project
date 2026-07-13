@@ -20,16 +20,15 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import numpy as np
 
-from alloy_db import get_db
-from alloy_screening import screen_composition
-from alloy_calculator import ATOMIC_WEIGHTS
-from lookup_common import (
+from stage_one.alloy.alloy_db_v1 import get_db
+from stage_one.alloy.alloy_screening_v1 import screen_composition
+from stage_one.alloy.alloy_calculator_v1 import ATOMIC_WEIGHTS
+from stage_one.lookup.lookup_common_v1 import (
     from_mp_results, from_oqmd_results, from_alexandria_results,
     dedup_by_formula, filter_by_distance
 )
+from stage_one.tools.plot_v1 import plot_xrd, plot_vsm, plot_sem
 
-# Import plotting functions
-from plot_xrd_v4 import plot_xrd, plot_vsm, plot_sem
 
 # Human-readable labels and default cutoffs
 LIT_DB_LABELS = {
@@ -411,6 +410,10 @@ class AlloyLabApp(ctk.CTk):
             print(f"Error loading characterization: {e}")
     
     def viewer_load_plot(self, char_id):
+        # Add this at the beginning of viewer_load_plot
+        if self.current_figure is not None:
+            plt.close(self.current_figure)
+            self.current_figure = None
         file_info = None
         for btn_frame in self.viewer_file_buttons:
             if hasattr(btn_frame.winfo_children()[0], 'file_info'):
@@ -636,7 +639,7 @@ class AlloyLabApp(ctk.CTk):
             return
         
         try:
-            from alloy_calculator import parse_composition_input
+            from stage_one.alloy.alloy_calculator_v1 import parse_composition_input
             parsed = parse_composition_input(formula)
             if parsed:
                 invalid = [e for e in parsed.keys() if e not in ATOMIC_WEIGHTS]
@@ -717,7 +720,7 @@ class AlloyLabApp(ctk.CTk):
                 self.status_label.configure(text="No formula entered")
                 return
             
-            from alloy_calculator import parse_composition_input, parse_composition_with_unit, calculate_masses, ElementComponent
+            from stage_one.alloy.alloy_calculator_v1 import parse_composition_input, parse_composition_with_unit, calculate_masses, ElementComponent
             
             try:
                 parsed = parse_composition_input(formula)
@@ -742,7 +745,7 @@ class AlloyLabApp(ctk.CTk):
             at_composition = parse_composition_with_unit(formula, unit)
             comp_frac = {k: v/100 for k, v in at_composition.items()}
             
-            from alloy_screening import IncompleteElementDataError
+            from stage_one.alloy.alloy_screening_v1 import IncompleteElementDataError
             try:
                 screening = screen_composition(comp_frac)
             except IncompleteElementDataError as e:
@@ -795,8 +798,8 @@ class AlloyLabApp(ctk.CTk):
             self.status_label.configure(text="Checking literature databases...")
             
             try:
-                from alloy_entry_full import get_api_key
-                from mp_lookup import lookup as mp_lookup_fn
+                from stage_one.alloy.alloy_entry_full_v1 import get_api_key
+                from stage_one.lookup.mp_lookup_v1 import lookup as mp_lookup_fn
                 api_key = get_api_key()
                 if api_key:
                     mp_raw = mp_lookup_fn(comp_frac, api_key=api_key)
@@ -808,7 +811,7 @@ class AlloyLabApp(ctk.CTk):
                 self.lit_results['materials_project'] = []
             
             try:
-                from oqmd_lookup import lookup as oqmd_lookup_fn
+                from stage_one.lookup.oqmd_lookup_v1 import lookup as oqmd_lookup_fn
                 oqmd_raw = oqmd_lookup_fn(comp_frac)
                 self.lit_results['oqmd'] = dedup_by_formula(from_oqmd_results(oqmd_raw))
             except Exception as e:
@@ -816,7 +819,7 @@ class AlloyLabApp(ctk.CTk):
                 self.lit_results['oqmd'] = []
             
             try:
-                from alexandria_lookup import lookup as alexandria_lookup_fn
+                from stage_one.lookup.alexandria_lookup_v1 import lookup as alexandria_lookup_fn
                 alexandria_raw = alexandria_lookup_fn(comp_frac)
                 self.lit_results['alexandria'] = dedup_by_formula(from_alexandria_results(alexandria_raw))
             except Exception as e:
@@ -887,9 +890,9 @@ class AlloyLabApp(ctk.CTk):
                 self.status_label.configure(text="No material class selected")
                 return
             
-            from alloy_db import get_db
-            from alloy_calculator import parse_composition_with_unit, calculate_masses, ElementComponent
-            from alloy_screening import screen_composition
+            from stage_one.alloy.alloy_db_v1 import get_db
+            from stage_one.alloy.alloy_calculator_v1 import parse_composition_with_unit, calculate_masses, ElementComponent
+            from stage_one.alloy.alloy_screening_v1 import screen_composition
             
             at_composition = parse_composition_with_unit(formula, unit)
             comp_frac = {k: v/100 for k, v in at_composition.items()}
@@ -909,7 +912,7 @@ class AlloyLabApp(ctk.CTk):
             
             result = calculate_masses(total_mass_g=mass, elements=elements)
             
-            from alloy_screening import IncompleteElementDataError
+            from stage_one.alloy.alloy_screening_v1 import IncompleteElementDataError
             try:
                 screening = screen_composition(comp_frac)
             except IncompleteElementDataError as e:
@@ -1036,6 +1039,7 @@ class AlloyLabApp(ctk.CTk):
         ctk.CTkLabel(header, text="Size", width=70, font=ctk.CTkFont(size=12, weight="bold")).pack(side="left", padx=5)
         ctk.CTkLabel(header, text="Sample ID", width=120, font=ctk.CTkFont(size=12, weight="bold")).pack(side="left", padx=5)
         
+    
         for f in files:
             row = ctk.CTkFrame(self.file_list_container)
             row.pack(fill="x", padx=2, pady=1)
@@ -1044,7 +1048,23 @@ class AlloyLabApp(ctk.CTk):
             cb = ctk.CTkCheckBox(row, text="", variable=check_var, onvalue="1", offvalue="0", width=30)
             cb.pack(side="left", padx=5)
             
-            name_label = ctk.CTkLabel(row, text=f['name'], width=200, anchor="w")
+            # Check if file already imported
+            is_imported = False
+            try:
+                db = get_db()
+                db.cursor.execute(
+                    "SELECT id FROM characterization WHERE file_path = %s",
+                    (f['path'],)
+                )
+                is_imported = db.cursor.fetchone() is not None
+                db.close()
+            except:
+                pass
+            
+            if is_imported:
+                name_label = ctk.CTkLabel(row, text=f"✅ {f['name']}", width=200, anchor="w", text_color="green")
+            else:
+                name_label = ctk.CTkLabel(row, text=f['name'], width=200, anchor="w")
             name_label.pack(side="left", padx=5)
             
             type_label = ctk.CTkLabel(row, text=f['ext'][1:] if f['ext'] else "unknown", width=60)
@@ -1070,7 +1090,7 @@ class AlloyLabApp(ctk.CTk):
                 'sample_var': sample_var,
                 'sample_menu': sample_menu
             })
-        
+            
         self.import_log.insert("end", f"Loaded {len(files)} files from {os.path.basename(folder)}\n")
         self.import_log.see("end")
     
@@ -1159,6 +1179,8 @@ class AlloyLabApp(ctk.CTk):
             return
         
         db = get_db()
+        db.conn.autocommit = False  # Disable autocommit for transaction control
+        
         imported = 0
         errors = 0
         
@@ -1170,7 +1192,29 @@ class AlloyLabApp(ctk.CTk):
             
             try:
                 char_type = self.detect_char_type(ext, filename)
+    
+                # --- Check if sample exists, create if not ---
+                sample_exists = db.get_sample(sample_id)
+                if not sample_exists:
+                    db.add_sample(
+                        sample_id=sample_id,
+                        composition={'placeholder': 1.0},
+                        material_class='Unknown',
+                        source_type='imported',
+                        notes=f"Auto-created from import of {filename}"
+                    )
+                    self.import_log.insert("end", f"  📝 Created new sample: {sample_id}\n")
                 
+                # --- Check if this file already exists in database ---
+                db.cursor.execute(
+                    "SELECT id FROM characterization WHERE file_path = %s",
+                    (file_path,)
+                )
+                existing = db.cursor.fetchone()
+                if existing:
+                    self.import_log.insert("end", f"⏭️  Skipped {filename} — already imported (ID: {existing['id']})\n")
+                    continue    
+                                     
                 # Add characterization
                 char_id = db.add_characterization(
                     sample_id=sample_id,
@@ -1185,7 +1229,7 @@ class AlloyLabApp(ctk.CTk):
                 # --- Auto-parse based on file type ---
                 if char_type == 'XRD' and ext == '.xy':
                     try:
-                        from xrd_integration import import_xrd_file
+                        from stage_one.integrations.xrd_integration_v1 import import_xrd_file
                         xrd_result = import_xrd_file(file_path, sample_id, db)
                         if xrd_result['success']:
                             a_val = xrd_result.get('lattice_a', 'N/A')
@@ -1195,7 +1239,7 @@ class AlloyLabApp(ctk.CTk):
                 
                 elif char_type in ['VSM', 'MH'] and ext == '.dat':
                     try:
-                        from vsm_integration import import_vsm_file
+                        from stage_one.integrations.vsm_integration_v1 import import_vsm_file
                         vsm_result = import_vsm_file(file_path, sample_id, db)
                         if vsm_result['success']:
                             ms = vsm_result.get('ms', 0)
@@ -1206,7 +1250,7 @@ class AlloyLabApp(ctk.CTk):
                 
                 elif char_type == 'SEM' and ext in ['.tif', '.tiff']:
                     try:
-                        from sem_integration import import_sem_file
+                        from stage_one.integrations.sem_integration_v1 import import_sem_file
                         sem_result = import_sem_file(file_path, sample_id, db)
                         if sem_result['success']:
                             mag = sem_result.get('magnification', 'N/A')
@@ -1214,10 +1258,16 @@ class AlloyLabApp(ctk.CTk):
                             self.import_log.insert("end", f"  🔬 SEM: Mag = {mag}, EHT = {eht}\n")
                     except Exception as e:
                         self.import_log.insert("end", f"  ⚠️ SEM analysis failed: {str(e)}\n")
-                
+                # ✅ Commit the transaction after successful import
+                db.conn.commit()
+            
             except Exception as e:
+                db.conn.rollback()  # Rollback on error
                 errors += 1
                 self.import_log.insert("end", f"Error importing {filename}: {str(e)}\n")
+        
+        # Refresh the viewer samples after import
+        self.refresh_viewer_samples()
         
         db.close()
         self.import_log.insert("end", f"\nImport complete: {imported} imported, {errors} errors\n")
