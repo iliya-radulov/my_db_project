@@ -20,14 +20,13 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import numpy as np
 
-from alloy_db import get_db
-from alloy_screening import screen_composition
-from alloy_calculator import ATOMIC_WEIGHTS
-from lookup_common import (
+from stage_one.alloy.alloy_db_v1 import get_db
+from stage_one.alloy.alloy_screening_v1 import screen_composition
+from stage_one.alloy.alloy_calculator_v1 import ATOMIC_WEIGHTS
+from stage_one.lookup.lookup_common_v1 import (
     from_mp_results, from_oqmd_results, from_alexandria_results,
     dedup_by_formula, filter_by_distance
 )
-
 # Import plotting functions
 from stage_two.tools.plot_xrd_v2 import plot_xrd, plot_vsm, plot_sem
 
@@ -636,7 +635,7 @@ class AlloyLabApp(ctk.CTk):
             return
         
         try:
-            from alloy_calculator import parse_composition_input
+            from stage_one.alloy.alloy_calculator_v1 import parse_composition_input
             parsed = parse_composition_input(formula)
             if parsed:
                 invalid = [e for e in parsed.keys() if e not in ATOMIC_WEIGHTS]
@@ -717,7 +716,7 @@ class AlloyLabApp(ctk.CTk):
                 self.status_label.configure(text="No formula entered")
                 return
             
-            from alloy_calculator import parse_composition_input, parse_composition_with_unit, calculate_masses, ElementComponent
+            from stage_one.alloy.alloy_calculator_v1 import parse_composition_input, parse_composition_with_unit, calculate_masses, ElementComponent
             
             try:
                 parsed = parse_composition_input(formula)
@@ -742,7 +741,7 @@ class AlloyLabApp(ctk.CTk):
             at_composition = parse_composition_with_unit(formula, unit)
             comp_frac = {k: v/100 for k, v in at_composition.items()}
             
-            from alloy_screening import IncompleteElementDataError
+            from stage_one.alloy.alloy_screening_v1 import IncompleteElementDataError
             try:
                 screening = screen_composition(comp_frac)
             except IncompleteElementDataError as e:
@@ -795,8 +794,8 @@ class AlloyLabApp(ctk.CTk):
             self.status_label.configure(text="Checking literature databases...")
             
             try:
-                from alloy_entry_full import get_api_key
-                from mp_lookup import lookup as mp_lookup_fn
+                from stage_one.alloy.alloy_entry_full_v1 import get_api_key
+                from stage_one.lookup.mp_lookup_v1 import lookup as mp_lookup_fn
                 api_key = get_api_key()
                 if api_key:
                     mp_raw = mp_lookup_fn(comp_frac, api_key=api_key)
@@ -808,7 +807,7 @@ class AlloyLabApp(ctk.CTk):
                 self.lit_results['materials_project'] = []
             
             try:
-                from oqmd_lookup import lookup as oqmd_lookup_fn
+                from stage_one.lookup.oqmd_lookup_v1 import lookup as oqmd_lookup_fn
                 oqmd_raw = oqmd_lookup_fn(comp_frac)
                 self.lit_results['oqmd'] = dedup_by_formula(from_oqmd_results(oqmd_raw))
             except Exception as e:
@@ -816,7 +815,7 @@ class AlloyLabApp(ctk.CTk):
                 self.lit_results['oqmd'] = []
             
             try:
-                from alexandria_lookup import lookup as alexandria_lookup_fn
+                from stage_one.lookup.alexandria_lookup_v1 import lookup as alexandria_lookup_fn
                 alexandria_raw = alexandria_lookup_fn(comp_frac)
                 self.lit_results['alexandria'] = dedup_by_formula(from_alexandria_results(alexandria_raw))
             except Exception as e:
@@ -887,9 +886,9 @@ class AlloyLabApp(ctk.CTk):
                 self.status_label.configure(text="No material class selected")
                 return
             
-            from alloy_db import get_db
-            from alloy_calculator import parse_composition_with_unit, calculate_masses, ElementComponent
-            from alloy_screening import screen_composition
+            from stage_one.alloy.alloy_db_v1 import get_db
+            from stage_one.alloy.alloy_calculator_v1 import parse_composition_with_unit, calculate_masses, ElementComponent
+            from stage_one.alloy.alloy_screening_v1 import screen_composition
             
             at_composition = parse_composition_with_unit(formula, unit)
             comp_frac = {k: v/100 for k, v in at_composition.items()}
@@ -909,7 +908,7 @@ class AlloyLabApp(ctk.CTk):
             
             result = calculate_masses(total_mass_g=mass, elements=elements)
             
-            from alloy_screening import IncompleteElementDataError
+            from stage_one.alloy.alloy_screening_v1 import IncompleteElementDataError
             try:
                 screening = screen_composition(comp_frac)
             except IncompleteElementDataError as e:
@@ -1185,7 +1184,7 @@ class AlloyLabApp(ctk.CTk):
                 # --- Auto-parse based on file type ---
                 if char_type == 'XRD' and ext == '.xy':
                     try:
-                        from xrd_integration import import_xrd_file
+                        from stage_one.integrations.xrd_integration_v1 import import_xrd_file
                         xrd_result = import_xrd_file(file_path, sample_id, db)
                         if xrd_result['success']:
                             a_val = xrd_result.get('lattice_a', 'N/A')
@@ -1195,7 +1194,7 @@ class AlloyLabApp(ctk.CTk):
                 
                 elif char_type in ['VSM', 'MH'] and ext == '.dat':
                     try:
-                        from vsm_integration import import_vsm_file
+                        from stage_one.integrations.sem_integration_v1 import import_vsm_file
                         vsm_result = import_vsm_file(file_path, sample_id, db)
                         if vsm_result['success']:
                             ms = vsm_result.get('ms', 0)
@@ -1206,7 +1205,7 @@ class AlloyLabApp(ctk.CTk):
                 
                 elif char_type == 'SEM' and ext in ['.tif', '.tiff']:
                     try:
-                        from sem_integration import import_sem_file
+                        from stage_one.integrations.sem_integration_v1 import import_sem_file
                         sem_result = import_sem_file(file_path, sample_id, db)
                         if sem_result['success']:
                             mag = sem_result.get('magnification', 'N/A')
