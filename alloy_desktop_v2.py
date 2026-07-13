@@ -29,7 +29,7 @@ from lookup_common import (
 )
 
 # Import plotting functions
-from plot_xrd_v4_v2 import plot_xrd, plot_vsm, plot_sem
+from stage_two.tools.plot_xrd_v2 import plot_xrd, plot_vsm, plot_sem
 
 # Human-readable labels and default cutoffs
 LIT_DB_LABELS = {
