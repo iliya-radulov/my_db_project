@@ -1,8 +1,13 @@
 .env
 venv/
 __pycache__/
+
 *.pyc
+*.backup
+*.messy
 .DS_Store
+
 data/
 stage_two/
 stage_three/
+
