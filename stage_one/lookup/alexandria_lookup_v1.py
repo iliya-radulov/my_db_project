@@ -25,6 +25,7 @@ Alexandria as a third independent DFT stability check, not a source of
 
 import itertools
 import sys
+import time
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 from dataclasses import dataclass
@@ -33,6 +34,8 @@ from typing import Dict, List, Optional
 from optimade.client import OptimadeClient
 
 ALEXANDRIA_BASE_URL = "https://alexandria.icams.rub.de/pbe"
+RETRY_WAIT_SECONDS = 45
+MAX_RETRIES = 1
 
 RESPONSE_FIELDS = [
     "chemical_formula_reduced", "elements", "elements_ratios", "nelements",
@@ -77,6 +80,34 @@ def _quote_elements(elements: List[str]) -> str:
     return ",".join(f'"{el}"' for el in elements)
 
 
+def _is_transient_error(errors: List) -> bool:
+    """502/503/504 are transient server-side issues worth retrying -- see
+    the matching note in oqmd_lookup_v1.py for why the client's own
+    max_attempts doesn't already cover this."""
+    return any(any(code in str(e) for code in ("502", "503", "504")) for e in errors)
+
+
+def _query_with_retry(client: OptimadeClient, filter_str: str) -> dict:
+    """Runs client.get() and retries once (after a wait) if Alexandria
+    returned a transient server error, before giving up."""
+    raw = client.get(filter=filter_str, response_fields=RESPONSE_FIELDS)
+    attempt = 0
+    while attempt < MAX_RETRIES:
+        try:
+            errors = raw["structures"][filter_str][ALEXANDRIA_BASE_URL].get("errors") or []
+        except (KeyError, TypeError):
+            errors = []
+        if not _is_transient_error(errors):
+            break
+        attempt += 1
+        print(f"  [retry] Alexandria returned a transient server error "
+              f"({errors[0]}) -- waiting {RETRY_WAIT_SECONDS}s before "
+              f"retry {attempt}/{MAX_RETRIES}...")
+        time.sleep(RETRY_WAIT_SECONDS)
+        raw = client.get(filter=filter_str, response_fields=RESPONSE_FIELDS)
+    return raw
+
+
 def _extract_results(raw: dict, filter_str: str) -> List[dict]:
     try:
         provider_result = raw["structures"][filter_str][ALEXANDRIA_BASE_URL]
@@ -107,7 +138,7 @@ def lookup(
         f'elements HAS ALL {_quote_elements(target_elements)} '
         f'AND nelements={len(target_elements)}'
     )
-    raw = client.get(filter=exact_filter, response_fields=RESPONSE_FIELDS)
+    raw = _query_with_retry(client, exact_filter)
     for entry in _extract_results(raw, exact_filter):
         attrs = entry.get("attributes", {})
         candidate_comp = dict(zip(attrs.get("elements", []), attrs.get("elements_ratios", [])))
@@ -131,7 +162,7 @@ def lookup(
                 f'elements HAS ALL {_quote_elements(list(subset))} '
                 f'AND nelements={len(subset)}'
             )
-            raw = client.get(filter=sub_filter, response_fields=RESPONSE_FIELDS)
+            raw = _query_with_retry(client, sub_filter)
             for entry in _extract_results(raw, sub_filter):
                 attrs = entry.get("attributes", {})
                 results.append(AlexandriaMatchResult(

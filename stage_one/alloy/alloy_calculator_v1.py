@@ -91,12 +91,21 @@ class CalculationResult:
 def parse_composition_input(
     formula: str,
     unit: str = 'at%',
-    case_sensitive: bool = False
+    case_sensitive: bool = False,
+    normalize: bool = True
 ) -> Dict[str, float]:
     """
     Parse formula like 'Fe65Nd30Co5' or 'lafe11.6si1.4'
     Strict: validates element symbols, raises error on invalid entries.
     Requires numbers after each element (e.g., 'Cp' is invalid).
+
+    normalize=True (default): rescales so values sum to 100 -- correct for
+    a formula describing a complete, self-contained composition.
+    normalize=False: returns the literal parsed numbers as-is. Needed when
+    the numbers already mean "at% of some larger whole" on their own --
+    e.g. raw elements being added on top of a fixed-mass pre-alloy, where
+    "Co5Si10" must stay exactly 5 and 10, not be rescaled to sum to 100
+    between just those two.
     """
     # Valid single-letter elements
     valid_single = {'B', 'C', 'F', 'H', 'I', 'K', 'N', 'O', 'P', 'S', 'U', 'V', 'W', 'Y'}
@@ -173,7 +182,7 @@ def parse_composition_input(
         result[elem] = result.get(elem, 0.0) + num
     
     total = sum(result.values())
-    if total > 0 and abs(total - 100) > 0.01:
+    if normalize and total > 0 and abs(total - 100) > 0.01:
         result = {k: v / total * 100 for k, v in result.items()}
     
     return result
@@ -306,6 +315,72 @@ def calculate_masses(
         effective_molar_mass=total_molar_mass,
         elements=element_results,
         pre_alloys=pre_alloy_results,
+    )
+
+
+def calculate_masses_from_fixed_prealloy(
+    known_prealloy_grams: float,
+    prealloy: PreAlloyComponent,
+    elements: Optional[List[ElementComponent]] = None,
+) -> CalculationResult:
+    """
+    Solve for the raw elements to add to a pre-alloy of KNOWN, FIXED mass,
+    given the target final at% for the pre-alloy and the raw elements.
+
+    Example: you already have 13 g of Fe2P and want a final alloy of
+    Fe2P (85 at%) + Co (5 at%) + Si (10 at%). This tells you how many
+    grams of Co and Si to add -- it does NOT tell you how much Fe2P to
+    make, since you already have it; that 13 g is the known anchor the
+    whole calculation is solved from.
+
+    Only ONE pre-alloy is supported here (the known-mass anchor). Two
+    independently fixed pre-alloy masses at once is a different, harder
+    problem this function doesn't attempt.
+
+    Correctly handles the case where an element appears in BOTH the raw
+    `elements` list and the pre-alloy's own internal composition (e.g.
+    adding extra pure Fe on top of an Fe-containing pre-alloy) -- masses
+    are computed directly from each raw element's own contribution, never
+    from a merged total, so nothing already inside the pre-alloy gets
+    double-counted as something you still need to weigh out.
+    """
+    elements = elements or []
+    top_sum = sum(e.at_pct for e in elements) + prealloy.at_pct
+    if top_sum <= 0:
+        raise ValueError("Total atomic percent must be > 0")
+
+    # Every output of calculate_masses() scales linearly with total_mass_g,
+    # so run it once with a placeholder total mass, then solve for the
+    # real total mass by comparing the pre-alloy's placeholder grams to
+    # the actual known grams you have.
+    placeholder = calculate_masses(total_mass_g=1.0, elements=elements, pre_alloys=[prealloy])
+    if not placeholder.pre_alloys:
+        raise ValueError("No pre-alloy in result -- check prealloy.at_pct > 0")
+    placeholder_prealloy_g = placeholder.pre_alloys[0].grams
+    if placeholder_prealloy_g <= 0:
+        raise ValueError("Pre-alloy contributes zero mass at the given at_pct")
+
+    scale = known_prealloy_grams / placeholder_prealloy_g
+    real_total_mass_g = placeholder.total_mass_g * scale
+    total_molar_mass = placeholder.effective_molar_mass
+
+    element_results = []
+    for e in elements:
+        if e.symbol not in ATOMIC_WEIGHTS:
+            raise ValueError(f"Unknown element: {e.symbol}")
+        top_frac = e.at_pct / top_sum
+        g = real_total_mass_g * top_frac * ATOMIC_WEIGHTS[e.symbol] / total_molar_mass
+        wt_frac = (top_frac * ATOMIC_WEIGHTS[e.symbol]) / total_molar_mass
+        element_results.append(ElementResult(
+            symbol=e.symbol, at_pct=top_frac * 100, wt_pct=wt_frac * 100,
+            grams=g, weigh_grams=g * (1 + e.excess_pct / 100),
+        ))
+
+    return CalculationResult(
+        total_mass_g=real_total_mass_g,
+        effective_molar_mass=total_molar_mass,
+        elements=element_results,
+        pre_alloys=[PreAlloyResult(name=prealloy.name, grams=known_prealloy_grams)],
     )
 
 

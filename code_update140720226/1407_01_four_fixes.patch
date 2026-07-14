@@ -1,0 +1,196 @@
+diff --git a/alloy_desktop_complete.py b/alloy_desktop_complete.py
+index 77305c1..41ab5a3 100644
+--- a/alloy_desktop_complete.py
++++ b/alloy_desktop_complete.py
+@@ -68,6 +68,11 @@ class AlloyLabApp(ctk.CTk):
+         self.viewer_files = []
+         self.current_figure = None
+         self.current_canvas = None
++
++        # Ensure any open matplotlib figures (e.g. the Data Viewer's XRD/
++        # VSM/SEM plot) are closed when the app itself closes -- otherwise
++        # a plot window can be left dangling after the main app exits.
++        self.protocol("WM_DELETE_WINDOW", self.on_closing)
+         
+         # Main frame
+         self.main_frame = ctk.CTkFrame(self)
+@@ -105,6 +110,17 @@ class AlloyLabApp(ctk.CTk):
+         self.setup_viewer_tab()
+         self.setup_lookup_tab()
+         self.setup_summary_tab()
++
++    def on_closing(self):
++        """Close any open matplotlib figures (notably the Data Viewer's
++        current plot) before the main window is destroyed. Without this,
++        a plot window can be left open/dangling after the app itself has
++        closed."""
++        try:
++            plt.close('all')
++        except Exception:
++            pass
++        self.destroy()
+     
+     # ============================================
+     # Tab 1: New Entry
+@@ -796,12 +812,19 @@ class AlloyLabApp(ctk.CTk):
+             self.last_calc_output = output
+             
+             self.status_label.configure(text="Checking literature databases...")
++            self.update_idletasks()  # force repaint now -- without this the
++                                      # label change isn't actually visible
++                                      # until after all 3 blocking calls
++                                      # below finish, making the app look
++                                      # frozen even though it's working
+             
+             try:
+                 from stage_one.alloy.alloy_entry_full_v1 import get_api_key
+                 from stage_one.lookup.mp_lookup_v1 import lookup as mp_lookup_fn
+                 api_key = get_api_key()
+                 if api_key:
++                    self.status_label.configure(text="Checking Materials Project...")
++                    self.update_idletasks()
+                     mp_raw = mp_lookup_fn(comp_frac, api_key=api_key)
+                     self.lit_results['materials_project'] = dedup_by_formula(from_mp_results(mp_raw))
+                 else:
+@@ -812,6 +835,8 @@ class AlloyLabApp(ctk.CTk):
+             
+             try:
+                 from stage_one.lookup.oqmd_lookup_v1 import lookup as oqmd_lookup_fn
++                self.status_label.configure(text="Checking OQMD...")
++                self.update_idletasks()
+                 oqmd_raw = oqmd_lookup_fn(comp_frac)
+                 self.lit_results['oqmd'] = dedup_by_formula(from_oqmd_results(oqmd_raw))
+             except Exception as e:
+@@ -820,6 +845,8 @@ class AlloyLabApp(ctk.CTk):
+             
+             try:
+                 from stage_one.lookup.alexandria_lookup_v1 import lookup as alexandria_lookup_fn
++                self.status_label.configure(text="Checking Alexandria...")
++                self.update_idletasks()
+                 alexandria_raw = alexandria_lookup_fn(comp_frac)
+                 self.lit_results['alexandria'] = dedup_by_formula(from_alexandria_results(alexandria_raw))
+             except Exception as e:
+diff --git a/stage_one/alloy/alloy_calculator_v1.py b/stage_one/alloy/alloy_calculator_v1.py
+index 9088866..08f62f0 100644
+--- a/stage_one/alloy/alloy_calculator_v1.py
++++ b/stage_one/alloy/alloy_calculator_v1.py
+@@ -309,6 +309,72 @@ def calculate_masses(
+     )
+ 
+ 
++def calculate_masses_from_fixed_prealloy(
++    known_prealloy_grams: float,
++    prealloy: PreAlloyComponent,
++    elements: Optional[List[ElementComponent]] = None,
++) -> CalculationResult:
++    """
++    Solve for the raw elements to add to a pre-alloy of KNOWN, FIXED mass,
++    given the target final at% for the pre-alloy and the raw elements.
++
++    Example: you already have 13 g of Fe2P and want a final alloy of
++    Fe2P (85 at%) + Co (5 at%) + Si (10 at%). This tells you how many
++    grams of Co and Si to add -- it does NOT tell you how much Fe2P to
++    make, since you already have it; that 13 g is the known anchor the
++    whole calculation is solved from.
++
++    Only ONE pre-alloy is supported here (the known-mass anchor). Two
++    independently fixed pre-alloy masses at once is a different, harder
++    problem this function doesn't attempt.
++
++    Correctly handles the case where an element appears in BOTH the raw
++    `elements` list and the pre-alloy's own internal composition (e.g.
++    adding extra pure Fe on top of an Fe-containing pre-alloy) -- masses
++    are computed directly from each raw element's own contribution, never
++    from a merged total, so nothing already inside the pre-alloy gets
++    double-counted as something you still need to weigh out.
++    """
++    elements = elements or []
++    top_sum = sum(e.at_pct for e in elements) + prealloy.at_pct
++    if top_sum <= 0:
++        raise ValueError("Total atomic percent must be > 0")
++
++    # Every output of calculate_masses() scales linearly with total_mass_g,
++    # so run it once with a placeholder total mass, then solve for the
++    # real total mass by comparing the pre-alloy's placeholder grams to
++    # the actual known grams you have.
++    placeholder = calculate_masses(total_mass_g=1.0, elements=elements, pre_alloys=[prealloy])
++    if not placeholder.pre_alloys:
++        raise ValueError("No pre-alloy in result -- check prealloy.at_pct > 0")
++    placeholder_prealloy_g = placeholder.pre_alloys[0].grams
++    if placeholder_prealloy_g <= 0:
++        raise ValueError("Pre-alloy contributes zero mass at the given at_pct")
++
++    scale = known_prealloy_grams / placeholder_prealloy_g
++    real_total_mass_g = placeholder.total_mass_g * scale
++    total_molar_mass = placeholder.effective_molar_mass
++
++    element_results = []
++    for e in elements:
++        if e.symbol not in ATOMIC_WEIGHTS:
++            raise ValueError(f"Unknown element: {e.symbol}")
++        top_frac = e.at_pct / top_sum
++        g = real_total_mass_g * top_frac * ATOMIC_WEIGHTS[e.symbol] / total_molar_mass
++        wt_frac = (top_frac * ATOMIC_WEIGHTS[e.symbol]) / total_molar_mass
++        element_results.append(ElementResult(
++            symbol=e.symbol, at_pct=top_frac * 100, wt_pct=wt_frac * 100,
++            grams=g, weigh_grams=g * (1 + e.excess_pct / 100),
++        ))
++
++    return CalculationResult(
++        total_mass_g=real_total_mass_g,
++        effective_molar_mass=total_molar_mass,
++        elements=element_results,
++        pre_alloys=[PreAlloyResult(name=prealloy.name, grams=known_prealloy_grams)],
++    )
++
++
+ if __name__ == "__main__":
+     # Test the parser
+     print("Parser tests:")
+diff --git a/stage_one/tools/plot_v1.py b/stage_one/tools/plot_v1.py
+index 973019b..df68be6 100644
+--- a/stage_one/tools/plot_v1.py
++++ b/stage_one/tools/plot_v1.py
+@@ -30,12 +30,6 @@ def plot_xrd(file_path, figure=None):
+     fig, ax = plt.subplots(figsize=(8, 5))
+     ax.plot(two_theta, intensity, 'b-', linewidth=0.8, label='XRD pattern')
+     
+-    for peak in peaks[:20]:
+-        ax.axvline(peak['two_theta'], color='r', linestyle='--', alpha=0.5, linewidth=0.8)
+-        ax.text(peak['two_theta'], peak['intensity'] * 0.9, 
+-                f'{peak["two_theta"]:.1f}°', 
+-                rotation=90, fontsize=8, ha='center', va='bottom')
+-    
+     ax.set_xlabel('2θ (degrees)')
+     ax.set_ylabel('Intensity (counts)')
+     ax.set_title(f'XRD Pattern: {Path(file_path).name}')
+@@ -71,27 +65,13 @@ def plot_vsm(file_path, figure=None):
+     hc = result.get('hc')
+     mr = result.get('mr')
+     ms = result.get('ms')
+-    
++
+     # Get data ranges
+     x_min, x_max = np.min(fields), np.max(fields)
+     y_min, y_max = np.min(moments), np.max(moments)
+     x_pad = (x_max - x_min) * 0.05
+     y_pad = (y_max - y_min) * 0.05
+-    
+-    if hc:
+-        ax.plot([hc, hc], [y_min - y_pad, y_max + y_pad], 'r--', alpha=0.7, linewidth=1.5)
+-        ax.plot([-hc, -hc], [y_min - y_pad, y_max + y_pad], 'r--', alpha=0.7, linewidth=1.5)
+-        ax.text(hc, 0, f' Hc={hc:.1f}', fontsize=9, ha='left', va='center', color='red')
+-        ax.text(-hc, 0, f' Hc={hc:.1f}', fontsize=9, ha='right', va='center', color='red')
+-        ax.plot([], [], 'r--', linewidth=1.5, label=f'Hc = {hc:.1f} Oe')
+-    
+-    if mr:
+-        ax.plot([x_min - x_pad, x_max + x_pad], [mr, mr], 'g--', alpha=0.7, linewidth=1.5)
+-        ax.plot([x_min - x_pad, x_max + x_pad], [-mr, -mr], 'g--', alpha=0.7, linewidth=1.5)
+-        ax.text(0, mr, f' Mr={mr:.4f}', fontsize=9, ha='left', va='bottom', color='green')
+-        ax.text(0, -mr, f' Mr={mr:.4f}', fontsize=9, ha='left', va='top', color='green')
+-        ax.plot([], [], 'g--', linewidth=1.5, label=f'Mr = {mr:.4f} emu')
+-    
++
+     ax.set_xlim(x_min - x_pad, x_max + x_pad)
+     ax.set_ylim(y_min - y_pad, y_max + y_pad)
+     

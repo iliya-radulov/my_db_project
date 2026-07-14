@@ -30,12 +30,6 @@ def plot_xrd(file_path, figure=None):
     fig, ax = plt.subplots(figsize=(8, 5))
     ax.plot(two_theta, intensity, 'b-', linewidth=0.8, label='XRD pattern')
     
-    for peak in peaks[:20]:
-        ax.axvline(peak['two_theta'], color='r', linestyle='--', alpha=0.5, linewidth=0.8)
-        ax.text(peak['two_theta'], peak['intensity'] * 0.9, 
-                f'{peak["two_theta"]:.1f}°', 
-                rotation=90, fontsize=8, ha='center', va='bottom')
-    
     ax.set_xlabel('2θ (degrees)')
     ax.set_ylabel('Intensity (counts)')
     ax.set_title(f'XRD Pattern: {Path(file_path).name}')
@@ -71,27 +65,13 @@ def plot_vsm(file_path, figure=None):
     hc = result.get('hc')
     mr = result.get('mr')
     ms = result.get('ms')
-    
+
     # Get data ranges
     x_min, x_max = np.min(fields), np.max(fields)
     y_min, y_max = np.min(moments), np.max(moments)
     x_pad = (x_max - x_min) * 0.05
     y_pad = (y_max - y_min) * 0.05
-    
-    if hc:
-        ax.plot([hc, hc], [y_min - y_pad, y_max + y_pad], 'r--', alpha=0.7, linewidth=1.5)
-        ax.plot([-hc, -hc], [y_min - y_pad, y_max + y_pad], 'r--', alpha=0.7, linewidth=1.5)
-        ax.text(hc, 0, f' Hc={hc:.1f}', fontsize=9, ha='left', va='center', color='red')
-        ax.text(-hc, 0, f' Hc={hc:.1f}', fontsize=9, ha='right', va='center', color='red')
-        ax.plot([], [], 'r--', linewidth=1.5, label=f'Hc = {hc:.1f} Oe')
-    
-    if mr:
-        ax.plot([x_min - x_pad, x_max + x_pad], [mr, mr], 'g--', alpha=0.7, linewidth=1.5)
-        ax.plot([x_min - x_pad, x_max + x_pad], [-mr, -mr], 'g--', alpha=0.7, linewidth=1.5)
-        ax.text(0, mr, f' Mr={mr:.4f}', fontsize=9, ha='left', va='bottom', color='green')
-        ax.text(0, -mr, f' Mr={mr:.4f}', fontsize=9, ha='left', va='top', color='green')
-        ax.plot([], [], 'g--', linewidth=1.5, label=f'Mr = {mr:.4f} emu')
-    
+
     ax.set_xlim(x_min - x_pad, x_max + x_pad)
     ax.set_ylim(y_min - y_pad, y_max + y_pad)
     
