@@ -218,6 +218,12 @@ class AlloyLabApp(ctk.CTk):
         
         self.submit_btn = ctk.CTkButton(btn_frame, text="💾 Submit to Database", command=self.submit_to_db, width=200, state="disabled")
         self.submit_btn.pack(side="left", padx=10)
+
+        self.skip_search_var = ctk.BooleanVar(value=False)
+        ctk.CTkCheckBox(
+            btn_frame, text="Skip literature search (screening + mass calc only)",
+            variable=self.skip_search_var
+        ).pack(side="left", padx=20)
         
         # Literature controls
         lit_frame = ctk.CTkFrame(frame)
@@ -913,48 +919,53 @@ class AlloyLabApp(ctk.CTk):
             output.append("\n" + "="*60)
             
             self.last_calc_output = output
-            
-            self.status_label.configure(text="Checking literature databases...")
-            self.update_idletasks()  # force repaint now -- without this the
-                                      # label change isn't actually visible
-                                      # until after all 3 blocking calls
-                                      # below finish, making the app look
-                                      # frozen even though it's working
-            
-            try:
-                from stage_one.alloy.alloy_entry_full_v1 import get_api_key
-                from stage_one.lookup.mp_lookup_v1 import lookup as mp_lookup_fn
-                api_key = get_api_key()
-                if api_key:
-                    self.status_label.configure(text="Checking Materials Project...")
-                    self.update_idletasks()
-                    mp_raw = mp_lookup_fn(comp_frac, api_key=api_key)
-                    self.lit_results['materials_project'] = dedup_by_formula(from_mp_results(mp_raw))
-                else:
+
+            self.search_was_skipped = self.skip_search_var.get()
+
+            if self.search_was_skipped:
+                self.lit_results = {'materials_project': [], 'oqmd': [], 'alexandria': []}
+            else:
+                self.status_label.configure(text="Checking literature databases...")
+                self.update_idletasks()  # force repaint now -- without this the
+                                          # label change isn't actually visible
+                                          # until after all 3 blocking calls
+                                          # below finish, making the app look
+                                          # frozen even though it's working
+
+                try:
+                    from stage_one.alloy.alloy_entry_full_v1 import get_api_key
+                    from stage_one.lookup.mp_lookup_v1 import lookup as mp_lookup_fn
+                    api_key = get_api_key()
+                    if api_key:
+                        self.status_label.configure(text="Checking Materials Project...")
+                        self.update_idletasks()
+                        mp_raw = mp_lookup_fn(comp_frac, api_key=api_key)
+                        self.lit_results['materials_project'] = dedup_by_formula(from_mp_results(mp_raw))
+                    else:
+                        self.lit_results['materials_project'] = []
+                except Exception as e:
+                    print(f"MP lookup failed: {e}")
                     self.lit_results['materials_project'] = []
-            except Exception as e:
-                print(f"MP lookup failed: {e}")
-                self.lit_results['materials_project'] = []
-            
-            try:
-                from stage_one.lookup.oqmd_lookup_v1 import lookup as oqmd_lookup_fn
-                self.status_label.configure(text="Checking OQMD...")
-                self.update_idletasks()
-                oqmd_raw = oqmd_lookup_fn(comp_frac)
-                self.lit_results['oqmd'] = dedup_by_formula(from_oqmd_results(oqmd_raw))
-            except Exception as e:
-                print(f"OQMD lookup failed: {e}")
-                self.lit_results['oqmd'] = []
-            
-            try:
-                from stage_one.lookup.alexandria_lookup_v1 import lookup as alexandria_lookup_fn
-                self.status_label.configure(text="Checking Alexandria...")
-                self.update_idletasks()
-                alexandria_raw = alexandria_lookup_fn(comp_frac)
-                self.lit_results['alexandria'] = dedup_by_formula(from_alexandria_results(alexandria_raw))
-            except Exception as e:
-                print(f"Alexandria lookup failed: {e}")
-                self.lit_results['alexandria'] = []
+
+                try:
+                    from stage_one.lookup.oqmd_lookup_v1 import lookup as oqmd_lookup_fn
+                    self.status_label.configure(text="Checking OQMD...")
+                    self.update_idletasks()
+                    oqmd_raw = oqmd_lookup_fn(comp_frac)
+                    self.lit_results['oqmd'] = dedup_by_formula(from_oqmd_results(oqmd_raw))
+                except Exception as e:
+                    print(f"OQMD lookup failed: {e}")
+                    self.lit_results['oqmd'] = []
+
+                try:
+                    from stage_one.lookup.alexandria_lookup_v1 import lookup as alexandria_lookup_fn
+                    self.status_label.configure(text="Checking Alexandria...")
+                    self.update_idletasks()
+                    alexandria_raw = alexandria_lookup_fn(comp_frac)
+                    self.lit_results['alexandria'] = dedup_by_formula(from_alexandria_results(alexandria_raw))
+                except Exception as e:
+                    print(f"Alexandria lookup failed: {e}")
+                    self.lit_results['alexandria'] = []
             
             self.render_lit_section()
             self.submit_btn.configure(state="normal")
@@ -971,10 +982,14 @@ class AlloyLabApp(ctk.CTk):
         shown = filter_by_distance(all_candidates, cutoff)
         
         lines = []
-        lines.append(f"\n{LIT_DB_LABELS[db_key]} literature check (cutoff={cutoff:.2f}) -- {len(shown)} of {len(all_candidates)} shown")
-        lines.append("-" * 60)
-        if not shown:
-            lines.append("  (none within cutoff)" if all_candidates else "  (no results)")
+        if getattr(self, 'search_was_skipped', False):
+            lines.append(f"\n{LIT_DB_LABELS[db_key]} literature check -- skipped (checkbox was set)")
+            lines.append("-" * 60)
+        else:
+            lines.append(f"\n{LIT_DB_LABELS[db_key]} literature check (cutoff={cutoff:.2f}) -- {len(shown)} of {len(all_candidates)} shown")
+            lines.append("-" * 60)
+            if not shown:
+                lines.append("  (none within cutoff)" if all_candidates else "  (no results)")
         for c in shown:
             stability = "stable" if c.stability == 0 else (f"{c.stability:.3f} eV/atom" if c.stability is not None else "unknown")
             known = "known" if c.experimentally_known else "computed only"
