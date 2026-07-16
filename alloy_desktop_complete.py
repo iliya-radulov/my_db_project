@@ -68,6 +68,11 @@ class AlloyLabApp(ctk.CTk):
         self.viewer_files = []
         self.current_figure = None
         self.current_canvas = None
+
+        # Ensure any open matplotlib figures (e.g. the Data Viewer's XRD/
+        # VSM/SEM plot) are closed when the app itself closes -- otherwise
+        # a plot window can be left dangling after the main app exits.
+        self.protocol("WM_DELETE_WINDOW", self.on_closing)
         
         # Main frame
         self.main_frame = ctk.CTkFrame(self)
@@ -105,6 +110,17 @@ class AlloyLabApp(ctk.CTk):
         self.setup_viewer_tab()
         self.setup_lookup_tab()
         self.setup_summary_tab()
+
+    def on_closing(self):
+        """Close any open matplotlib figures (notably the Data Viewer's
+        current plot) before the main window is destroyed. Without this,
+        a plot window can be left open/dangling after the app itself has
+        closed."""
+        try:
+            plt.close('all')
+        except Exception:
+            pass
+        self.destroy()
     
     # ============================================
     # Tab 1: New Entry
@@ -153,27 +169,65 @@ class AlloyLabApp(ctk.CTk):
         ctk.CTkLabel(frame, text="Excess (e.g., Nd:3):", font=ctk.CTkFont(size=14)).grid(row=6, column=0, padx=10, pady=10, sticky="w")
         self.excess_entry = ctk.CTkEntry(frame, width=200, placeholder_text="e.g., Nd:3, Co:2")
         self.excess_entry.grid(row=6, column=1, padx=10, pady=10, sticky="w")
+
+        # Fixed-mass pre-alloy mode -- optional. If "Pre-alloy mass" below
+        # is filled in, the "Alloy Formula" field above is reinterpreted as
+        # the RAW elements being added on top of a pre-alloy you already
+        # have a known, fixed mass of (e.g. 13g of Fe2P) -- rather than the
+        # complete target composition. Target Mass above is then ignored,
+        # since the total mass is solved for rather than chosen.
+        prealloy_box = ctk.CTkFrame(frame)
+        prealloy_box.grid(row=7, column=0, columnspan=3, padx=10, pady=(5, 10), sticky="ew")
+        ctk.CTkLabel(
+            prealloy_box,
+            text="Fixed-mass pre-alloy (optional) -- leave 'Pre-alloy mass' blank for normal mode",
+            font=ctk.CTkFont(size=12, weight="bold")
+        ).grid(row=0, column=0, columnspan=4, padx=10, pady=(8, 4), sticky="w")
+
+        ctk.CTkLabel(prealloy_box, text="Pre-alloy formula:", font=ctk.CTkFont(size=13)).grid(row=1, column=0, padx=10, pady=6, sticky="w")
+        self.prealloy_formula_entry = ctk.CTkEntry(prealloy_box, width=140, placeholder_text="e.g., Fe2P")
+        self.prealloy_formula_entry.grid(row=1, column=1, padx=5, pady=6, sticky="w")
+
+        ctk.CTkLabel(prealloy_box, text="Pre-alloy mass (g):", font=ctk.CTkFont(size=13)).grid(row=1, column=2, padx=10, pady=6, sticky="w")
+        self.prealloy_mass_entry = ctk.CTkEntry(prealloy_box, width=100, placeholder_text="e.g., 13")
+        self.prealloy_mass_entry.grid(row=1, column=3, padx=5, pady=6, sticky="w")
+
+        ctk.CTkLabel(prealloy_box, text="Pre-alloy at% of final:", font=ctk.CTkFont(size=13)).grid(row=2, column=0, padx=10, pady=(0, 8), sticky="w")
+        self.prealloy_atpct_entry = ctk.CTkEntry(prealloy_box, width=140, placeholder_text="e.g., 85")
+        self.prealloy_atpct_entry.grid(row=2, column=1, padx=5, pady=(0, 8), sticky="w")
+
+        ctk.CTkLabel(
+            prealloy_box,
+            text="When set: 'Alloy Formula' above = raw elements to add (at%, e.g. Co5Si10)",
+            font=ctk.CTkFont(size=11), text_color="gray60"
+        ).grid(row=2, column=2, columnspan=2, padx=10, pady=(0, 8), sticky="w")
         
-        ctk.CTkLabel(frame, text="Sample ID:", font=ctk.CTkFont(size=14)).grid(row=7, column=0, padx=10, pady=10, sticky="w")
+        ctk.CTkLabel(frame, text="Sample ID:", font=ctk.CTkFont(size=14)).grid(row=8, column=0, padx=10, pady=10, sticky="w")
         self.sample_id_entry = ctk.CTkEntry(frame, width=300, placeholder_text="Auto-generated")
-        self.sample_id_entry.grid(row=7, column=1, padx=10, pady=10, sticky="w")
+        self.sample_id_entry.grid(row=8, column=1, padx=10, pady=10, sticky="w")
         self.auto_generate_id()
         
         self.auto_id_btn = ctk.CTkButton(frame, text="🔄 Auto-generate ID", command=self.auto_generate_id, width=150)
-        self.auto_id_btn.grid(row=7, column=2, padx=10, pady=10)
+        self.auto_id_btn.grid(row=8, column=2, padx=10, pady=10)
         
         btn_frame = ctk.CTkFrame(frame)
-        btn_frame.grid(row=8, column=0, columnspan=3, pady=20)
+        btn_frame.grid(row=9, column=0, columnspan=3, pady=20)
         
         self.calc_btn = ctk.CTkButton(btn_frame, text="🧪 Calculate & Preview", command=self.run_calculation, width=200)
         self.calc_btn.pack(side="left", padx=10)
         
         self.submit_btn = ctk.CTkButton(btn_frame, text="💾 Submit to Database", command=self.submit_to_db, width=200, state="disabled")
         self.submit_btn.pack(side="left", padx=10)
+
+        self.skip_search_var = ctk.BooleanVar(value=False)
+        ctk.CTkCheckBox(
+            btn_frame, text="Skip literature search (screening + mass calc only)",
+            variable=self.skip_search_var
+        ).pack(side="left", padx=20)
         
         # Literature controls
         lit_frame = ctk.CTkFrame(frame)
-        lit_frame.grid(row=9, column=0, columnspan=3, padx=10, pady=(0, 5), sticky="ew")
+        lit_frame.grid(row=10, column=0, columnspan=3, padx=10, pady=(0, 5), sticky="ew")
         
         ctk.CTkLabel(lit_frame, text="Literature DB:", font=ctk.CTkFont(size=13)).pack(side="left", padx=(10, 5))
         
@@ -196,9 +250,9 @@ class AlloyLabApp(ctk.CTk):
         self.lit_cutoff_label.pack(side="left", padx=10)
         
         self.result_text = scrolledtext.ScrolledText(frame, height=15, width=80, bg="#1e1e1e", fg="#ffffff", font=("Courier", 10))
-        self.result_text.grid(row=10, column=0, columnspan=3, padx=10, pady=10, sticky="nsew")
+        self.result_text.grid(row=11, column=0, columnspan=3, padx=10, pady=10, sticky="nsew")
         
-        frame.grid_rowconfigure(10, weight=1)
+        frame.grid_rowconfigure(11, weight=1)
         frame.grid_columnconfigure(1, weight=1)
         self.update_lit_cutoff_label()
     
@@ -720,19 +774,61 @@ class AlloyLabApp(ctk.CTk):
                 self.status_label.configure(text="No formula entered")
                 return
             
-            from stage_one.alloy.alloy_calculator_v1 import parse_composition_input, parse_composition_with_unit, calculate_masses, ElementComponent
-            
-            try:
-                parsed = parse_composition_input(formula)
-                invalid = [e for e in parsed.keys() if e not in ATOMIC_WEIGHTS]
-                if invalid:
-                    messagebox.showerror("Invalid Formula", f"Unknown element(s): {', '.join(invalid)}")
+            from stage_one.alloy.alloy_calculator_v1 import (
+                parse_composition_input, parse_composition_with_unit, calculate_masses,
+                calculate_masses_from_fixed_prealloy, ElementComponent, PreAlloyComponent
+            )
+
+            prealloy_mass_str = self.prealloy_mass_entry.get().strip()
+            prealloy_mode = bool(prealloy_mass_str)
+
+            if prealloy_mode:
+                # Pre-alloy mode: "formula" field = raw elements to add,
+                # given as LITERAL at% of the final composition (not
+                # renormalized among themselves) -- e.g. "Co5Si10" means
+                # exactly 5% Co and 10% Si of the eventual whole, not a
+                # 1:2 ratio rescaled to sum to 100.
+                try:
+                    raw_at_pct = parse_composition_input(formula, normalize=False)
+                    invalid = [e for e in raw_at_pct.keys() if e not in ATOMIC_WEIGHTS]
+                    if invalid:
+                        messagebox.showerror("Invalid Formula", f"Unknown element(s): {', '.join(invalid)}")
+                        self.status_label.configure(text="Invalid formula")
+                        return
+                except ValueError as e:
+                    messagebox.showerror("Invalid Formula", str(e))
                     self.status_label.configure(text="Invalid formula")
                     return
-            except ValueError as e:
-                messagebox.showerror("Invalid Formula", str(e))
-                self.status_label.configure(text="Invalid formula")
-                return
+
+                prealloy_formula = self.prealloy_formula_entry.get().strip()
+                if not prealloy_formula:
+                    messagebox.showwarning("Warning", "Enter the pre-alloy's own formula (e.g. Fe2P)")
+                    self.status_label.configure(text="No pre-alloy formula entered")
+                    return
+                try:
+                    prealloy_mass = float(prealloy_mass_str)
+                    prealloy_atpct = float(self.prealloy_atpct_entry.get().strip())
+                except ValueError:
+                    messagebox.showerror("Invalid Input", "Pre-alloy mass and at% must be numbers")
+                    self.status_label.configure(text="Invalid pre-alloy input")
+                    return
+
+                prealloy_composition = parse_composition_with_unit(prealloy_formula, 'at%')
+                prealloy_component = PreAlloyComponent(
+                    name=prealloy_formula, at_pct=prealloy_atpct, composition=prealloy_composition
+                )
+            else:
+                try:
+                    parsed = parse_composition_input(formula)
+                    invalid = [e for e in parsed.keys() if e not in ATOMIC_WEIGHTS]
+                    if invalid:
+                        messagebox.showerror("Invalid Formula", f"Unknown element(s): {', '.join(invalid)}")
+                        self.status_label.configure(text="Invalid formula")
+                        return
+                except ValueError as e:
+                    messagebox.showerror("Invalid Formula", str(e))
+                    self.status_label.configure(text="Invalid formula")
+                    return
             
             unit = self.unit_var.get()
             mass = float(self.mass_entry.get()) if self.mass_entry.get() else 10.0
@@ -741,9 +837,44 @@ class AlloyLabApp(ctk.CTk):
             if material_class is None:
                 self.status_label.configure(text="No material class selected")
                 return
-            
-            at_composition = parse_composition_with_unit(formula, unit)
-            comp_frac = {k: v/100 for k, v in at_composition.items()}
+
+            excess_input = self.excess_entry.get().strip()
+            excess_dict = {}
+            if excess_input:
+                for item in excess_input.split(','):
+                    if ':' in item:
+                        elem, pct = item.split(':')
+                        excess_dict[elem.strip()] = float(pct.strip())
+
+            if prealloy_mode:
+                elements = [
+                    ElementComponent(symbol=sym, at_pct=val, excess_pct=excess_dict.get(sym, 0.0))
+                    for sym, val in raw_at_pct.items()
+                ]
+                # Full merged final composition (pre-alloy's own elements +
+                # raw additions) -- this is what screening, the literature
+                # lookups, and the eventual DB composition column need, same
+                # shape as normal mode's at_composition/comp_frac.
+                full = calculate_masses(total_mass_g=1.0, elements=elements, pre_alloys=[prealloy_component])
+                at_composition = {e.symbol: e.at_pct for e in full.elements}
+                comp_frac = {k: v / 100 for k, v in at_composition.items()}
+
+                # The actual masses to weigh -- raw elements only, correctly
+                # solved from the pre-alloy's known fixed mass.
+                result = calculate_masses_from_fixed_prealloy(
+                    known_prealloy_grams=prealloy_mass,
+                    prealloy=prealloy_component,
+                    elements=elements,
+                )
+                mass = result.total_mass_g  # solved, not the (ignored) Target Mass field
+            else:
+                at_composition = parse_composition_with_unit(formula, unit)
+                comp_frac = {k: v/100 for k, v in at_composition.items()}
+                elements = []
+                for symbol, at_pct in at_composition.items():
+                    excess = excess_dict.get(symbol, 0.0)
+                    elements.append(ElementComponent(symbol=symbol, at_pct=at_pct, excess_pct=excess))
+                result = calculate_masses(total_mass_g=mass, elements=elements)
             
             from stage_one.alloy.alloy_screening_v1 import IncompleteElementDataError
             try:
@@ -754,27 +885,17 @@ class AlloyLabApp(ctk.CTk):
             else:
                 screening_warning = None
             
-            elements = []
-            excess_input = self.excess_entry.get().strip()
-            excess_dict = {}
-            if excess_input:
-                for item in excess_input.split(','):
-                    if ':' in item:
-                        elem, pct = item.split(':')
-                        excess_dict[elem.strip()] = float(pct.strip())
-            
-            for symbol, at_pct in at_composition.items():
-                excess = excess_dict.get(symbol, 0.0)
-                elements.append(ElementComponent(symbol=symbol, at_pct=at_pct, excess_pct=excess))
-            
-            result = calculate_masses(total_mass_g=mass, elements=elements)
-            
             output = []
             output.append("="*60)
             output.append("Calculation Results")
             output.append("="*60)
-            output.append(f"\nFormula: {formula} (as {unit})")
-            output.append(f"Target mass: {mass}g")
+            if prealloy_mode:
+                output.append(f"\nPre-alloy: {self.prealloy_formula_entry.get().strip()} -- {prealloy_mass}g (already have)")
+                output.append(f"Raw elements to add (at%): {formula}")
+                output.append(f"Total mass (solved): {mass:.4f}g")
+            else:
+                output.append(f"\nFormula: {formula} (as {unit})")
+                output.append(f"Target mass: {mass}g")
             output.append(f"Material class: {material_class}")
             output.append(f"Sample ID: {self.sample_id_entry.get()}")
             
@@ -792,7 +913,11 @@ class AlloyLabApp(ctk.CTk):
             else:
                 output.append(f"\nScreening skipped: {screening_warning}")
             
-            output.append("\nMass Breakdown:")
+            if prealloy_mode:
+                output.append(f"\nPre-alloy (already have): {result.pre_alloys[0].name} -- {result.pre_alloys[0].grams:.4f}g")
+                output.append("\nRaw elements to add:")
+            else:
+                output.append("\nMass Breakdown:")
             output.append(f"{'Element':<10}{'at%':>8}{'wt%':>8}{'target(g)':>10}{'weigh(g)':>10}")
             output.append("-" * 46)
             for e in result.elements:
@@ -800,37 +925,53 @@ class AlloyLabApp(ctk.CTk):
             output.append("\n" + "="*60)
             
             self.last_calc_output = output
-            
-            self.status_label.configure(text="Checking literature databases...")
-            
-            try:
-                from stage_one.alloy.alloy_entry_full_v1 import get_api_key
-                from stage_one.lookup.mp_lookup_v1 import lookup as mp_lookup_fn
-                api_key = get_api_key()
-                if api_key:
-                    mp_raw = mp_lookup_fn(comp_frac, api_key=api_key)
-                    self.lit_results['materials_project'] = dedup_by_formula(from_mp_results(mp_raw))
-                else:
+
+            self.search_was_skipped = self.skip_search_var.get()
+
+            if self.search_was_skipped:
+                self.lit_results = {'materials_project': [], 'oqmd': [], 'alexandria': []}
+            else:
+                self.status_label.configure(text="Checking literature databases...")
+                self.update_idletasks()  # force repaint now -- without this the
+                                          # label change isn't actually visible
+                                          # until after all 3 blocking calls
+                                          # below finish, making the app look
+                                          # frozen even though it's working
+
+                try:
+                    from stage_one.alloy.alloy_entry_full_v1 import get_api_key
+                    from stage_one.lookup.mp_lookup_v1 import lookup as mp_lookup_fn
+                    api_key = get_api_key()
+                    if api_key:
+                        self.status_label.configure(text="Checking Materials Project...")
+                        self.update_idletasks()
+                        mp_raw = mp_lookup_fn(comp_frac, api_key=api_key)
+                        self.lit_results['materials_project'] = dedup_by_formula(from_mp_results(mp_raw))
+                    else:
+                        self.lit_results['materials_project'] = []
+                except Exception as e:
+                    print(f"MP lookup failed: {e}")
                     self.lit_results['materials_project'] = []
-            except Exception as e:
-                print(f"MP lookup failed: {e}")
-                self.lit_results['materials_project'] = []
-            
-            try:
-                from stage_one.lookup.oqmd_lookup_v1 import lookup as oqmd_lookup_fn
-                oqmd_raw = oqmd_lookup_fn(comp_frac)
-                self.lit_results['oqmd'] = dedup_by_formula(from_oqmd_results(oqmd_raw))
-            except Exception as e:
-                print(f"OQMD lookup failed: {e}")
-                self.lit_results['oqmd'] = []
-            
-            try:
-                from stage_one.lookup.alexandria_lookup_v1 import lookup as alexandria_lookup_fn
-                alexandria_raw = alexandria_lookup_fn(comp_frac)
-                self.lit_results['alexandria'] = dedup_by_formula(from_alexandria_results(alexandria_raw))
-            except Exception as e:
-                print(f"Alexandria lookup failed: {e}")
-                self.lit_results['alexandria'] = []
+
+                try:
+                    from stage_one.lookup.oqmd_lookup_v1 import lookup as oqmd_lookup_fn
+                    self.status_label.configure(text="Checking OQMD...")
+                    self.update_idletasks()
+                    oqmd_raw = oqmd_lookup_fn(comp_frac)
+                    self.lit_results['oqmd'] = dedup_by_formula(from_oqmd_results(oqmd_raw))
+                except Exception as e:
+                    print(f"OQMD lookup failed: {e}")
+                    self.lit_results['oqmd'] = []
+
+                try:
+                    from stage_one.lookup.alexandria_lookup_v1 import lookup as alexandria_lookup_fn
+                    self.status_label.configure(text="Checking Alexandria...")
+                    self.update_idletasks()
+                    alexandria_raw = alexandria_lookup_fn(comp_frac)
+                    self.lit_results['alexandria'] = dedup_by_formula(from_alexandria_results(alexandria_raw))
+                except Exception as e:
+                    print(f"Alexandria lookup failed: {e}")
+                    self.lit_results['alexandria'] = []
             
             self.render_lit_section()
             self.submit_btn.configure(state="normal")
@@ -847,10 +988,14 @@ class AlloyLabApp(ctk.CTk):
         shown = filter_by_distance(all_candidates, cutoff)
         
         lines = []
-        lines.append(f"\n{LIT_DB_LABELS[db_key]} literature check (cutoff={cutoff:.2f}) -- {len(shown)} of {len(all_candidates)} shown")
-        lines.append("-" * 60)
-        if not shown:
-            lines.append("  (none within cutoff)" if all_candidates else "  (no results)")
+        if getattr(self, 'search_was_skipped', False):
+            lines.append(f"\n{LIT_DB_LABELS[db_key]} literature check -- skipped (checkbox was set)")
+            lines.append("-" * 60)
+        else:
+            lines.append(f"\n{LIT_DB_LABELS[db_key]} literature check (cutoff={cutoff:.2f}) -- {len(shown)} of {len(all_candidates)} shown")
+            lines.append("-" * 60)
+            if not shown:
+                lines.append("  (none within cutoff)" if all_candidates else "  (no results)")
         for c in shown:
             stability = "stable" if c.stability == 0 else (f"{c.stability:.3f} eV/atom" if c.stability is not None else "unknown")
             known = "known" if c.experimentally_known else "computed only"
@@ -897,13 +1042,12 @@ class AlloyLabApp(ctk.CTk):
                 return
             
             from stage_one.alloy.alloy_db_v1 import get_db
-            from stage_one.alloy.alloy_calculator_v1 import parse_composition_with_unit, calculate_masses, ElementComponent
+            from stage_one.alloy.alloy_calculator_v1 import (
+                parse_composition_input, parse_composition_with_unit, calculate_masses,
+                calculate_masses_from_fixed_prealloy, ElementComponent, PreAlloyComponent
+            )
             from stage_one.alloy.alloy_screening_v1 import screen_composition
-            
-            at_composition = parse_composition_with_unit(formula, unit)
-            comp_frac = {k: v/100 for k, v in at_composition.items()}
-            
-            elements = []
+
             excess_input = self.excess_entry.get().strip()
             excess_dict = {}
             if excess_input:
@@ -911,12 +1055,42 @@ class AlloyLabApp(ctk.CTk):
                     if ':' in item:
                         elem, pct = item.split(':')
                         excess_dict[elem.strip()] = float(pct.strip())
-            
-            for symbol, at_pct in at_composition.items():
-                excess = excess_dict.get(symbol, 0.0)
-                elements.append(ElementComponent(symbol=symbol, at_pct=at_pct, excess_pct=excess))
-            
-            result = calculate_masses(total_mass_g=mass, elements=elements)
+
+            prealloy_mass_str = self.prealloy_mass_entry.get().strip()
+            prealloy_mode = bool(prealloy_mass_str)
+            prealloy_name = None
+
+            if prealloy_mode:
+                raw_at_pct = parse_composition_input(formula, normalize=False)
+                prealloy_formula = self.prealloy_formula_entry.get().strip()
+                prealloy_mass = float(prealloy_mass_str)
+                prealloy_atpct = float(self.prealloy_atpct_entry.get().strip())
+                prealloy_composition = parse_composition_with_unit(prealloy_formula, 'at%')
+                prealloy_component = PreAlloyComponent(
+                    name=prealloy_formula, at_pct=prealloy_atpct, composition=prealloy_composition
+                )
+                prealloy_name = prealloy_formula
+
+                elements = [
+                    ElementComponent(symbol=sym, at_pct=val, excess_pct=excess_dict.get(sym, 0.0))
+                    for sym, val in raw_at_pct.items()
+                ]
+                full = calculate_masses(total_mass_g=1.0, elements=elements, pre_alloys=[prealloy_component])
+                at_composition = {e.symbol: e.at_pct for e in full.elements}
+                comp_frac = {k: v / 100 for k, v in at_composition.items()}
+
+                result = calculate_masses_from_fixed_prealloy(
+                    known_prealloy_grams=prealloy_mass, prealloy=prealloy_component, elements=elements,
+                )
+                mass = result.total_mass_g
+            else:
+                at_composition = parse_composition_with_unit(formula, unit)
+                comp_frac = {k: v/100 for k, v in at_composition.items()}
+                elements = []
+                for symbol, at_pct in at_composition.items():
+                    excess = excess_dict.get(symbol, 0.0)
+                    elements.append(ElementComponent(symbol=symbol, at_pct=at_pct, excess_pct=excess))
+                result = calculate_masses(total_mass_g=mass, elements=elements)
             
             from stage_one.alloy.alloy_screening_v1 import IncompleteElementDataError
             try:
@@ -963,6 +1137,13 @@ class AlloyLabApp(ctk.CTk):
                 db.commit()
                 print(f"Added new material class: {material_class}")
                 self.load_material_classes()
+
+            notes = (
+                f"Added via Desktop App: pre-alloy {prealloy_name} ({prealloy_mass_str}g) "
+                f"+ raw {formula} (at%)"
+                if prealloy_mode else
+                f"Added via Desktop App: {formula} as {unit}"
+            )
             
             sample_db_id = db.add_sample(
                 sample_id=sample_id,
@@ -973,7 +1154,7 @@ class AlloyLabApp(ctk.CTk):
                 vec=screening['VEC'] if screening else None,
                 delta=screening['delta'] if screening else None,
                 delta_h_mix=screening['Delta_H_mix'] if screening else None,
-                notes=f"Added via Desktop App: {formula} as {unit}"
+                notes=notes
             )
             
             for db_key in ('materials_project', 'oqmd', 'alexandria'):
