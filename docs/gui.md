@@ -58,17 +58,9 @@ state timing) that a script doesn't.
   last-set cutoff.
 - **Summary tab**: total sample count, literature check count, breakdown
   by material class, most recent samples.
-- **Fixed-mass pre-alloy mode**: an optional set of fields (pre-alloy
-  formula, known mass, at% share of the final composition) that switches
-  the main formula field's meaning from "complete target composition" to
-  "raw elements being added on top of a pre-alloy you already have a
-  fixed amount of" — solves for the total mass and the raw element
-  masses, rather than requiring the total mass upfront. See
-  [`calculator.md`](calculator.md) for the underlying math.
-- **Skip literature search checkbox**: bypasses all three database
-  lookups for an instant screening-and-mass-calc-only preview — added
-  specifically to stay usable while OQMD or another provider is having a
-  slow/erroring day, rather than waiting through retries every time.
+- **Synthesis feasibility warning** (Stage 2 addition, see below): a
+  non-blocking confirmation dialog if the melt/boil check comes back
+  `blocked` at submission time.
 
 ## Bugs found by actually running it (not just reading the code)
 
@@ -100,23 +92,6 @@ called before their owning widgets existed yet (a `status_label`
 referenced before `setup_summary_tab()` had finished running) — resolved
 by fixing initialization order across the app's `__init__` sequence.
 
-3. **Matplotlib figures not closing with the main app.** No
-   `WM_DELETE_WINDOW` handler existed at all, so closing the main window
-   never triggered `plt.close('all')` — a plot opened in the Data Viewer
-   could be left dangling after the app itself had closed. Fixed by
-   binding `self.protocol("WM_DELETE_WINDOW", self.on_closing)` and
-   verified directly: 1 figure open → simulated window close → 0 figures
-   open.
-
-4. **Literature search looked frozen, but wasn't.** A status label update
-   (`"Checking Materials Project..."`, etc.) was already present before
-   each blocking network call — but nothing forced Tkinter to actually
-   repaint before the call ran, so the label change was invisible until
-   everything had already finished. This wasn't a missing feature, it was
-   a real bug: the "progress indicator" existed in code but never
-   rendered. Fixed with `self.update_idletasks()` after each status
-   change.
-
 ## Verification approach
 
 Because a GUI can't be meaningfully checked by reading code or parsing
@@ -128,3 +103,39 @@ specific new interactions (radio button switching moves the slider to
 that database's remembered cutoff; dragging the slider re-filters and
 re-renders live) behave as designed — not just that the file imports
 without error.
+
+---
+
+## Stage 2 addition: synthesis feasibility display
+
+Added after Stage 1 closed (see [`screening.md`](screening.md) for the
+underlying `check_synthesis_feasibility()` logic). Two changes, both in
+the "New Entry" tab:
+
+1. **"Calculate & Preview"** now prints a synthesis feasibility line
+   alongside VEC/δ/ΔH_mix in the results text — status icon, message, and
+   suggested routes if the check flags anything.
+2. **"Submit"** now shows a non-blocking confirmation dialog
+   (`messagebox.askyesno`) if the check comes back `blocked` — the same
+   pattern already used for the existing "Sample Exists, Override?"
+   check. Saving is never hard-prevented; the dialog just surfaces the
+   warning before commitment, consistent with how `IncompleteElementDataError`
+   already only *skips* screening rather than blocking the whole entry
+   workflow.
+
+**Verified the same way as the rest of this file** — actually instantiated
+under Xvfb (not just `py_compile`), with the real `stage_one/` package
+structure and no live Postgres/network access, confirming:
+- "Calculate & Preview" on a real `W50Mg50` composition produces the
+  correct `blocked` status and message in the live `result_text` widget,
+  positioned correctly alongside VEC/δ/ΔH_mix.
+- "Submit" on that same composition triggers the confirmation dialog with
+  the correct title and message (`messagebox.askyesno` mocked, since
+  there's no user to click it under Xvfb); declining correctly cancels
+  with status `"Cancelled (synthesis feasibility)"` and never reaches
+  `db.add_sample`; accepting correctly proceeds past the dialog (only
+  failing afterward on the expected, unrelated missing-Postgres error).
+- A comfortably-`ok` composition (`Fe34Co33Ni33`) never triggers the
+  dialog at all — confirming it's scoped specifically to `blocked`,
+  not shown on every submission.
+

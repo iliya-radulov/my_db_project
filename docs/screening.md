@@ -58,6 +58,80 @@ which pairs actually have parameters defined.
 ## Output
 
 `screen_composition()` returns `{'VEC': ..., 'delta': ..., 'Delta_H_mix':
-...}`. `interpret_screening()` gives a plain-language read (solid solution
-vs. intermetallic likely, weak/moderate/strong compound formation) for
-quick human interpretation.
+..., 'synthesis_feasibility': {...}}` (the last key added in Stage 2, see
+below). `interpret_screening()` gives a plain-language read (solid solution
+vs. intermetallic likely, weak/moderate/strong compound formation, plus
+melt/boil feasibility) for quick human interpretation.
+
+---
+
+## Stage 2 addition: synthesis feasibility (melt/boil check)
+
+Added after Stage 1 closed, to the same module and same `ELEMENT_PROPERTIES`
+table — not part of the original Stage 1 build, called out separately here
+so the history stays accurate. Motivated by a real practical need: knowing
+*whether a melt-based synthesis route is even physically possible* before
+attempting it, given how different constituent melting points can be.
+
+### The physical logic
+
+`check_synthesis_feasibility()` answers a different question from
+VEC/δ/ΔH_mix — not "will this form a solid solution," but "can this even be
+melted together." The core insight: melting-point *spread* alone isn't the
+right signal. What actually matters is whether homogenizing the melt
+requires heating past the **boiling point** of the most volatile
+constituent:
+
+- To melt the highest-melting element, the whole melt must reach at least
+  its melting point.
+- If that temperature is at or above the lowest-melting element's
+  **boiling point**, that element doesn't just risk *some* evaporation —
+  it boils off before or as the alloy homogenizes. Classic real cases:
+  Mg (melts 923 K, boils 1363 K) or Zn (melts 693 K, boils 1180 K) paired
+  with almost any refractory metal.
+
+This gives three tiers, deliberately not collapsed into a single
+confidence level:
+- **`blocked`** — required melt temperature is at/above the volatile
+  element's boiling point (minus a 125 K safety margin, since real
+  vacuum/inert-atmosphere furnaces generally *lower* effective boiling
+  point further, not raise it). A hard physical block: suggests
+  mechanical alloying, powder sintering, or diffusion bonding instead.
+- **`caution`** — a real but non-decisive gap. Pure-element numbers alone
+  aren't sufficient here: a strongly negative ΔH_mix can suppress a
+  volatile element's effective vapor pressure once alloyed, which this
+  composition-only check cannot quantify. Flagged rather than resolved —
+  points to checking `calculate_mixing_enthalpy()`, literature precedent,
+  or a small test melt.
+- **`ok`** — comfortable margin, no melt-based volatility concern from
+  composition alone.
+
+### A real data anomaly this surfaced
+
+Arsenic's melting point (1090 K) is *above* its boiling point (887 K) in
+the reference table used to build `melt_K`/`boil_K` — not a data error:
+As sublimes directly at 1 atm and only shows a true liquid phase under
+~3.6 MPa pressure. Astatine shows the same inversion, though that's more
+about how poorly-characterized At is (only ever produced in trace
+quantities). Documented directly in `ELEMENT_PROPERTIES` so future logic
+doesn't silently assume boiling point always exceeds melting point.
+
+### What this deliberately does NOT do
+
+No attempt is made to auto-adjust the `caution` threshold using ΔH_mix,
+even though the two numbers are conceptually related (ΔH_mix affects real
+vapor pressure via activity coefficients, Raoult's-law-type effects) —
+that would require real thermodynamic modeling this composition-only
+check isn't trying to do. The `caution` tier exists specifically to avoid
+presenting false precision on genuinely open questions.
+
+### Validation
+
+Tested against real element pairs, not just internal consistency:
+FeCoNi → `ok`; W+Mg → `blocked` (textbook incompatible pair); Fe+Nb →
+`caution` (both common alloying elements, non-extreme mismatch — a
+genuinely useful example of the middle tier). The module's own
+pre-existing `Fe2P` self-test also independently confirms `blocked`,
+which matches real metallurgical practice — Fe-P compounds are
+typically made via solid-state routes, not open arc melting.
+
