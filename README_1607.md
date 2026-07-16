@@ -167,15 +167,32 @@ The notable ones that didn't feed back into an existing component above
   "syntax parses" and "logic works" are different bars, and that testing
   the specific path that changed matters more than testing nearby code
   that happens to still parse.
+- **A large `data/` folder ended up fully committed to git**, despite
+  being listed in `.gitignore` — because the ignore rule was added
+  *after* the files were already tracked, which `.gitignore` does nothing
+  to undo. Caught before the repository went public for good, but only
+  after it had briefly been public once already. Fixed with a full
+  history rewrite (`git filter-repo`), not just a new commit removing the
+  files (which would have left them recoverable from earlier commits).
+  Full detail, including the exact commands used and verification steps,
+  in [`docs/setup.md`](docs/setup.md).
 
 ## 6. Current Status
 
 **Stage 1 is complete.** Working end-to-end, verified with real data:
 - Core database, schema, and credential handling.
-- Calculator (formula parsing, at%/wt%, pre-alloys, excess%).
+- Calculator (formula parsing, at%/wt%, pre-alloys, excess%, and a
+  fixed-mass pre-alloy mode — solve for raw elements to add on top of a
+  known amount of pre-alloy already on hand, see
+  [`docs/calculator.md`](docs/calculator.md)).
 - Screening (VEC/δ/ΔH_mix, full periodic table, graceful error on gaps).
 - Three literature databases with dedup and adjustable cutoffs, wired into
-  both the CLI tool and the GUI.
+  both the CLI tool and the GUI, including a retry (once, after 45s) for
+  OQMD/Alexandria's transient 502/503/504 errors — the underlying
+  `optimade` client's own retry only ever covers HTTP 429, confirmed by
+  reading its source, not assumed. A "skip literature search" checkbox
+  gives an instant screening-only preview when a provider is having a
+  slow/erroring day.
 - XRD, VSM, and SEM characterization import, with real extracted
   properties (peak count, lattice parameter, saturation moment, remanence,
   coercivity, magnification, accelerating voltage, working distance,
@@ -183,61 +200,38 @@ The notable ones that didn't feed back into an existing component above
   practice.
 - Desktop GUI (five tabs), covering the full new-entry → screen →
   cross-check → calculate → submit workflow, plus a Data Viewer for
-  browsing XRD/VSM/SEM data directly.
+  browsing XRD/VSM/SEM data directly. The XRD/VSM plots deliberately show
+  only the raw data curve and numeric summaries now — the peak-marker and
+  Hc/Mr guide-line overlays were removed rather than left in an
+  approximate, potentially-misleading state; proper peak-fitting is a
+  Stage 2 item.
 - Data sorter utility, tested against the real messy desktop folder.
 
-**Known gaps, carried into Stage 2 rather than blocking Stage 1's close:**
-- OQMD's server occasionally returns transient errors (502) under load;
-  automatic retry logic is planned but not yet implemented.
-- The CLI tool (`stage_one/alloy/alloy_entry_full_v1.py`) has fallen behind the GUI (no
-  Alexandria integration, no cutoff filtering) — a decision on bringing it
-  to parity or retiring it in favor of the GUI.
-- Minor polish items: VSM hysteresis-loop plot markers could be cleaner,
-  and large characterization imports would benefit from a visible
-  progress indicator.
+**CLI vs. GUI — resolved as a deliberate decision, not left as a gap:**
+the CLI stays intentionally dialogue/text-only (fast, scriptable data
+import and lookups from existing files), while the GUI is where anything
+visual or exploratory happens. Not a temporary imbalance to fix later —
+an actual design choice, made explicitly rather than by default.
+
+**Remaining minor items, genuinely open:**
+- Large characterization imports (e.g. batch SEM) would benefit from a
+  visible progress indicator during the import itself (distinct from the
+  literature-search progress indicator, which is fixed).
 
 ## 7. Next Steps (Stage 2)
 
 Stage 2 is about shaping this data for ML, not adding new capture
 capability:
 - Element-fraction table, purpose-built for ML-style compositional queries.
-- CLI-vs-GUI consolidation decision.
-- Peak fitting (e.g. via PowerXRD) and a proper feature-extraction
+- Proper peak fitting (e.g. via PowerXRD) and a broader feature-extraction
   pipeline, turning raw XRD/VSM curves into structured ML-ready features
-  beyond what Stage 1 already extracts as single summary values.
+  beyond what Stage 1 already extracts as single summary values — this is
+  also where the removed plot guide-lines get done properly, not just
+  restored.
 - Patent-records table, once ML planning defines what's actually needed
   from it.
 - Further out: actual ML model training, once the above data-preparation
   work is in place.
-
-## 8. Stage 2 Progress
-
-Not part of Stage 1 — logged here separately so the history stays
-accurate about what was actually built when.
-
-- **XRD peak-fitting pipeline** (`stage_two/tools/xrd_analyzer_dev1.py`):
-  real error handling, neighbor-aware fit windowing (fixed a duplicate-peak
-  bug), physical-unit peak separation, R² fit-quality metric, Scherrer
-  crystallite size, d-spacing, Rachinger Kα2 stripping (default-on), and an
-  optional per-peak Kα2 doublet fit — all verified against real XRD files,
-  not just synthetic data. `xrd_peaks`/`xrd_features` table design done;
-  DB wiring not yet integrated into the main app.
-- **Synthesis feasibility check** (`alloy_screening_v1.py`, see
-  [`docs/screening.md`](docs/screening.md)): a fourth composition-only
-  screening function alongside VEC/δ/ΔH_mix, answering "can this even be
-  melted together" rather than "will this form a solid solution." Required
-  adding `melt_K`/`boil_K` to `ELEMENT_PROPERTIES` for all 103 elements
-  first. **Integrated into the main app** (`alloy_desktop_complete.py`,
-  see [`docs/gui.md`](docs/gui.md)): shown in the "Calculate & Preview"
-  output, plus a non-blocking confirmation dialog on "Submit" if the check
-  comes back `blocked`. Verified live under Xvfb, not just by syntax
-  check.
-- **Not yet done:** persisting `synthesis_feasibility` results to the
-  database — deliberately left as an open decision (see `screening.md`)
-  since the existing `synthesis` table records what actually happened
-  post-synthesis, a different purpose from this pre-synthesis advisory
-  check, and conflating the two without a real design decision seemed
-  worse than leaving it as display-only for now.
 
 ---
 
