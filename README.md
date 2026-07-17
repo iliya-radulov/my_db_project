@@ -7,7 +7,9 @@ build toward using all of it as training data for ML models that predict
 whether a novel composition is known — and if not, how to try synthesizing it.
 
 This document is the narrative overview. Detailed technical write-ups for
-each component live in [`docs/`](docs/).
+each component live in [`docs/`](docs/). For a more detailed statement of
+the principles behind how AI/ML is used in this project, see
+[`MANIFESTO.md`](MANIFESTO.md).
 
 ---
 
