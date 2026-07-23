@@ -1443,8 +1443,11 @@ class AlloyLabApp(ctk.CTk):
                         from stage_two.integrations.xrd_integration_v2 import import_xrd_file
                         xrd_result = import_xrd_file(file_path, sample_id, db)
                         if xrd_result['success']:
-                            a_val = xrd_result.get('lattice_a', 'N/A')
-                            self.import_log.insert("end", f"  📐 XRD: a = {a_val:.4f} Å\n" if a_val != 'N/A' else f"  📐 XRD: a = N/A\n")
+                            n_peaks = xrd_result['n_peaks']
+                            n_hq = xrd_result['n_peaks_high_quality']
+                            self.import_log.insert("end", f"  📐 XRD: {n_peaks} peaks ({n_hq} high-quality, R²≥0.9)\n")
+                        else:
+                            self.import_log.insert("end", f"  ⚠️ XRD import: {xrd_result.get('error', 'unknown error')}\n")
                     except Exception as e:
                         self.import_log.insert("end", f"  ⚠️ XRD analysis failed: {str(e)}\n")
                 
