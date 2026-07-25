@@ -1456,9 +1456,11 @@ class AlloyLabApp(ctk.CTk):
                         from stage_two.integrations.vsm_integration_v2 import import_vsm_file
                         vsm_result = import_vsm_file(file_path, sample_id, db)
                         if vsm_result['success']:
-                            ms = vsm_result.get('ms', 0)
-                            hc = vsm_result.get('hc', 0)
-                            self.import_log.insert("end", f"  📊 VSM: Ms = {ms:.4f} emu, Hc = {hc:.1f} Oe\n")
+                            types_str = ', '.join(f"{k}:{v}" for k, v in vsm_result['segment_types'].items())
+                            tc_str = " + temp. coefficients" if vsm_result['has_temperature_coefficients'] else ""
+                            self.import_log.insert("end", f"  📊 VSM ({vsm_result['instrument_type']}): {vsm_result['n_segments']} segments ({types_str}){tc_str}\n")
+                        else:
+                            self.import_log.insert("end", f"  ⚠️ VSM import: {vsm_result.get('error', 'unknown error')}\n")
                     except Exception as e:
                         self.import_log.insert("end", f"  ⚠️ VSM analysis failed: {str(e)}\n")
                 
