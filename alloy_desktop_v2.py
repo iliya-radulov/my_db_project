@@ -1468,10 +1468,16 @@ class AlloyLabApp(ctk.CTk):
                     try:
                         from stage_two.integrations.sem_integration_v2 import import_sem_file
                         sem_result = import_sem_file(file_path, sample_id, db)
-                        if sem_result['success']:
-                            mag = sem_result.get('magnification', 'N/A')
-                            eht = sem_result.get('eht', 'N/A')
-                            self.import_log.insert("end", f"  🔬 SEM: Mag = {mag}, EHT = {eht}\n")
+                        if sem_result['success']:                           
+                            fmt = sem_result.get('format', '?')
+                            mag = sem_result.get('magnification')
+                            eht = sem_result.get('eht')
+                            mag_str = f"{mag:.0f}x" if mag else 'N/A'
+                            eht_str = f"{eht:.1f} kV" if eht else 'N/A'
+                            self.import_log.insert(
+                                "end",
+                                f"  🔬 SEM ({fmt}): Mag = {mag_str}, EHT = {eht_str}\n"
+                            )
                     except Exception as e:
                         self.import_log.insert("end", f"  ⚠️ SEM analysis failed: {str(e)}\n")
                 # ✅ Commit the transaction after successful import
@@ -1514,7 +1520,7 @@ class AlloyLabApp(ctk.CTk):
         if ext.lower() in ['.raw', '.xy', '.xrdml']:
             return 'Bruker D8'
         if ext.lower() in ['.tif', '.tiff']:
-            return 'Zeiss SEM'
+            return 'SEM'
         if '.dat' in filename.lower():
             return 'PPMS/VSM'
         return 'Unknown'
