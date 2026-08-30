@@ -32,9 +32,18 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 import numpy as np
 import io
+import sys
+import os
 import contextlib
+from pathlib import Path
+
+# Project root on path for db_config and shared tools
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from xrd_analyzer_dev1 import analyze_xrd
+from xrd_features_builder import build_xrd_peaks_rows, build_xrd_features_row
+from db_type_utils import sanitize_row
 
 ctk.set_appearance_mode("System")
 ctk.set_default_color_theme("blue")
@@ -54,6 +63,7 @@ class XRDAnalyzerApp(ctk.CTk):
         self._build_plot_area()
         self._build_peak_table()
         self._build_summary_bar()
+        self._build_save_bar()
 
     # ---------------------------------------------------------------
     # UI construction
@@ -92,6 +102,11 @@ class XRDAnalyzerApp(ctk.CTk):
                                              state="disabled")
         self.analyze_button.grid(row=0, column=6, rowspan=2, padx=(20, 5))
 
+        self.save_button = ctk.CTkButton(frame, text="💾 Save to DB",
+                                          command=self.save_to_db, state="disabled",
+                                          fg_color="darkgreen")
+        self.save_button.grid(row=0, column=7, rowspan=2, padx=(10, 5))
+
     def _build_plot_area(self):
         self.plot_frame = ctk.CTkFrame(self)
         self.plot_frame.pack(side="top", fill="both", expand=True, padx=8, pady=(0, 8))
@@ -119,13 +134,19 @@ class XRDAnalyzerApp(ctk.CTk):
 
     def _build_summary_bar(self):
         self.summary_label = ctk.CTkLabel(self, text="", anchor="w")
-        self.summary_label.pack(side="bottom", fill="x", padx=8, pady=(0, 8))
+        self.summary_label.pack(side="bottom", fill="x", padx=8, pady=(0, 4))
+
+    def _build_save_bar(self):
+        self.save_status_label = ctk.CTkLabel(self, text="", anchor="w",
+                                               font=ctk.CTkFont(size=12))
+        self.save_status_label.pack(side="bottom", fill="x", padx=8, pady=(0, 4))
 
     # ---------------------------------------------------------------
     # Actions
     # ---------------------------------------------------------------
-    def on_load_file(self):
-        path = filedialog.askopenfilename(filetypes=[("XRD pattern", "*.xy"), ("All files", "*.*")])
+    def on_load_file(self, path=None):
+        if path is None:
+            path = filedialog.askopenfilename(filetypes=[("XRD pattern", "*.xy"), ("All files", "*.*")])
         if not path:
             return
         self.file_path = path
@@ -161,6 +182,8 @@ class XRDAnalyzerApp(ctk.CTk):
         self._refresh_plot()
         self._refresh_peak_table()
         self._refresh_summary()
+        self.save_button.configure(state="normal")
+        self.save_status_label.configure(text="")
 
     def on_peak_toggle(self, idx):
         def callback():
@@ -221,6 +244,100 @@ class XRDAnalyzerApp(ctk.CTk):
         )
 
 
+
+    def save_to_db(self):
+        """
+        Saves the currently accepted peaks to xrd_peaks and xrd_features,
+        REPLACING any previous analysis for this sample. Looks up the
+        sample via the characterization table using the loaded file_path.
+        """
+        if not self.analysis_result or not self.file_path:
+            messagebox.showerror("Nothing to save", "Run analysis first.")
+            return
+
+        accepted_peaks = [
+            p for i, p in enumerate(self.analysis_result["fitted_peaks"])
+            if self.peak_accepted.get(i, True)
+        ]
+        if not accepted_peaks:
+            messagebox.showerror("Nothing accepted", "Accept at least one peak before saving.")
+            return
+
+        try:
+            from db_config import DB_CONFIG
+            import psycopg2
+            import psycopg2.extras
+
+            conn_params = {k: v for k, v in DB_CONFIG.items() if k != "schema"}
+            schema = DB_CONFIG.get("schema", "alloy_lab")
+            conn = psycopg2.connect(**conn_params)
+            cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+
+            # Look up sample_id via characterization table
+            cur.execute(
+                f"SELECT sample_id FROM {schema}.characterization WHERE file_path = %s",
+                (self.file_path,)
+            )
+            row = cur.fetchone()
+            if not row:
+                messagebox.showerror(
+                    "Not in database",
+                    "This file has no characterization record.\nImport it via the main app first."
+                )
+                conn.close()
+                return
+            sample_db_id = row["sample_id"]
+
+            # Build rows from accepted peaks only
+            modified_result = dict(self.analysis_result)
+            modified_result["fitted_peaks"] = accepted_peaks
+
+            peaks_rows = [sanitize_row(r) for r in build_xrd_peaks_rows(
+                sample_id=sample_db_id, result=modified_result)]
+            features_row = sanitize_row(build_xrd_features_row(
+                sample_id=sample_db_id, result=modified_result))
+
+            # Replace existing analysis (DELETE + INSERT)
+            cur2 = conn.cursor()
+            cur2.execute(f"DELETE FROM {schema}.xrd_peaks WHERE sample_id = %s", (sample_db_id,))
+            cur2.execute(f"DELETE FROM {schema}.xrd_features WHERE sample_id = %s", (sample_db_id,))
+
+            for r in peaks_rows:
+                cols = list(r.keys())
+                cur2.execute(
+                    f"INSERT INTO {schema}.xrd_peaks ({\", \".join(cols)}) "
+                    f"VALUES ({\", \".join([f\"%({{c}})s\" for c in cols])})", r
+                )
+
+            cols = list(features_row.keys())
+            cur2.execute(
+                f"INSERT INTO {schema}.xrd_features ({\", \".join(cols)}) "
+                f"VALUES ({\", \".join([f\"%({{c}})s\" for c in cols])})", features_row
+            )
+
+            conn.commit()
+            cur2.close()
+            cur.close()
+            conn.close()
+
+            n_saved = len(accepted_peaks)
+            n_total = len(self.analysis_result["fitted_peaks"])
+            self.save_status_label.configure(
+                text=f"✅ Saved {n_saved} peak(s) to DB  ({n_total - n_saved} rejected)"
+            )
+
+        except Exception as e:
+            import traceback
+            traceback.print_exc()
+            messagebox.showerror("Save failed", str(e))
+            self.save_status_label.configure(text=f"❌ Save failed: {e}")
+
 if __name__ == "__main__":
     app = XRDAnalyzerApp()
+    # When launched from the viewer with a file path, auto-load AND
+    # auto-analyze with default parameters so the user sees results
+    # immediately. They can still adjust parameters and re-analyze.
+    if len(sys.argv) > 1 and os.path.exists(sys.argv[1]):
+        app.after(200, lambda: app.on_load_file(sys.argv[1]))
+        app.after(500, app.on_analyze)
     app.mainloop()
