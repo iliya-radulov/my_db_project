@@ -41,6 +41,13 @@ from tkinter import filedialog, messagebox
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 import numpy as np
+import sys
+import os
+from pathlib import Path
+
+# Project root on path for db_config
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from vsm_pipeline import load_vsm_file
 from vsm_segmenter import detect_segments
@@ -66,6 +73,7 @@ class VSMMHAnalyzerApp(ctk.CTk):
         self._build_controls()
         self._build_main_area()
         self._build_summary_bar()
+        self._build_save_bar()
 
     # ---------------------------------------------------------------
     # UI construction
@@ -133,14 +141,30 @@ class VSMMHAnalyzerApp(ctk.CTk):
         self.accept_check.pack(side="right", padx=10, pady=10)
 
     def _build_summary_bar(self):
+        save_frame = ctk.CTkFrame(self)
+        save_frame.pack(side="bottom", fill="x", padx=8, pady=(0, 4))
+
+        self.save_button = ctk.CTkButton(
+            save_frame, text="💾 Save to DB",
+            command=self.save_to_db, state="disabled",
+            fg_color="darkgreen", width=160,
+        )
+        self.save_button.pack(side="left", padx=8, pady=6)
+
+        self.save_status_label = ctk.CTkLabel(save_frame, text="", anchor="w",
+                                               font=ctk.CTkFont(size=12))
+        self.save_status_label.pack(side="left", padx=8, pady=6)
+
+    def _build_save_bar(self):
         self.summary_label = ctk.CTkLabel(self, text="", anchor="w")
-        self.summary_label.pack(side="bottom", fill="x", padx=8, pady=(0, 8))
+        self.summary_label.pack(side="bottom", fill="x", padx=8, pady=(0, 4))
 
     # ---------------------------------------------------------------
     # Actions
     # ---------------------------------------------------------------
-    def on_load_file(self):
-        path = filedialog.askopenfilename(filetypes=[("VSM data", "*.dat *.DAT"), ("All files", "*.*")])
+    def on_load_file(self, path=None):
+        if path is None:
+            path = filedialog.askopenfilename(filetypes=[("VSM data", "*.dat *.DAT"), ("All files", "*.*")])
         if not path:
             return
         self.file_path = path
@@ -181,6 +205,8 @@ class VSMMHAnalyzerApp(ctk.CTk):
 
         self._refresh_segment_list()
         self._refresh_summary()
+        self.save_button.configure(state="normal")
+        self.save_status_label.configure(text="")
 
         # auto-select the first MH segment found, if any
         first_mh = next((i for i, s in enumerate(self.segments) if s['type'] == 'MH'), None)
@@ -277,6 +303,91 @@ class VSMMHAnalyzerApp(ctk.CTk):
         )
 
 
+
+    def save_to_db(self):
+        """
+        Updates vsm_mh_details in the DB for all accepted MH segments,
+        using the re-analyzed Hc/Mr values. Finds the vsm_file record
+        by file_path, then matches segments by (start_row, end_row).
+        """
+        accepted = {
+            i: r for i, r in self.mh_results.items()
+            if self.segment_accepted.get(i, False)
+        }
+        if not accepted:
+            messagebox.showerror("Nothing accepted",
+                "Accept at least one MH segment before saving.")
+            return
+
+        try:
+            from db_config import DB_CONFIG
+            import psycopg2
+            import psycopg2.extras
+
+            conn_params = {k: v for k, v in DB_CONFIG.items() if k != "schema"}
+            schema = DB_CONFIG.get("schema", "alloy_lab")
+            conn = psycopg2.connect(**conn_params)
+            cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+
+            # Find vsm_file record
+            cur.execute(
+                f"SELECT id FROM {schema}.vsm_files WHERE file_path = %s",
+                (self.file_path,)
+            )
+            row = cur.fetchone()
+            if not row:
+                messagebox.showerror(
+                    "Not in database",
+                    "This file has no vsm_files record.\nImport it via the main app first."
+                )
+                conn.close()
+                return
+            vsm_file_id = row["id"]
+
+            # Update vsm_mh_details for each accepted segment
+            cur2 = conn.cursor()
+            updated = 0
+            for seg_idx, result in accepted.items():
+                seg = self.segments[seg_idx]
+                # Find vsm_segment by file + row range
+                cur2.execute(
+                    f"SELECT id FROM {schema}.vsm_segments "
+                    f"WHERE vsm_file_id = %s AND start_row = %s AND end_row = %s",
+                    (vsm_file_id, seg["start"], seg["end"])
+                )
+                seg_row = cur2.fetchone()
+                if seg_row:
+                    seg_id = seg_row[0]
+                    cur2.execute(
+                        f"UPDATE {schema}.vsm_mh_details "
+                        f"SET hc_oe = %s, mr_emu = %s, hc_mr_flag = %s, branch_found = %s "
+                        f"WHERE vsm_segment_id = %s",
+                        (result["Hc"], result["Mr"], result["flag"],
+                         result["branch_found"], seg_id)
+                    )
+                    updated += 1
+
+            conn.commit()
+            cur2.close()
+            cur.close()
+            conn.close()
+
+            self.save_status_label.configure(
+                text=f"✅ Saved {updated} segment(s) to DB"
+            )
+
+        except Exception as e:
+            import traceback
+            traceback.print_exc()
+            messagebox.showerror("Save failed", str(e))
+            self.save_status_label.configure(text=f"❌ Save failed: {e}")
+
 if __name__ == "__main__":
     app = VSMMHAnalyzerApp()
+    # When launched from the viewer with a file path, auto-load AND
+    # auto-analyze with default parameters so the user sees results
+    # immediately. They can still adjust parameters and re-analyze.
+    if len(sys.argv) > 1 and os.path.exists(sys.argv[1]):
+        app.after(200, lambda: app.on_load_file(sys.argv[1]))
+        app.after(500, app.on_analyze)
     app.mainloop()

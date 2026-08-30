@@ -498,9 +498,23 @@ class AlloyLabApp(ctk.CTk):
             error = None
             
             if char_type == 'XRD':
-                fig, error = plot_xrd(file_path)
+                fig, error = plot_xrd(file_path, master=self.viewer_plot_frame)
+                if error:
+                    self.viewer_plot_label.pack()
+                    self.viewer_plot_label.configure(text=f"Error: {error}")
+                self.viewer_info_label.configure(text=f"File: {Path(file_path).name} | Type: {char_type}")
+                return
             elif char_type in ['VSM', 'MH']:
-                fig, error = plot_vsm(file_path)
+                fig, error = plot_vsm(file_path, master=self.viewer_plot_frame)
+                if error:
+                    self.viewer_plot_label.pack()
+                    self.viewer_plot_label.configure(text=f"Error: {error}")
+                self.viewer_info_label.configure(text=f"File: {Path(file_path).name} | Type: {char_type}")
+                return
+            # if char_type == 'XRD':
+            #     fig, error = plot_xrd(file_path)
+            # elif char_type in ['VSM', 'MH']:
+            #     fig, error = plot_vsm(file_path)
             elif char_type == 'SEM':
                 # SEM handles its own canvas embedding
                 fig, error = plot_sem(file_path, master=self.viewer_plot_frame)
