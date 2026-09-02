@@ -1181,6 +1181,13 @@ class AlloyLabApp(ctk.CTk):
                 notes=notes
             )
             
+            # Write per-element composition to compositions table
+            db.add_compositions(
+                sample_db_id=sample_db_id,
+                elements=result.elements,
+                composition_type='aimed'
+            )
+
             for db_key in ('materials_project', 'oqmd', 'alexandria'):
                 candidates = filter_by_distance(self.lit_results.get(db_key, []), self.lit_cutoffs[db_key])
                 for c in candidates:
