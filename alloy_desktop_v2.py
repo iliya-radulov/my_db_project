@@ -1188,6 +1188,16 @@ class AlloyLabApp(ctk.CTk):
                 composition_type='aimed'
             )
 
+            # Save suggested synthesis routes from screening
+            _synth = screening.get('synthesis_feasibility') if screening else None
+            if _synth and _synth.get('suggested_routes'):
+                for route in _synth['suggested_routes']:
+                    db.add_synthesis(
+                        sample_id=sample_id,
+                        method=route,
+                        notes=f"Suggested by screening [{_synth['status']}]: {_synth['message']}"
+                    )
+
             for db_key in ('materials_project', 'oqmd', 'alexandria'):
                 candidates = filter_by_distance(self.lit_results.get(db_key, []), self.lit_cutoffs[db_key])
                 for c in candidates:
