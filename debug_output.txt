@@ -1,4 +1,0 @@
-Traceback (most recent call last):
-  File "/Users/r/Documents/Projects/my_db_project/alloy_desktop_v2.py", line 7, in <module>
-    import customtkinter as ctk
-ModuleNotFoundError: No module named 'customtkinter'
