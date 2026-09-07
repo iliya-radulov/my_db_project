@@ -1,4 +1,4 @@
-# Alloy Lab Database — Stage 1
+# Alloy Lab Database — Stage 1 & Stage 2
 
 A personal experimental database for alloy research: store samples, synthesis
 conditions, and characterization results in a structured, queryable way,
@@ -74,7 +74,7 @@ pattern is documented explicitly in
 single clean design that was right from the start — it wasn't, and
 pretending otherwise would make the docs less useful to future-me.
 
-## 4. Decisions & Implementation (condensed)
+## 4. Decisions & Implementation — Stage 1 (condensed)
 
 Full detail, including the specific bugs and dead ends, lives in the
 linked pages. This section is the short version.
@@ -141,7 +141,7 @@ hysteresis loops, and SEM images directly in-app. Went through many
 iterations (`alloy_desktop.py` → `_fixed` → `_fixed2` → `_fixed3` →
 `_with_db_classes.py` → `_complete.py`) before stabilizing.
 
-## 5. Problems & Dead Ends
+## 5. Problems & Dead Ends — Stage 1
 
 The notable ones that didn't feed back into an existing component above
 (full list of smaller issues is in each linked page):
@@ -159,8 +159,8 @@ The notable ones that didn't feed back into an existing component above
   session cookie plus some Docker container/port confusion, not a real
   data-loss risk. Pure ops noise, not a project-design issue, but worth
   a line here since it consumed real time.
-- **A regression I (the assistant) introduced and had to fix twice**: an
-  edit meant to add the distance-cutoff feature to `stage_one/lookup/lookup_common_v1.py`
+- **A regression introduced and fixed twice**: an edit meant to add the
+  distance-cutoff feature to `stage_one/lookup/lookup_common_v1.py`
   accidentally deleted a function's signature while leaving its body
   behind as dead code, breaking deduplication for all three literature
   databases at once. It shipped because the fix was verified by testing
@@ -170,76 +170,256 @@ The notable ones that didn't feed back into an existing component above
   the specific path that changed matters more than testing nearby code
   that happens to still parse.
 
-## 6. Current Status
+---
 
-**Stage 1 is complete.** Working end-to-end, verified with real data:
-- Core database, schema, and credential handling.
-- Calculator (formula parsing, at%/wt%, pre-alloys, excess%).
-- Screening (VEC/δ/ΔH_mix, full periodic table, graceful error on gaps).
-- Three literature databases with dedup and adjustable cutoffs, wired into
-  both the CLI tool and the GUI.
-- XRD, VSM, and SEM characterization import, with real extracted
-  properties (peak count, lattice parameter, saturation moment, remanence,
-  coercivity, magnification, accelerating voltage, working distance,
-  pixel size) stored against real samples — 690 SEM files imported in
-  practice.
-- Desktop GUI (five tabs), covering the full new-entry → screen →
-  cross-check → calculate → submit workflow, plus a Data Viewer for
-  browsing XRD/VSM/SEM data directly.
-- Data sorter utility, tested against the real messy desktop folder.
+## 6. Stage 2 — The Characterisation Layer
 
-**Known gaps, carried into Stage 2 rather than blocking Stage 1's close:**
-- OQMD's server occasionally returns transient errors (502) under load;
-  automatic retry logic is planned but not yet implemented.
-- The CLI tool (`stage_one/alloy/alloy_entry_full_v1.py`) has fallen behind the GUI (no
-  Alexandria integration, no cutoff filtering) — a decision on bringing it
-  to parity or retiring it in favor of the GUI.
-- Minor polish items: VSM hysteresis-loop plot markers could be cleaner,
-  and large characterization imports would benefit from a visible
-  progress indicator.
+Stage 2 transformed the lab-book foundation into a validated research
+platform. Every instrument pipeline was built on real data, not synthetic
+tests. The schema was designed for machine learning. The infrastructure
+was migrated to a dedicated home server shared by all machines.
 
-## 7. Next Steps (Stage 2)
+**Stage 2 is complete** as of September 2026.
 
-Stage 2 is about shaping this data for ML, not adding new capture
-capability:
-- Element-fraction table, purpose-built for ML-style compositional queries.
-- CLI-vs-GUI consolidation decision.
-- Peak fitting (e.g. via PowerXRD) and a proper feature-extraction
-  pipeline, turning raw XRD/VSM curves into structured ML-ready features
-  beyond what Stage 1 already extracts as single summary values.
-- Patent-records table, once ML planning defines what's actually needed
-  from it.
-- Further out: actual ML model training, once the above data-preparation
-  work is in place.
+### 6.1 XRD Pipeline
 
-## 8. Stage 2 Progress
+`stage_two/tools/xrd_analyzer_dev1.py` — a general-purpose peak-fitting
+pipeline, validated against NIST SRM 660c (LaB₆ certified reference
+material). Lattice parameter converges to within 0.0001 Å of the certified
+value.
 
-Not part of Stage 1 — logged here separately so the history stays
-accurate about what was actually built when.
+- Background subtraction and Rachinger Kα2 stripping (Cu anode, default-on)
+- Neighbour-aware peak fitting — each peak's fit window uses local context,
+  not isolated regions; fixed a duplicate-peak bug present in the naive approach
+- R² fit-quality metric per peak — low-quality fits flagged, never silently
+  averaged into summary statistics
+- Scherrer crystallite size and d-spacing extracted automatically
+- Results in two tables: `xrd_peaks` (long format, one row per peak) and
+  `xrd_features` (wide format, ML-ready, one row per sample)
+- Standalone interactive tool (`xrd_analyzer_standalone.py`): live
+  sensitivity controls, per-peak accept/reject, Save to DB
+- Integration (`xrd_integration_v2.py`) tested end-to-end against real
+  production database with real samples
 
-- **XRD peak-fitting pipeline** (`stage_two/tools/xrd_analyzer_dev1.py`):
-  real error handling, neighbor-aware fit windowing (fixed a duplicate-peak
-  bug), physical-unit peak separation, R² fit-quality metric, Scherrer
-  crystallite size, d-spacing, Rachinger Kα2 stripping (default-on), and an
-  optional per-peak Kα2 doublet fit — all verified against real XRD files,
-  not just synthetic data. `xrd_peaks`/`xrd_features` table design done;
-  DB wiring not yet integrated into the main app.
-- **Synthesis feasibility check** (`alloy_screening_v1.py`, see
-  [`docs/screening.md`](docs/screening.md)): a fourth composition-only
-  screening function alongside VEC/δ/ΔH_mix, answering "can this even be
-  melted together" rather than "will this form a solid solution." Required
-  adding `melt_K`/`boil_K` to `ELEMENT_PROPERTIES` for all 103 elements
-  first. **Integrated into the main app** (`alloy_desktop_complete.py`,
-  see [`docs/gui.md`](docs/gui.md)): shown in the "Calculate & Preview"
-  output, plus a non-blocking confirmation dialog on "Submit" if the check
-  comes back `blocked`. Verified live under Xvfb, not just by syntax
-  check.
-- **Not yet done:** persisting `synthesis_feasibility` results to the
-  database — deliberately left as an open decision (see `screening.md`)
-  since the existing `synthesis` table records what actually happened
-  post-synthesis, a different purpose from this pre-synthesis advisory
-  check, and conflating the two without a real design decision seemed
-  worse than leaving it as display-only for now.
+### 6.2 VSM Pipeline
+
+A full multi-component pipeline replacing the Stage 1 single-value parser.
+
+- Instrument auto-detection (PPMS VSM / MPMS3 / ACMS) — each instrument
+  type uses different column conventions; detection is by diagnostic column
+  name, not raw column count (confirmed unreliable across versions)
+- Mass extraction from file header (primary, confirmed reliable on real
+  data) or filename (fallback, returned with a confidence flag)
+- Automatic segmentation into MH loops / MT scans / idle / corrupted
+  segments, using a rolling-window local-range classifier — not naive
+  point-to-point derivatives, which fail near H=0 and during instrument
+  self-centering events
+- Second-quadrant Hc/Mr extraction via crossing-point interpolation on the
+  descending branch specifically — confirmed on real data that whole-loop
+  analysis gives wrong results when an initial settling excursion is present
+- Temperature coefficients α(Hc) and β(Mr) fitted when multiple loops at
+  different fixed temperatures exist in one file
+- Isothermal entropy change ΔSm via Maxwell relation, with a check that
+  the input is genuinely a set of single-direction isothermal sweeps, not
+  full bipolar loops (the two look structurally similar but are not
+  interchangeable inputs for the calculation)
+- Demagnetising correction and BHmax for cuboid samples
+  (Prozorov-Kogan formula, validated against a real worked example)
+- 6-table schema: `vsm_files`, `vsm_segments`, `vsm_mh_details`,
+  `vsm_mt_details`, `vsm_mt_candidates`, `vsm_temperature_coefficients`
+- Standalone interactive tool (`vsm_mh_analyzer_standalone.py`):
+  multi-segment, adjustable branch-detection sensitivity, per-segment
+  accept/reject, Save to DB
+- Three real bugs found and fixed during end-to-end integration testing,
+  including a NaN-masking issue that silently hid a 60 K temperature jump
+
+### 6.3 SEM Pipeline
+
+Three manufacturers, three completely different metadata conventions —
+unified into one schema, auto-detected per file.
+
+- **Zeiss**: proprietary compressed binary TIFF tags (34118/34119) —
+  wraps the Stage 1 Zeiss parser, with regex-based unit extraction added
+  (raw values come back as embedded strings like `'25.00 K X'`)
+- **JEOL**: sidecar `.txt` file, `$KEY value` format — confirmed directly
+  on real files; calibration from `$$SM_MICRON_BAR`/`$$SM_MICRON_MARKER`;
+  footer height from `$CM_FULL_SIZE` vs actual TIFF height, no
+  brightness-heuristic guessing needed
+- **Tescan**: sidecar `.hdr` file, standard INI format — `PixelSizeX`
+  directly in metres, the most direct calibration of the three; 16-bit
+  image data handled throughout
+- Missing-sidecar case returns `format='unknown'` rather than guessing —
+  confirmed to occur on real JEOL files uploaded without their sidecar
+- Phase fraction via Otsu thresholding — offered as a starting suggestion
+  only, not forced: confirmed on real data that global thresholding fails
+  in different ways depending on the sample and imaging mode. A key
+  finding during development: what appeared to be a texture artifact on a
+  Tescan image was confirmed via Kerr microscopy to be real magnetic domain
+  contrast — the algorithm was detecting the right thing, but for the wrong
+  physical purpose. The tool puts the threshold decision in the operator's
+  hands
+- Grain-detection module (`sem_grain_analyzer.py`) with adaptive per-image
+  Canny thresholds, validated on 16 real images across formats; correctly
+  flagged 2 deliberately low-quality test images as unreliable rather than
+  forcing a confident wrong answer
+- Tescan 16-bit support: `sem_grain_analyzer.py` updated to use
+  `sem_metadata_universal` internally, and `parse_pixel_size()` extended
+  to handle both float (universal parser) and string (`'11.09 nm'`, Zeiss
+  parser) inputs
+- Standalone interactive tool (`sem_phase_fraction_standalone.py`): live
+  threshold slider, Otsu suggestion, optional invert, calibrated area
+  readout in µm², Save to DB
+
+### 6.4 Element-Fraction Auto-Wiring
+
+- `compositions` table extended with `composition_type` column:
+  `'aimed'` (nominal, set at sample creation) / `'measured'` (EDX/ICP
+  result) / `'reference'` (literature data added manually)
+- `add_compositions()` method added to `alloy_db_v2.py`: called
+  automatically after every new sample entry, stores both wt% and at%
+  from the calculator's output — no separate computation needed, the mass
+  calculator already has both
+- Backfill script (`compute_atomic_percent.py`, inline) used to populate
+  `atomic_percent` for the three samples entered before this was wired in,
+  using IUPAC atomic weights from `alloy_calculator_v2.ATOMIC_WEIGHTS`
+- `element_fraction_table.py`: wide-format reshaping for ML consumption —
+  one row per sample, one column per element, zero-filled for absent elements
+
+### 6.5 Synthesis Route Auto-Save
+
+- Screening module (`alloy_screening_v2.py`) already computed
+  `synthesis_feasibility` with `suggested_routes` — this information was
+  previously display-only
+- Now auto-saved to the `synthesis` table after every new sample entry,
+  one row per suggested route, with the full screening reasoning (status
+  + message) stored in the `notes` column
+- Means a researcher picking up a sample months later can see immediately
+  why a particular route was suggested (or blocked) and what the physical
+  reasoning was, without re-running the screener
+
+### 6.6 Infrastructure — Database Migration to Home Server
+
+On 3 September 2026, the database was migrated from a local Docker
+container on the development Mac to a dedicated home server
+(`192.168.2.42`). Migration: `pg_dump` (compressed format) → `scp` →
+`pg_restore`. One session, zero data loss.
+
+- **Home server**: AMD FX-4320, Ubuntu Server 26.04, Docker Engine,
+  `postgres:17` container with persistent volume at `~/docker/postgres/data`
+- **Wake-on-LAN**: NIC supports magic packet (`wol g`); systemd service
+  persists the setting across reboots; BIOS `Power On By PCI-E/PCI`
+  enabled. Server wakes from cold poweroff in ~60 seconds via
+  `wakeonlan 2c:56:dc:74:c4:ff`
+- **Remote access**: `pg_hba.conf` allows `192.168.2.0/24`; `listen_addresses = '*'`
+  in `postgresql.conf`
+- **All machines updated**: `.env` changed to `POSTGRES_HOST=192.168.2.42`
+  on Mac and ML Desktop. SSH installed on ML Desktop during this session
+- **`path_repair.py`**: scans `characterization.file_path` and
+  `vsm_files.file_path` for broken paths, auto-searches by filename under
+  a given root, handles ambiguous matches interactively. Run post-migration:
+  zero broken paths
+
+Post-migration database state: 50 samples, 16 tables, 170 XRD peaks,
+92 characterization records, 4 synthesis route records.
+
+### 6.7 Data Viewer — Standalone Tool Integration
+
+All three standalone tools now launch from the Data Viewer with the
+current file pre-loaded and auto-analysed:
+
+- `plot_xrd()` and `plot_vsm()` updated to accept a `master` tkinter
+  frame, embedding canvas + launch button directly — same pattern as the
+  existing SEM viewer
+- **📐 Analyze XRD** → `xrd_analyzer_standalone.py` (pre-loaded, auto-analyzed)
+- **📊 Analyze VSM** → `vsm_mh_analyzer_standalone.py` (pre-loaded, auto-analyzed)
+- **📊 Phase Fraction** → `sem_phase_fraction_standalone.py` (pre-loaded)
+- Fixed a bug where the child-clearing loop in the plot functions was
+  destroying `viewer_plot_label`, causing the Data Viewer to break after
+  the first plot was loaded
+
+### 6.8 Codebase Cleanup
+
+- `stage_one/outdated/` and `stage_two/outdated/` removed entirely —
+  dozens of intermediate development versions (`parse_vsm_fixed3.py`,
+  `alloy_desktop_fixed2.py`, etc.). All history preserved in git
+- Old PyQt5 SEM tool (`sem_analyzer_gui_v6.py`) retired and removed
+- `vsm_entropy_integration.py` copied to `stage_two/tools/` to resolve
+  a `ModuleNotFoundError` when VSM standalone was launched as a subprocess
+
+## 7. Problems & Dead Ends — Stage 2
+
+- **`parse_sem_v2` import failures as subprocess**: when standalone tools
+  are launched via `subprocess.Popen`, Python's `sys.path` doesn't
+  include the project's `parsers/` directory. Fixed with `sys.path.insert`
+  using `pathlib.Path(__file__).resolve().parent` in each affected module.
+- **`viewer_plot_label` destroyed by plot functions**: the child-clearing
+  loop inside `plot_xrd`/`plot_vsm`/`plot_sem` was destroying all widgets
+  in the frame including the error-display label the app needed for
+  subsequent "file not found" messages. Removed — the app already clears
+  the frame before calling the plot functions.
+- **XRD Save to DB — `sample_id` NULL**: `characterization.sample_id` was
+  NULL for existing records (imported before the FK was fully wired).
+  Fixed by prompting the operator for the sample ID string at save time,
+  then looking up the integer PK from the `samples` table.
+- **Tescan `pixel_size_nm` None despite correct metadata**: `parse_pixel_size()`
+  used a regex expecting a string like `'11.09 nm'`, but
+  `sem_metadata_universal` returns a plain float. Fixed by checking the
+  type before regex extraction.
+- **Synthesis routes not auto-saving**: `screening.get('suggested_routes')`
+  was wrong — `suggested_routes` is nested inside
+  `screening['synthesis_feasibility']`. Fixed by extracting `_synth` first.
+- **pptxgenjs 8-digit hex colors**: `'FFFFFF99'` (hex + alpha) is not
+  supported and silently produces black. Fixed by using a plain 6-digit
+  equivalent.
+- **Docker schema — tables "not found"**: `\dt` in `psql` searched the
+  `public` schema by default; all tables live in the `alloy_lab` schema.
+  Fixed by using `\dt alloy_lab.*`.
+
+## 8. Current Status
+
+**Stage 1: complete.**
+**Stage 2: complete** as of September 2026.
+
+Working end-to-end, verified with real data:
+- Three validated characterisation pipelines: XRD (NIST reference),
+  VSM (three instrument types, 3 real bugs caught in integration),
+  SEM (Zeiss/JEOL/Tescan, 16-bit support)
+- 16-table schema: all populated with real data
+- Standalone interactive tools for all three techniques, with Save to DB
+- Element-fraction auto-wiring (wt% + at% on every new sample entry)
+- Synthesis route auto-save from screening results
+- Database migrated to home server; three machines connected
+- `path_repair.py` for broken-path recovery after file moves
+
+## 9. Next Steps — Stage 3 (ML)
+
+Stage 3 is about closing the loop: composition → measurement → prediction
+→ new composition recommendation.
+
+**Feature matrix (X):**
+- `compositions` — element fractions wt% + at%, all samples
+- `xrd_features` — n_peaks, mean R², crystallite size, d-spacing
+- `vsm_mh_details` — Hc, Mr, BHmax per segment
+- `vsm_temperature_coefficients` — α(Hc), β(Mr)
+- `properties` — SEM phase fraction
+
+**Target properties (y):**
+- Magnetic: Hc, Mr, BHmax
+- Thermal stability: α, β temperature coefficients
+- Structural: phase fraction, crystallite size
+
+**Planned ML workflow:**
+1. Assemble feature matrix from existing DB tables via
+   `element_fraction_table.py` + joins
+2. Start with Gaussian Process regression (appropriate for small datasets)
+3. Move to neural networks as data volume grows
+4. Prediction → new composition recommendation → back into calculator →
+   new sample → new measurements → back into DB
+
+**Infrastructure:**
+- ML Desktop: Ryzen 9900X, RTX 5060 Ti 16 GB, Ubuntu 26.04, CUDA 13.2
+- Database: home server `192.168.2.42`, always-on, wake-on-LAN
+- All machines read/write the same canonical database
 
 ---
 
