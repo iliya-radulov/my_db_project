@@ -1212,6 +1212,41 @@ class AlloyLabApp(ctk.CTk):
                         composition_distance=c.composition_distance
                     )
             
+            # RAG synthesis guidance — called via stage_three venv subprocess
+            try:
+                import subprocess, json
+                from pathlib import Path
+                _synth = screening.get('synthesis_feasibility') if screening else None
+                _routes = _synth.get('suggested_routes', []) if _synth else []
+                if _routes:
+                    _stage3_dir = Path(__file__).resolve().parent / "stage_three"
+                    _python = _stage3_dir / ".venv" / "bin" / "python3"
+                    _script = _stage3_dir / "synthesis_rag.py"
+                    _system = sample_id.split("-")[0] if "-" in sample_id else sample_id
+                    _payload = json.dumps({
+                        "system_name": _system,
+                        "suggested_routes": _routes,
+                        "composition": composition_frac,
+                    })
+                    self.result_text.insert("end", "\n\n" + "="*60)
+                    self.result_text.insert("end", "\nLiterature Synthesis Guidance (RAG):")
+                    self.result_text.insert("end", "\n" + "="*60 + "\n")
+                    self.result_text.insert("end", "Querying literature... (may take ~30s)")
+                    self.update_idletasks()
+                    _proc = subprocess.run(
+                        [str(_python), str(_script), _payload],
+                        capture_output=True, text=True, timeout=120,
+                    )
+                    if _proc.returncode == 0:
+                        _rag = json.loads(_proc.stdout)
+                        # Remove "Querying..." text
+                        self.result_text.delete("end-2l", "end")
+                        self.result_text.insert("end", f"\n{_rag['answer']}")
+                    else:
+                        self.result_text.insert("end", f"\nRAG error: {_proc.stderr[:200]}")
+            except Exception as _rag_err:
+                self.result_text.insert("end", f"\n(RAG skipped: {_rag_err})")
+
             self.result_text.insert("end", f"\n\nSuccessfully added sample: {sample_id}")
             self.status_label.configure(text=f"Sample {sample_id} added to database")
             self.submit_btn.configure(state="disabled")
