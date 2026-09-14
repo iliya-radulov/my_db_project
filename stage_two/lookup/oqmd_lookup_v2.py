@@ -21,7 +21,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 from dataclasses import dataclass
 from typing import Dict, List, Optional
 
-from optimade.client import OptimadeClient
+from stage_two.lookup.optimade_requests import OptimadeClient
 
 OQMD_BASE_URL = "https://oqmd.org/optimade"
 RETRY_WAIT_SECONDS = 45
