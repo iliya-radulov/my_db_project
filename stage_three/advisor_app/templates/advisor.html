@@ -1,0 +1,356 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row g-4">
+
+  <!-- ── Input panel ────────────────────────────────────────────────────────── -->
+  <div class="col-md-4 col-lg-3">
+    <div class="card shadow-sm">
+      <div class="card-header fw-semibold">Composition Input</div>
+      <div class="card-body">
+        <p class="text-muted small mb-3">
+          Enter mole fractions (they will be normalized automatically).
+          Nd₂Fe₁₄B stoichiometry: Nd=0.118, Fe=0.824, B=0.059
+        </p>
+        <form id="comp-form">
+          <div class="mb-3">
+            <label class="form-label fw-semibold">x<sub>Nd</sub></label>
+            <input type="number" class="form-control" id="x_nd"
+                   value="0.118" min="0" max="1" step="0.001" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold">x<sub>Fe</sub></label>
+            <input type="number" class="form-control" id="x_fe"
+                   value="0.824" min="0" max="1" step="0.001" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold">x<sub>B</sub></label>
+            <input type="number" class="form-control" id="x_b"
+                   value="0.059" min="0" max="1" step="0.001" required>
+          </div>
+
+          <!-- Normalized preview -->
+          <div id="norm-preview" class="alert alert-secondary small py-2 mb-3" style="display:none;"></div>
+
+          <button type="submit" class="btn btn-primary w-100">
+            Run Phase Check
+          </button>
+        </form>
+
+        <!-- Quick presets -->
+        <hr class="my-3">
+        <p class="text-muted small mb-2">Quick presets:</p>
+        <div class="d-grid gap-1">
+          <button class="btn btn-outline-secondary btn-sm preset-btn"
+                  data-nd="0.118" data-fe="0.824" data-b="0.059">
+            Nd₂Fe₁₄B stoich.
+          </button>
+          <button class="btn btn-outline-secondary btn-sm preset-btn"
+                  data-nd="0.15"  data-fe="0.79"  data-b="0.06">
+            Nd-rich (+Nd)
+          </button>
+          <button class="btn btn-outline-secondary btn-sm preset-btn"
+                  data-nd="0.10"  data-fe="0.83"  data-b="0.07">
+            Fe-rich (+Fe)
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Results panel ──────────────────────────────────────────────────────── -->
+  <div class="col-md-8 col-lg-9">
+    <div id="results-placeholder" class="card shadow-sm d-flex align-items-center justify-content-center text-muted" style="min-height:200px;">
+      <div class="text-center py-5">
+        <div style="font-size:3rem;">🔬</div>
+        <p class="mt-2">Enter a composition and click <strong>Run Phase Check</strong></p>
+        <p class="small">Checks equilibrium at 1100 K, 1300 K, 1375 K, 1450 K, 1600 K</p>
+      </div>
+    </div>
+
+    <div id="results-panel" style="display:none;">
+
+      <!-- Summary header -->
+      <div class="card shadow-sm mb-3">
+        <div class="card-body d-flex align-items-center gap-3">
+          <div id="overall-icon" style="font-size:2.5rem;"></div>
+          <div>
+            <div class="fw-semibold" id="overall-text"></div>
+            <div class="text-muted small" id="comp-display"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Per-temperature cards -->
+      <div class="row g-3" id="temp-cards"></div>
+
+      <!-- Sweep chart + Ternary map side by side -->
+      <div class="row g-3 mt-1">
+
+        <!-- Phase-fraction vs temperature sweep chart -->
+        <div class="col-md-6" id="sweep-card">
+          <div class="card shadow-sm h-100">
+            <div class="card-header fw-semibold py-2">Phase Fractions vs. T</div>
+            <div class="card-body p-0 text-center" style="background:#fff; min-height:80px;">
+              <div id="sweep-loading" style="display:none; padding:2rem 0;">
+                <div class="spinner-border spinner-border-sm text-secondary"></div>
+                <span class="text-muted small ms-2">Running sweep…</span>
+              </div>
+              <div id="sweep-error" class="text-danger small p-3" style="display:none;"></div>
+              <img id="sweep-img" src="" alt="Phase fractions vs temperature"
+                   class="img-fluid" style="max-width:100%; display:none;">
+            </div>
+          </div>
+        </div>
+
+        <!-- Ternary map with composition marker -->
+        <div class="col-md-6" id="ternary-card">
+          <div class="card shadow-sm h-100">
+            <div class="card-header d-flex justify-content-between align-items-center py-2">
+              <span class="fw-semibold">Ternary Map</span>
+              <div class="d-flex align-items-center gap-2">
+                <span class="text-muted small">T =</span>
+                <select id="overlay-T" class="form-select form-select-sm" style="width:auto;">
+                  <option value="1100">1100 K</option>
+                  <option value="1200">1200 K</option>
+                  <option value="1300">1300 K</option>
+                  <option value="1375" selected>1375 K</option>
+                  <option value="1450">1450 K</option>
+                  <option value="1600">1600 K</option>
+                </select>
+              </div>
+            </div>
+            <div class="card-body p-0 text-center" style="background:#fff; position:relative; min-height:120px;">
+              <div id="overlay-loading" style="display:none; padding:3rem 0;">
+                <div class="spinner-border spinner-border-sm text-secondary"></div>
+              </div>
+              <div id="overlay-error" class="text-danger small p-3" style="display:none;"></div>
+              <img id="overlay-img" src="" alt="Ternary section with composition marker"
+                   class="img-fluid" style="max-width:100%; display:none;">
+            </div>
+            <div class="card-footer text-muted small py-1" id="overlay-caption"></div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div id="error-panel" class="alert alert-danger mt-2" style="display:none;"></div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// ── Normalize preview ──────────────────────────────────────────────────────
+function updateNormPreview() {
+  const nd = parseFloat(document.getElementById('x_nd').value) || 0;
+  const fe = parseFloat(document.getElementById('x_fe').value) || 0;
+  const b  = parseFloat(document.getElementById('x_b').value)  || 0;
+  const total = nd + fe + b;
+  const el = document.getElementById('norm-preview');
+  if (Math.abs(total - 1.0) > 0.005) {
+    el.style.display = 'block';
+    el.textContent = `Sum = ${total.toFixed(3)} → will normalize to: Nd=${(nd/total).toFixed(3)}, Fe=${(fe/total).toFixed(3)}, B=${(b/total).toFixed(3)}`;
+  } else {
+    el.style.display = 'none';
+  }
+}
+['x_nd','x_fe','x_b'].forEach(id => document.getElementById(id).addEventListener('input', updateNormPreview));
+
+// ── Presets ────────────────────────────────────────────────────────────────
+document.querySelectorAll('.preset-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.getElementById('x_nd').value = btn.dataset.nd;
+    document.getElementById('x_fe').value = btn.dataset.fe;
+    document.getElementById('x_b').value  = btn.dataset.b;
+    updateNormPreview();
+  });
+});
+
+// ── Status helpers ─────────────────────────────────────────────────────────
+const STATUS_META = {
+  good:      { label: 'Sintering window ✓',   icon: '✅', cls: 'badge-good'      },
+  solid:     { label: 'Fully solid',           icon: '🔵', cls: 'badge-solid'     },
+  warning:   { label: 'Liquid-heavy ⚠',        icon: '⚠️', cls: 'badge-warning'   },
+  no_target: { label: 'No FE17ND2',            icon: '❌', cls: 'badge-no_target' },
+  error:     { label: 'Calc error',            icon: '💥', cls: 'badge-error'     },
+};
+
+function statusBadge(status) {
+  const m = STATUS_META[status] || STATUS_META.error;
+  return `<span class="badge ${m.cls}">${m.label}</span>`;
+}
+
+// ── Overall summary ────────────────────────────────────────────────────────
+function overallStatus(results) {
+  // Find the best status at sintering temperatures (1300-1450)
+  const sintering = results.filter(r => r.T >= 1300 && r.T <= 1450);
+  if (sintering.some(r => r.status === 'good'))    return 'good';
+  if (sintering.some(r => r.status === 'warning')) return 'warning';
+  if (sintering.some(r => r.status === 'solid'))   return 'solid';
+  return 'no_target';
+}
+
+// ── Render results ─────────────────────────────────────────────────────────
+function renderResults(data) {
+  document.getElementById('results-placeholder').style.display = 'none';
+  document.getElementById('error-panel').style.display = 'none';
+  document.getElementById('results-panel').style.display = 'block';
+
+  const c = data.composition;
+  document.getElementById('comp-display').textContent =
+    `Nd=${c.x_nd}  Fe=${c.x_fe}  B=${c.x_b}  (mole fractions)`;
+
+  const overall = overallStatus(data.results);
+  const om = STATUS_META[overall] || STATUS_META.error;
+  document.getElementById('overall-icon').textContent = om.icon;
+  document.getElementById('overall-text').innerHTML =
+    `<strong>${om.label}</strong> — phase check across 5 temperatures`;
+
+  const container = document.getElementById('temp-cards');
+  container.innerHTML = '';
+
+  // Load sweep chart and ternary overlay in parallel
+  loadSweepChart(data.composition);
+
+  const sinterGood = data.results.find(r => r.T >= 1300 && r.T <= 1450 && r.status === 'good');
+  const overlayT   = sinterGood ? sinterGood.T : 1375;
+  document.getElementById('overlay-T').value = overlayT;
+  loadOverlay(data.composition, overlayT);
+
+  data.results.forEach(r => {
+    const isSinter = r.T >= 1300 && r.T <= 1450;
+    const borderCls = isSinter ? 'border-primary' : '';
+
+    const phaseRows = r.phases.map(p => `
+      <tr>
+        <td class="small">${p.name}</td>
+        <td class="small text-end">${(p.fraction * 100).toFixed(1)}%</td>
+        <td style="width:80px;">
+          <div class="frac-bar"><div class="frac-fill" style="width:${Math.round(p.fraction*100)}%"></div></div>
+        </td>
+      </tr>`).join('');
+
+    const noPhases = r.phases.length === 0
+      ? `<tr><td colspan="3" class="text-muted small">${r.error || 'No stable phases found'}</td></tr>`
+      : '';
+
+    container.innerHTML += `
+      <div class="col-sm-6 col-xl-4">
+        <div class="card shadow-sm h-100 ${borderCls}">
+          <div class="card-header d-flex justify-content-between align-items-center py-2">
+            <span class="fw-semibold">${r.T} K <span class="text-muted fw-normal">(${r.T_C} °C)</span></span>
+            ${statusBadge(r.status)}
+          </div>
+          <div class="card-body p-2">
+            <table class="table table-sm mb-0">
+              <tbody>${phaseRows}${noPhases}</tbody>
+            </table>
+          </div>
+          ${isSinter ? '<div class="card-footer text-primary small py-1">sintering range</div>' : ''}
+        </div>
+      </div>`;
+  });
+}
+
+// ── Phase sweep chart ──────────────────────────────────────────────────────
+function loadSweepChart(comp) {
+  const url      = `/api/phase_sweep?x_nd=${comp.x_nd}&x_fe=${comp.x_fe}&x_b=${comp.x_b}`;
+  const sweepImg = document.getElementById('sweep-img');
+  const loading  = document.getElementById('sweep-loading');
+  const errEl    = document.getElementById('sweep-error');
+
+  sweepImg.style.display = 'none';
+  errEl.style.display    = 'none';
+  loading.style.display  = 'block';
+
+  const probe = new Image();
+  probe.onload = () => {
+    loading.style.display  = 'none';
+    sweepImg.src           = url;
+    sweepImg.style.display = 'block';
+  };
+  probe.onerror = () => {
+    loading.style.display = 'none';
+    errEl.textContent     = 'Could not generate sweep chart.';
+    errEl.style.display   = 'block';
+  };
+  probe.src = url;
+}
+
+// ── Ternary overlay ────────────────────────────────────────────────────────
+let _lastComp = null;
+
+function loadOverlay(comp, T) {
+  _lastComp = comp;
+  const url = `/api/ternary_overlay?x_nd=${comp.x_nd}&x_fe=${comp.x_fe}&x_b=${comp.x_b}&T=${T}`;
+
+  const img     = document.getElementById('overlay-img');
+  const loading = document.getElementById('overlay-loading');
+  const errEl   = document.getElementById('overlay-error');
+  const caption = document.getElementById('overlay-caption');
+
+  img.style.display     = 'none';
+  errEl.style.display   = 'none';
+  loading.style.display = 'block';
+
+  const probe = new Image();
+  probe.onload = () => {
+    loading.style.display = 'none';
+    img.src = url;
+    img.style.display = 'block';
+    caption.textContent =
+      `Nd=${comp.x_nd}  Fe=${comp.x_fe}  B=${comp.x_b}  at ${T} K  ·  red dot = input composition`;
+  };
+  probe.onerror = () => {
+    loading.style.display = 'none';
+    errEl.textContent = `Could not load overlay for T=${T} K.`;
+    errEl.style.display = 'block';
+  };
+  probe.src = url;
+}
+
+document.getElementById('overlay-T').addEventListener('change', function () {
+  if (_lastComp) loadOverlay(_lastComp, parseInt(this.value));
+});
+
+// ── Form submit ────────────────────────────────────────────────────────────
+document.getElementById('comp-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const overlay = document.getElementById('spinner-overlay');
+  overlay.classList.add('show');
+
+  const payload = {
+    x_nd: parseFloat(document.getElementById('x_nd').value),
+    x_fe: parseFloat(document.getElementById('x_fe').value),
+    x_b:  parseFloat(document.getElementById('x_b').value),
+  };
+
+  try {
+    const resp = await fetch('/api/equilibrium', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(payload),
+    });
+    const data = await resp.json();
+
+    if (data.error) {
+      document.getElementById('results-placeholder').style.display = 'none';
+      document.getElementById('results-panel').style.display = 'none';
+      const ep = document.getElementById('error-panel');
+      ep.style.display = 'block';
+      ep.textContent = 'Error: ' + data.error;
+    } else {
+      renderResults(data);
+    }
+  } catch (err) {
+    document.getElementById('error-panel').style.display = 'block';
+    document.getElementById('error-panel').textContent = 'Network error: ' + err.message;
+  } finally {
+    overlay.classList.remove('show');
+  }
+});
+</script>
+{% endblock %}

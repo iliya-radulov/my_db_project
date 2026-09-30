@@ -1,0 +1,199 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row g-4">
+
+  <!-- ── Control panel ──────────────────────────────────────────────────────── -->
+  <div class="col-md-4 col-lg-3">
+    <div class="card shadow-sm">
+      <div class="card-header fw-semibold">Plot Controls</div>
+      <div class="card-body">
+
+        <!-- Temperature selector -->
+        <p class="text-muted small mb-2 fw-semibold">Temperature</p>
+        <div class="d-grid gap-1 mb-3" id="temp-btns">
+          {% for T in [1100, 1200, 1300, 1375, 1450, 1600] %}
+          <button class="btn btn-outline-secondary btn-sm temp-btn {% if T == 1375 %}active{% endif %}"
+                  data-t="{{ T }}"
+                  {% if T >= 1300 and T <= 1450 %}data-sinter="1"{% endif %}>
+            {{ T }} K
+            <span class="text-muted fw-normal">({{ T - 273 }}°C)</span>
+            {% if T >= 1300 and T <= 1450 %}<span class="ms-1 badge bg-primary" style="font-size:.65rem;">sinter</span>{% endif %}
+          </button>
+          {% endfor %}
+        </div>
+
+        <hr class="my-3">
+
+        <!-- Plot type selector -->
+        <p class="text-muted small mb-2 fw-semibold">Plot type</p>
+        <div class="d-grid gap-1" id="type-btns">
+          <button class="btn btn-outline-secondary btn-sm type-btn active" data-type="ternary">
+            Ternary section
+          </button>
+          <button class="btn btn-outline-secondary btn-sm type-btn" data-type="FE17ND2">
+            FE17ND2 fraction
+          </button>
+          <button class="btn btn-outline-secondary btn-sm type-btn" id="liquid-btn" data-type="LIQUID">
+            LIQUID fraction
+          </button>
+        </div>
+
+        <div id="liquid-note" class="alert alert-secondary small py-2 mt-2" style="display:none;">
+          LIQUID heatmap only available at 1300 K and above.
+        </div>
+
+        <hr class="my-3">
+        <p class="text-muted small">
+          <strong>N=200</strong> grid · SGTE binary TDB ·
+          pycalphad 0.11
+        </p>
+        <p class="text-muted small mb-0">
+          Sintering range: <strong>1300–1450 K</strong><br>
+          Optimal: FE17ND2 + small LIQUID + no excess Fe₂B
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Image panel ────────────────────────────────────────────────────────── -->
+  <div class="col-md-8 col-lg-9">
+    <div class="card shadow-sm">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <span class="fw-semibold" id="plot-title">Ternary section — 1375 K (1102°C)</span>
+        <a id="download-link" href="#" download class="btn btn-outline-secondary btn-sm">⬇ PNG</a>
+      </div>
+      <div class="card-body p-0 text-center" style="background:#fff;">
+        <!-- Loading state -->
+        <div id="img-loading" style="display:none; padding:4rem 0;">
+          <div class="spinner-border text-secondary" role="status"></div>
+          <p class="text-muted small mt-2 mb-0">Loading…</p>
+        </div>
+        <!-- Error state -->
+        <div id="img-error" class="text-muted py-5" style="display:none;">
+          <div style="font-size:2.5rem;">⚠️</div>
+          <p class="mt-2" id="img-error-text">Image not available.</p>
+        </div>
+        <!-- The actual image -->
+        <img id="phase-img"
+             src="/images/FENDB_ternary_1375K_v3.png"
+             alt="Phase diagram"
+             class="img-fluid"
+             style="max-width:100%; display:block; margin:auto;">
+      </div>
+      <div class="card-footer text-muted small" id="plot-caption">
+        Isothermal section at 1375 K · N=200 Gibbs-triangle grid · pycalphad equilibrium
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// ── State ──────────────────────────────────────────────────────────────────
+let currentT    = 1375;
+let currentType = 'ternary';
+
+const LIQUID_MIN_T = 1300;   // LIQUID heatmaps only exist at 1300+ K
+
+// ── DOM refs ──────────────────────────────────────────────────────────────
+const img         = document.getElementById('phase-img');
+const imgLoading  = document.getElementById('img-loading');
+const imgError    = document.getElementById('img-error');
+const imgErrorTxt = document.getElementById('img-error-text');
+const plotTitle   = document.getElementById('plot-title');
+const plotCaption = document.getElementById('plot-caption');
+const dlLink      = document.getElementById('download-link');
+const liquidNote  = document.getElementById('liquid-note');
+const liquidBtn   = document.getElementById('liquid-btn');
+
+// ── Build filename ────────────────────────────────────────────────────────
+function filename(T, type) {
+  return `FENDB_${type}_${T}K_v3.png`;
+}
+
+// ── Human-readable labels ─────────────────────────────────────────────────
+const TYPE_LABEL = {
+  ternary:  'Ternary section',
+  FE17ND2:  'FE₁₇Nd₂ fraction',
+  LIQUID:   'LIQUID fraction',
+};
+
+function tempC(T) { return (T - 273.15).toFixed(0); }
+
+// ── Update display ────────────────────────────────────────────────────────
+function update() {
+  const fn   = filename(currentT, currentType);
+  const url  = `/images/${fn}`;
+  const lbl  = TYPE_LABEL[currentType] || currentType;
+
+  plotTitle.textContent   = `${lbl} — ${currentT} K (${tempC(currentT)} °C)`;
+  plotCaption.textContent = `Isothermal section at ${currentT} K · N=200 Gibbs-triangle grid · pycalphad equilibrium`;
+  dlLink.href             = url;
+  dlLink.download         = fn;
+
+  // Show loading, hide image and error
+  img.style.display        = 'none';
+  imgError.style.display   = 'none';
+  imgLoading.style.display = 'block';
+
+  // Preload
+  const probe = new Image();
+  probe.onload = () => {
+    imgLoading.style.display = 'none';
+    img.src = url;
+    img.style.display = 'block';
+  };
+  probe.onerror = () => {
+    imgLoading.style.display = 'none';
+    imgErrorTxt.textContent  = `File not found: ${fn}`;
+    imgError.style.display   = 'block';
+  };
+  probe.src = url;
+}
+
+// ── Temperature buttons ───────────────────────────────────────────────────
+document.querySelectorAll('.temp-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    currentT = parseInt(btn.dataset.t, 10);
+    document.querySelectorAll('.temp-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    // If LIQUID is selected but T < LIQUID_MIN_T → fall back to ternary
+    if (currentType === 'LIQUID' && currentT < LIQUID_MIN_T) {
+      currentType = 'ternary';
+      document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
+      document.querySelector('.type-btn[data-type="ternary"]').classList.add('active');
+    }
+
+    updateLiquidAvailability();
+    update();
+  });
+});
+
+// ── Plot type buttons ─────────────────────────────────────────────────────
+document.querySelectorAll('.type-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    if (btn.disabled) return;
+    currentType = btn.dataset.type;
+    document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    update();
+  });
+});
+
+// ── LIQUID availability ───────────────────────────────────────────────────
+function updateLiquidAvailability() {
+  const avail = currentT >= LIQUID_MIN_T;
+  liquidBtn.disabled = !avail;
+  liquidBtn.classList.toggle('opacity-50', !avail);
+  liquidNote.style.display = avail ? 'none' : 'block';
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────
+updateLiquidAvailability();
+update();
+</script>
+{% endblock %}
