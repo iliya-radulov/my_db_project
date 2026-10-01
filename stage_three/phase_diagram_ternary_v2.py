@@ -158,7 +158,7 @@ def _align_to_maxph(arr, npts, maxph):
 
 
 # ── Equilibrium over the whole grid ───────────────────────────────────────────
-def compute_equilibria(db, elements, phases, x1, x2, T, chunk=400):
+def compute_equilibria(db, elements, phases, x1, x2, T, chunk=1):
     """
     Returns a list of per-point dicts:
         'phases'  : tuple of phase names with NP > threshold
