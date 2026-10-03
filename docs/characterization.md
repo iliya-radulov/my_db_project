@@ -31,8 +31,20 @@ on a real pattern that clearly has many — a bug in the detection
 threshold/logic. Fixed to correctly find the expected order of magnitude
 (96-102 peaks on the real test samples).
 
-**Lattice parameter**: computed from N matched reflections (`a`, in Å,
-with a standard deviation across the matched peaks where available).
+**Lattice parameter** (quick visual check only -- the validated XRD
+analysis is the Stage 2 pipeline): peaks are indexed against Nd2Fe14B
+reflections calculated from the reference cell (a = 8.80 Å, c = 12.20 Å,
+P4_2/mnm), keeping only peaks with exactly one reflection within 0.3°,
+and `a` and `c` are fitted together by least squares on
+1/d² = (h²+k²)/a² + l²/c², with standard errors from the fit.
+
+**Correction (2026-10):** the first version used a hand-typed reflection
+table whose 2θ values were 20-40° too low, and computed `a = d·√(h²+k²)`,
+which ignores the l term. Peaks were therefore matched to the wrong
+reflections, and the values below (a ≈ 15.6 Å, against ≈ 8.8 Å for
+Nd2Fe14B) are artifacts of that bug, not real lattice parameters.
+`lattice_parameter_a` values stored before this fix should be
+recomputed or discarded.
 
 **A real integration bug**: `lattice_parameter_a` was originally inserted
 into Postgres via a query that let a Python `numpy.float64` value's
@@ -42,9 +54,11 @@ exist` (Postgres tried to parse `np.float64(15.62...)` as SQL, reading
 `np` as a schema name). Fixed by properly parameterizing the value
 (casting to a native Python `float` before binding). Real results after
 the fix, for reference: RP1a — 101 peaks, a = 15.627 Å; RP2a — 96 peaks,
-a = 15.630 Å; RP3a — 98 peaks, a = 15.744 Å.
+a = 15.630 Å; RP3a — 98 peaks, a = 15.744 Å (the `a` values are wrong,
+see the correction above; the database fix itself stands).
 
-**Stored properties**: `n_peaks`, `lattice_parameter_a` (Å), linked to an
+**Stored properties**: `n_peaks`, `lattice_parameter_a` and, when the
+matched peaks constrain it, `lattice_parameter_c` (Å), linked to an
 `'XRD'` characterization row per sample.
 
 ## VSM (`parse_vsm.py` → `_fixed` → `_fixed2` → `_clean`, `stage_one/integrations/vsm_integration_v1.py`)

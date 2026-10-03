@@ -18,8 +18,21 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 # ---------------------------------------------------------------------------
-# Element properties (unchanged from v2)
+# Element properties
 # ---------------------------------------------------------------------------
+# Complete ELEMENT_PROPERTIES - includes all elements with data
+# valence electrons, atomic radius (Å), electronegativity (Pauling),
+# melting point (melt_K) and boiling point (boil_K), both in Kelvin.
+# melt_K/boil_K source: Reade.com reference table, spot-checked against
+# known CRC/NIST values (Fe, Cu, W, Al, Zn, Mg all matched exactly).
+# None = no stable value at 1 atm (e.g. He does not solidify at 1 atm).
+# NOTE: As has an INVERTED melt/boil relationship (melt_K=1090 > boil_K=887)
+# -- this is real physics, not a data error: As sublimes directly at 1 atm
+# and only shows a true liquid phase under ~3.6 MPa pressure. At (astatine)
+# is also inverted in the source table, but At's properties are poorly
+# known (only ever produced in trace/synthetic quantities). Any synthesis-
+# route logic comparing melt/boil across elements must special-case these
+# two rather than assume boil_K > melt_K always holds.
 ELEMENT_PROPERTIES = {
     # Period 1
     'H': {'valence': 1, 'radius': 0.53, 'en': 2.20, 'melt_K': 14.01, 'boil_K': 20.28},
@@ -140,22 +153,29 @@ ELEMENT_PROPERTIES = {
 # Takeuchi & Inoue, Mater. Trans. JIM 41 (2000) 1372 / Mater. Trans. 46
 # (2005) 2817. Symmetric: (A,B) and (B,A) are the same value. The
 # regular-solution interaction parameter Ω = 4·ΔH is applied later.
+#
+# Every entry was cross-checked (2026-10) against matminer's machine-
+# readable transcription of the same Takeuchi & Inoue 2005 table
+# (matminer/utils/data_files/MiedemaLiquidDeltaHf.tsv). That check found
+# 16 wrong values in the previous version of this table (all C pairs set
+# to 0, B-Zr, Cu-Mn and Cu-V with flipped signs, Ag-Fe, Ag-La, Au-La,
+# Cr-P, La-Mn, Ga-Si), which are corrected here.
 # ---------------------------------------------------------------------------
 PAIRWISE_DELTA_H = {
-    ('Ag', 'Al'): -4,     ('Ag', 'La'): -38,
-    ('Ag', 'Cu'): 2,      ('Ag', 'Fe'): 13,   ('Ag', 'Mg'): -10,
+    ('Ag', 'Al'): -4,     ('Ag', 'La'): -30,
+    ('Ag', 'Cu'): 2,      ('Ag', 'Fe'): 28,   ('Ag', 'Mg'): -10,
     ('Al', 'B'): 0,       ('Al', 'Ca'): -20,  ('Al', 'Ce'): -38,
     ('Al', 'Co'): -19,    ('Al', 'Cr'): -10,  ('Al', 'Cu'): -1,
     ('Al', 'Fe'): -11,    ('Al', 'Ga'): 1,    ('Al', 'La'): -38,
     ('Al', 'Mg'): -2,     ('Al', 'Mn'): -19,  ('Al', 'Mo'): -5,
     ('Al', 'Nb'): -18,    ('Al', 'Ni'): -22,  ('Al', 'Si'): -19,
     ('Al', 'Zr'): -44,
-    ('Au', 'Cu'): -9,     ('Au', 'La'): -21,
+    ('Au', 'Cu'): -9,     ('Au', 'La'): -73,
     ('B', 'Co'): -24,     ('B', 'Cr'): -31,   ('B', 'Cu'): 0,
-    ('B', 'Fe'): -26,     ('B', 'Ni'): -24,   ('B', 'Zr'): -23,
-    ('C', 'Co'): 0,       ('C', 'Cr'): 0,     ('C', 'Fe'): 0,
-    ('C', 'Mo'): 0,       ('C', 'Ni'): 0,     ('C', 'Si'): 0,
-    ('C', 'W'): 0,
+    ('B', 'Fe'): -26,     ('B', 'Ni'): -24,   ('B', 'Zr'): -71,
+    ('C', 'Co'): -42,     ('C', 'Cr'): -61,   ('C', 'Fe'): -50,
+    ('C', 'Mo'): -67,     ('C', 'Ni'): -39,   ('C', 'Si'): -39,
+    ('C', 'W'): -60,
     ('Ca', 'Cu'): -13,    ('Ca', 'Mg'): -6,   ('Ca', 'Zn'): -22,
     ('Co', 'Cr'): -4,     ('Co', 'Fe'): -1,   ('Co', 'Hf'): -35,
     ('Co', 'Mn'): -5,     ('Co', 'Mo'): -5,   ('Co', 'Nb'): -25,
@@ -163,19 +183,19 @@ PAIRWISE_DELTA_H = {
     ('Co', 'Si'): -38,    ('Co', 'Ti'): -28,  ('Co', 'V'): -14,
     ('Co', 'W'): -1,      ('Co', 'Y'): -22,   ('Co', 'Zr'): -41,
     ('Cr', 'Fe'): -1,     ('Cr', 'Ge'): -18.5,('Cr', 'Mo'): 0,
-    ('Cr', 'Ni'): -7,     ('Cr', 'P'): -34.5, ('Cr', 'Pd'): -15,
+    ('Cr', 'Ni'): -7,     ('Cr', 'P'): -49.5, ('Cr', 'Pd'): -15,
     ('Cr', 'Si'): -37,    ('Cr', 'Zr'): -12,
     ('Cu', 'Fe'): 13,     ('Cu', 'Hf'): -17,  ('Cu', 'La'): -21,
-    ('Cu', 'Mg'): -3,     ('Cu', 'Mn'): -4,   ('Cu', 'Nb'): 3,      # low confidence
-    ('Cu', 'Ni'): 4,      ('Cu', 'P'): -17.5, ('Cu', 'Si'): -19,    # low confidence
-    ('Cu', 'Ti'): -9,     ('Cu', 'V'): -5,    ('Cu', 'Y'): -22,
+    ('Cu', 'Mg'): -3,     ('Cu', 'Mn'): 4,    ('Cu', 'Nb'): 3,
+    ('Cu', 'Ni'): 4,      ('Cu', 'P'): -17.5, ('Cu', 'Si'): -19,
+    ('Cu', 'Ti'): -9,     ('Cu', 'V'): 5,     ('Cu', 'Y'): -22,
     ('Cu', 'Zr'): -23,
     ('Fe', 'Ga'): -2,     ('Fe', 'Ge'): -15.5,('Fe', 'Hf'): -21,
     ('Fe', 'La'): 5,      ('Fe', 'Ni'): -2,   ('Fe', 'P'): -39.5,
     ('Fe', 'Si'): -35,    ('Fe', 'Zr'): -25,
     ('Ga', 'Mg'): -4,
     ('Hf', 'Ni'): -42,
-    ('La', 'Mn'): -38,    ('La', 'Ni'): -27,  ('La', 'Zn'): -31,
+    ('La', 'Mn'): 3,      ('La', 'Ni'): -27,  ('La', 'Zn'): -31,
     ('Mg', 'Ni'): -4,     ('Mg', 'Zn'): -4,
     ('Mn', 'Ni'): -8,     ('Mn', 'Si'): -45,  ('Mn', 'Zr'): -15,
     ('Mo', 'Ni'): -7,     ('Mo', 'Si'): -35,
@@ -186,17 +206,25 @@ PAIRWISE_DELTA_H = {
     ('Si', 'Ti'): -66,    ('Si', 'Zr'): -84,
     ('Ti', 'Zr'): 0,
     ('V', 'Zr'): -4,      ('W', 'Zr'): -9,
-    # --- Lanthanide pairs (LOW CONFIDENCE — not directly attested in the
-    #     Takeuchi 2005 extraction; values consistent with neighbouring
-    #     Ln members of the same series. Verify before relying on them.) ---
-    ('Fe', 'Nd'): 1,      # low confidence
-    ('Nd', 'Co'): -20,    # low confidence
-    ('Nd', 'B'): -49,     # low confidence
-    ('Nd', 'Al'): -38,    # consistent with Al-Ln series
-    ('Nd', 'Si'): -73,    # low confidence
-    ('La', 'Si'): -73,    # low confidence
-    ('Co', 'Al'): -19,    # duplicate of ('Al','Co') for readability; harmless
-    ('Ga', 'Si'): -6,     # low confidence — not attested in the extraction
+    # --- Lanthanide pairs (previously flagged low confidence; now confirmed
+    #     against the Takeuchi & Inoue 2005 table, see header note) ---
+    ('Fe', 'Nd'): 1,
+    ('Nd', 'Co'): -20,
+    ('Nd', 'B'): -49,
+    ('Nd', 'Al'): -38,
+    ('Nd', 'Si'): -73,
+    ('La', 'Si'): -73,
+    ('Ga', 'Si'): -17,
+    # --- Pairs added for the alloy families in active use (Mn-Fe-P-Si,
+    #     La-Fe-Co-Si, Nd-Fe-Ga, Cantor/HEA-type), same source ---
+    ('Fe', 'Mn'): 0,      ('Mn', 'P'): -57.5, ('P', 'Si'): -25.5,
+    ('Co', 'La'): -17,    ('Ga', 'Nd'): -40,  ('Co', 'Ga'): -11,
+    ('Ga', 'La'): -41,    ('Co', 'Cu'): 6,    ('Cr', 'Cu'): 12,
+    ('Cr', 'Mn'): 2,      ('Al', 'Ti'): -30,  ('Fe', 'Ti'): -17,
+    ('Cr', 'Ti'): -7,     ('Al', 'V'): -16,   ('Fe', 'V'): -7,
+    ('Cr', 'V'): -2,      ('Ni', 'V'): -18,   ('Fe', 'Nb'): -16,
+    ('Fe', 'Mo'): -2,     ('Cr', 'Nb'): -7,   ('Co', 'Ge'): -21.5,
+    ('Ge', 'Mn'): -31.5,
 }
 
 # ---------------------------------------------------------------------------
@@ -298,10 +326,47 @@ def calculate_mixing_enthalpy(composition_at_frac):
 
 
 # ---------------------------------------------------------------------------
-# Synthesis feasibility (unchanged from v2 apart from using _check_elements)
+# Synthesis feasibility
 # ---------------------------------------------------------------------------
 def check_synthesis_feasibility(composition_at_frac, hard_block_margin_K=125, caution_zone_K=300):
-    """Composition-only feasibility check for melt-based synthesis."""
+    """
+    Composition-only feasibility check for melt-based synthesis (arc/induction
+    melting), using ONLY melt_K/boil_K -- no crystal structure or DFT needed,
+    same input shape as calculate_vec/calculate_delta.
+
+    Physical logic (the hard-block rule IS physically grounded, not a
+    heuristic):
+      - Homogenizing a melt requires heating to at least the HIGHEST melting
+        point among constituents.
+      - boil_K is treated as "the temperature at which this element is lost
+        to vapor at 1 atm" -- true boiling point for most elements, but for
+        As (and similarly At) this is really a sublimation point, since
+        those elements have no stable liquid phase at 1 atm. Using boil_K
+        directly still gives the physically correct comparison either way.
+      - If the required melt temperature is at or above the most volatile
+        constituent's vapor-loss point (minus a safety margin), that
+        element WILL be lost before/as the alloy homogenizes in an open
+        melt -- this is a hard physical block, not a judgment call.
+
+    hard_block_margin_K: subtracted from the boiling point before the hard-
+    block comparison. Default 125 K is conservative in the safe direction --
+    vacuum/inert-atmosphere furnaces used in practice generally LOWER the
+    effective boiling point further, not raise it, so real risk starts
+    before the naive 1-atm boil_K value is reached.
+
+    caution_zone_K: width of the "genuinely uncertain" zone above the hard-
+    block threshold. This width is a practical, ADJUSTABLE heuristic (unlike
+    the hard-block rule itself) -- a strongly negative Delta_H_mix can
+    suppress a volatile element's effective vapor pressure once alloyed,
+    which this composition-only check cannot quantify. Cases in this zone
+    are deliberately flagged rather than given a false-confidence route
+    suggestion; see calculate_mixing_enthalpy for the complementary check
+    worth consulting manually.
+
+    Returns a dict with 'status' in {'ok', 'caution', 'blocked', 'unknown'},
+    the limiting elements/temperatures, a human-readable message, and
+    suggested_routes.
+    """
     _check_elements(composition_at_frac)
 
     elements = list(composition_at_frac.keys())
@@ -391,17 +456,23 @@ def interpret_screening(results):
     print("\n📊 Screening Interpretation:")
     print("-" * 40)
 
-    if vec > 8:
-        print(f"VEC = {vec:.2f} → Likely FCC or BCC solid solution")
-    elif vec > 6:
-        print(f"VEC = {vec:.2f} → Likely BCC solid solution")
+    # VEC thresholds from Guo et al., J. Appl. Phys. 109 (2011) 103505:
+    # VEC >= 8.0 -> FCC, VEC < 6.87 -> BCC, in between -> FCC + BCC.
+    # These apply to alloys that do form a solid solution.
+    if vec >= 8.0:
+        print(f"VEC = {vec:.2f} → FCC favoured (if a solid solution forms)")
+    elif vec >= 6.87:
+        print(f"VEC = {vec:.2f} → Mixed FCC + BCC (if a solid solution forms)")
     else:
-        print(f"VEC = {vec:.2f} → Likely intermetallic or complex phases")
+        print(f"VEC = {vec:.2f} → BCC favoured (if a solid solution forms)")
 
-    if delta < 5:
-        print(f"δ = {delta:.3f} → Small atomic mismatch: solid solution likely")
+    # calculate_delta() returns a fraction; the Yang & Zhang (2012)
+    # solid-solution criterion is delta <= 6.6 %.
+    delta_pct = delta * 100
+    if delta_pct <= 6.6:
+        print(f"δ = {delta_pct:.2f} % → Small atomic mismatch: solid solution likely")
     else:
-        print(f"δ = {delta:.3f} → Large atomic mismatch: intermetallic likely")
+        print(f"δ = {delta_pct:.2f} % → Large atomic mismatch: intermetallic likely")
 
     # Thresholds here follow Takeuchi-Inoue convention, where the
     # regular-solution form is used (Ω = 4·ΔH).
@@ -447,6 +518,11 @@ def _self_test():
         ('Cr', 'Si'): -37,
         ('Ni', 'Al'): -22,
         ('La', 'Fe'): 5,
+        ('Fe', 'C'): -50,
+        ('Zr', 'B'): -71,
+        ('Cu', 'Mn'): 4,
+        ('Cu', 'V'): 5,
+        ('Fe', 'Nd'): 1,
     }
     failures = []
     for (a, b), expected in anchors.items():
@@ -494,7 +570,7 @@ if __name__ == "__main__":
         print(f"⚠️  Screening aborted: {e}")
 
     print("\n" + "=" * 50)
-    print("Testing a composition with a missing pair (Fe-Nd-Co-B):")
+    print("Testing a composition with all pairs present (Fe-Nd-Co-B):")
     # Fe-Nd, Fe-Co, Nd-Co are present; Fe-B present; Nd-B present;
     # Co-B present. This should succeed.
     test_with_b = {'Fe': 0.60, 'Nd': 0.20, 'Co': 0.10, 'B': 0.10}
@@ -505,9 +581,9 @@ if __name__ == "__main__":
         print(f"⚠️  Pair missing (unexpected here): {e}")
 
     print("\n" + "=" * 50)
-    print("Testing a composition with a known-missing pair (Fe-Nd-Ga):")
-    # Fe-Nd present, Fe-Ga present, Nd-Ga NOT present → should raise.
-    test_missing_pair = {'Fe': 0.60, 'Nd': 0.30, 'Ga': 0.10}
+    print("Testing a composition with a known-missing pair (Fe-Nd-Ti):")
+    # Fe-Nd present, Fe-Ti present, Nd-Ti NOT present → should raise.
+    test_missing_pair = {'Fe': 0.60, 'Nd': 0.30, 'Ti': 0.10}
     try:
         results = screen_composition(test_missing_pair)
         print(f"  ΔH_mix = {results['Delta_H_mix']:.2f} kJ/mol (unexpected — pair was found)")
