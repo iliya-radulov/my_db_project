@@ -900,10 +900,10 @@ class AlloyLabApp(ctk.CTk):
                     elements.append(ElementComponent(symbol=symbol, at_pct=at_pct, excess_pct=excess))
                 result = calculate_masses(total_mass_g=mass, elements=elements)
             
-            from stage_two.alloy.alloy_screening_v2 import IncompleteElementDataError
+            from stage_two.alloy.alloy_screening_v2 import IncompleteElementDataError, IncompletePairDataError
             try:
                 screening = screen_composition(comp_frac)
-            except IncompleteElementDataError as e:
+            except (IncompleteElementDataError, IncompletePairDataError) as e:
                 screening = None
                 screening_warning = str(e)
             else:
@@ -1116,10 +1116,10 @@ class AlloyLabApp(ctk.CTk):
                     elements.append(ElementComponent(symbol=symbol, at_pct=at_pct, excess_pct=excess))
                 result = calculate_masses(total_mass_g=mass, elements=elements)
             
-            from stage_two.alloy.alloy_screening_v2 import IncompleteElementDataError
+            from stage_two.alloy.alloy_screening_v2 import IncompleteElementDataError, IncompletePairDataError
             try:
                 screening = screen_composition(comp_frac)
-            except IncompleteElementDataError as e:
+            except (IncompleteElementDataError, IncompletePairDataError) as e:
                 screening = None
                 print(f"Screening skipped: {e}")
             

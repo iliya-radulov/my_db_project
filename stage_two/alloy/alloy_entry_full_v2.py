@@ -15,7 +15,7 @@ from datetime import datetime
 
 from stage_two.alloy.alloy_calculator_v2 import parse_composition_with_unit, calculate_masses, ElementComponent
 from stage_two.alloy.alloy_db_v2 import get_db
-from stage_two.alloy.alloy_screening_v2 import screen_composition, interpret_screening, IncompleteElementDataError
+from stage_two.alloy.alloy_screening_v2 import screen_composition, interpret_screening, IncompleteElementDataError, IncompletePairDataError
 from stage_two.lookup.mp_lookup_v2 import lookup as mp_lookup, print_report as mp_print_report
 from stage_two.lookup.oqmd_lookup_v2 import lookup as oqmd_lookup, print_report as oqmd_print_report
 from stage_two.lookup.lookup_common_v2 import from_mp_results, from_oqmd_results, dedup_by_formula
@@ -55,7 +55,7 @@ def interactive_add_alloy_full():
     try:
         screening_results = screen_composition(comp_frac)
         interpret_screening(screening_results)
-    except IncompleteElementDataError as e:
+    except (IncompleteElementDataError, IncompletePairDataError) as e:
         print(f"   ⚠️  Skipping screening: {e}")
         screening_results = None
     
