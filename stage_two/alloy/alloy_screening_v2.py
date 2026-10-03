@@ -18,8 +18,21 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 # ---------------------------------------------------------------------------
-# Element properties (unchanged from v2)
+# Element properties
 # ---------------------------------------------------------------------------
+# Complete ELEMENT_PROPERTIES - includes all elements with data
+# valence electrons, atomic radius (Å), electronegativity (Pauling),
+# melting point (melt_K) and boiling point (boil_K), both in Kelvin.
+# melt_K/boil_K source: Reade.com reference table, spot-checked against
+# known CRC/NIST values (Fe, Cu, W, Al, Zn, Mg all matched exactly).
+# None = no stable value at 1 atm (e.g. He does not solidify at 1 atm).
+# NOTE: As has an INVERTED melt/boil relationship (melt_K=1090 > boil_K=887)
+# -- this is real physics, not a data error: As sublimes directly at 1 atm
+# and only shows a true liquid phase under ~3.6 MPa pressure. At (astatine)
+# is also inverted in the source table, but At's properties are poorly
+# known (only ever produced in trace/synthetic quantities). Any synthesis-
+# route logic comparing melt/boil across elements must special-case these
+# two rather than assume boil_K > melt_K always holds.
 ELEMENT_PROPERTIES = {
     # Period 1
     'H': {'valence': 1, 'radius': 0.53, 'en': 2.20, 'melt_K': 14.01, 'boil_K': 20.28},
@@ -313,10 +326,47 @@ def calculate_mixing_enthalpy(composition_at_frac):
 
 
 # ---------------------------------------------------------------------------
-# Synthesis feasibility (unchanged from v2 apart from using _check_elements)
+# Synthesis feasibility
 # ---------------------------------------------------------------------------
 def check_synthesis_feasibility(composition_at_frac, hard_block_margin_K=125, caution_zone_K=300):
-    """Composition-only feasibility check for melt-based synthesis."""
+    """
+    Composition-only feasibility check for melt-based synthesis (arc/induction
+    melting), using ONLY melt_K/boil_K -- no crystal structure or DFT needed,
+    same input shape as calculate_vec/calculate_delta.
+
+    Physical logic (the hard-block rule IS physically grounded, not a
+    heuristic):
+      - Homogenizing a melt requires heating to at least the HIGHEST melting
+        point among constituents.
+      - boil_K is treated as "the temperature at which this element is lost
+        to vapor at 1 atm" -- true boiling point for most elements, but for
+        As (and similarly At) this is really a sublimation point, since
+        those elements have no stable liquid phase at 1 atm. Using boil_K
+        directly still gives the physically correct comparison either way.
+      - If the required melt temperature is at or above the most volatile
+        constituent's vapor-loss point (minus a safety margin), that
+        element WILL be lost before/as the alloy homogenizes in an open
+        melt -- this is a hard physical block, not a judgment call.
+
+    hard_block_margin_K: subtracted from the boiling point before the hard-
+    block comparison. Default 125 K is conservative in the safe direction --
+    vacuum/inert-atmosphere furnaces used in practice generally LOWER the
+    effective boiling point further, not raise it, so real risk starts
+    before the naive 1-atm boil_K value is reached.
+
+    caution_zone_K: width of the "genuinely uncertain" zone above the hard-
+    block threshold. This width is a practical, ADJUSTABLE heuristic (unlike
+    the hard-block rule itself) -- a strongly negative Delta_H_mix can
+    suppress a volatile element's effective vapor pressure once alloyed,
+    which this composition-only check cannot quantify. Cases in this zone
+    are deliberately flagged rather than given a false-confidence route
+    suggestion; see calculate_mixing_enthalpy for the complementary check
+    worth consulting manually.
+
+    Returns a dict with 'status' in {'ok', 'caution', 'blocked', 'unknown'},
+    the limiting elements/temperatures, a human-readable message, and
+    suggested_routes.
+    """
     _check_elements(composition_at_frac)
 
     elements = list(composition_at_frac.keys())

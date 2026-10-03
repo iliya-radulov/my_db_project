@@ -185,7 +185,7 @@ class AlloyLabApp(ctk.CTk):
         ).grid(row=0, column=0, columnspan=4, padx=10, pady=(8, 4), sticky="w")
 
         ctk.CTkLabel(prealloy_box, text="Pre-alloy formula:", font=ctk.CTkFont(size=13)).grid(row=1, column=0, padx=10, pady=6, sticky="w")
-        self.prealloy_formula_entry = ctk.CTkEntry(prealloy_box, width=140, placeholder_text="e.g., Fe2P")
+        self.prealloy_formula_entry = ctk.CTkEntry(prealloy_box, width=140, placeholder_text="e.g., Fe2P1")
         self.prealloy_formula_entry.grid(row=1, column=1, padx=5, pady=6, sticky="w")
 
         ctk.CTkLabel(prealloy_box, text="Pre-alloy mass (g):", font=ctk.CTkFont(size=13)).grid(row=1, column=2, padx=10, pady=6, sticky="w")

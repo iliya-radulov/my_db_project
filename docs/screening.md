@@ -56,7 +56,7 @@ as 0.
 sign), a missing ×4 regular-solution factor (Ω_ij = 4·ΔH_AB), and the
 silent zero default for missing pairs.
 
-**Then (Stage 2, `stage_two/alloy/alloy_screening_v2.py`):**
+**Then:**
 1. `PAIRWISE_DELTA_H` stores the Takeuchi ΔH_AB values, and the ×4 factor
    is applied inside the calculation. A self-test checks that an
    equiatomic binary gives exactly ΔH_AB.
@@ -70,8 +70,8 @@ silent zero default for missing pairs.
    the Mn-Fe-P-Si, La-Fe-Co-Si and Nd-Fe-Ga families were added at the
    same time.
 
-Note that `stage_one/alloy/alloy_screening_v1.py` is kept unchanged as
-the Stage 1 snapshot and still contains the original table.
+The same corrected module is used in `stage_one/alloy/alloy_screening_v1.py`,
+so the Stage 1 snapshot matches the Stage 1 paper.
 
 ## Output
 

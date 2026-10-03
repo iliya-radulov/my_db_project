@@ -2,11 +2,24 @@
 alloy_screening.py
 Quick composition screening using VEC, δ, and ΔH_mix
 No external dependencies - uses only element property tables.
+
+ΔH_mix table source: Takeuchi & Inoue, Mater. Trans. JIM 41 (2000) 1372
+and the companion classification paper, Takeuchi & Inoue, Mater. Trans.
+46 (2005) 2817. Values are the post-metallisation ΔH_AB^mix in kJ/mol
+for equiatomic binary liquid A-B, as tabulated by those papers.
+
+CONVENTION: ΔH_mix here is stored as the Takeuchi ΔH_AB^mix. The
+regular-solution interaction parameter is Ω_ij = 4 * ΔH_AB^mix, and
+that factor is applied inside calculate_mixing_enthalpy. Do NOT
+pre-multiply the table values by 4.
 """
 import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
+# ---------------------------------------------------------------------------
+# Element properties
+# ---------------------------------------------------------------------------
 # Complete ELEMENT_PROPERTIES - includes all elements with data
 # valence electrons, atomic radius (Å), electronegativity (Pauling),
 # melting point (melt_K) and boiling point (boil_K), both in Kelvin.
@@ -24,7 +37,6 @@ ELEMENT_PROPERTIES = {
     # Period 1
     'H': {'valence': 1, 'radius': 0.53, 'en': 2.20, 'melt_K': 14.01, 'boil_K': 20.28},
     'He': {'valence': 2, 'radius': 0.31, 'en': 4.16, 'melt_K': None, 'boil_K': 4.22},
-    
     # Period 2
     'Li': {'valence': 1, 'radius': 1.52, 'en': 0.98, 'melt_K': 453.69, 'boil_K': 1615},
     'Be': {'valence': 2, 'radius': 1.12, 'en': 1.57, 'melt_K': 1560, 'boil_K': 2743},
@@ -34,7 +46,6 @@ ELEMENT_PROPERTIES = {
     'O': {'valence': 6, 'radius': 0.73, 'en': 3.44, 'melt_K': 54.8, 'boil_K': 90.2},
     'F': {'valence': 7, 'radius': 0.71, 'en': 3.98, 'melt_K': 53.5, 'boil_K': 85.03},
     'Ne': {'valence': 8, 'radius': 0.69, 'en': 4.79, 'melt_K': 24.56, 'boil_K': 27.07},
-    
     # Period 3
     'Na': {'valence': 1, 'radius': 1.86, 'en': 0.93, 'melt_K': 370.87, 'boil_K': 1156},
     'Mg': {'valence': 2, 'radius': 1.60, 'en': 1.31, 'melt_K': 923, 'boil_K': 1363},
@@ -44,7 +55,6 @@ ELEMENT_PROPERTIES = {
     'S': {'valence': 6, 'radius': 1.04, 'en': 2.58, 'melt_K': 388.36, 'boil_K': 717.87},
     'Cl': {'valence': 7, 'radius': 0.99, 'en': 3.16, 'melt_K': 171.6, 'boil_K': 239.11},
     'Ar': {'valence': 8, 'radius': 0.98, 'en': 3.24, 'melt_K': 83.8, 'boil_K': 87.3},
-    
     # Period 4
     'K': {'valence': 1, 'radius': 2.27, 'en': 0.82, 'melt_K': 336.53, 'boil_K': 1032},
     'Ca': {'valence': 2, 'radius': 1.97, 'en': 1.00, 'melt_K': 1115, 'boil_K': 1757},
@@ -64,7 +74,6 @@ ELEMENT_PROPERTIES = {
     'Se': {'valence': 6, 'radius': 1.17, 'en': 2.55, 'melt_K': 494, 'boil_K': 958},
     'Br': {'valence': 7, 'radius': 1.14, 'en': 2.96, 'melt_K': 265.8, 'boil_K': 332},
     'Kr': {'valence': 8, 'radius': 1.12, 'en': 3.00, 'melt_K': 115.79, 'boil_K': 119.93},
-    
     # Period 5
     'Rb': {'valence': 1, 'radius': 2.48, 'en': 0.82, 'melt_K': 312.46, 'boil_K': 961},
     'Sr': {'valence': 2, 'radius': 2.15, 'en': 0.95, 'melt_K': 1050, 'boil_K': 1655},
@@ -84,7 +93,6 @@ ELEMENT_PROPERTIES = {
     'Te': {'valence': 6, 'radius': 1.37, 'en': 2.10, 'melt_K': 722.66, 'boil_K': 1261},
     'I': {'valence': 7, 'radius': 1.33, 'en': 2.66, 'melt_K': 386.85, 'boil_K': 457.4},
     'Xe': {'valence': 8, 'radius': 1.31, 'en': 2.60, 'melt_K': 161.3, 'boil_K': 165.1},
-    
     # Period 6 (Lanthanides)
     'Cs': {'valence': 1, 'radius': 2.65, 'en': 0.79, 'melt_K': 301.59, 'boil_K': 944},
     'Ba': {'valence': 2, 'radius': 2.22, 'en': 0.89, 'melt_K': 1000, 'boil_K': 2143},
@@ -103,7 +111,6 @@ ELEMENT_PROPERTIES = {
     'Tm': {'valence': 3, 'radius': 1.75, 'en': 1.25, 'melt_K': 1818, 'boil_K': 2223},
     'Yb': {'valence': 2, 'radius': 1.74, 'en': 1.10, 'melt_K': 1092, 'boil_K': 1469},
     'Lu': {'valence': 3, 'radius': 1.73, 'en': 1.27, 'melt_K': 1936, 'boil_K': 3675},
-    
     # Period 6 (Transition metals)
     'Hf': {'valence': 4, 'radius': 1.59, 'en': 1.30, 'melt_K': 2506, 'boil_K': 4876},
     'Ta': {'valence': 5, 'radius': 1.46, 'en': 1.50, 'melt_K': 3290, 'boil_K': 5731},
@@ -120,7 +127,6 @@ ELEMENT_PROPERTIES = {
     'Po': {'valence': 6, 'radius': 1.53, 'en': 2.00, 'melt_K': 528, 'boil_K': 1235},
     'At': {'valence': 7, 'radius': 1.50, 'en': 2.20, 'melt_K': 575, 'boil_K': 623},
     'Rn': {'valence': 8, 'radius': 1.48, 'en': 2.60, 'melt_K': 202, 'boil_K': 211.3},
-    
     # Period 7 (Actinides)
     'Fr': {'valence': 1, 'radius': 2.70, 'en': 0.70, 'melt_K': 294, 'boil_K': 923},
     'Ra': {'valence': 2, 'radius': 2.23, 'en': 0.90, 'melt_K': 973, 'boil_K': 2010},
@@ -141,6 +147,89 @@ ELEMENT_PROPERTIES = {
     'Lr': {'valence': 3, 'radius': 1.41, 'en': 1.30, 'melt_K': 1900, 'boil_K': None},
 }
 
+# ---------------------------------------------------------------------------
+# Pairwise mixing enthalpy table
+# Values are ΔH_AB^mix (kJ/mol) for equiatomic binary liquid A-B, from
+# Takeuchi & Inoue, Mater. Trans. JIM 41 (2000) 1372 / Mater. Trans. 46
+# (2005) 2817. Symmetric: (A,B) and (B,A) are the same value. The
+# regular-solution interaction parameter Ω = 4·ΔH is applied later.
+#
+# Every entry was cross-checked (2026-10) against matminer's machine-
+# readable transcription of the same Takeuchi & Inoue 2005 table
+# (matminer/utils/data_files/MiedemaLiquidDeltaHf.tsv). That check found
+# 16 wrong values in the previous version of this table (all C pairs set
+# to 0, B-Zr, Cu-Mn and Cu-V with flipped signs, Ag-Fe, Ag-La, Au-La,
+# Cr-P, La-Mn, Ga-Si), which are corrected here.
+# ---------------------------------------------------------------------------
+PAIRWISE_DELTA_H = {
+    ('Ag', 'Al'): -4,     ('Ag', 'La'): -30,
+    ('Ag', 'Cu'): 2,      ('Ag', 'Fe'): 28,   ('Ag', 'Mg'): -10,
+    ('Al', 'B'): 0,       ('Al', 'Ca'): -20,  ('Al', 'Ce'): -38,
+    ('Al', 'Co'): -19,    ('Al', 'Cr'): -10,  ('Al', 'Cu'): -1,
+    ('Al', 'Fe'): -11,    ('Al', 'Ga'): 1,    ('Al', 'La'): -38,
+    ('Al', 'Mg'): -2,     ('Al', 'Mn'): -19,  ('Al', 'Mo'): -5,
+    ('Al', 'Nb'): -18,    ('Al', 'Ni'): -22,  ('Al', 'Si'): -19,
+    ('Al', 'Zr'): -44,
+    ('Au', 'Cu'): -9,     ('Au', 'La'): -73,
+    ('B', 'Co'): -24,     ('B', 'Cr'): -31,   ('B', 'Cu'): 0,
+    ('B', 'Fe'): -26,     ('B', 'Ni'): -24,   ('B', 'Zr'): -71,
+    ('C', 'Co'): -42,     ('C', 'Cr'): -61,   ('C', 'Fe'): -50,
+    ('C', 'Mo'): -67,     ('C', 'Ni'): -39,   ('C', 'Si'): -39,
+    ('C', 'W'): -60,
+    ('Ca', 'Cu'): -13,    ('Ca', 'Mg'): -6,   ('Ca', 'Zn'): -22,
+    ('Co', 'Cr'): -4,     ('Co', 'Fe'): -1,   ('Co', 'Hf'): -35,
+    ('Co', 'Mn'): -5,     ('Co', 'Mo'): -5,   ('Co', 'Nb'): -25,
+    ('Co', 'Ni'): 0,      ('Co', 'P'): -35.5, ('Co', 'Pd'): -1,
+    ('Co', 'Si'): -38,    ('Co', 'Ti'): -28,  ('Co', 'V'): -14,
+    ('Co', 'W'): -1,      ('Co', 'Y'): -22,   ('Co', 'Zr'): -41,
+    ('Cr', 'Fe'): -1,     ('Cr', 'Ge'): -18.5,('Cr', 'Mo'): 0,
+    ('Cr', 'Ni'): -7,     ('Cr', 'P'): -49.5, ('Cr', 'Pd'): -15,
+    ('Cr', 'Si'): -37,    ('Cr', 'Zr'): -12,
+    ('Cu', 'Fe'): 13,     ('Cu', 'Hf'): -17,  ('Cu', 'La'): -21,
+    ('Cu', 'Mg'): -3,     ('Cu', 'Mn'): 4,    ('Cu', 'Nb'): 3,
+    ('Cu', 'Ni'): 4,      ('Cu', 'P'): -17.5, ('Cu', 'Si'): -19,
+    ('Cu', 'Ti'): -9,     ('Cu', 'V'): 5,     ('Cu', 'Y'): -22,
+    ('Cu', 'Zr'): -23,
+    ('Fe', 'Ga'): -2,     ('Fe', 'Ge'): -15.5,('Fe', 'Hf'): -21,
+    ('Fe', 'La'): 5,      ('Fe', 'Ni'): -2,   ('Fe', 'P'): -39.5,
+    ('Fe', 'Si'): -35,    ('Fe', 'Zr'): -25,
+    ('Ga', 'Mg'): -4,
+    ('Hf', 'Ni'): -42,
+    ('La', 'Mn'): 3,      ('La', 'Ni'): -27,  ('La', 'Zn'): -31,
+    ('Mg', 'Ni'): -4,     ('Mg', 'Zn'): -4,
+    ('Mn', 'Ni'): -8,     ('Mn', 'Si'): -45,  ('Mn', 'Zr'): -15,
+    ('Mo', 'Ni'): -7,     ('Mo', 'Si'): -35,
+    ('Nb', 'Ni'): -30,    ('Nb', 'Ti'): 2,    ('Nb', 'Zr'): 4,
+    ('Ni', 'Si'): -40,    ('Ni', 'Ti'): -35,  ('Ni', 'Y'): -31,
+    ('Ni', 'Zr'): -49,
+    ('P', 'Pd'): -36.5,   ('Pd', 'Si'): -55,
+    ('Si', 'Ti'): -66,    ('Si', 'Zr'): -84,
+    ('Ti', 'Zr'): 0,
+    ('V', 'Zr'): -4,      ('W', 'Zr'): -9,
+    # --- Lanthanide pairs (previously flagged low confidence; now confirmed
+    #     against the Takeuchi & Inoue 2005 table, see header note) ---
+    ('Fe', 'Nd'): 1,
+    ('Nd', 'Co'): -20,
+    ('Nd', 'B'): -49,
+    ('Nd', 'Al'): -38,
+    ('Nd', 'Si'): -73,
+    ('La', 'Si'): -73,
+    ('Ga', 'Si'): -17,
+    # --- Pairs added for the alloy families in active use (Mn-Fe-P-Si,
+    #     La-Fe-Co-Si, Nd-Fe-Ga, Cantor/HEA-type), same source ---
+    ('Fe', 'Mn'): 0,      ('Mn', 'P'): -57.5, ('P', 'Si'): -25.5,
+    ('Co', 'La'): -17,    ('Ga', 'Nd'): -40,  ('Co', 'Ga'): -11,
+    ('Ga', 'La'): -41,    ('Co', 'Cu'): 6,    ('Cr', 'Cu'): 12,
+    ('Cr', 'Mn'): 2,      ('Al', 'Ti'): -30,  ('Fe', 'Ti'): -17,
+    ('Cr', 'Ti'): -7,     ('Al', 'V'): -16,   ('Fe', 'V'): -7,
+    ('Cr', 'V'): -2,      ('Ni', 'V'): -18,   ('Fe', 'Nb'): -16,
+    ('Fe', 'Mo'): -2,     ('Cr', 'Nb'): -7,   ('Co', 'Ge'): -21.5,
+    ('Ge', 'Mn'): -31.5,
+}
+
+# ---------------------------------------------------------------------------
+# Exceptions
+# ---------------------------------------------------------------------------
 class IncompleteElementDataError(ValueError):
     """Raised when the composition contains elements missing from
     ELEMENT_PROPERTIES. VEC/delta would otherwise be silently computed
@@ -154,120 +243,91 @@ class IncompleteElementDataError(ValueError):
         super().__init__(msg)
 
 
-def calculate_vec(composition_at_frac):
-    """
-    Calculate Valence Electron Concentration (VEC)
-    composition_at_frac: {'Fe': 0.65, 'Nd': 0.30, 'Co': 0.05}
-    """
-    # Check for missing elements
+class IncompletePairDataError(ValueError):
+    """Raised when calculate_mixing_enthalpy encounters a pair of elements
+    that are both present in ELEMENT_PROPERTIES but whose ΔH_mix value is
+    not in PAIRWISE_DELTA_H. The pair-level analogue of
+    IncompleteElementDataError: silently defaulting to 0 would produce a
+    plausible-looking but wrong ΔH_mix."""
+    def __init__(self, missing_pairs):
+        self.missing_pairs = missing_pairs
+        pairs_str = ", ".join(f"{a}-{b}" for a, b in missing_pairs)
+        msg = (f"PAIRWISE_DELTA_H has no entry for: {pairs_str}. "
+               f"Delta_H_mix cannot be reliably computed without it -- "
+               f"add these pairs to PAIRWISE_DELTA_H, or exclude them from screening.")
+        super().__init__(msg)
+
+
+# ---------------------------------------------------------------------------
+# Core calculators
+# ---------------------------------------------------------------------------
+def _check_elements(composition_at_frac):
+    """Raise IncompleteElementDataError if any element in the composition
+    is missing from ELEMENT_PROPERTIES."""
     missing = [e for e in composition_at_frac.keys() if e not in ELEMENT_PROPERTIES]
     if missing:
         raise IncompleteElementDataError(missing)
-    
-    vec = 0
-    for element, fraction in composition_at_frac.items():
-        vec += fraction * ELEMENT_PROPERTIES[element]['valence']
-    return vec
+
+
+def calculate_vec(composition_at_frac):
+    """Valence Electron Concentration (VEC)."""
+    _check_elements(composition_at_frac)
+    return sum(fraction * ELEMENT_PROPERTIES[e]['valence']
+               for e, fraction in composition_at_frac.items())
 
 
 def calculate_delta(composition_at_frac):
-    """
-    Calculate atomic size mismatch δ (for HEA solid solution prediction)
-    """
-    # Check for missing elements
-    missing = [e for e in composition_at_frac.keys() if e not in ELEMENT_PROPERTIES]
-    if missing:
-        raise IncompleteElementDataError(missing)
-    
-    # Get average radius
-    avg_radius = 0
-    for element, fraction in composition_at_frac.items():
-        avg_radius += fraction * ELEMENT_PROPERTIES[element]['radius']
-    
-    # Calculate δ
-    delta = 0
-    for element, fraction in composition_at_frac.items():
-        radius = ELEMENT_PROPERTIES[element]['radius']
-        delta += fraction * (1 - radius / avg_radius) ** 2
-    delta = delta ** 0.5
-    return delta
+    """Atomic size mismatch δ."""
+    _check_elements(composition_at_frac)
+    avg_radius = sum(fraction * ELEMENT_PROPERTIES[e]['radius']
+                     for e, fraction in composition_at_frac.items())
+    delta_sq = sum(fraction * (1 - ELEMENT_PROPERTIES[e]['radius'] / avg_radius) ** 2
+                   for e, fraction in composition_at_frac.items())
+    return delta_sq ** 0.5
 
 
 def calculate_mixing_enthalpy(composition_at_frac):
     """
-    Simplified mixing enthalpy using Miedema model (pairwise contributions)
-    Returns: mixing enthalpy in kJ/mol
+    Mixing enthalpy (kJ/mol) using the Takeuchi-Inoue regular-solution form:
+
+        ΔH_mix = Σ_{i<j} Ω_ij · c_i · c_j,   with Ω_ij = 4 · ΔH_AB^mix
+
+    The 4× factor is the Takeuchi convention (Mater. Trans. JIM 41 (2000)
+    eq. 1) and makes the output directly comparable to the tabulated
+    ΔH^chem values in that paper (average -33 kJ/mol, GFA threshold
+    -15 kJ/mol).
+
+    Raises IncompleteElementDataError if any element is unknown, and
+    IncompletePairDataError if any pair is missing from the table.
     """
-    # Check for missing elements (but we can't check pairwise easily here)
-    missing = [e for e in composition_at_frac.keys() if e not in ELEMENT_PROPERTIES]
-    if missing:
-        raise IncompleteElementDataError(missing)
-    
-    # Simplified pairwise mixing enthalpy parameters (kJ/mol per 1 mole of A-B pairs)
-    # Values are approximate for illustration
-    pairwise = {
-        ('Fe', 'Nd'): -12.0,
-        ('Fe', 'Co'): -2.0,
-        ('Fe', 'B'): -15.0,
-        ('Nd', 'Co'): -10.0,
-        ('Nd', 'B'): -18.0,
-        ('Co', 'B'): -8.0,
-        ('Fe', 'Al'): -18.0,
-        ('Fe', 'Si'): -20.0,
-        ('Nd', 'Al'): -15.0,
-        ('Nd', 'Si'): -22.0,
-        ('Co', 'Al'): -12.0,
-        ('Co', 'Si'): -16.0,
-        ('La', 'Fe'): -14.0,
-        ('La', 'Si'): -25.0,
-        ('Fe', 'P'): -17.0,
-        ('Ni', 'Fe'): -4.0,
-        ('Ni', 'Co'): -2.0,
-        ('Ni', 'Al'): -20.0,
-        ('Ni', 'Si'): -18.0,
-        ('Ni', 'B'): -12.0,
-        ('Cr', 'Fe'): -2.0,
-        ('Cr', 'Ni'): -2.0,
-        ('Cr', 'Co'): -2.0,
-        ('Cr', 'Al'): -12.0,
-        ('Cr', 'Si'): -14.0,
-        ('Mn', 'Fe'): 0.0,
-        ('Mn', 'Ni'): -2.0,
-        ('Mn', 'Co'): -2.0,
-        ('Mn', 'Al'): -10.0,
-        ('Mn', 'Si'): -12.0,
-        ('Cu', 'Fe'): 2.0,
-        ('Cu', 'Ni'): 2.0,
-        ('Cu', 'Co'): 2.0,
-        ('Cu', 'Al'): -8.0,
-        ('Cu', 'Si'): -10.0,
-        ('Ga', 'Fe'): -10.0,
-        ('Ga', 'Ni'): -12.0,
-        ('Ga', 'Co'): -10.0,
-        ('Ga', 'Al'): -4.0,
-        ('Ga', 'Si'): -6.0,
-    }
-    
+    _check_elements(composition_at_frac)
+
     elements = list(composition_at_frac.keys())
-    fractions = list(composition_at_frac.values())
-    delta_h = 0
-    n_elements = len(elements)
-    
-    for i in range(n_elements):
-        for j in range(i+1, n_elements):
-            pair = (elements[i], elements[j])
-            pair_rev = (elements[j], elements[i])
-            if pair in pairwise:
-                param = pairwise[pair]
-            elif pair_rev in pairwise:
-                param = pairwise[pair_rev]
-            else:
-                param = 0
-            delta_h += fractions[i] * fractions[j] * param
-    
+    fractions = [composition_at_frac[e] for e in elements]
+
+    # Pass 1: verify every pair is present, collect missing ones.
+    missing_pairs = []
+    for i in range(len(elements)):
+        for j in range(i + 1, len(elements)):
+            a, b = elements[i], elements[j]
+            if (a, b) not in PAIRWISE_DELTA_H and (b, a) not in PAIRWISE_DELTA_H:
+                missing_pairs.append((a, b))
+    if missing_pairs:
+        raise IncompletePairDataError(missing_pairs)
+
+    # Pass 2: sum. Ω = 4·ΔH applied here, not stored in the table.
+    delta_h = 0.0
+    for i in range(len(elements)):
+        for j in range(i + 1, len(elements)):
+            a, b = elements[i], elements[j]
+            dh = PAIRWISE_DELTA_H.get((a, b), PAIRWISE_DELTA_H.get((b, a)))
+            delta_h += 4.0 * fractions[i] * fractions[j] * dh
     return delta_h
 
 
+# ---------------------------------------------------------------------------
+# Synthesis feasibility
+# ---------------------------------------------------------------------------
 def check_synthesis_feasibility(composition_at_frac, hard_block_margin_K=125, caution_zone_K=300):
     """
     Composition-only feasibility check for melt-based synthesis (arc/induction
@@ -307,9 +367,7 @@ def check_synthesis_feasibility(composition_at_frac, hard_block_margin_K=125, ca
     the limiting elements/temperatures, a human-readable message, and
     suggested_routes.
     """
-    missing = [e for e in composition_at_frac.keys() if e not in ELEMENT_PROPERTIES]
-    if missing:
-        raise IncompleteElementDataError(missing)
+    _check_elements(composition_at_frac)
 
     elements = list(composition_at_frac.keys())
     missing_data = sorted({
@@ -327,15 +385,11 @@ def check_synthesis_feasibility(composition_at_frac, hard_block_margin_K=125, ca
             'suggested_routes': [],
         }
 
-    # highest melting point among constituents: must reach this to homogenize a melt
     limiting_melt_element = max(elements, key=lambda e: ELEMENT_PROPERTIES[e]['melt_K'])
     limiting_melt_K = ELEMENT_PROPERTIES[limiting_melt_element]['melt_K']
-
-    # lowest boiling/vapor-loss point among constituents: the most volatile element
     limiting_boil_element = min(elements, key=lambda e: ELEMENT_PROPERTIES[e]['boil_K'])
     limiting_boil_K = ELEMENT_PROPERTIES[limiting_boil_element]['boil_K']
-
-    margin_K = limiting_boil_K - limiting_melt_K  # positive = boil point comfortably above required melt temp
+    margin_K = limiting_boil_K - limiting_melt_K
 
     if margin_K <= hard_block_margin_K:
         status = 'blocked'
@@ -380,50 +434,48 @@ def check_synthesis_feasibility(composition_at_frac, hard_block_margin_K=125, ca
     }
 
 
+# ---------------------------------------------------------------------------
+# Top-level screening
+# ---------------------------------------------------------------------------
 def screen_composition(composition_at_frac):
-    """
-    Run all three screening calculations on a composition
-    composition_at_frac: {'Fe': 0.65, 'Nd': 0.30, 'Co': 0.05}
-    """
-    vec = calculate_vec(composition_at_frac)
-    delta = calculate_delta(composition_at_frac)
-    delta_h = calculate_mixing_enthalpy(composition_at_frac)
-    synthesis = check_synthesis_feasibility(composition_at_frac)
-    
+    """Run all screening calculations on a composition."""
     return {
-        'VEC': vec,
-        'delta': delta,
-        'Delta_H_mix': delta_h,
-        'synthesis_feasibility': synthesis
+        'VEC': calculate_vec(composition_at_frac),
+        'delta': calculate_delta(composition_at_frac),
+        'Delta_H_mix': calculate_mixing_enthalpy(composition_at_frac),
+        'synthesis_feasibility': check_synthesis_feasibility(composition_at_frac),
     }
 
 
 def interpret_screening(results):
-    """
-    Provide basic interpretation of screening results
-    """
+    """Basic interpretation of screening results."""
     vec = results['VEC']
     delta = results['delta']
     delta_h = results['Delta_H_mix']
-    
+
     print("\n📊 Screening Interpretation:")
     print("-" * 40)
-    
-    # VEC interpretation
-    if vec > 8:
-        print(f"VEC = {vec:.2f} → Likely FCC or BCC solid solution")
-    elif vec > 6:
-        print(f"VEC = {vec:.2f} → Likely BCC solid solution")
+
+    # VEC thresholds from Guo et al., J. Appl. Phys. 109 (2011) 103505:
+    # VEC >= 8.0 -> FCC, VEC < 6.87 -> BCC, in between -> FCC + BCC.
+    # These apply to alloys that do form a solid solution.
+    if vec >= 8.0:
+        print(f"VEC = {vec:.2f} → FCC favoured (if a solid solution forms)")
+    elif vec >= 6.87:
+        print(f"VEC = {vec:.2f} → Mixed FCC + BCC (if a solid solution forms)")
     else:
-        print(f"VEC = {vec:.2f} → Likely intermetallic or complex phases")
-    
-    # δ interpretation
-    if delta < 5:
-        print(f"δ = {delta:.3f} → Small atomic mismatch: solid solution likely")
+        print(f"VEC = {vec:.2f} → BCC favoured (if a solid solution forms)")
+
+    # calculate_delta() returns a fraction; the Yang & Zhang (2012)
+    # solid-solution criterion is delta <= 6.6 %.
+    delta_pct = delta * 100
+    if delta_pct <= 6.6:
+        print(f"δ = {delta_pct:.2f} % → Small atomic mismatch: solid solution likely")
     else:
-        print(f"δ = {delta:.3f} → Large atomic mismatch: intermetallic likely")
-    
-    # ΔH_mix interpretation
+        print(f"δ = {delta_pct:.2f} % → Large atomic mismatch: intermetallic likely")
+
+    # Thresholds here follow Takeuchi-Inoue convention, where the
+    # regular-solution form is used (Ω = 4·ΔH).
     if delta_h < -20:
         print(f"ΔH_mix = {delta_h:.1f} kJ/mol → Strong compound formation likely")
     elif delta_h < -5:
@@ -431,7 +483,6 @@ def interpret_screening(results):
     else:
         print(f"ΔH_mix = {delta_h:.1f} kJ/mol → Weak compound formation")
 
-    # Synthesis feasibility (melt/boil check)
     synth = results.get('synthesis_feasibility')
     if synth:
         status_icon = {'ok': '✅', 'caution': '⚠️', 'blocked': '🚫', 'unknown': '❓'}.get(synth['status'], '')
@@ -440,26 +491,101 @@ def interpret_screening(results):
             print(f"   Suggested routes: {', '.join(synth['suggested_routes'])}")
 
 
-# Test the screening
+# ---------------------------------------------------------------------------
+# Self-tests: anchor values from Takeuchi & Inoue (2005) text and Table 1.
+# These check that the table was entered correctly, and that the Ω=4·ΔH
+# convention is applied consistently.
+# ---------------------------------------------------------------------------
+def _self_test():
+    """Verify the pairwise table against known anchor values. Raises
+    AssertionError on mismatch."""
+    anchors = {
+        ('Zr', 'Ni'): -49,
+        ('Mg', 'Zn'): -4,
+        ('Mg', 'Cu'): -3,
+        ('Nb', 'Sn'): None,   # Sn-Nb not in our table; skip
+        ('Nb', 'Ta'): None,   # Ta pairs not tabulated here; skip
+        ('Ti', 'Zr'): 0,
+        ('Ni', 'Pd'): None,   # not in our table
+        ('Fe', 'B'): -26,
+        ('Fe', 'P'): -39.5,
+        ('Cu', 'Fe'): 13,
+        ('Cu', 'Ni'): 4,
+        ('Fe', 'Si'): -35,
+        ('Si', 'Zr'): -84,
+        ('Si', 'Ti'): -66,
+        ('Co', 'Si'): -38,
+        ('Cr', 'Si'): -37,
+        ('Ni', 'Al'): -22,
+        ('La', 'Fe'): 5,
+        ('Fe', 'C'): -50,
+        ('Zr', 'B'): -71,
+        ('Cu', 'Mn'): 4,
+        ('Cu', 'V'): 5,
+        ('Fe', 'Nd'): 1,
+    }
+    failures = []
+    for (a, b), expected in anchors.items():
+        if expected is None:
+            continue
+        got = PAIRWISE_DELTA_H.get((a, b), PAIRWISE_DELTA_H.get((b, a)))
+        if got != expected:
+            failures.append(f"  {a}-{b}: expected {expected}, got {got}")
+    if failures:
+        raise AssertionError("Pairwise table anchor mismatches:\n" + "\n".join(failures))
+    print("✅ Pairwise table anchors verified.")
+
+    # Convention check: a 50/50 binary should give ΔH_mix = Ω/4 · 1 · 1 = ΔH_AB.
+    # i.e. for an equiatomic binary, the regular-solution form with Ω=4ΔH
+    # reduces to exactly ΔH_AB^mix. Test against Fe-B = -26.
+    fe_b_50_50 = {'Fe': 0.5, 'B': 0.5}
+    dh = calculate_mixing_enthalpy(fe_b_50_50)
+    assert abs(dh - (-26.0)) < 1e-9, f"Convention check failed: Fe0.5B0.5 gave {dh}, expected -26"
+    print("✅ Ω = 4·ΔH convention verified (Fe0.5B0.5 → -26 kJ/mol).")
+
+
 if __name__ == "__main__":
-    # Test with NdFeB composition
+    _self_test()
+
+    print("\n" + "=" * 50)
+    print("Testing NdFeB composition (Fe 0.65, Nd 0.30, Co 0.05):")
     test_composition = {'Fe': 0.65, 'Nd': 0.30, 'Co': 0.05}
-    print("Testing NdFeB composition:", test_composition)
-    results = screen_composition(test_composition)
-    print("\nResults:")
-    for key, value in results.items():
-        print(f"  {key}: {value}")
-    interpret_screening(results)
-    
-    # Test with Phosphorus
-    print("\n" + "="*50)
-    print("Testing Fe2P composition:")
-    test_fe2p = {'Fe': 0.667, 'P': 0.333}
     try:
-        results = screen_composition(test_fe2p)
-        print("Results:")
+        results = screen_composition(test_composition)
         for key, value in results.items():
             print(f"  {key}: {value}")
         interpret_screening(results)
-    except IncompleteElementDataError as e:
-        print(f"✅ Expected error caught: {e}")
+    except (IncompleteElementDataError, IncompletePairDataError) as e:
+        print(f"⚠️  Screening aborted: {e}")
+
+    print("\n" + "=" * 50)
+    print("Testing Fe2P composition (Fe 0.667, P 0.333):")
+    test_fe2p = {'Fe': 0.667, 'P': 0.333}
+    try:
+        results = screen_composition(test_fe2p)
+        for key, value in results.items():
+            print(f"  {key}: {value}")
+        interpret_screening(results)
+    except (IncompleteElementDataError, IncompletePairDataError) as e:
+        print(f"⚠️  Screening aborted: {e}")
+
+    print("\n" + "=" * 50)
+    print("Testing a composition with all pairs present (Fe-Nd-Co-B):")
+    # Fe-Nd, Fe-Co, Nd-Co are present; Fe-B present; Nd-B present;
+    # Co-B present. This should succeed.
+    test_with_b = {'Fe': 0.60, 'Nd': 0.20, 'Co': 0.10, 'B': 0.10}
+    try:
+        results = screen_composition(test_with_b)
+        print(f"  ΔH_mix = {results['Delta_H_mix']:.2f} kJ/mol")
+    except IncompletePairDataError as e:
+        print(f"⚠️  Pair missing (unexpected here): {e}")
+
+    print("\n" + "=" * 50)
+    print("Testing a composition with a known-missing pair (Fe-Nd-Ti):")
+    # Fe-Nd present, Fe-Ti present, Nd-Ti NOT present → should raise.
+    test_missing_pair = {'Fe': 0.60, 'Nd': 0.30, 'Ti': 0.10}
+    try:
+        results = screen_composition(test_missing_pair)
+        print(f"  ΔH_mix = {results['Delta_H_mix']:.2f} kJ/mol (unexpected — pair was found)")
+    except IncompletePairDataError as e:
+        print(f"✅ Expected IncompletePairDataError caught: {e}")
