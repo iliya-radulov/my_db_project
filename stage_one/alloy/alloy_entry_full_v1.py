@@ -7,6 +7,7 @@ Full alloy entry tool with:
 4. VEC/δ/ΔH_mix screening
 5. Database insertion
 """
+import os
 import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
@@ -22,6 +23,11 @@ from stage_one.lookup.lookup_common_v1 import from_mp_results, from_oqmd_results
 
 
 def get_api_key():
+    # MP_API_KEY env var first (same variable mp_lookup falls back to); the
+    # key file path is relative to the current working directory.
+    env_key = os.environ.get('MP_API_KEY')
+    if env_key:
+        return env_key.strip()
     key_file = Path('../../back_up/API') / 'MP_API_KEY.txt'
     if key_file.exists():
         return key_file.read_text().strip()

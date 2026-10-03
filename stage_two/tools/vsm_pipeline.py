@@ -136,7 +136,8 @@ def process_vsm_file(file_path, encoding='latin-1', segmenter_window=80,
     won't be computed.
 
     demag_dimensions_mm: (full_a, full_b, full_c) in mm, matching
-    vsm_bhmax.demag_factor_prozorov_kogan()'s exact convention --
+    vsm_bhmax.demag_factor_prozorov_kogan()'s exact convention, i.e.
+    full_c is the edge PARALLEL to the applied field --
     confirmed on real data that swapping which physical dimension plays
     which of these two roles changes the demagnetizing factor by
     roughly 2x, so the caller must supply these already correctly
