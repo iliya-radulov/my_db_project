@@ -70,8 +70,8 @@ silent zero default for missing pairs.
    the Mn-Fe-P-Si, La-Fe-Co-Si and Nd-Fe-Ga families were added at the
    same time.
 
-The same corrected module is used in `stage_one/alloy/alloy_screening_v1.py`,
-so the Stage 1 snapshot matches the Stage 1 paper.
+`stage_one/alloy/alloy_screening_v1.py` and
+`stage_two/alloy/alloy_screening_v2.py` are the same file.
 
 ## Output
 

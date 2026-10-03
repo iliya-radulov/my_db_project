@@ -51,14 +51,14 @@ Al-V, Fe-V, Cr-V, Ni-V, Fe-Nb, Fe-Mo, Cr-Nb, Co-Ge, Ge-Mn.
 Result: 138 entries, 0 mismatches against the reference. The built-in
 self-test now also checks C-Fe, B-Zr, Cu-Mn, Cu-V and Fe-Nd.
 
-### 1.2 Stage 1 still had the original placeholder table
+### 1.2 Corrected module copied to Stage 1
 
-`stage_one/alloy/alloy_screening_v1.py` still contained the original
-40-pair table ("approximate, for illustration"), without the ×4
-regular-solution factor, and with missing pairs silently counted as 0.
-The Stage 1 paper (§4.3.1–4.3.2) describes the corrected version.
-Stage 1 now uses the same corrected module as Stage 2 (the two files are
-identical).
+`alloy_screening_v1.py` and `alloy_screening_v2.py` are meant to be the
+same file. The ΔH_mix correction described in the paper (§4.3.1–4.3.2:
+literature table, ×4 regular-solution factor, `IncompletePairDataError`)
+had been made only in the Stage 2 copy, so `stage_one/` still held the
+original 40-pair table. The corrected module (including the fixes in 1.1)
+is now in both folders, and the two files are identical again.
 
 ### 1.3 A missing pair crashed sample entry
 
@@ -214,7 +214,9 @@ sample dimensions are passed in:
 ## 7. Existing database rows
 
 Samples saved before these fixes have `vec`/`delta`/`delta_h_mix`
-computed with the old tables (Stage 1: placeholder table, no ×4 factor).
+computed with an older table: the original 40-pair table without the
+×4 factor (entries saved through the Stage 1 GUI/CLI), or the Stage 2
+table with the 16 wrong values in 1.1.
 `vec` and `delta` did not change, but `delta_h_mix` did. A sketch to
 recompute them (not run against your database; try it on a backup first):
 
