@@ -248,6 +248,19 @@ class AlloyDB:
         print(f"  Logged {source_db} tier {tier}: {match_formula}")
         return check_id
 
+    def add_literature_source(self, doi: str, title: str = None,
+                              authors: str = None, year: int = None) -> None:
+        """Records a paper in literature_sources, keyed by DOI. A DOI that is
+        already stored is left as is (one row per paper, however many
+        samples point to it)."""
+        self.cursor.execute(
+            """INSERT INTO literature_sources (doi, title, authors, year)
+               VALUES (%s, %s, %s, %s)
+               ON CONFLICT (doi) DO NOTHING""",
+            (doi, title, authors, year)
+        )
+        self.commit()
+
     def get_family_tree(self, sample_id: str) -> List[Dict]:
         query = """
             WITH RECURSIVE family AS (
