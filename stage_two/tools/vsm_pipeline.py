@@ -116,6 +116,44 @@ def load_vsm_file(file_path, encoding='latin-1'):
     }
 
 
+def analyze_mh_segment(seg_H, seg_M, seg_T, mass_g, prominence=5000, distance=20,
+                       density_g_cm3=None, demag_N=None):
+    """
+    Per-MH-segment analysis shared by process_vsm_file() and the
+    interactive vsm_mh_analyzer_standalone.py, so the two cannot drift
+    apart: second-quadrant Hc/Mr, nominal temperature and field range,
+    and BH_max when density and demagnetizing factor are both given.
+
+    Returns the extract_second_quadrant_hc_mr() dict plus:
+        'temperature_K': float -- mean T over the segment
+        'field_min_oe', 'field_max_oe': float
+        'branch': (start, end) or None -- the descending branch used,
+            as positions within seg_H/seg_M
+        'bhmax_kJ_m3': float or None -- None unless density_g_cm3,
+            demag_N and mass_g are all available AND Hc/Mr extraction
+            succeeded (flag is None); a branch whose own crossing
+            detection failed isn't trustworthy for BH_max either.
+    """
+    features = extract_second_quadrant_hc_mr(seg_H, seg_M, prominence=prominence,
+                                             distance=distance)
+    features['temperature_K'] = float(np.nanmean(seg_T))
+    features['field_min_oe'] = float(np.nanmin(seg_H))
+    features['field_max_oe'] = float(np.nanmax(seg_H))
+    features['branch'] = find_descending_branch(seg_H, prominence=prominence,
+                                                distance=distance)
+    features['bhmax_kJ_m3'] = None
+
+    if (features['flag'] is None and features['branch'] is not None
+            and density_g_cm3 is not None and demag_N is not None and mass_g):
+        b_start, b_end = features['branch']
+        bhmax_result = compute_bhmax(
+            seg_H[b_start:b_end + 1], seg_M[b_start:b_end + 1], mass_g=mass_g,
+            density_g_cm3=density_g_cm3, N=demag_N
+        )
+        features['bhmax_kJ_m3'] = bhmax_result['BHmax_kJ_m3']
+    return features
+
+
 def process_vsm_file(file_path, encoding='latin-1', segmenter_window=80,
                       density_g_cm3=None, demag_dimensions_mm=None):
     """
@@ -209,27 +247,10 @@ def process_vsm_file(file_path, encoding='latin-1', segmenter_window=80,
 
         if seg['type'] == 'MH':
             all_mh_segments.append(seg)
-            features = extract_second_quadrant_hc_mr(seg_H, seg_M)
+            features = analyze_mh_segment(seg_H, seg_M, seg_T, loaded['mass_g'],
+                                          density_g_cm3=density_g_cm3, demag_N=demag_N)
             if features['flag'] is None:
-                T_nominal = float(np.nanmean(seg_T))
-                mh_T_Hc_Mr.append((T_nominal, features['Hc'], features['Mr']))
-
-                if demag_N is not None:
-                    branch = find_descending_branch(seg_H)
-                    if branch is not None:
-                        b_start, b_end = branch
-                        branch_H, branch_M = seg_H[b_start:b_end + 1], seg_M[b_start:b_end + 1]
-                        bhmax_result = compute_bhmax(
-                            branch_H, branch_M, mass_g=loaded['mass_g'],
-                            density_g_cm3=density_g_cm3, N=demag_N
-                        )
-                        features['bhmax_kJ_m3'] = bhmax_result['BHmax_kJ_m3']
-                    else:
-                        features['bhmax_kJ_m3'] = None
-                else:
-                    features['bhmax_kJ_m3'] = None
-            else:
-                features['bhmax_kJ_m3'] = None
+                mh_T_Hc_Mr.append((features['temperature_K'], features['Hc'], features['Mr']))
         elif seg['type'] == 'MT':
             features = extract_mt_candidates(seg_T, seg_M)
         else:

@@ -280,3 +280,74 @@ sign, and Co-Ni was −2 instead of 0.
 - **Not run here:** the GUIs were not started (no display or database in
   the review environment); all changed files compile, and the screening,
   calculator and XRD changes were tested directly.
+
+---
+
+## 10. VSM standalone tool (`vsm_mh_analyzer_standalone.py`) — Stage 2 draft check
+
+Checked against the Stage 2 paper draft (§3, §5). The tool did not do
+what §3 says ("Save to DB persists only what the operator has reviewed
+and accepted"), and there was no way to get BH_max from the app at all.
+
+### 10.1 What was wrong
+
+| Problem | Effect |
+|---------|--------|
+| No BH_max input. The main-app import calls `process_vsm_file()` without density/dimensions, and the tool had no fields for them | BH_max (§5.2) could only be produced by calling the pipeline by hand; nothing in the app ever stored it |
+| Save only updated accepted segments | A segment the operator **rejected** kept the automatic Hc/Mr from import, looking valid |
+| Save never touched `vsm_temperature_coefficients` | α(Hc)/β(Mr) still included rejected segments |
+| Save never touched `bhmax_kj_m3`/`demag_factor_n` | after re-analysis with other prominence/distance, BH_max came from a different branch than the saved Hc/Mr |
+| Plot used `find_descending_branch()` with default settings | the green "descending branch" was not the one analyzed when prominence/distance were changed |
+| Segments were never annotated | the self-centering count in the list (promised in the docstring and `docs/standalone_tools.md`) was never shown |
+| Segment matching counted unmatched segments as saved, and took an arbitrary row if a path was imported twice | silent partial saves |
+| Docstring and READMEs said "no database saving" | contradicted the code and the paper |
+| Layout: bottom bars packed after the expanding plot, transparent list buttons | Save bar and result line pushed off-screen at 1300×800; segment names nearly invisible in light mode |
+
+### 10.2 What changed
+
+- **`vsm_pipeline.analyze_mh_segment()`** (new): per-MH-segment analysis
+  (Hc/Mr, mean T, field range, branch used, BH_max) used by both
+  `process_vsm_file()` and the tool, so they cannot drift apart. It
+  also guards BH_max against a missing mass (previously a crash).
+- **Tool, BH_max:** density + full a, b, c (c = edge parallel to the
+  field). Shows N for Prozorov–Kogan (used and saved) and Aharoni, and
+  BH_max with both, so the open caveat of §5.2 can be quantified per
+  sample.
+- **Tool, Save to DB:** one transaction; accepted segments get the new
+  values, all other MH segments NULL Hc/Mr/BH_max with a flag
+  (`operator_rejected` if rejected by hand); geometry stored on
+  `vsm_files`; temperature coefficients refitted from accepted segments;
+  aborts without writing if any MH segment has no stored match or the
+  path is stored twice; stored geometry is loaded and re-analyzed for
+  review rather than saved blindly.
+- **`vsm_db_builder.py`:** fills `temperature_k`, `field_min_oe`,
+  `field_max_oe` (in the schema since `003_vsm_tables.sql`, never
+  written) and stores NULL Hc/Mr for flagged segments, as the schema
+  comment says (`unexpected_sign` used to store the numbers).
+- Docs: `docs/standalone_tools.md`, `standalone/stand-alone_README.md`,
+  README §6.2 (VSM schema is 7 tables, not 6).
+
+**Tested** (Python 3.12, PostgreSQL 16, Xvfb): synthetic three-loop file
+(300/350/400 K, Hc = 12000/9000/6000 Oe). Hc recovered to < 0.1 Oe,
+α(Hc) = −0.500 %/K as built in, BH_max = 177.93 kJ/m³ against an
+independent SI calculation of 177.93 kJ/m³. Imported with the builder,
+then in the GUI: partial geometry rejected, one segment rejected, saved
+→ that row NULL + `operator_rejected`, coefficients refitted from 2
+points, geometry stored; stored-geometry reload and segment-mismatch
+abort (nothing written) both checked.
+
+> **Action needed:** rows already in `vsm_mh_details` were written by
+> the old builder: `temperature_k`/field range are NULL, and
+> `unexpected_sign` rows still carry Hc/Mr. Re-import, or open each file
+> in the tool and save. `operator_rejected` is a new `hc_mr_flag` value;
+> update anything that lists the allowed values.
+
+### 10.3 Text to check in the Stage 2 paper
+
+| Where | Issue |
+|-------|-------|
+| Abstract, Contributions (2) | "eight new tables": the Stage 2 SQL creates nine (`xrd_peaks`, `xrd_features` + seven `vsm_*`); SEM writes to the older `characterization`/`properties` tables, so "one schema extension shared by XRD, VSM and SEM" needs checking |
+| §3 item 3 | true for the VSM tool now; worth adding that the main-app import stores the automatic result first and the tool's save then replaces it |
+| §5.1/§5.2 | say where BH_max is computed (the standalone tool, or `process_vsm_file(..., density_g_cm3, demag_dimensions_mm)`); the normal import does not compute it |
+| §5.2 "Open caveats", §8 | the tool now shows the Aharoni BH_max next to the Prozorov–Kogan one; running it on the 1 × 2.5 × 2 mm sample gives the second number to quote instead of only the N values (0.323 vs 0.267) |
+| §8 | "other stored BH_max values": the import never stored any, so only values saved by hand or with this tool exist; easy to check with `SELECT count(*) FROM vsm_mh_details WHERE bhmax_kj_m3 IS NOT NULL` |
