@@ -10,7 +10,8 @@ must be run from: they import sibling modules (`vsm_pipeline.py`,
 
 - `xrd_analyzer_standalone.py` — XRD peak fitting, adjustable
   sensitivity, per-peak accept/reject.
-- `vsm_mh_analyzer_standalone.py` — VSM Hc/Mr analysis, automatic
+- `vsm_mh_analyzer_standalone.py` — VSM analysis (tabs: MH loops, temperature
+  coefficients, entropy change, MT candidates), automatic
   segmentation, adjustable branch-detection sensitivity, optional BH_max
   (density + dimensions, field edge as c), per-segment accept/reject.
 

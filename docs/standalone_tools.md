@@ -19,7 +19,7 @@ individually and accept or reject it — rejecting a spurious/noisy peak
 immediately updates the summary statistics (peak count, mean R² of the
 accepted set), making it easy to spot and remove a bad fit.
 
-## VSM MH Analyzer (`vsm_mh_analyzer_standalone.py`)
+## VSM Analyzer (`vsm_mh_analyzer_standalone.py`)
 
 Load a full `.dat` file directly — handles real, multi-segment files
 (e.g. a temperature series of several MH loops in one file), not just
@@ -31,6 +31,16 @@ crossings marked) and result. Adjust branch-detection sensitivity
 segment's result as a whole. Each MH segment goes through the same
 `vsm_pipeline.analyze_mh_segment()` used at import, so the tool and the
 database import cannot give different numbers for the same settings.
+
+**Tabs.** *MH loops* (above), *Temp. coefficients* (α(Hc) and β(Mr),
+fitted live from the accepted segments only), *Entropy change* (ΔS_M
+from all MH segments of the file, at editable integer target fields in
+Oe; refuses files whose segments are full bipolar loops, and needs a
+sample mass), and *MT candidates* (M extrema and |dM/dT| peaks per
+temperature branch, unclassified and view-only, never saved). Clicking
+an MT segment in the list opens its tab. If the file has no mass, enter
+it in mg in the controls; it is used for BH_max and entropy change and is
+stored on save with `mass_source = 'manual'`.
 
 **BH_max (optional, cuboid samples).** Enter the density (g/cm³) and
 the three full edge lengths in mm, with the edge **parallel to the
@@ -53,7 +63,11 @@ main app. Saving updates that import's records in one transaction:
   stored and the fields are empty, the tool fills them in and re-runs the
   analysis so the BH_max can be reviewed before saving;
 - the file's temperature coefficients are refitted from the accepted
-  segments only (removed if fewer than two temperatures are accepted).
+  segments only (removed if fewer than two temperatures are accepted);
+- the entropy-change result shown in its tab replaces the one stored at
+  import (`vsm_entropy_change`, plus `entropy_change_suitable/_reason` on
+  `vsm_files`); a file that is not suitable is recorded as such;
+- a hand-entered mass is stored on `vsm_files`.
 
 Segments are matched to the stored ones by start/end row. If any MH
 segment has no match (the file was imported with a different

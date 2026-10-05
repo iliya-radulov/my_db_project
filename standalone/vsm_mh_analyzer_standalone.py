@@ -37,12 +37,18 @@ in a live, interactive GUI:
     if a result still looks wrong after that, the user can do their
     own separate manual recalculation rather than the tool pretending
     to offer a precision it can't add.
+  - Further tabs: temperature coefficients (alpha Hc, beta Mr, fitted live
+    from the accepted segments), isothermal entropy change (all MH
+    segments, refuses full bipolar loops; mass needed) and MT candidates
+    (unclassified, view only).
   - "Save to DB" writes the reviewed result back to the file's existing
     records (the file must already have been imported via the main app):
     accepted segments get the re-analyzed values, every other MH segment
     is stored with NULL Hc/Mr/BH_max and a flag ('operator_rejected' if
     the operator rejected it), and the file's temperature coefficients
-    are refitted from the accepted segments only.
+    are refitted from the accepted segments only. The entropy-change
+    result shown in its tab replaces the one stored at import, and a mass
+    typed in by hand (file has none) is stored with mass_source 'manual'.
 
 Built in customtkinter (not PyQt5), matching the same project decision
 as the XRD tool: can later share the main app's process/database
@@ -70,6 +76,8 @@ from vsm_pipeline import load_vsm_file, analyze_mh_segment
 from vsm_segmenter import detect_segments
 from vsm_quality_flags import annotate_segment_quality
 from vsm_temp_coefficient import fit_temperature_coefficient
+from vsm_mt_features import extract_mt_candidates
+from vsm_entropy_integration import compute_entropy_change_for_file
 from vsm_bhmax import demag_factor_prozorov_kogan
 from vsm_demag_correction import demag_factor_from_dimensions
 from db_type_utils import sanitize_row
@@ -80,6 +88,9 @@ ctk.set_default_color_theme("blue")
 # Same window process_vsm_file() uses -- segment row ranges must match
 # the ones stored at import time for "Save to DB" to find them.
 SEGMENTER_WINDOW = 80
+
+# vsm_entropy_change.target_field_oe is an INTEGER column
+DEFAULT_TARGET_FIELDS_OE = (10000, 19000)
 
 
 class VSMMHAnalyzerApp(ctk.CTk):
@@ -96,6 +107,8 @@ class VSMMHAnalyzerApp(ctk.CTk):
         self.segment_accepted = {} # segment index -> bool (MH segments only)
         self.selected_segment = None
         self.geometry_used = None  # (density, (a, b, c), N_PK, N_Aharoni) or None
+        self.entropy = None        # compute_entropy_change_for_file() result, or None
+        self.mass_override_g = None  # mass typed in by hand because the file has none
 
         # bottom bars are packed before the expanding main area, otherwise
         # pack gives the plot all the space and pushes them off-screen
@@ -134,6 +147,11 @@ class VSMMHAnalyzerApp(ctk.CTk):
                                              state="disabled")
         self.analyze_button.grid(row=1, column=4, padx=(20, 5), pady=(5, 0))
 
+        ctk.CTkLabel(frame, text="Mass (mg), only if the file has none:").grid(
+            row=1, column=5, columnspan=2, padx=(20, 2), pady=(5, 0), sticky="e")
+        self.mass_entry = ctk.CTkEntry(frame, width=70)
+        self.mass_entry.grid(row=1, column=7, padx=2, pady=(5, 0), sticky="w")
+
         # Optional BH_max inputs -- leave all empty for needle-shaped
         # samples, where no demagnetizing correction is needed.
         ctk.CTkLabel(frame, text="BH_max (optional) — density (g/cm³):").grid(
@@ -165,9 +183,13 @@ class VSMMHAnalyzerApp(ctk.CTk):
         self.segment_list_frame = ctk.CTkScrollableFrame(left)
         self.segment_list_frame.pack(fill="both", expand=True, padx=5, pady=5)
 
-        # right: plot + result panel
-        right = ctk.CTkFrame(container)
-        right.pack(side="left", fill="both", expand=True)
+        # right: tabs
+        self.tabs = ctk.CTkTabview(container)
+        self.tabs.pack(side="left", fill="both", expand=True)
+        right = self.tabs.add("MH loops")
+        self._build_tc_tab(self.tabs.add("Temp. coefficients"))
+        self._build_entropy_tab(self.tabs.add("Entropy change"))
+        self._build_mt_tab(self.tabs.add("MT candidates"))
 
         # result panel packed first (at the bottom) so the plot can't squeeze it
         result_frame = ctk.CTkFrame(right)
@@ -187,6 +209,46 @@ class VSMMHAnalyzerApp(ctk.CTk):
                                              variable=self.accept_var,
                                              command=self.on_accept_toggle, state="disabled")
         self.accept_check.pack(side="right", padx=10, pady=10)
+
+    def _make_canvas(self, parent, figsize=(7, 4.2)):
+        fig = Figure(figsize=figsize, dpi=100)
+        canvas = FigureCanvasTkAgg(fig, master=parent)
+        canvas.get_tk_widget().pack(side="top", fill="both", expand=True)
+        return fig, canvas
+
+    def _build_tc_tab(self, tab):
+        # label packed first (bottom) so the plot cannot squeeze it out
+        self.tc_label = ctk.CTkLabel(tab, text="", anchor="w", justify="left")
+        self.tc_label.pack(side="bottom", fill="x", padx=10, pady=6)
+        self.tc_fig, self.tc_canvas = self._make_canvas(tab)
+
+    def _build_entropy_tab(self, tab):
+        top = ctk.CTkFrame(tab)
+        top.pack(side="top", fill="x", pady=(0, 4))
+        ctk.CTkLabel(top, text="Target fields (Oe, integers):").pack(side="left", padx=8, pady=6)
+        self.target_entry = ctk.CTkEntry(top, width=160)
+        self.target_entry.insert(0, ", ".join(str(v) for v in DEFAULT_TARGET_FIELDS_OE))
+        self.target_entry.pack(side="left", padx=4)
+        ctk.CTkButton(top, text="Recompute", width=100,
+                      command=self._on_recompute_entropy).pack(side="left", padx=8)
+        self.entropy_label = ctk.CTkLabel(tab, text="", anchor="w", justify="left", wraplength=1000)
+        self.entropy_label.pack(side="bottom", fill="x", padx=10, pady=6)
+        self.entropy_fig, self.entropy_canvas = self._make_canvas(tab)
+
+    def _build_mt_tab(self, tab):
+        top = ctk.CTkFrame(tab)
+        top.pack(side="top", fill="x", pady=(0, 4))
+        ctk.CTkLabel(top, text="MT segment:").pack(side="left", padx=8, pady=6)
+        self.mt_var = tk.StringVar(value="-")
+        self.mt_menu = ctk.CTkOptionMenu(top, values=["-"], variable=self.mt_var,
+                                         command=lambda _v: self._refresh_mt())
+        self.mt_menu.pack(side="left", padx=4)
+        ctk.CTkLabel(top, text="Candidates are unclassified by design; interpretation is yours. "
+                              "View only, not saved.", text_color="gray").pack(side="left", padx=12)
+        self.mt_text = ctk.CTkTextbox(tab, height=140, font=ctk.CTkFont(family="Courier", size=12))
+        self.mt_text.pack(side="bottom", fill="x", padx=6, pady=4)
+        self.mt_text.configure(state="disabled")
+        self.mt_fig, self.mt_canvas = self._make_canvas(tab, figsize=(7, 3.4))
 
     def _build_save_bar(self):
         save_frame = ctk.CTkFrame(self)
@@ -272,7 +334,20 @@ class VSMMHAnalyzerApp(ctk.CTk):
             return
 
         mass = self.loaded['mass_g']
-        mass_str = f"{mass} g ({self.loaded['mass_source']})" if mass else "not found"
+        self.mass_override_g = None
+        if not mass:
+            raw = self.mass_entry.get().strip()
+            if raw:
+                try:
+                    mg = float(raw)
+                    if mg <= 0:
+                        raise ValueError
+                except ValueError:
+                    messagebox.showerror("Invalid input", "Mass (mg) must be a positive number.")
+                    return
+                mass = self.mass_override_g = mg / 1000.0
+        mass_str = (f"{mass} g ({self.loaded['mass_source']})" if self.loaded['mass_g']
+                    else (f"{mass} g (entered by hand)" if mass else "not found"))
         self.info_label.configure(
             text=f"Type: {self.loaded['instrument_type']}  |  Mass: {mass_str}"
         )
@@ -310,8 +385,11 @@ class VSMMHAnalyzerApp(ctk.CTk):
                 self.mh_results_aharoni[i] = alt['bhmax_kJ_m3']
 
         self.selected_segment = None
+        self._compute_entropy()
         self._refresh_segment_list()
         self._refresh_summary()
+        self._refresh_tc()
+        self._refresh_mt_menu()
         self.save_button.configure(state="normal" if self.mh_results else "disabled")
         self.save_status_label.configure(text="")
 
@@ -328,6 +406,12 @@ class VSMMHAnalyzerApp(ctk.CTk):
     def on_select_segment(self, idx):
         self.selected_segment = idx
         self._refresh_segment_list()
+        if self.segments[idx]['type'] == 'MT':
+            self.mt_var.set(f"[{idx}]")
+            self._refresh_mt()
+            self.tabs.set("MT candidates")
+            return
+        self.tabs.set("MH loops")
         self._refresh_plot()
         self._refresh_result_panel()
 
@@ -336,6 +420,158 @@ class VSMMHAnalyzerApp(ctk.CTk):
             self.segment_accepted[self.selected_segment] = self.accept_var.get()
             self._refresh_segment_list()
             self._refresh_summary()
+            self._refresh_tc()
+
+    # ---------------------------------------------------------------
+    # Temperature coefficients / entropy change / MT candidates
+    # ---------------------------------------------------------------
+    def _accepted_points(self):
+        """(T, Hc, Mr) of the accepted MH segments -- what gets fitted and saved."""
+        return [(self.mh_results[i]["temperature_K"], self.mh_results[i]["Hc"],
+                 self.mh_results[i]["Mr"])
+                for i in self.mh_results if self.segment_accepted.get(i, False)]
+
+    def _refresh_tc(self):
+        pts = self._accepted_points()
+        fig = self.tc_fig
+        fig.clear()
+        ax1, ax2 = fig.add_subplot(121), fig.add_subplot(122)
+        if len(pts) < 2 or len({round(t, 6) for t, _, _ in pts}) < 2:
+            for ax in (ax1, ax2):
+                ax.axis("off")
+            ax1.text(0.5, 0.5, "Needs at least 2 accepted MH segments\nat different temperatures.",
+                     ha="center", va="center", color="gray")
+            self.tc_label.configure(text="")
+        else:
+            T = np.array([p[0] for p in pts])
+            fits = {}
+            for ax, key, col, ylabel in ((ax1, "alpha_Hc", 1, "Hc (Oe)"), (ax2, "beta_Mr", 2, "Mr (emu)")):
+                y = np.array([p[col] for p in pts])
+                d = fits[key] = fit_temperature_coefficient(list(T), list(y))
+                ax.plot(T, y, "o", color="C0")
+                tt = np.linspace(T.min(), T.max(), 50)
+                ax.plot(tt, d["Y_ref"] + d["slope"] * (tt - d["T_ref"]), "-", color="C1")
+                ax.set_xlabel("T (K)")
+                ax.set_ylabel(ylabel)
+                ax.set_title(f"{key}: {d['coefficient_pct_per_K']:.3f} %/K")
+            a, b = fits["alpha_Hc"], fits["beta_Mr"]
+            self.tc_label.configure(
+                text=(f"alpha (Hc) = {a['coefficient_pct_per_K']:.3f} %/K   R2 = {a['r_squared']}   "
+                      f"n = {a['n_points']}      beta (Mr) = {b['coefficient_pct_per_K']:.3f} %/K   "
+                      f"R2 = {b['r_squared']}   (reference T = {a['T_ref']:.1f} K)\n"
+                      "Fitted from the accepted MH segments only; reject a segment in the MH tab to exclude it."))
+        fig.tight_layout()
+        self.tc_canvas.draw()
+
+    def _effective_mass(self):
+        if self.loaded is None:
+            return None
+        return self.loaded['mass_g'] or self.mass_override_g
+
+    def _compute_entropy(self):
+        """Delta S_M for the whole file (all MH segments, as the import does).
+        Sets self.entropy (None if it could not even be attempted) and redraws."""
+        fig = self.entropy_fig
+        fig.clear()
+        ax = fig.add_subplot(111)
+        self.entropy = None
+        mh_segs = [s for s in self.segments if s['type'] == 'MH']
+        if self.loaded is None or len(mh_segs) < 2:
+            ax.axis("off")
+            ax.text(0.5, 0.5, "Entropy change needs at least 2 MH segments.", ha="center",
+                    va="center", color="gray")
+            self.entropy_label.configure(text="", text_color="gray")
+            self.entropy_canvas.draw()
+            return
+        try:
+            targets = tuple(int(float(p)) for p in
+                            self.target_entry.get().replace(";", ",").split(",") if p.strip())
+            if not targets or any(t <= 0 for t in targets):
+                raise ValueError
+        except ValueError:
+            self.entropy_label.configure(text="Target fields must be positive integers in Oe, "
+                                              "e.g. 10000, 19000.", text_color="red")
+            ax.axis("off")
+            self.entropy_canvas.draw()
+            return
+        try:
+            self.entropy = compute_entropy_change_for_file(
+                self.loaded['H'], self.loaded['T'], self.loaded['M'], mh_segs,
+                self._effective_mass(), target_fields_Oe=targets)
+        except Exception as e:
+            self.entropy_label.configure(text=f"Entropy change failed: {e}", text_color="red")
+            ax.axis("off")
+            self.entropy_canvas.draw()
+            return
+        ent = self.entropy
+        if not ent['suitable']:
+            ax.axis("off")
+            ax.text(0.5, 0.5, "Not suitable for entropy change", ha="center", va="center", color="gray")
+            self.entropy_label.configure(text=f"Not suitable: {ent['reason']}", text_color="orange")
+        else:
+            for target, (t_mid, d_sm) in ent['results'].items():
+                ax.plot(t_mid, d_sm, "o-", markersize=3, label=f"{target / 10000:g} T")
+            ax.axhline(0, color="gray", linewidth=0.5)
+            ax.set_xlabel("T (K)")
+            ax.set_ylabel("Delta S_M (J/(kg K))")
+            ax.legend()
+            ax.set_title(f"Isothermal entropy change, {ent['n_isotherms']} isotherms")
+            self.entropy_label.configure(
+                text="First and last points are less accurate (finite difference at the boundary). "
+                     "Saved with the file when you press Save to DB.", text_color="gray")
+        fig.tight_layout()
+        self.entropy_canvas.draw()
+
+    def _on_recompute_entropy(self):
+        self._compute_entropy()
+
+    def _refresh_mt_menu(self):
+        mt = [f"[{i}]" for i, s in enumerate(self.segments) if s['type'] == 'MT']
+        self.mt_menu.configure(values=mt or ["-"])
+        self.mt_var.set(mt[0] if mt else "-")
+        self._refresh_mt()
+
+    def _refresh_mt(self):
+        fig = self.mt_fig
+        fig.clear()
+        ax = fig.add_subplot(111)
+        self.mt_text.configure(state="normal")
+        self.mt_text.delete("1.0", "end")
+        sel = self.mt_var.get()
+        if self.loaded is None or not sel.startswith("["):
+            ax.axis("off")
+            ax.text(0.5, 0.5, "No MT segment in this file.", ha="center", va="center", color="gray")
+            self.mt_text.configure(state="disabled")
+            self.mt_canvas.draw()
+            return
+        idx = int(sel.strip("[]"))
+        seg = self.segments[idx]
+        T = self.loaded['T'][seg['start']:seg['end']]
+        M = self.loaded['M'][seg['start']:seg['end']]
+        ax.plot(T, M, ".", markersize=2, color="C0")
+        try:
+            cands = extract_mt_candidates(T, M)
+        except Exception as e:
+            self.mt_text.insert("1.0", f"Candidate extraction failed: {e}")
+            self.mt_text.configure(state="disabled")
+            self.mt_canvas.draw()
+            return
+        lines = []
+        for br in cands['branches']:
+            lines.append(f"Branch {br['direction']}, T {br['T_range'][0]:.1f}-{br['T_range'][1]:.1f} K")
+            for c in br['M_extrema']:
+                ax.plot(c['T'], c['M'], "^" if c['kind'] == 'max' else "v", color="red")
+                lines.append(f"   M {c['kind']:<3} at T = {c['T']:.2f} K   M = {c['M']:.5g} emu")
+            for c in br['dMdT_extrema'][:5]:
+                ax.axvline(c['T'], color="green", linestyle="--", linewidth=0.8)
+                lines.append(f"   |dM/dT| peak at T = {c['T']:.2f} K   dM/dT = {c['dMdT']:.4g}")
+        self.mt_text.insert("1.0", "\n".join(lines) if lines else "No candidates found.")
+        self.mt_text.configure(state="disabled")
+        ax.set_xlabel("T (K)")
+        ax.set_ylabel("M (emu)")
+        ax.set_title(f"Segment {idx} (MT); red = M extrema, green = |dM/dT| peaks")
+        fig.tight_layout()
+        self.mt_canvas.draw()
 
     # ---------------------------------------------------------------
     # Display refresh
@@ -450,7 +686,8 @@ class VSMMHAnalyzerApp(ctk.CTk):
             messagebox.showerror("Nothing to save", "Run the analysis first.")
             return
         accepted = [i for i in self.mh_results if self.segment_accepted.get(i, False)]
-        if not accepted and not messagebox.askyesno(
+        any_usable = any(r["flag"] is None for r in self.mh_results.values())
+        if any_usable and not accepted and not messagebox.askyesno(
                 "No accepted segments",
                 "No MH segment is accepted. Save anyway? This clears Hc/Mr/BH_max "
                 "for every MH segment of this file."):
@@ -569,6 +806,36 @@ class VSMMHAnalyzerApp(ctk.CTk):
                     )
                 updated += 1
 
+            if self.mass_override_g is not None:
+                cur2.execute(
+                    f"UPDATE {schema}.vsm_files SET mass_g = %s, mass_source = 'manual', "
+                    f"mass_confidence = 'high' WHERE id = %s",
+                    (self.mass_override_g, vsm_file_id)
+                )
+
+            # Entropy change: replace what the import stored with what is shown.
+            n_entropy = 0
+            if self.entropy is not None:
+                ent = self.entropy
+                cur2.execute(f"DELETE FROM {schema}.vsm_entropy_change WHERE vsm_file_id = %s",
+                             (vsm_file_id,))
+                cur2.execute(
+                    f"UPDATE {schema}.vsm_files SET entropy_change_suitable = %s, "
+                    f"entropy_change_reason = %s WHERE id = %s",
+                    (bool(ent['suitable']), ent['reason'], vsm_file_id)
+                )
+                if ent['suitable'] and ent['results']:
+                    for target, (t_mid, d_sm) in ent['results'].items():
+                        for t, dsm in zip(t_mid, d_sm):
+                            cur2.execute(
+                                f"INSERT INTO {schema}.vsm_entropy_change (vsm_file_id, "
+                                f"target_field_oe, t_mid_k, delta_sm_j_per_kg_k) "
+                                f"VALUES (%(f)s, %(h)s, %(t)s, %(s)s)",
+                                sanitize_row({"f": vsm_file_id, "h": int(target),
+                                              "t": t, "s": dsm})
+                            )
+                            n_entropy += 1
+
             if self.geometry_used is not None:
                 density, (a, b, c), _, _ = self.geometry_used
                 cur2.execute(
@@ -615,10 +882,11 @@ class VSMMHAnalyzerApp(ctk.CTk):
             cur2.close()
             cur.close()
 
+            ent_str = f", {n_entropy} entropy-change points" if n_entropy else ""
             tc_str = (f", temperature coefficients refitted from {len(pts)} segments"
                       if n_coeffs else ", no temperature coefficients (fewer than 2 accepted temperatures)")
             self.save_status_label.configure(
-                text=f"✅ Saved {updated} MH segment(s), {len(accepted)} accepted{tc_str}"
+                text=f"✅ Saved {updated} MH segment(s), {len(accepted)} accepted{tc_str}{ent_str}"
             )
 
         except Exception as e:
