@@ -657,7 +657,8 @@ def build_app():
                 names += GRAIN_PROPERTY_NAMES
             if want_phase:
                 names += PHASE_PROPERTY_NAMES
-            if self.grain_summary and not self.grain_summary["calibrated"] and want_grains:
+            if (self.grain_summary and self.grain_summary["n"] > 0
+                    and not self.grain_summary["calibrated"] and want_grains):
                 messagebox.showinfo("Not calibrated", "No pixel size: grain diameters are not saved, "
                                                       "only count and shape measures.")
             try:
