@@ -103,19 +103,28 @@ def insert_vsm_result(conn, sample_id, result):
 
         features = seg.get('features')
         if seg['type'] == 'MH' and features is not None:
+            flagged = features['flag'] is not None
             mh_row = sanitize_row({
                 'vsm_segment_id': segment_id,
-                'hc_oe': features['Hc'],
-                'mr_emu': features['Mr'],
+                'temperature_k': features.get('temperature_K'),
+                'field_min_oe': features.get('field_min_oe'),
+                'field_max_oe': features.get('field_max_oe'),
+                # NULL when flagged, as documented in 003_vsm_tables.sql --
+                # extract_second_quadrant_hc_mr() still returns numbers for
+                # 'unexpected_sign', but they are not trustworthy values
+                'hc_oe': None if flagged else features['Hc'],
+                'mr_emu': None if flagged else features['Mr'],
                 'hc_mr_flag': features['flag'],
                 'branch_found': features['branch_found'],
                 'demag_factor_n': result.get('demag_factor_N'),
                 'bhmax_kj_m3': features.get('bhmax_kJ_m3'),
             })
             cur.execute(
-                """INSERT INTO vsm_mh_details (vsm_segment_id, hc_oe, mr_emu,
+                """INSERT INTO vsm_mh_details (vsm_segment_id, temperature_k,
+                       field_min_oe, field_max_oe, hc_oe, mr_emu,
                        hc_mr_flag, branch_found, demag_factor_n, bhmax_kj_m3)
-                   VALUES (%(vsm_segment_id)s, %(hc_oe)s, %(mr_emu)s,
+                   VALUES (%(vsm_segment_id)s, %(temperature_k)s,
+                       %(field_min_oe)s, %(field_max_oe)s, %(hc_oe)s, %(mr_emu)s,
                        %(hc_mr_flag)s, %(branch_found)s, %(demag_factor_n)s,
                        %(bhmax_kj_m3)s)"""
                 ,
