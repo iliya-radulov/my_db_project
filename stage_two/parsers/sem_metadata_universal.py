@@ -194,7 +194,19 @@ def parse_sem_metadata_universal(tif_path):
     fmt = detect_sem_format(tif_path)
 
     if fmt == 'zeiss':
-        from parse_sem_v2 import parse_sem_file
+        # Works both when imported as stage_two.parsers.sem_metadata_universal (the app)
+        # and when imported flat from stage_two/tools (the standalone tools).
+        try:
+            from .parse_sem_v2 import parse_sem_file
+        except ImportError:
+            import sys
+            from pathlib import Path
+            _parsers = str(Path(__file__).resolve().parent)
+            if Path(__file__).resolve().parent.name != 'parsers':
+                _parsers = str(Path(__file__).resolve().parent.parent / 'parsers')
+            if _parsers not in sys.path:
+                sys.path.insert(0, _parsers)
+            from parse_sem_v2 import parse_sem_file
         zeiss_result = parse_sem_file(tif_path)
         return {
             'format': 'zeiss',

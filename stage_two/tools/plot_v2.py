@@ -247,10 +247,10 @@ def plot_sem(file_path, figure=None, master=None):
             button_frame.pack_propagate(False)
             print(f"🔍 DEBUG: Button frame created at TOP")
             
-            # ✅ NEW — points to current phase fraction standalone tool
+            # points to the combined SEM tool (grains, shape, phase fraction)
             sem_analyzer_path = os.path.join(
                 os.path.dirname(__file__), 
-                'sem_phase_fraction_standalone.py'
+                'sem_analyzer_standalone.py'
             )
 
             if os.path.exists(sem_analyzer_path):
@@ -259,7 +259,7 @@ def plot_sem(file_path, figure=None, master=None):
                 
                 analyze_btn = ctk.CTkButton(
                     button_frame,
-                    text="📊 Phase Fraction",
+                    text="🔬 Analyze SEM",
                     command=launch_analyzer,
                     fg_color="green",
                     text_color="white",
@@ -278,7 +278,7 @@ def plot_sem(file_path, figure=None, master=None):
             else:
                 note = ctk.CTkLabel(
                     button_frame,
-                    text="sem_phase_fraction_standalone.py not found",
+                    text="sem_analyzer_standalone.py not found",
                     font=ctk.CTkFont(size=11)
                 )
                 note.grid(row=0, column=0, padx=10, pady=10)
