@@ -192,8 +192,8 @@ def process_vsm_file(file_path, encoding='latin-1', segmenter_window=80,
             'segments': [ {type, start, end, n_self_centering_events,
                            is_HT_transition, features}, ... ],
             'temperature_coefficients': {
-                'alpha_Hc': {...} or None,
-                'beta_Mr': {...} or None,
+                'beta_Hc': {...} or None,    # coercivity coefficient (beta)
+                'alpha_Mr': {...} or None,   # remanence coefficient (alpha)
             } or None (if fewer than 2 valid MH segments with distinct T)
             'entropy_change': {
                 'suitable': bool, 'reason': str or None, 'n_isotherms': int,
@@ -265,8 +265,8 @@ def process_vsm_file(file_path, encoding='latin-1', segmenter_window=80,
         Hc_pts = [hc for _, hc, _ in mh_T_Hc_Mr]
         Mr_pts = [mr for _, _, mr in mh_T_Hc_Mr]
         temperature_coefficients = {
-            'alpha_Hc': fit_temperature_coefficient(T_pts, Hc_pts),
-            'beta_Mr': fit_temperature_coefficient(T_pts, Mr_pts),
+            'beta_Hc': fit_temperature_coefficient(T_pts, Hc_pts),
+            'alpha_Mr': fit_temperature_coefficient(T_pts, Mr_pts),
         }
 
     entropy_change = None

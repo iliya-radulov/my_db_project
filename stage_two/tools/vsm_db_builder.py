@@ -184,7 +184,7 @@ def insert_vsm_result(conn, sample_id, result):
     # 3. temperature coefficients, if present
     tc = result.get('temperature_coefficients')
     if tc:
-        for coeff_type, coeff_data in [('alpha_Hc', tc['alpha_Hc']), ('beta_Mr', tc['beta_Mr'])]:
+        for coeff_type, coeff_data in [('beta_Hc', tc['beta_Hc']), ('alpha_Mr', tc['alpha_Mr'])]:
             tc_row = sanitize_row({
                 'vsm_file_id': vsm_file_id,
                 'coefficient_type': coeff_type,
