@@ -351,3 +351,10 @@ abort (nothing written) both checked.
 | §5.1/§5.2 | say where BH_max is computed (the standalone tool, or `process_vsm_file(..., density_g_cm3, demag_dimensions_mm)`); the normal import does not compute it |
 | §5.2 "Open caveats", §8 | the tool now shows the Aharoni BH_max next to the Prozorov–Kogan one; running it on the 1 × 2.5 × 2 mm sample gives the second number to quote instead of only the N values (0.323 vs 0.267) |
 | §8 | "other stored BH_max values": the import never stored any, so only values saved by hand or with this tool exist; easy to check with `SELECT count(*) FROM vsm_mh_details WHERE bhmax_kj_m3 IS NOT NULL` |
+
+## 11. Follow-ups after the 2026-10-18 review
+
+| Change | Detail |
+|--------|--------|
+| VSM mass from filename | `95.98mg` was read as 98 mg (only `_` was recognised as a decimal mark; point and comma names fell through to the plain `digits + mg` pattern and gave just the digits after the separator, with "medium" confidence). Point and comma are now accepted; an ambiguous name returns no mass instead of a wrong one. Tests in `stage_two/tools/test_vsm_mass_extractor.py`. Any `vsm_files` row with `mass_source = 'filename'` and a point/comma name needs re-importing. |
+| Temperature-coefficient names | α and β were the wrong way round relative to the permanent-magnet convention. Now **α = remanence (Mr)**, **β = coercivity (Hc)**; for Nd-Fe-B typically α ≈ −0.10 %/K and β ≈ −0.5 … −0.6 %/K. The fitted numbers were always right, only the names were swapped. `coefficient_type` is now `'beta_Hc'` / `'alpha_Mr'` (was `'alpha_Hc'` / `'beta_Mr'`). Existing rows are renamed by `stage_two/tools/006_temp_coefficient_names.sql`; run it once after merging, before saving new results. |

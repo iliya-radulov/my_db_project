@@ -99,14 +99,15 @@ CREATE TABLE IF NOT EXISTS vsm_mt_candidates (
 CREATE INDEX IF NOT EXISTS idx_vsm_mt_candidates_details_id ON vsm_mt_candidates(vsm_mt_details_id);
 
 -- 6. Temperature coefficients -- one row per computed coefficient
---    (alpha_Hc, beta_Mr), per file. Only populated when a file has 2+
+--    (beta_Hc, alpha_Mr), per file (alpha = remanence, beta = coercivity;
+--    swapped from the original names by migration 006). Only populated when a file has 2+
 --    valid MH segments with distinct temperatures (see
 --    vsm_temp_coefficient.py / vsm_pipeline.py).
 CREATE TABLE IF NOT EXISTS vsm_temperature_coefficients (
     id SERIAL PRIMARY KEY,
     vsm_file_id INTEGER REFERENCES vsm_files(id) ON DELETE CASCADE,
 
-    coefficient_type TEXT NOT NULL,           -- 'alpha_Hc' | 'beta_Mr'
+    coefficient_type TEXT NOT NULL,           -- 'beta_Hc' | 'alpha_Mr'
     slope REAL,
     t_ref REAL,
     y_ref REAL,

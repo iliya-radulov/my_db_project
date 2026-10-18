@@ -32,7 +32,7 @@ segment's result as a whole. Each MH segment goes through the same
 `vsm_pipeline.analyze_mh_segment()` used at import, so the tool and the
 database import cannot give different numbers for the same settings.
 
-**Tabs.** *MH loops* (above), *Temp. coefficients* (α(Hc) and β(Mr),
+**Tabs.** *MH loops* (above), *Temp. coefficients* (α(Mr) and β(Hc),
 fitted live from the accepted segments only), *Entropy change* (ΔS_M
 from all MH segments of the file, at editable integer target fields in
 Oe; refuses files whose segments are full bipolar loops, and needs a

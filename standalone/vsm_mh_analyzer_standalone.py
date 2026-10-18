@@ -37,7 +37,7 @@ in a live, interactive GUI:
     if a result still looks wrong after that, the user can do their
     own separate manual recalculation rather than the tool pretending
     to offer a precision it can't add.
-  - Further tabs: temperature coefficients (alpha Hc, beta Mr, fitted live
+  - Further tabs: temperature coefficients (beta Hc, alpha Mr, fitted live
     from the accepted segments), isothermal entropy change (all MH
     segments, refuses full bipolar loops; mass needed) and MT candidates
     (unclassified, view only).
@@ -445,7 +445,7 @@ class VSMMHAnalyzerApp(ctk.CTk):
         else:
             T = np.array([p[0] for p in pts])
             fits = {}
-            for ax, key, col, ylabel in ((ax1, "alpha_Hc", 1, "Hc (Oe)"), (ax2, "beta_Mr", 2, "Mr (emu)")):
+            for ax, key, col, ylabel in ((ax1, "beta_Hc", 1, "Hc (Oe)"), (ax2, "alpha_Mr", 2, "Mr (emu)")):
                 y = np.array([p[col] for p in pts])
                 d = fits[key] = fit_temperature_coefficient(list(T), list(y))
                 ax.plot(T, y, "o", color="C0")
@@ -454,10 +454,10 @@ class VSMMHAnalyzerApp(ctk.CTk):
                 ax.set_xlabel("T (K)")
                 ax.set_ylabel(ylabel)
                 ax.set_title(f"{key}: {d['coefficient_pct_per_K']:.3f} %/K")
-            a, b = fits["alpha_Hc"], fits["beta_Mr"]
+            a, b = fits["beta_Hc"], fits["alpha_Mr"]
             self.tc_label.configure(
-                text=(f"alpha (Hc) = {a['coefficient_pct_per_K']:.3f} %/K   R2 = {a['r_squared']}   "
-                      f"n = {a['n_points']}      beta (Mr) = {b['coefficient_pct_per_K']:.3f} %/K   "
+                text=(f"beta (Hc) = {a['coefficient_pct_per_K']:.3f} %/K   R2 = {a['r_squared']}   "
+                      f"n = {a['n_points']}      alpha (Mr) = {b['coefficient_pct_per_K']:.3f} %/K   "
                       f"R2 = {b['r_squared']}   (reference T = {a['T_ref']:.1f} K)\n"
                       "Fitted from the accepted MH segments only; reject a segment in the MH tab to exclude it."))
         fig.tight_layout()
@@ -856,8 +856,8 @@ class VSMMHAnalyzerApp(ctk.CTk):
             n_coeffs = 0
             if len(pts) >= 2 and len({t for t, _, _ in pts}) >= 2:
                 T_pts = [t for t, _, _ in pts]
-                for coeff_type, Y in [("alpha_Hc", [hc for _, hc, _ in pts]),
-                                      ("beta_Mr", [mr for _, _, mr in pts])]:
+                for coeff_type, Y in [("beta_Hc", [hc for _, hc, _ in pts]),
+                                      ("alpha_Mr", [mr for _, _, mr in pts])]:
                     fit = fit_temperature_coefficient(T_pts, Y)
                     cur2.execute(
                         f"INSERT INTO {schema}.vsm_temperature_coefficients "
