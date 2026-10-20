@@ -3,11 +3,14 @@ vsm_bhmax.py
 
 Calculates the maximum energy product (BH_max) for a cuboid permanent
 magnet sample, correcting for self-demagnetization -- the actual figure
-of merit for permanent magnets, as opposed to Hc/Mr (which, confirmed
-directly via a synthetic ground-truth test, are mathematically
-UNCHANGED by a simple point-wise shearing correction, since that
-correction is proportional to M itself and vanishes exactly at the
-points defining Hc and Mr).
+of merit for permanent magnets, as opposed to Hc and Mr. A point-wise
+shearing correction (H_int = H_applied - N*M) leaves Hc exactly unchanged,
+because M = 0 at the coercivity crossing (confirmed with a synthetic
+ground-truth test). It does NOT leave Mr unchanged: Mr is defined at zero
+INTERNAL field, which on the measured loop lies at H_applied = N*M_r > 0.
+The Mr stored by the pipeline is read at H_applied = 0, i.e. the apparent
+remanence of the open sample, lower than the intrinsic value by about
+chi*N/(1 + chi*N) (chi = recoil susceptibility; about 1.2 % for HD336).
 
 Formula chain confirmed against the user's own real, working lab
 practice (extracted directly from real presentation files, not
