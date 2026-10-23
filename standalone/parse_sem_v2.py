@@ -14,17 +14,21 @@ from PIL import Image
 from PIL.TiffTags import TAGS
 
 # Key patterns to search for - only the most important ones
+# Patterns are anchored to the start of a line (re.MULTILINE) and use the exact
+# field names. Unanchored, case-insensitive search matched look-alike fields:
+# "FIB EHT = 0.000 kV" instead of "EHT = 10.00 kV", "VPSE detector = Absent"
+# instead of "Detector = SE2", "Free WD" instead of "WD".
 KEY_PATTERNS = {
-    'magnification': r'Mag\s*=\s*([\d.]+\s*[KkMm]?\s*X?)',
-    'eht_kv': r'EHT\s*=\s*([\d.]+\s*kV)',
-    'working_distance_mm': r'WD\s*=\s*([\d.]+\s*mm)',
-    'signal_a': r'Signal A\s*=\s*(\w+)',
-    'signal_b': r'Signal B\s*=\s*(\w+)',
-    'detector': r'Detector\s*=\s*(\w+)',
+    'magnification': r'^Mag\s*=\s*([\d.]+\s*[KkMm]?\s*X?)',
+    'eht_kv': r'^EHT\s*=\s*([\d.]+\s*kV)',
+    'working_distance_mm': r'^WD\s*=\s*([\d.]+\s*mm)',
+    'signal_a': r'^Signal A\s*=\s*(\w+)',
+    'signal_b': r'^Signal B\s*=\s*(\w+)',
+    'detector': r'^Detector\s*=\s*(\w+)',
     'date': r'Date[:\s]*([\d]+\s+[A-Za-z]+\s+[\d]+)',
-    'operator': r'Operator\s*=\s*(\w+)',
-    'sample_id': r'Sample ID\s*=\s*(.+)',
-    'pixel_size_nm': r'Pixel Size\s*=\s*([\d.]+\s*nm)',
+    'operator': r'^Operator\s*=\s*(\w+)',
+    'sample_id': r'^Sample ID\s*=\s*(.+)',
+    'pixel_size_nm': r'^Pixel Size\s*=\s*([\d.]+\s*nm)',
 }
 
 def parse_sem_file(file_path, max_size_mb=50):
@@ -50,8 +54,7 @@ def parse_sem_file(file_path, max_size_mb=50):
         img = Image.open(file_path)
         
         # Get basic image info (fast)
-        width = img.tag_v2.get('ImageWidth', None)
-        height = img.tag_v2.get('ImageLength', None)
+        width, height = img.size
         if width and height:
             sem_data['image_size'] = f"{width} x {height}"
         
@@ -72,11 +75,11 @@ def parse_sem_file(file_path, max_size_mb=50):
                         pass
         
         # Combine all text data
-        full_text = ' '.join(text_data)
+        full_text = '\n'.join(text_data)
         
         # Extract key fields using regex (fast)
         for key, pattern in KEY_PATTERNS.items():
-            match = re.search(pattern, full_text, re.IGNORECASE)
+            match = re.search(pattern, full_text, re.MULTILINE)
             if match:
                 sem_data[key] = match.group(1).strip()
         

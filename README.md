@@ -225,11 +225,13 @@ A full multi-component pipeline replacing the Stage 1 single-value parser.
   interchangeable inputs for the calculation)
 - Demagnetising correction and BHmax for cuboid samples
   (Prozorov-Kogan formula, validated against a real worked example)
-- 6-table schema: `vsm_files`, `vsm_segments`, `vsm_mh_details`,
-  `vsm_mt_details`, `vsm_mt_candidates`, `vsm_temperature_coefficients`
+- 7-table schema: `vsm_files`, `vsm_segments`, `vsm_mh_details`,
+  `vsm_mt_details`, `vsm_mt_candidates`, `vsm_temperature_coefficients`,
+  `vsm_entropy_change`
 - Standalone interactive tool (`vsm_mh_analyzer_standalone.py`):
-  multi-segment, adjustable branch-detection sensitivity, per-segment
-  accept/reject, Save to DB
+  multi-segment, adjustable branch-detection sensitivity, optional BHmax
+  (density + dimensions, Aharoni factor shown for comparison),
+  per-segment accept/reject, Save to DB
 - Three real bugs found and fixed during end-to-end integration testing,
   including a NaN-masking issue that silently hid a 60 K temperature jump
 

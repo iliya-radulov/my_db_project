@@ -221,3 +221,9 @@ wheel==0.47.0
 widgetsnbextension==4.0.15
 wrapt==2.2.1
 xattr==1.3.0
+
+# Imported by the stage one/two code but missing from the freeze above
+# (unpinned -- pin to the versions in your environment with `pip freeze`)
+customtkinter
+mp-api
+psycopg2-binary

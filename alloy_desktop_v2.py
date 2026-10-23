@@ -185,7 +185,7 @@ class AlloyLabApp(ctk.CTk):
         ).grid(row=0, column=0, columnspan=4, padx=10, pady=(8, 4), sticky="w")
 
         ctk.CTkLabel(prealloy_box, text="Pre-alloy formula:", font=ctk.CTkFont(size=13)).grid(row=1, column=0, padx=10, pady=6, sticky="w")
-        self.prealloy_formula_entry = ctk.CTkEntry(prealloy_box, width=140, placeholder_text="e.g., Fe2P")
+        self.prealloy_formula_entry = ctk.CTkEntry(prealloy_box, width=140, placeholder_text="e.g., Fe2P1")
         self.prealloy_formula_entry.grid(row=1, column=1, padx=5, pady=6, sticky="w")
 
         ctk.CTkLabel(prealloy_box, text="Pre-alloy mass (g):", font=ctk.CTkFont(size=13)).grid(row=1, column=2, padx=10, pady=6, sticky="w")
@@ -900,10 +900,10 @@ class AlloyLabApp(ctk.CTk):
                     elements.append(ElementComponent(symbol=symbol, at_pct=at_pct, excess_pct=excess))
                 result = calculate_masses(total_mass_g=mass, elements=elements)
             
-            from stage_two.alloy.alloy_screening_v2 import IncompleteElementDataError
+            from stage_two.alloy.alloy_screening_v2 import IncompleteElementDataError, IncompletePairDataError
             try:
                 screening = screen_composition(comp_frac)
-            except IncompleteElementDataError as e:
+            except (IncompleteElementDataError, IncompletePairDataError) as e:
                 screening = None
                 screening_warning = str(e)
             else:
@@ -958,44 +958,40 @@ class AlloyLabApp(ctk.CTk):
                 self.status_label.configure(text="Checking literature databases...")
                 self.update_idletasks()  # force repaint now -- without this the
                                           # label change isn't actually visible
-                                          # until after all 3 blocking calls
-                                          # below finish, making the app look
-                                          # frozen even though it's working
+                                          # until the lookups below finish,
+                                          # making the app look frozen even
+                                          # though it's working
 
-                try:
+                from concurrent.futures import ThreadPoolExecutor
+
+                # The three databases are independent network calls, so they run
+                # in parallel; total wait is the slowest one, not the sum. Worker
+                # threads only do network work -- all Tk updates stay on this thread.
+                def _mp():
                     from stage_two.alloy.alloy_entry_full_v2 import get_api_key
                     from stage_two.lookup.mp_lookup_v2 import lookup as mp_lookup_fn
                     api_key = get_api_key()
-                    if api_key:
-                        self.status_label.configure(text="Checking Materials Project...")
-                        self.update_idletasks()
-                        mp_raw = mp_lookup_fn(comp_frac, api_key=api_key)
-                        self.lit_results['materials_project'] = dedup_by_formula(from_mp_results(mp_raw))
-                    else:
-                        self.lit_results['materials_project'] = []
-                except Exception as e:
-                    print(f"MP lookup failed: {e}")
-                    self.lit_results['materials_project'] = []
+                    if not api_key:
+                        return []
+                    return dedup_by_formula(from_mp_results(mp_lookup_fn(comp_frac, api_key=api_key)))
 
-                try:
+                def _oqmd():
                     from stage_two.lookup.oqmd_lookup_v2 import lookup as oqmd_lookup_fn
-                    self.status_label.configure(text="Checking OQMD...")
-                    self.update_idletasks()
-                    oqmd_raw = oqmd_lookup_fn(comp_frac)
-                    self.lit_results['oqmd'] = dedup_by_formula(from_oqmd_results(oqmd_raw))
-                except Exception as e:
-                    print(f"OQMD lookup failed: {e}")
-                    self.lit_results['oqmd'] = []
+                    return dedup_by_formula(from_oqmd_results(oqmd_lookup_fn(comp_frac)))
 
-                try:
+                def _alexandria():
                     from stage_two.lookup.alexandria_lookup_v2 import lookup as alexandria_lookup_fn
-                    self.status_label.configure(text="Checking Alexandria...")
-                    self.update_idletasks()
-                    alexandria_raw = alexandria_lookup_fn(comp_frac)
-                    self.lit_results['alexandria'] = dedup_by_formula(from_alexandria_results(alexandria_raw))
-                except Exception as e:
-                    print(f"Alexandria lookup failed: {e}")
-                    self.lit_results['alexandria'] = []
+                    return dedup_by_formula(from_alexandria_results(alexandria_lookup_fn(comp_frac)))
+
+                jobs = {'materials_project': _mp, 'oqmd': _oqmd, 'alexandria': _alexandria}
+                with ThreadPoolExecutor(max_workers=len(jobs)) as pool:
+                    futures = {key: pool.submit(fn) for key, fn in jobs.items()}
+                    for key, future in futures.items():
+                        try:
+                            self.lit_results[key] = future.result()
+                        except Exception as e:
+                            print(f"{key} lookup failed: {e}")
+                            self.lit_results[key] = []
             
             self.render_lit_section()
             self.submit_btn.configure(state="normal")
@@ -1116,10 +1112,10 @@ class AlloyLabApp(ctk.CTk):
                     elements.append(ElementComponent(symbol=symbol, at_pct=at_pct, excess_pct=excess))
                 result = calculate_masses(total_mass_g=mass, elements=elements)
             
-            from stage_two.alloy.alloy_screening_v2 import IncompleteElementDataError
+            from stage_two.alloy.alloy_screening_v2 import IncompleteElementDataError, IncompletePairDataError
             try:
                 screening = screen_composition(comp_frac)
-            except IncompleteElementDataError as e:
+            except (IncompleteElementDataError, IncompletePairDataError) as e:
                 screening = None
                 print(f"Screening skipped: {e}")
             
@@ -1212,6 +1208,29 @@ class AlloyLabApp(ctk.CTk):
                         composition_distance=c.composition_distance
                     )
             
+            # Papers behind the experimentally known MP matches: Materials
+            # Project's text-mined synthesis recipes carry the source DOI, which
+            # goes into literature_sources. Best effort -- coverage is
+            # oxide-heavy, and a failure here must not undo the saved sample.
+            try:
+                from stage_two.alloy.alloy_entry_full_v2 import get_api_key
+                from stage_two.lookup.mp_lookup_v2 import lookup_synthesis
+                api_key = get_api_key()
+                known = [c for c in filter_by_distance(self.lit_results.get('materials_project', []),
+                                                       self.lit_cutoffs['materials_project'])
+                         if c.experimentally_known]
+                if api_key and known:
+                    dois = set()
+                    for c in known[:3]:
+                        dois.update(r.doi for r in lookup_synthesis(c.formula, api_key=api_key) if r.doi)
+                    for doi in sorted(dois):
+                        db.add_literature_source(doi=doi)
+                    if dois:
+                        self.result_text.insert("end", f"\nStored {len(dois)} literature DOI(s) from Materials Project synthesis data")
+            except Exception as e:
+                db.rollback()
+                print(f"Literature-source lookup skipped: {e}")
+
             # RAG synthesis guidance — called via stage_three venv subprocess
             try:
                 import subprocess, json

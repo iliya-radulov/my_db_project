@@ -46,14 +46,32 @@ anything was skipped.
 
 ## Mixing enthalpy: a milder version of the same gap
 
-`calculate_mixing_enthalpy()`'s pairwise parameter table only covers a
-subset of element *pairs* (not all elements individually) — any pair
-without a defined parameter silently contributes 0 to ΔH_mix rather than
-raising an error. This is a real, still-open gap, milder than the
-VEC/δ case since a missing pair just under-counts one contribution rather
-than failing outright, but worth being aware of: a ΔH_mix result should
-not be read as "all pairwise interactions accounted for" without checking
-which pairs actually have parameters defined.
+**Tried:** `calculate_mixing_enthalpy()` originally used a 40-pair table
+of unrecorded origin ("approximate, for illustration"), summed as
+`Σ c_i·c_j·ΔH_ij`, and any pair missing from the table silently counted
+as 0.
+
+**Result:** checking the 40 pairs against Takeuchi & Inoue (Mater. Trans.
+46 (2005) 2817) showed wrong values (Fe-Nd, La-Fe and Al-Ga had the wrong
+sign), a missing ×4 regular-solution factor (Ω_ij = 4·ΔH_AB), and the
+silent zero default for missing pairs.
+
+**Then:**
+1. `PAIRWISE_DELTA_H` stores the Takeuchi ΔH_AB values, and the ×4 factor
+   is applied inside the calculation. A self-test checks that an
+   equiatomic binary gives exactly ΔH_AB.
+2. A missing pair raises `IncompletePairDataError`, the pair-level twin
+   of `IncompleteElementDataError`. The GUI and the CLI tool catch both
+   and skip screening for that run (columns left `NULL`).
+3. A later cross-check of every entry against matminer's copy of the
+   2005 table found and fixed 16 more wrong values (all carbon pairs
+   had been left at 0; B-Zr, Cu-Mn and Cu-V had wrong values or signs;
+   plus Ag-Fe, Ag-La, Au-La, Cr-P, La-Mn and Ga-Si). Pairs needed for
+   the Mn-Fe-P-Si, La-Fe-Co-Si and Nd-Fe-Ga families were added at the
+   same time.
+
+`stage_one/alloy/alloy_screening_v1.py` and
+`stage_two/alloy/alloy_screening_v2.py` are the same file.
 
 ## Output
 

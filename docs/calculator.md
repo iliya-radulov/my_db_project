@@ -23,8 +23,16 @@ W, Y`) and known two-letter combinations, requiring a number immediately
 after each recognized element. Anything that doesn't match a valid
 element unambiguously now raises a clear `ValueError` naming the invalid
 token, rather than silently guessing. Two-letter elements are matched
-case-insensitively (`'lafe11.6si1.4'` parses the same as
-`'LaFe11.6Si1.4'`).
+case-insensitively (`'la1fe11.6si1.4'` parses the same as
+`'La1Fe11.6Si1.4'`).
+
+**Follow-up gap (fixed 2026-10):** the "number after each element" rule
+was only enforced when another element followed. A *trailing* element
+without a number (`Fe65Nd30B`) was silently given an amount of 1, and a
+formula with no numbers at all was read as equiatomic. Both now raise a
+`ValueError`, as does a number placed before the first element
+(`65Fe35Nd`). Formulas must be written with every amount explicit, e.g.
+`Nd2Fe14B1`, `Fe2P1`.
 
 ## at% ↔ wt% conversion
 

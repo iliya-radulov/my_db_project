@@ -1,10 +1,14 @@
 """
 vsm_temp_coefficient.py
 
-Fits the reversible temperature coefficients of coercivity (alpha) and
-remanence (beta) from a set of (T, Hc) / (T, Mr) points extracted from
+Fits the reversible temperature coefficients of remanence (alpha) and
+coercivity (beta) from a set of (T, Mr) / (T, Hc) points extracted from
 multiple MH loops at different fixed temperatures -- the standard
-permanent-magnet datasheet quantities.
+permanent-magnet datasheet quantities. Naming follows the permanent-magnet
+convention: alpha = coefficient of remanence (Br), beta = coefficient of
+intrinsic coercivity (Hcj); for Nd-Fe-B typically alpha ~ -0.10 %/K and
+beta ~ -0.5 ... -0.6 %/K. (Until 2026-10 these two names were used the
+other way round in this project; see migration 006.)
 
 Standard definition: a linear fit of the quantity vs. T, normalized by
 its value at a reference temperature, expressed as %/K:

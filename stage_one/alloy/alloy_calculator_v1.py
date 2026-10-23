@@ -125,6 +125,9 @@ def parse_composition_input(
         
         # We're at a letter
         if current_num:
+            if not elements:
+                raise ValueError(f"Number '{current_num}' appears before any element "
+                                 f"(write the amount after the element, e.g. 'Fe65')")
             numbers.append(float(current_num))
             current_num = ""
         
@@ -169,14 +172,20 @@ def parse_composition_input(
             i += 1
     
     if current_num:
+        if not elements:
+            raise ValueError(f"No element symbol found in '{formula}'")
         numbers.append(float(current_num))
-    
-    if not numbers:
-        numbers = [1.0] * len(elements)
-    
-    while len(numbers) < len(elements):
-        numbers.append(1.0)
-    
+
+    if not elements:
+        raise ValueError(f"No element symbol found in '{formula}'")
+
+    # Strict: every element needs its own explicit amount. A trailing element
+    # without a number (e.g. the B in 'Fe65Nd30B') used to be silently given
+    # 1.0, which is a plausible-looking but unintended composition.
+    if len(numbers) != len(elements):
+        raise ValueError(f"Missing number after '{elements[-1]}' -- every element must be "
+                         f"followed by its amount (e.g. 'Nd2Fe14B1', not 'Nd2Fe14B')")
+
     result = {}
     for elem, num in zip(elements, numbers):
         result[elem] = result.get(elem, 0.0) + num
@@ -387,16 +396,17 @@ def calculate_masses_from_fixed_prealloy(
 if __name__ == "__main__":
     # Test the parser
     print("Parser tests:")
-    print("  'Lafe11.6si1.4' →", parse_composition_input('Lafe11.6si1.4'))
-    print("  'LaFe11.6Si1.4' →", parse_composition_input('LaFe11.6Si1.4'))
+    print("  'la1fe11.6si1.4' →", parse_composition_input('la1fe11.6si1.4'))
+    print("  'La1Fe11.6Si1.4' →", parse_composition_input('La1Fe11.6Si1.4'))
     print("  'fe65nd30co5' →", parse_composition_input('fe65nd30co5'))
     
-    # Test invalid formula
-    print("\nTesting invalid 'Fe65Cp30Co5':")
-    try:
-        print(parse_composition_input('Fe65Cp30Co5'))
-    except ValueError as e:
-        print(f"  ✅ Error caught: {e}")
+    # Test invalid formulas
+    for bad in ('Fe65Cp30Co5', 'Nd2Fe14B', 'LaFe11.6Si1.4', '65Fe35Nd'):
+        print(f"\nTesting invalid '{bad}':")
+        try:
+            print(parse_composition_input(bad))
+        except ValueError as e:
+            print(f"  ✅ Error caught: {e}")
     
     # Test with excess
     print("\nMass calculation with 3% excess La:")

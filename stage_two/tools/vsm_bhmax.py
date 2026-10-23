@@ -3,11 +3,14 @@ vsm_bhmax.py
 
 Calculates the maximum energy product (BH_max) for a cuboid permanent
 magnet sample, correcting for self-demagnetization -- the actual figure
-of merit for permanent magnets, as opposed to Hc/Mr (which, confirmed
-directly via a synthetic ground-truth test, are mathematically
-UNCHANGED by a simple point-wise shearing correction, since that
-correction is proportional to M itself and vanishes exactly at the
-points defining Hc and Mr).
+of merit for permanent magnets, as opposed to Hc and Mr. A point-wise
+shearing correction (H_int = H_applied - N*M) leaves Hc exactly unchanged,
+because M = 0 at the coercivity crossing (confirmed with a synthetic
+ground-truth test). It does NOT leave Mr unchanged: Mr is defined at zero
+INTERNAL field, which on the measured loop lies at H_applied = N*M_r > 0.
+The Mr stored by the pipeline is read at H_applied = 0, i.e. the apparent
+remanence of the open sample, lower than the intrinsic value by about
+chi*N/(1 + chi*N) (chi = recoil susceptibility; about 1.2 % for HD336).
 
 Formula chain confirmed against the user's own real, working lab
 practice (extracted directly from real presentation files, not
@@ -22,11 +25,19 @@ unit convention:
      approximation):
          N^-1 = 1 + (3/4)(c/a)(1 + a/b)
      where a, b, c are HALF-dimensions and the field is applied along
-     the b-axis. Confirmed against a real worked example (2a=1mm,
-     2b=2.5mm, 2c=2mm -> N=0.322) to match exactly.
+     the c-axis (the THIRD dimension). Checked against a real worked
+     example (2a=1mm, 2b=2.5mm, 2c=2mm -> N=0.322), and against the
+     limits: c -> 0 (thin plate, field normal to it) gives N -> 1, and
+     c -> infinity (long rod along the field) gives N -> 0. (An earlier
+     version of this docstring said "b-axis"; that was wrong -- with b
+     along the field, a long rod would give N ~ 0.57 instead of 0.)
+     Note: Prozorov & Kogan derive this for diamagnetic (chi = -1)
+     samples. For a ferromagnet it is an approximation; Aharoni's
+     magnetometric factor (vsm_demag_correction.py) gives 0.267 for
+     the same 1 x 2.5 x 2 mm sample with the field along the 2 mm edge.
   2. Polarisation: J[T] = M[emu/g] * density[g/cm^3] * 4*pi*1e-4.
-     Confirmed against a real worked example (M=86.87 emu/g,
-     density=7.61 g/cm^3 -> J=0.828T) to match exactly.
+     Worked example: M=86.87 emu/g, density=7.61 g/cm^3 -> J=0.831T
+     (an earlier note quoted 0.828T; the formula gives 0.8307T).
   3. Field conversion: H[kA/m] = H[Oe] / (4*pi).
   4. Demagnetizing correction, in SI-consistent kA/m (NOT the CGS
      4*pi*N*M form used elsewhere in this project -- confirmed these
@@ -47,16 +58,17 @@ import numpy as np
 def demag_factor_prozorov_kogan(full_a, full_b, full_c):
     """
     Prozorov & Kogan approximate demagnetizing factor for a rectangular
-    cuboid, field applied along the b-axis (the SECOND dimension
+    cuboid, field applied along the c-axis (the THIRD dimension
     passed in). Takes FULL sample dimensions (not half-dimensions --
-    the /2 conversion happens internally).
+    the /2 conversion happens internally). Pass the edge parallel to
+    the applied field as full_c.
 
     R. Prozorov, V. Kogan, "Effective Demagnetizing Factors of
     Diamagnetic Samples of Various Shapes", Phys. Rev. Applied 10,
     014030 (2018).
 
-    Confirmed against a real worked example: full_a=1mm, full_b=2.5mm,
-    full_c=2mm -> N=0.3226 (matches the user's own reference exactly).
+    Worked example: full_a=1mm, full_b=2.5mm, full_c=2mm (field along
+    the 2mm edge) -> N=0.3226.
     """
     a, b, c = full_a / 2.0, full_b / 2.0, full_c / 2.0
     N_inv = 1 + (3.0/4.0) * (c/a) * (1 + a/b)
@@ -70,8 +82,7 @@ def polarisation_tesla(M_emu, mass_g, density_g_cm3):
 
     J[T] = (M_emu/mass_g) * density_g_cm3 * 4*pi*1e-4
 
-    Confirmed against a real worked example: M/mass=86.87 emu/g,
-    density=7.61 g/cm^3 -> J=0.828T (matches exactly).
+    Worked example: M/mass=86.87 emu/g, density=7.61 g/cm^3 -> J=0.831T.
     """
     M_per_g = np.asarray(M_emu) / mass_g
     return M_per_g * density_g_cm3 * 4 * np.pi * 1e-4

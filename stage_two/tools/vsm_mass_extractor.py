@@ -47,6 +47,8 @@ def extract_mass_from_filename(filename):
         '50_35mg'     -> 50.35  (underscore as decimal point -- CONFIRMED
                                   correct against a real header value)
         'm29_07_'     -> 29.07  ('m' prefix + underscore-decimal, no 'mg' suffix)
+        '95.98mg'     -> 95.98  (point as decimal separator)
+        'm11,819mg'   -> 11.819 (comma as decimal separator, optional 'm' prefix)
 
     Returns (mass_g_or_None, confidence) where confidence is:
         'high'    -- header confirmed (not applicable here, filename-only)
@@ -57,29 +59,30 @@ def extract_mass_from_filename(filename):
                      SILENTLY, flag for manual review.
         None      -- no mass pattern found at all
     """
-    # pattern 1: digits_digits immediately followed by 'mg', but only
-    # when the first digit group starts at a real token boundary (not
-    # preceded by a letter/digit) -- confirmed necessary on real data:
-    # without this, 'sample1_50mg' incorrectly matched '1_50mg' as
-    # 1.50mg (the '1' in 'sample1' is an ID number, not a mass digit).
-    matches = list(re.finditer(r'(?<![a-zA-Z0-9])(\d+)_(\d+)mg', filename))
+    # pattern 1: digits, a decimal separator ('_', '.' or ','), digits, then
+    # 'mg' -- e.g. '50_35mg', '95.98mg', 'm11,819mg'. The first digit group
+    # must start at a real token boundary (not preceded by a letter/digit) --
+    # confirmed necessary on real data: without this, 'sample1_50mg'
+    # incorrectly matched '1_50mg' as 1.50mg (the '1' in 'sample1' is an ID
+    # number, not a mass digit). An optional single 'm' directly before the
+    # number is accepted as a mass marker ('m23.147mg') for '.' and ','
+    # only: for '_' the pre-existing handling of 'm4_140mg' is kept (below).
+    matches = list(re.finditer(
+        r'(?<![a-zA-Z0-9])(?:m(?=\d+[.,]\d+mg))?(\d+)([_.,])(\d+)mg',
+        filename, re.IGNORECASE))
     if matches:
         # use the LAST match (closest to end of filename, where mass
         # conventionally sits) as the primary candidate
         m = matches[-1]
-        mass = float(f"{m.group(1)}.{m.group(2)}")
-        # ambiguity check: is there a letter immediately before the
-        # first digit group that could indicate it's a compound token
-        # (e.g. 'm4_140mg' -- the 'm' + first digit group could be a
-        # separate sample-ID token, not part of the mass)
-        start = m.start()
-        preceding_char = filename[start - 1] if start > 0 else ''
-        if preceding_char.isalpha():
-            return mass, 'low'
+        mass = float(f"{m.group(1)}.{m.group(3)}")
         return mass, 'medium'
 
-    # pattern 2: plain digits immediately followed by 'mg', no decimal
-    m = re.search(r'(\d+)mg', filename)
+    # pattern 2: plain digits immediately followed by 'mg', no decimal.
+    # Must not start in the middle of a decimal number: '95.98mg' that did
+    # not match pattern 1 for some other reason must not be read as 98mg.
+    # (If a decimal separator precedes the digits, report no mass instead
+    # of a silently wrong one, so the operator is asked to enter it.)
+    m = re.search(r'(?<![\d.,])(\d+)mg', filename, re.IGNORECASE)
     if m:
         return float(m.group(1)), 'medium'
 
