@@ -1,6 +1,7 @@
 """
 phase_diagram_ternary_v3.py — Ternary isothermal section with multiprocessing.
 
+Merges the three binaries with tdb_merge (checked against each binary; see 24 Oct 2026).
 Uses Python multiprocessing to parallelize equilibrium calculations across all
 available CPU cores. ~10x faster than v2 on a 12-core machine (N=80 in ~7 min).
 
@@ -39,8 +40,20 @@ from tdb_lookup import build_index, find_binaries, select_preferred
 SQRT3_2 = np.sqrt(3) / 2
 
 
-# ── TDB merge (same dedup logic as v1/v2) ────────────────────────────────────
+# ── TDB merge ─────────────────────────────────────────────────────────────────
+# 24 Oct 2026: the old text merge (kept below as merge_tdb_files_OLD for reference) dropped
+# elements from shared phases (last CONSTITUENT list won: Fe was missing from LIQUID, BCC_A2,
+# FCC_A1) and counted shared parameters twice. tdb_merge merges the parsed databases instead.
+from tdb_merge import merged_text, check_edges
+
+
 def merge_tdb_files(paths):
+    """TDB text of the merged description (now via tdb_merge)."""
+    return merged_text(paths)
+
+
+def merge_tdb_files_OLD(paths):
+    """DEFECTIVE — do not use. Kept only to document the defect (paper 3, Section 7)."""
     seen, out = set(), []
     DEDUP = {"FUNCTION", "ELEMENT", "PHASE", "CONSTITUENT"}
     for path in paths:
@@ -255,8 +268,13 @@ def main():
         merged_path = THIS_DIR / f"{''.join(elements)}_merged_v3.tdb"
         merged_path.write_text(merge_tdb_files(tdb_paths), encoding="utf-8")
 
-        # Load once in main process just to get phase list
+        # Load once in main process just to get phase list, and check the merge:
+        # along every edge the merged file must reproduce its binary file
         db_main = Database(str(merged_path))
+        print("  Checking the merge against the binary files...")
+        if not check_edges(db_main, tdb_paths):
+            print("ERROR: the merged description does not reproduce its binaries — stopping")
+            sys.exit(1)
         phases  = list(db_main.phases.keys())
         print(f"  Phases: {phases}\n")
 

@@ -1239,7 +1239,7 @@ class AlloyLabApp(ctk.CTk):
                 _routes = _synth.get('suggested_routes', []) if _synth else []
                 if _routes:
                     _stage3_dir = Path(__file__).resolve().parent / "stage_three"
-                    _python = _stage3_dir / ".venv" / "bin" / "python3"
+                    _python = Path.home() / "venvs" / "stage3_rag" / "bin" / "python3"
                     _script = _stage3_dir / "synthesis_rag.py"
                     _system = sample_id.split("-")[0] if "-" in sample_id else sample_id
                     _payload = json.dumps({
@@ -1261,6 +1261,9 @@ class AlloyLabApp(ctk.CTk):
                         # Remove "Querying..." text
                         self.result_text.delete("end-2l", "end")
                         self.result_text.insert("end", f"\n{_rag['answer']}")
+                        if _rag.get("sources"):
+                            _books = list(dict.fromkeys(_rag["sources"]))
+                            self.result_text.insert("end", "\n\nSources: " + "; ".join(_books))
                     else:
                         self.result_text.insert("end", f"\nRAG error: {_proc.stderr[:200]}")
             except Exception as _rag_err:

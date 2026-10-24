@@ -1,0 +1,1004 @@
+{
+ "phase": {
+  "books": {
+   "ASM International - ASM Handbook, Volume 3_ Alloy Phase Diagrams (Asm Handbook) (1992).pdf": {
+    "status": "ok",
+    "pages": 1741,
+    "words": 165985,
+    "chunks": 472,
+    "tokens_measured": 0,
+    "over_2048_tokens": 0,
+    "max_tokens": null,
+    "shortened": []
+   },
+   "[Landolt-Börnstein - Group VIII Advanced Materials and Technologies 11B] E. Burzo (eds.) - Nanocrystalline Materials, Part B_ Advanced Materials and Technologies (2015, Springer-Verlag Berlin Heidelberg).pdf": {
+    "status": "ok",
+    "pages": 357,
+    "words": 168123,
+    "chunks": 478,
+    "tokens_measured": 0,
+    "over_2048_tokens": 0,
+    "max_tokens": null,
+    "shortened": []
+   },
+   "[Landolt-Börnstein - Group VIII Advanced Materials and Technologies 11] E. Burzo (eds.) - Nanocrystalline Materials, Part A_ Advanced Materials and Technologies (2013, Springer-Verlag Berlin Heidelberg).pdf": {
+    "status": "ok",
+    "pages": 348,
+    "words": 164078,
+    "chunks": 466,
+    "tokens_measured": 0,
+    "over_2048_tokens": 0,
+    "max_tokens": null,
+    "shortened": []
+   },
+   "[Landolt-Börnstein - Group VIII Advanced Materials and Technologies 2A1_ Advanced Materials and Technologies] P. Beiss, R. Ruthardt, H. Warlimont (auth.), P. Beiss, R. Ruthar - Powder Metallurgy Data_ Part 1_ Metals and Magnets.pdf": {
+    "status": "ok",
+    "pages": 580,
+    "words": 202392,
+    "chunks": 576,
+    "tokens_measured": 5,
+    "over_2048_tokens": 0,
+    "max_tokens": 1012,
+    "shortened": []
+   },
+   "[Landolt-Börnstein - Group VIII Advanced Materials and Technologies 2A2_ Advanced Materials and Technologies] P. Beiss, R. Ruthardt, H. Warlimont (auth.), P. Beiss, R. Ruthar - Powder Metallurgy Data. Refractory, Hard and Interme.pdf": {
+    "status": "ok",
+    "pages": 269,
+    "words": 104659,
+    "chunks": 297,
+    "tokens_measured": 0,
+    "over_2048_tokens": 0,
+    "max_tokens": null,
+    "shortened": []
+   },
+   "[Landolt-Börnstein - Group VIII Advanced Materials and Technologies 2C1_ Advanced Materials and Technologies] M. Spittel, T. Spittel (auth.), H. Warlimont (eds.) - Metal Forming Data of Ferrous Alloys - deformation behaviouri.pdf": {
+    "status": "ok",
+    "pages": 993,
+    "words": 121875,
+    "chunks": 346,
+    "tokens_measured": 1,
+    "over_2048_tokens": 0,
+    "max_tokens": 764,
+    "shortened": []
+   },
+   "modeling-and-simulation-of-microstructure-evolution-in-solidifying-alloys-mathematics-and-its-applications_compress.pdf": {
+    "status": "ok",
+    "pages": 304,
+    "words": 60010,
+    "chunks": 169,
+    "tokens_measured": 1,
+    "over_2048_tokens": 1,
+    "max_tokens": 2258,
+    "shortened": []
+   },
+   "phase-equilibria-phase-diagrams-and-phase-transformations_compress.pdf": {
+    "status": "ok",
+    "pages": 526,
+    "words": 196692,
+    "chunks": 559,
+    "tokens_measured": 0,
+    "over_2048_tokens": 0,
+    "max_tokens": null,
+    "shortened": []
+   },
+   "phase-transformations-in-materials.pdf": {
+    "status": "ok",
+    "pages": 721,
+    "words": 347434,
+    "chunks": 990,
+    "tokens_measured": 0,
+    "over_2048_tokens": 0,
+    "max_tokens": null,
+    "shortened": []
+   },
+   "phase-transformations-in-metals-and-alloys.pdf": {
+    "status": "ok",
+    "pages": 227,
+    "words": 108187,
+    "chunks": 307,
+    "tokens_measured": 0,
+    "over_2048_tokens": 0,
+    "max_tokens": null,
+    "shortened": []
+   }
+  },
+  "books_indexed": 10,
+  "books_without_chunks": [],
+  "chunks_expected": 4660,
+  "chunks_minilm": 4660,
+  "chunks_bge": 4660,
+  "end_check_lowest_cosine": 1.0,
+  "chunks_measured_tokens": 7,
+  "chunks_over_2048_tokens": 1,
+  "longest_chunk_tokens": 2258,
+  "shortened_for_embedding": []
+ },
+ "synthesis": {
+  "books": {
+   "A. K. Tyagi (editor), Raghumani S. Ningthoujam (editor) - Handbook on Synthesis Strategies for Advanced Materials_ Volume-III_ Materials Specific Synthesis Strategies (Indian Institute (2021, Springer).pdf": {
+    "status": "ok",
+    "pages": 922,
+    "words": 348311,
+    "chunks": 993,
+    "tokens_measured": 0,
+    "over_2048_tokens": 0,
+    "max_tokens": null,
+    "shortened": []
+   },
+   "ASM - ASM Handbook_Vol_15_ Casting (1988, ASM International).pdf": {
+    "status": "ok",
+    "pages": 2002,
+    "words": 757473,
+    "chunks": 2162,
+    "tokens_measured": 0,
+    "over_2048_tokens": 0,
+    "max_tokens": null,
+    "shortened": []
+   },
+   "ASM - ASM Handbook_Vol_4_Heat Treating (1991, ASM International).pdf": {
+    "status": "ok",
+    "pages": 2173,
+    "words": 807338,
+    "chunks": 2304,
+    "tokens_measured": 0,
+    "over_2048_tokens": 0,
+    "max_tokens": null,
+    "shortened": []
+   },
+   "ASM - ASM Handbook_Vol_7_powder-metal-technologies-and-applications-asm-handbook.pdf": {
+    "status": "ok",
+    "pages": 2762,
+    "words": 1108211,
+    "chunks": 3164,
+    "tokens_measured": 0,
+    "over_2048_tokens": 0,
+    "max_tokens": null,
+    "shortened": []
+   },
+   "David Furrer - ASM Handbook Volume 22B_ Metals Process Simulation (2010, ASM International).pdf": {
+    "status": "ok",
+    "pages": 695,
+    "words": 620102,
+    "chunks": 1769,
+    "tokens_measured": 0,
+    "over_2048_tokens": 0,
+    "max_tokens": null,
+    "shortened": []
+   },
+   "E. M. Savitskii, G. S. Burkhanov (auth.) - Physical Metallurgy of Refractory Metals and Alloys (1970).pdf": {
+    "status": "ok",
+    "pages": 295,
+    "words": 148610,
+    "chunks": 422,
+    "tokens_measured": 0,
+    "over_2048_tokens": 0,
+    "max_tokens": null,
+    "shortened": []
+   },
+   "Furrer, D.U._ Semiatin, S.L. (Eds.) - ASM Handbook, Volume 22A - Fundamentals of Modeling for Metals Processing (2009, ASM International).pdf": {
+    "status": "ok",
+    "pages": 803,
+    "words": 610444,
+    "chunks": 1742,
+    "tokens_measured": 0,
+    "over_2048_tokens": 0,
+    "max_tokens": null,
+    "shortened": []
+   },
+   "G S Upadhyaya - Powder Metallurgy Technology (1998).pdf": {
+    "status": "ok",
+    "pages": 170,
+    "words": 56603,
+    "chunks": 159,
+    "tokens_measured": 1,
+    "over_2048_tokens": 0,
+    "max_tokens": 1061,
+    "shortened": []
+   },
+   "George E. Totten, C. E. Bates, N. A. Clinton - Handbook of Quenchants and Quenching Technology (1993, Asm International.pdf": {
+    "status": "ok",
+    "pages": 528,
+    "words": 128089,
+    "chunks": 363,
+    "tokens_measured": 0,
+    "over_2048_tokens": 0,
+    "max_tokens": null,
+    "shortened": []
+   },
+   "J. W. Martin Emeritus Reader in Physical Metallurgy - Concise Encyclopedia of the Structure of Materials (2007, Elsevier).pdf": {
+    "status": "ok",
+    "pages": 485,
+    "words": 281256,
+    "chunks": 801,
+    "tokens_measured": 0,
+    "over_2048_tokens": 0,
+    "max_tokens": null,
+    "shortened": []
+   },
+   "Jan_Svoboda_Magnetic_Techniques_for_the_Treatmen.pdf": {
+    "status": "ok",
+    "pages": 651,
+    "words": 95401,
+    "chunks": 270,
+    "tokens_measured": 149,
+    "over_2048_tokens": 3,
+    "max_tokens": 2315,
+    "shortened": []
+   },
+   "M. Sherif El-Eskandarany - Mechanical Alloying, Second Edition_ Nanotechnology, Materials Science and Powder Metallurgy (2015).pdf": {
+    "status": "ok",
+    "pages": 340,
+    "words": 102680,
+    "chunks": 291,
+    "tokens_measured": 0,
+    "over_2048_tokens": 0,
+    "max_tokens": null,
+    "shortened": []
+   },
+   "M. Yamaguchi, Y. Shirai (auth.), N. S. Stoloff, V. K. Sikka (eds - Physical Metallurgy and processing of Intermetallic Compounds (1996).pdf": {
+    "status": "ok",
+    "pages": 689,
+    "words": 218669,
+    "chunks": 622,
+    "tokens_measured": 0,
+    "over_2048_tokens": 0,
+    "max_tokens": null,
+    "shortened": []
+   },
+   "Mario_Aparicio,_Andrei_Jitianu,_Lisa_C._Klein_Sol_Gel.pdf": {
+    "status": "ok",
+    "pages": 408,
+    "words": 159842,
+    "chunks": 454,
+    "tokens_measured": 0,
+    "over_2048_tokens": 0,
+    "max_tokens": null,
+    "shortened": []
+   },
+   "Mechanical alloying and milling.pdf": {
+    "status": "ok",
+    "pages": 184,
+    "words": 72273,
+    "chunks": 204,
+    "tokens_measured": 0,
+    "over_2048_tokens": 0,
+    "max_tokens": null,
+    "shortened": []
+   },
+   "Nato Science Series E213- Ordered Intermetallics_Physical Metallurgy and Mechanical Behaviour (1992).pdf": {
+    "status": "ok",
+    "pages": 691,
+    "words": 249391,
+    "chunks": 710,
+    "tokens_measured": 0,
+    "over_2048_tokens": 0,
+    "max_tokens": null,
+    "shortened": []
+   },
+   "Pasquale Cavaliere - Spark Plasma Sintering of Materials_ Advances in Processing and Applications-Springer International Publishing (2019).pdf": {
+    "status": "ok",
+    "pages": 767,
+    "words": 272960,
+    "chunks": 777,
+    "tokens_measured": 0,
+    "over_2048_tokens": 0,
+    "max_tokens": null,
+    "shortened": []
+   },
+   "R E Smallman, A.H.W. Ngan - Physical Metallurgy and Advanced Materials, Seventh Edition (2007).pdf": {
+    "status": "ok",
+    "pages": 673,
+    "words": 287090,
+    "chunks": 818,
+    "tokens_measured": 0,
+    "over_2048_tokens": 0,
+    "max_tokens": null,
+    "shortened": []
+   },
+   "Randall German - A - Z of Powder Metallurgy (2005, Elsevier Science).pdf": {
+    "status": "ok",
+    "pages": 441,
+    "words": 151659,
+    "chunks": 431,
+    "tokens_measured": 0,
+    "over_2048_tokens": 0,
+    "max_tokens": null,
+    "shortened": []
+   },
+   "Randall M. German - Powder Metallurgy & Particulate Materials Processing (2005, Metal Powder Industry).pdf": {
+    "status": "ok",
+    "pages": 157,
+    "words": 61089,
+    "chunks": 172,
+    "tokens_measured": 0,
+    "over_2048_tokens": 0,
+    "max_tokens": null,
+    "shortened": []
+   },
+   "Supermagnets-Hard-Magnetic-Materials.pdf": {
+    "status": "ok",
+    "pages": 839,
+    "words": 248440,
+    "chunks": 707,
+    "tokens_measured": 0,
+    "over_2048_tokens": 0,
+    "max_tokens": null,
+    "shortened": []
+   },
+   "Wood, J. V. (editor)_Schultz, L. (editor)_Herlach, D. M. (editor - Materials Development and Processing - Bulk Amorphous Materials, Undercooling and Powder Metallurgy_ SCHULTZ_MAT.DEV._PROCESS O (2000, Wiley-VCH Verlag GmbH & Co.pdf": {
+    "status": "ok",
+    "pages": 396,
+    "words": 119595,
+    "chunks": 339,
+    "tokens_measured": 0,
+    "over_2048_tokens": 0,
+    "max_tokens": null,
+    "shortened": []
+   },
+   "[The Institute of Materials Series on Powder Metallurgy] F. Thummler, R. Oberacker - B0490 Introduction to powder metallurgy (1994, Maney Materials Science).pdf": {
+    "status": "ok",
+    "pages": 347,
+    "words": 103269,
+    "chunks": 293,
+    "tokens_measured": 0,
+    "over_2048_tokens": 0,
+    "max_tokens": null,
+    "shortened": []
+   },
+   "[Three Volume Set] R.W. Cahn, Kazuhiro Hono, P. Haasen - Physical Metallurgy Volume 1 (1996, North-Holland).pdf": {
+    "status": "ok",
+    "pages": 1042,
+    "words": 372868,
+    "chunks": 1063,
+    "tokens_measured": 32,
+    "over_2048_tokens": 0,
+    "max_tokens": 1202,
+    "shortened": []
+   },
+   "[Three Volume Set] R.W. Cahn, Kazuhiro Hono, P. Haasen - Physical Metallurgy Volume 2 (1996, North-Holland).pdf": {
+    "status": "ok",
+    "pages": 944,
+    "words": 368180,
+    "chunks": 1049,
+    "tokens_measured": 0,
+    "over_2048_tokens": 0,
+    "max_tokens": null,
+    "shortened": []
+   },
+   "[Three Volume Set] R.W. Cahn, Kazuhiro Hono, P. Haasen - Physical Metallurgy Volume 3 (1996, North-Holland).pdf": {
+    "status": "ok",
+    "pages": 1024,
+    "words": 387631,
+    "chunks": 1105,
+    "tokens_measured": 0,
+    "over_2048_tokens": 0,
+    "max_tokens": null,
+    "shortened": []
+   },
+   "[Wiley on Processing of Engineering Materials 1] German, Randall M - Handbook of Mathematical Relations in Particulate Materials Processing (2009).pdf": {
+    "status": "ok",
+    "pages": 452,
+    "words": 120585,
+    "chunks": 342,
+    "tokens_measured": 0,
+    "over_2048_tokens": 0,
+    "max_tokens": null,
+    "shortened": []
+   },
+   "[Woodhead Publishing Series in Electronic and Optical Materials] John J. Croat - Rapidly Solidified Neodymium-Iron-Boron Permanent Magnets (2018).pdf": {
+    "status": "ok",
+    "pages": 384,
+    "words": 150281,
+    "chunks": 427,
+    "tokens_measured": 0,
+    "over_2048_tokens": 0,
+    "max_tokens": null,
+    "shortened": []
+   },
+   "alloys-preparation-properties-applications.pdf": {
+    "status": "ok",
+    "pages": 323,
+    "words": 144649,
+    "chunks": 411,
+    "tokens_measured": 0,
+    "over_2048_tokens": 0,
+    "max_tokens": null,
+    "shortened": []
+   },
+   "catalysis-by-metals-and-alloys-studies-in-surface-science-and-catalysis_compress.pdf": {
+    "status": "ok",
+    "pages": 745,
+    "words": 258439,
+    "chunks": 736,
+    "tokens_measured": 0,
+    "over_2048_tokens": 0,
+    "max_tokens": null,
+    "shortened": []
+   },
+   "intermetallic-chemistry-pergamon-materials-series-volume-13.pdf": {
+    "status": "ok",
+    "pages": 813,
+    "words": 284574,
+    "chunks": 811,
+    "tokens_measured": 2,
+    "over_2048_tokens": 2,
+    "max_tokens": 2376,
+    "shortened": []
+   },
+   "physical-metallurgy-principles-5ec3943bb6a0b.pdf": {
+    "status": "ok",
+    "pages": 769,
+    "words": 320059,
+    "chunks": 912,
+    "tokens_measured": 0,
+    "over_2048_tokens": 0,
+    "max_tokens": null,
+    "shortened": []
+   },
+   "Гаврилин И.В. - Плавление и кристаллизация металлов и сплавов (2000).pdf": {
+    "status": "ok",
+    "pages": 131,
+    "words": 74495,
+    "chunks": 210,
+    "tokens_measured": 185,
+    "over_2048_tokens": 0,
+    "max_tokens": 917,
+    "shortened": []
+   },
+   "Горелик С.С. (ред.) - Рекристаллизация металлов и сплавов.pdf": {
+    "status": "ok",
+    "pages": 432,
+    "words": 104242,
+    "chunks": 295,
+    "tokens_measured": 277,
+    "over_2048_tokens": 0,
+    "max_tokens": 1010,
+    "shortened": []
+   },
+   "Процессы порошковой металлургии. В 2-х т. Том 1. Производство металлических порошков Учебник для вузов.pdf": {
+    "status": "ok",
+    "pages": 186,
+    "words": 95832,
+    "chunks": 271,
+    "tokens_measured": 265,
+    "over_2048_tokens": 0,
+    "max_tokens": 1553,
+    "shortened": []
+   },
+   "СОВРЕМЕННЫЕ ТЕХНОЛОГИИ В ПОРОШКОВОЙ\nМЕТАЛЛУРГИИ.pdf": {
+    "status": "ok",
+    "pages": 384,
+    "words": 78899,
+    "chunks": 223,
+    "tokens_measured": 220,
+    "over_2048_tokens": 0,
+    "max_tokens": 892,
+    "shortened": []
+   },
+   "Самарин, Б. А._ Авраамов, Ю. С._ Новиков, В. Ю. - №970 Основы магнетизма, металловедение, технология производства и применение сплавов.pdf": {
+    "status": "ok",
+    "pages": 122,
+    "words": 21510,
+    "chunks": 59,
+    "tokens_measured": 54,
+    "over_2048_tokens": 0,
+    "max_tokens": 1257,
+    "shortened": []
+   }
+  },
+  "books_indexed": 37,
+  "books_without_chunks": [],
+  "chunks_expected": 27881,
+  "chunks_minilm": 27881,
+  "chunks_bge": 27881,
+  "end_check_lowest_cosine": 1.0,
+  "chunks_measured_tokens": 1185,
+  "chunks_over_2048_tokens": 5,
+  "longest_chunk_tokens": 2376,
+  "shortened_for_embedding": []
+ },
+ "magnetic": {
+  "books": {
+   "3d-4d-and-5d-elements-alloys-and-compounds-landolt-bornstein-numerical-data-and-functional-relationships-in-science-and-technology-new-series-condensed-matter.pdf": {
+    "status": "ok",
+    "pages": 439,
+    "words": 88013,
+    "chunks": 249,
+    "tokens_measured": 0,
+    "over_2048_tokens": 0,
+    "max_tokens": null,
+    "shortened": []
+   },
+   "ASM Handbook, Vol 9_ Metallography And Microstructures (2004).pdf": {
+    "status": "ok",
+    "pages": 1627,
+    "words": 500147,
+    "chunks": 1426,
+    "tokens_measured": 0,
+    "over_2048_tokens": 0,
+    "max_tokens": null,
+    "shortened": []
+   },
+   "ASM Handbook_ Vol 10_ Materials Characterization  (1986).pdf": {
+    "status": "ok",
+    "pages": 1310,
+    "words": 521073,
+    "chunks": 1486,
+    "tokens_measured": 0,
+    "over_2048_tokens": 0,
+    "max_tokens": null,
+    "shortened": []
+   },
+   "ASM Metals Handbook, Vol 02 Properties and Selection_ Nonferrous Alloys and Special-Purpose Materials Volume 2 (1990).pdf": {
+    "status": "ok",
+    "pages": 3470,
+    "words": 1147471,
+    "chunks": 3276,
+    "tokens_measured": 0,
+    "over_2048_tokens": 0,
+    "max_tokens": null,
+    "shortened": []
+   },
+   "Alex_Hubert_Rudolf_Schafer_Magnetic_Domains_The_Analysis_of_Magnetic_Microstructures.pdf": {
+    "status": "ok",
+    "pages": 707,
+    "words": 270800,
+    "chunks": 771,
+    "tokens_measured": 0,
+    "over_2048_tokens": 0,
+    "max_tokens": null,
+    "shortened": []
+   },
+   "Arcady_Zhukov_eds._Novel_Functional_Magnetic_Materials_Fundamentals_and_Applications.pdf": {
+    "status": "ok",
+    "pages": 455,
+    "words": 174941,
+    "chunks": 497,
+    "tokens_measured": 0,
+    "over_2048_tokens": 0,
+    "max_tokens": null,
+    "shortened": []
+   },
+   "BlunforDirac0198505914.pdf": {
+    "status": "ok",
+    "pages": 251,
+    "words": 99778,
+    "chunks": 283,
+    "tokens_measured": 0,
+    "over_2048_tokens": 0,
+    "max_tokens": null,
+    "shortened": []
+   },
+   "Complex Functional Materials.pdf": {
+    "status": "ok",
+    "pages": 261,
+    "words": 94988,
+    "chunks": 269,
+    "tokens_measured": 0,
+    "over_2048_tokens": 0,
+    "max_tokens": null,
+    "shortened": []
+   },
+   "Concise-Encyclopedia-of-Magnetic-and-Superconducting-Materials.pdf": {
+    "status": "ok",
+    "pages": 1361,
+    "words": 882996,
+    "chunks": 2520,
+    "tokens_measured": 0,
+    "over_2048_tokens": 0,
+    "max_tokens": null,
+    "shortened": []
+   },
+   "Condensed_Matter_Physics.pdf": {
+    "status": "ok",
+    "pages": 984,
+    "words": 340490,
+    "chunks": 970,
+    "tokens_measured": 0,
+    "over_2048_tokens": 0,
+    "max_tokens": null,
+    "shortened": []
+   },
+   "Cullity_Graham.pdf": {
+    "status": "ok",
+    "pages": 550,
+    "words": 205943,
+    "chunks": 586,
+    "tokens_measured": 0,
+    "over_2048_tokens": 0,
+    "max_tokens": null,
+    "shortened": []
+   },
+   "David_Dunlop_Özden_Özdemir_Rock_Magnetism.pdf": {
+    "status": "ok",
+    "pages": 595,
+    "words": 206782,
+    "chunks": 588,
+    "tokens_measured": 0,
+    "over_2048_tokens": 0,
+    "max_tokens": null,
+    "shortened": []
+   },
+   "Encyclopedia_of_Condensed_Matter_Physics.pdf": {
+    "status": "ok",
+    "pages": 2787,
+    "words": 1728074,
+    "chunks": 4935,
+    "tokens_measured": 0,
+    "over_2048_tokens": 0,
+    "max_tokens": null,
+    "shortened": []
+   },
+   "Fiorillo, Measurement and Characterization of Magnetic Materials (2004).pdf": {
+    "status": "ok",
+    "pages": 667,
+    "words": 216816,
+    "chunks": 617,
+    "tokens_measured": 0,
+    "over_2048_tokens": 0,
+    "max_tokens": null,
+    "shortened": []
+   },
+   "Furlani_E.P._Permanent_Magnet_and_Electromechani.pdf": {
+    "status": "ok",
+    "pages": 537,
+    "words": 112734,
+    "chunks": 320,
+    "tokens_measured": 0,
+    "over_2048_tokens": 0,
+    "max_tokens": null,
+    "shortened": []
+   },
+   "George_T._Rado_and_Harry_Suhl_Eds._Spin_Arrangements_and_Crystal_Structure,_Domains,_and_Micromagnetics._A_Treatise_on_Modern_Theory_and_Materials.pdf": {
+    "status": "ok",
+    "pages": 625,
+    "words": 215991,
+    "chunks": 615,
+    "tokens_measured": 1,
+    "over_2048_tokens": 0,
+    "max_tokens": 1749,
+    "shortened": []
+   },
+   "Giorgio_Bertotti_Hysteresis_in_magnetism_for_physicists_materials_scientists_and_engineers_Academic_Press(1998).pdf": {
+    "status": "ok",
+    "pages": 569,
+    "words": 179730,
+    "chunks": 511,
+    "tokens_measured": 0,
+    "over_2048_tokens": 0,
+    "max_tokens": null,
+    "shortened": []
+   },
+   "Handbook Magnetic Materials vol12.pdf": {
+    "status": "ok",
+    "pages": 543,
+    "words": 192285,
+    "chunks": 547,
+    "tokens_measured": 4,
+    "over_2048_tokens": 3,
+    "max_tokens": 6391,
+    "shortened": []
+   },
+   "Handbook of Magnetism and Advanced Magnetic Materials.pdf": {
+    "status": "ok",
+    "pages": 2912,
+    "words": 2071025,
+    "chunks": 5915,
+    "tokens_measured": 0,
+    "over_2048_tokens": 0,
+    "max_tokens": null,
+    "shortened": []
+   },
+   "J. M. D. Coey-Magnetism and Magnetic Materials-Cambridge University Press (2010).pdf": {
+    "status": "ok",
+    "pages": 633,
+    "words": 219879,
+    "chunks": 626,
+    "tokens_measured": 0,
+    "over_2048_tokens": 0,
+    "max_tokens": null,
+    "shortened": []
+   },
+   "K.H.J Buschow, F.R. de Boer-Physics of Magnetism and Magnetic Materials-Springer (2003).pdf": {
+    "status": "ok",
+    "pages": 191,
+    "words": 61988,
+    "chunks": 175,
+    "tokens_measured": 0,
+    "over_2048_tokens": 0,
+    "max_tokens": null,
+    "shortened": []
+   },
+   "Krinchik G.S. Fizika magnitnyh yavlenij(1976).pdf": {
+    "status": "ok",
+    "pages": 368,
+    "words": 92737,
+    "chunks": 262,
+    "tokens_measured": 200,
+    "over_2048_tokens": 0,
+    "max_tokens": 958,
+    "shortened": []
+   },
+   "Krupichka S. Fizika ferritov i rodstvennyh im magnitnyh okislov, tom 1 (1976).pdf": {
+    "status": "ok",
+    "pages": 180,
+    "words": 109970,
+    "chunks": 312,
+    "tokens_measured": 268,
+    "over_2048_tokens": 0,
+    "max_tokens": 1025,
+    "shortened": []
+   },
+   "Krupichka S. Fizika ferritov i rodstvennyh im magnitnyh okislov, tom 2 (1976).pdf": {
+    "status": "ok",
+    "pages": 253,
+    "words": 153643,
+    "chunks": 436,
+    "tokens_measured": 381,
+    "over_2048_tokens": 0,
+    "max_tokens": 989,
+    "shortened": []
+   },
+   "Magnetic_Hysteresis.pdf": {
+    "status": "ok",
+    "pages": 232,
+    "words": 59135,
+    "chunks": 166,
+    "tokens_measured": 1,
+    "over_2048_tokens": 0,
+    "max_tokens": 1148,
+    "shortened": []
+   },
+   "Magnetism and Structure in Functional Materials.pdf": {
+    "status": "ok",
+    "pages": 261,
+    "words": 94988,
+    "chunks": 269,
+    "tokens_measured": 0,
+    "over_2048_tokens": 0,
+    "max_tokens": null,
+    "shortened": []
+   },
+   "Magneto-Science..pdf": {
+    "status": "ok",
+    "pages": 369,
+    "words": 131489,
+    "chunks": 373,
+    "tokens_measured": 0,
+    "over_2048_tokens": 0,
+    "max_tokens": null,
+    "shortened": []
+   },
+   "Manilo_G._Abele_Structures_of_Permanent_Magnets.pdf": {
+    "status": "ok",
+    "pages": 193,
+    "words": 85916,
+    "chunks": 243,
+    "tokens_measured": 0,
+    "over_2048_tokens": 0,
+    "max_tokens": null,
+    "shortened": []
+   },
+   "Michael Coey, Stuart S.P. Parkin - Handbook of Magnetism and Magnetic Materials-Springer (2021).pdf": {
+    "status": "ok",
+    "pages": 1714,
+    "words": 686031,
+    "chunks": 1958,
+    "tokens_measured": 3,
+    "over_2048_tokens": 0,
+    "max_tokens": 960,
+    "shortened": []
+   },
+   "Nagaev E.L. -- Magnetiki so slozhnymi obmennymi vzaimodejstviyami.pdf": {
+    "status": "ok",
+    "pages": 231,
+    "words": 83104,
+    "chunks": 235,
+    "tokens_measured": 205,
+    "over_2048_tokens": 0,
+    "max_tokens": 888,
+    "shortened": []
+   },
+   "Peter_Mohn_Magnetism_in_the_solid_state.pdf": {
+    "status": "ok",
+    "pages": 230,
+    "words": 20715,
+    "chunks": 57,
+    "tokens_measured": 50,
+    "over_2048_tokens": 39,
+    "max_tokens": 4916,
+    "shortened": []
+   },
+   "Prof_Hasse_Fredriksson,_Ulla_Åkerlind_Physics_of_functional_materials.pdf": {
+    "status": "ok",
+    "pages": 490,
+    "words": 192267,
+    "chunks": 547,
+    "tokens_measured": 0,
+    "over_2048_tokens": 0,
+    "max_tokens": null,
+    "shortened": []
+   },
+   "R_M_Bozorth_American_Society_for_Metals_et_al.pdf": {
+    "status": "ok",
+    "pages": 354,
+    "words": 123961,
+    "chunks": 352,
+    "tokens_measured": 0,
+    "over_2048_tokens": 0,
+    "max_tokens": null,
+    "shortened": []
+   },
+   "Robert_C_OHandley_Modern_Magnetic_Materials.pdf": {
+    "status": "ok",
+    "pages": 767,
+    "words": 232856,
+    "chunks": 663,
+    "tokens_measured": 0,
+    "over_2048_tokens": 0,
+    "max_tokens": null,
+    "shortened": []
+   },
+   "Spaldin_N.A._Magnetic_Materials.pdf": {
+    "status": "ok",
+    "pages": 290,
+    "words": 82570,
+    "chunks": 233,
+    "tokens_measured": 0,
+    "over_2048_tokens": 0,
+    "max_tokens": null,
+    "shortened": []
+   },
+   "Sung_H._Whang_Nanostructured_metals_and_alloys.pdf": {
+    "status": "ok",
+    "pages": 828,
+    "words": 289791,
+    "chunks": 825,
+    "tokens_measured": 0,
+    "over_2048_tokens": 0,
+    "max_tokens": null,
+    "shortened": []
+   },
+   "Turov E.A_Fizicheskie svojstva magnitouporyadochennyh kristallov.pdf": {
+    "status": "ok",
+    "pages": 223,
+    "words": 63864,
+    "chunks": 180,
+    "tokens_measured": 136,
+    "over_2048_tokens": 0,
+    "max_tokens": 910,
+    "shortened": []
+   },
+   "Uajt R. Kvantovaja teorija magnetizma.pdf": {
+    "status": "ok",
+    "pages": 305,
+    "words": 75913,
+    "chunks": 214,
+    "tokens_measured": 162,
+    "over_2048_tokens": 0,
+    "max_tokens": 1113,
+    "shortened": []
+   },
+   "Victorino Franco (editor), Brad Dodrill (editor) - Magnetic Measurement Techniques for Materials Characterization (2021).pdf": {
+    "status": "ok",
+    "pages": 814,
+    "words": 314233,
+    "chunks": 895,
+    "tokens_measured": 0,
+    "over_2048_tokens": 0,
+    "max_tokens": null,
+    "shortened": []
+   },
+   "Vonsovskij S.V. Magnetizm.pdf": {
+    "status": "ok",
+    "pages": 1032,
+    "words": 512391,
+    "chunks": 1461,
+    "tokens_measured": 993,
+    "over_2048_tokens": 0,
+    "max_tokens": 1603,
+    "shortened": []
+   },
+   "bozort_ferromagnetizm_1956.pdf": {
+    "status": "ok",
+    "pages": 786,
+    "words": 274845,
+    "chunks": 783,
+    "tokens_measured": 566,
+    "over_2048_tokens": 2,
+    "max_tokens": 3576,
+    "shortened": []
+   },
+   "Ашкрофт Н., Мермин Н. Физика твердого тела (том 1).pdf": {
+    "status": "ok",
+    "pages": 458,
+    "words": 152964,
+    "chunks": 435,
+    "tokens_measured": 409,
+    "over_2048_tokens": 0,
+    "max_tokens": 973,
+    "shortened": []
+   },
+   "Ашкрофт Н., Мермин Н. Физика твердого тела (том 2).pdf": {
+    "status": "ok",
+    "pages": 486,
+    "words": 169283,
+    "chunks": 481,
+    "tokens_measured": 453,
+    "over_2048_tokens": 0,
+    "max_tokens": 961,
+    "shortened": []
+   },
+   "Б.Г. Лившиц, В.С. Крапошин, Я.Л. Линецкий_Физические свойства металлов и сплавов.pdf": {
+    "status": "ok",
+    "pages": 163,
+    "words": 101540,
+    "chunks": 288,
+    "tokens_measured": 239,
+    "over_2048_tokens": 0,
+    "max_tokens": 941,
+    "shortened": []
+   },
+   "Барабаш С.М., Коваль Структура и свойства металлов и сплавов. Кристаллическая структура металлов и сплавов.pdf": {
+    "status": "ok",
+    "pages": 299,
+    "words": 136413,
+    "chunks": 387,
+    "tokens_measured": 45,
+    "over_2048_tokens": 0,
+    "max_tokens": 1160,
+    "shortened": []
+   },
+   "Барьяхтар_В.Г.,_Иванов_Б.А._В_мире_магнитных_доменов._.pdf": {
+    "status": "ok",
+    "pages": 162,
+    "words": 43591,
+    "chunks": 122,
+    "tokens_measured": 106,
+    "over_2048_tokens": 0,
+    "max_tokens": 980,
+    "shortened": []
+   },
+   "Кекало И.Б., Самарин Б.А. - Физическое металловедение прецизионных сплавов.pdf": {
+    "status": "ok",
+    "pages": 497,
+    "words": 133167,
+    "chunks": 378,
+    "tokens_measured": 365,
+    "over_2048_tokens": 0,
+    "max_tokens": 1245,
+    "shortened": []
+   },
+   "Никитин С.А. - Магнитные свойства редкоземельных металлов и их сплавов.pdf": {
+    "status": "ok",
+    "pages": 248,
+    "words": 77388,
+    "chunks": 219,
+    "tokens_measured": 173,
+    "over_2048_tokens": 0,
+    "max_tokens": 986,
+    "shortened": []
+   },
+   "СОВРЕМЕННОЕ УЧЕНИЕ О МАГНЕТИЗМЕ.pdf": {
+    "status": "ok",
+    "pages": 42,
+    "words": 12356,
+    "chunks": 33,
+    "tokens_measured": 30,
+    "over_2048_tokens": 0,
+    "max_tokens": 905,
+    "shortened": []
+   }
+  },
+  "books_indexed": 49,
+  "books_without_chunks": [],
+  "chunks_expected": 39989,
+  "chunks_minilm": 39989,
+  "chunks_bge": 39989,
+  "end_check_lowest_cosine": 1.0,
+  "chunks_measured_tokens": 4790,
+  "chunks_over_2048_tokens": 44,
+  "longest_chunk_tokens": 6391,
+  "shortened_for_embedding": []
+ }
+}

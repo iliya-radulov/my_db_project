@@ -1,0 +1,18 @@
+[grid_lookup] Loaded 8 temperature grids from /home/iliya-radulov/Documents/github/active/my_db_project/stage_three/cache
+Available temperatures: [800, 1000, 1100, 1200, 1300, 1375, 1450, 1600]
+Convention check (boron mass balance, mean |error|):
+      800 K:  19647 points  error 0.00015   (swapped reading: 0.330)
+     1000 K:  14617 points  error 0.00037   (swapped reading: 0.331)
+     1100 K:   3376 points  error 0.00204   (swapped reading: 0.529)
+     1200 K:   3349 points  error 0.00246   (swapped reading: 0.528)
+     1300 K:   3348 points  error 0.00289   (swapped reading: 0.527)
+     1375 K:   2687 points  error 0.00395   (swapped reading: 0.633)
+     1450 K:   1860 points  error 0.00627   (swapped reading: 0.689)
+     1600 K:   1864 points  error 0.00737   (swapped reading: 0.689)
+Lever-rule expectation for Nd2Fe14B stoich in DHCP+FE17ND2+M2B_C16:
+    FE17ND2 ≈ 0.789   M2B_C16 ≈ 0.176   DHCP ≈ 0.035   (800–1100 K)
+
+  Nd2Fe14B stoich 800K      → FE17ND2=0.572  FE17ND5=0.263  M2B_C16=0.165   (nearest point at d=0.0028)
+  Nd2Fe14B stoich 1375K     → FE17ND2=0.549  LIQUID=0.451   (nearest point at d=0.0028)
+  Nd-rich 800K              → FE17ND5=0.522  FE17ND2=0.298  M2B_C16=0.180   (nearest point at d=0.0000)
+  Fe-rich 800K              → FE17ND2=0.652  M2B_C16=0.210  FE17ND5=0.138   (nearest point at d=0.0000)

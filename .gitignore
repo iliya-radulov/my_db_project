@@ -1,8 +1,10 @@
 .env
 venv/
 __pycache__/
-
+__old__venv__py314/
 *.pyc
+*.pyo
+*.pyd
 *.backup
 *.messy
 .DS_Store
@@ -11,3 +13,8 @@ data/
 stage_one/outdated/
 stage_three/chroma_db/
 stage_three/chroma_db/
+
+# Stage 3: book text, logs and obsolete caches stay local
+stage_three/benchmark_runs/
+stage_three/logs/
+stage_three/cache/old_text_merge/

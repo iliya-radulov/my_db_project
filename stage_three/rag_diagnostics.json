@@ -1,0 +1,103 @@
+{
+  "chroma_path": "/home/iliya-radulov/Documents/github/active/my_db_project/stage_three/chroma_db",
+  "collections": {
+    "synthesis": {
+      "chunks": 25769,
+      "sources": 36,
+      "chunks_per_source_median": 429.0,
+      "chunks_per_source_max": 3164,
+      "sampled": 1000,
+      "share_mostly_cyrillic": 0.035,
+      "share_ocr_garbage": 0.04,
+      "words_per_chunk_median": 400.0,
+      "tokens_per_chunk_median": 592.0,
+      "share_chunks_truncated": 1.0,
+      "share_of_text_not_embedded_mean": 0.589
+    },
+    "phase_stability": {
+      "chunks": 3073,
+      "sources": 7,
+      "chunks_per_source_median": 472,
+      "chunks_per_source_max": 990,
+      "sampled": 1000,
+      "share_mostly_cyrillic": 0.0,
+      "share_ocr_garbage": 0.112,
+      "words_per_chunk_median": 400.0,
+      "tokens_per_chunk_median": 631.0,
+      "share_chunks_truncated": 0.997,
+      "share_of_text_not_embedded_mean": 0.603
+    },
+    "magnetic": {
+      "chunks": 31262,
+      "sources": 40,
+      "chunks_per_source_median": 504.0,
+      "chunks_per_source_max": 5915,
+      "sampled": 1000,
+      "share_mostly_cyrillic": 0.092,
+      "share_ocr_garbage": 0.052,
+      "words_per_chunk_median": 400.0,
+      "tokens_per_chunk_median": 622.0,
+      "share_chunks_truncated": 1.0,
+      "share_of_text_not_embedded_mean": 0.617
+    }
+  },
+  "books": {
+    "phase_stability ← /home/iliya-radulov/Desktop/new_books/phase": {
+      "folder": "/home/iliya-radulov/Desktop/new_books/phase",
+      "pdfs_in_folder": 10,
+      "pdfs_without_chunks": [
+        "[Landolt-Börnstein - Group VIII Advanced Materials and Technologies 11] E. Burzo (eds.) - Nanocrystalline Materials, Part A_ Advanced Materials and Technologies (2013, Springer-Verlag Berlin Heidelberg).pdf",
+        "[Landolt-Börnstein - Group VIII Advanced Materials and Technologies 2A2_ Advanced Materials and Technologies] P. Beiss, R. Ruthardt, H. Warlimont (auth.), P. Beiss, R. Ruthar - Powder Metallurgy Data. Refractory, Hard and Interme.pdf",
+        "[Landolt-Börnstein - Group VIII Advanced Materials and Technologies 2C1_ Advanced Materials and Technologies] M. Spittel, T. Spittel (auth.), H. Warlimont (eds.) - Metal Forming Data of Ferrous Alloys - deformation behaviouri.pdf"
+      ],
+      "id_prefix_collisions": {
+        "[Landolt-Börnstein_-_Group_VIII_Advanced": [
+          "[Landolt-Börnstein - Group VIII Advanced Materials and Technologies 11B] E. Burzo (eds.) - Nanocrystalline Materials, Part B_ Advanced Materials and Technologies (2015, Springer-Verlag Berlin Heidelberg).pdf",
+          "[Landolt-Börnstein - Group VIII Advanced Materials and Technologies 11] E. Burzo (eds.) - Nanocrystalline Materials, Part A_ Advanced Materials and Technologies (2013, Springer-Verlag Berlin Heidelberg).pdf",
+          "[Landolt-Börnstein - Group VIII Advanced Materials and Technologies 2A1_ Advanced Materials and Technologies] P. Beiss, R. Ruthardt, H. Warlimont (auth.), P. Beiss, R. Ruthar - Powder Metallurgy Data_ Part 1_ Metals and Magnets.pdf",
+          "[Landolt-Börnstein - Group VIII Advanced Materials and Technologies 2A2_ Advanced Materials and Technologies] P. Beiss, R. Ruthardt, H. Warlimont (auth.), P. Beiss, R. Ruthar - Powder Metallurgy Data. Refractory, Hard and Interme.pdf",
+          "[Landolt-Börnstein - Group VIII Advanced Materials and Technologies 2C1_ Advanced Materials and Technologies] M. Spittel, T. Spittel (auth.), H. Warlimont (eds.) - Metal Forming Data of Ferrous Alloys - deformation behaviouri.pdf"
+        ]
+      }
+    },
+    "synthesis ← /home/iliya-radulov/Desktop/new_books/synthesis": {
+      "folder": "/home/iliya-radulov/Desktop/new_books/synthesis",
+      "pdfs_in_folder": 37,
+      "pdfs_without_chunks": [
+        "[Three Volume Set] R.W. Cahn, Kazuhiro Hono, P. Haasen - Physical Metallurgy Volume 2 (1996, North-Holland).pdf"
+      ],
+      "id_prefix_collisions": {
+        "[Three_Volume_Set]_R.W._Cahn,_Kazuhiro_H": [
+          "[Three Volume Set] R.W. Cahn, Kazuhiro Hono, P. Haasen - Physical Metallurgy Volume 1 (1996, North-Holland).pdf",
+          "[Three Volume Set] R.W. Cahn, Kazuhiro Hono, P. Haasen - Physical Metallurgy Volume 2 (1996, North-Holland).pdf",
+          "[Three Volume Set] R.W. Cahn, Kazuhiro Hono, P. Haasen - Physical Metallurgy Volume 3 (1996, North-Holland).pdf"
+        ]
+      }
+    },
+    "magnetic ← /home/iliya-radulov/Desktop/new_books/magnetic": {
+      "folder": "/home/iliya-radulov/Desktop/new_books/magnetic",
+      "pdfs_in_folder": 49,
+      "pdfs_without_chunks": [
+        "Encyclopedia_of_Condensed_Matter_Physics.pdf",
+        "Nagaev E.L. -- Magnetiki so slozhnymi obmennymi vzaimodejstviyami.pdf",
+        "R_M_Bozorth_American_Society_for_Metals_et_al.pdf",
+        "Turov E.A_Fizicheskie svojstva magnitouporyadochennyh kristallov.pdf",
+        "Uajt R. Kvantovaja teorija magnetizma.pdf",
+        "Vonsovskij S.V. Magnetizm.pdf",
+        "Ашкрофт Н., Мермин Н. Физика твердого тела (том 1).pdf",
+        "Ашкрофт Н., Мермин Н. Физика твердого тела (том 2).pdf",
+        "Барьяхтар_В.Г.,_Иванов_Б.А._В_мире_магнитных_доменов._.pdf"
+      ],
+      "id_prefix_collisions": {
+        "Krupichka_S._Fizika_ferritov_i_rodstvenn": [
+          "Krupichka S. Fizika ferritov i rodstvennyh im magnitnyh okislov, tom 1 (1976).pdf",
+          "Krupichka S. Fizika ferritov i rodstvennyh im magnitnyh okislov, tom 2 (1976).pdf"
+        ],
+        "Ашкрофт_Н.,_Мермин_Н._Физика_твердого_те": [
+          "Ашкрофт Н., Мермин Н. Физика твердого тела (том 1).pdf",
+          "Ашкрофт Н., Мермин Н. Физика твердого тела (том 2).pdf"
+        ]
+      }
+    }
+  }
+}
