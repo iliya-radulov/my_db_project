@@ -1,0 +1,328 @@
+{
+ "source": "user's run of feasibility.py (fixed), 24 Oct 2026, logs/feasibility_fixed.log",
+ "dHf": [
+  0,
+  -5,
+  -10,
+  -15,
+  -20,
+  -30
+ ],
+ "rows": [
+  {
+   "T": 800,
+   "threshold": -9.2,
+   "dG": [
+    9.2,
+    4.2,
+    -0.8,
+    -5.8,
+    -10.8,
+    -20.8
+   ],
+   "stable": [
+    false,
+    false,
+    true,
+    true,
+    true,
+    true
+   ],
+   "mix": "M2B_C16 0.176 + FE17ND2 0.570 + FE17ND5 0.254"
+  },
+  {
+   "T": 871,
+   "threshold": -8.81,
+   "dG": [
+    8.8,
+    3.8,
+    -1.2,
+    -6.2,
+    -11.2,
+    -21.2
+   ],
+   "stable": [
+    false,
+    false,
+    true,
+    true,
+    true,
+    true
+   ],
+   "mix": "M2B_C16 0.176 + FE17ND2 0.570 + FE17ND5 0.254"
+  },
+  {
+   "T": 943,
+   "threshold": -8.44,
+   "dG": [
+    8.4,
+    3.4,
+    -1.6,
+    -6.6,
+    -11.6,
+    -21.6
+   ],
+   "stable": [
+    false,
+    false,
+    true,
+    true,
+    true,
+    true
+   ],
+   "mix": "M2B_C16 0.176 + FE17ND2 0.570 + FE17ND5 0.254"
+  },
+  {
+   "T": 1014,
+   "threshold": -8.09,
+   "dG": [
+    8.1,
+    3.1,
+    -1.9,
+    -6.9,
+    -11.9,
+    -21.9
+   ],
+   "stable": [
+    false,
+    false,
+    true,
+    true,
+    true,
+    true
+   ],
+   "mix": "M2B_C16 0.176 + FE17ND2 0.570 + FE17ND5 0.254"
+  },
+  {
+   "T": 1086,
+   "threshold": -7.78,
+   "dG": [
+    7.8,
+    2.8,
+    -2.2,
+    -7.2,
+    -12.2,
+    -22.2
+   ],
+   "stable": [
+    false,
+    false,
+    true,
+    true,
+    true,
+    true
+   ],
+   "mix": "M2B_C16 0.174 + FE17ND2 0.771 + LIQUID 0.055"
+  },
+  {
+   "T": 1157,
+   "threshold": -7.51,
+   "dG": [
+    7.5,
+    2.5,
+    -2.5,
+    -7.5,
+    -12.5,
+    -22.5
+   ],
+   "stable": [
+    false,
+    false,
+    true,
+    true,
+    true,
+    true
+   ],
+   "mix": "M2B_C16 0.171 + FE17ND2 0.766 + LIQUID 0.063"
+  },
+  {
+   "T": 1229,
+   "threshold": -7.27,
+   "dG": [
+    7.3,
+    2.3,
+    -2.7,
+    -7.7,
+    -12.7,
+    -22.7
+   ],
+   "stable": [
+    false,
+    false,
+    true,
+    true,
+    true,
+    true
+   ],
+   "mix": "M2B_C16 0.164 + FE17ND2 0.756 + LIQUID 0.080"
+  },
+  {
+   "T": 1300,
+   "threshold": -7.06,
+   "dG": [
+    7.1,
+    2.1,
+    -2.9,
+    -7.9,
+    -12.9,
+    -22.9
+   ],
+   "stable": [
+    false,
+    false,
+    true,
+    true,
+    true,
+    true
+   ],
+   "mix": "M2B_C16 0.142 + FE17ND2 0.730 + LIQUID 0.129"
+  },
+  {
+   "T": 1371,
+   "threshold": -7.01,
+   "dG": [
+    7.0,
+    2.0,
+    -3.0,
+    -8.0,
+    -13.0,
+    -23.0
+   ],
+   "stable": [
+    false,
+    false,
+    true,
+    true,
+    true,
+    true
+   ],
+   "mix": "LIQUID 0.469 + FE17ND2 0.531"
+  },
+  {
+   "T": 1443,
+   "threshold": -7.35,
+   "dG": [
+    7.4,
+    2.4,
+    -2.6,
+    -7.6,
+    -12.6,
+    -22.6
+   ],
+   "stable": [
+    false,
+    false,
+    true,
+    true,
+    true,
+    true
+   ],
+   "mix": "FCC_A1 0.291 + LIQUID 0.709"
+  },
+  {
+   "T": 1514,
+   "threshold": -7.93,
+   "dG": [
+    7.9,
+    2.9,
+    -2.1,
+    -7.1,
+    -12.1,
+    -22.1
+   ],
+   "stable": [
+    false,
+    false,
+    true,
+    true,
+    true,
+    true
+   ],
+   "mix": "FCC_A1 0.160 + LIQUID 0.840"
+  },
+  {
+   "T": 1586,
+   "threshold": -8.62,
+   "dG": [
+    8.6,
+    3.6,
+    -1.4,
+    -6.4,
+    -11.4,
+    -21.4
+   ],
+   "stable": [
+    false,
+    false,
+    true,
+    true,
+    true,
+    true
+   ],
+   "mix": "LIQUID 1.000"
+  },
+  {
+   "T": 1657,
+   "threshold": -9.35,
+   "dG": [
+    9.3,
+    4.3,
+    -0.7,
+    -5.7,
+    -10.7,
+    -20.7
+   ],
+   "stable": [
+    false,
+    false,
+    true,
+    true,
+    true,
+    true
+   ],
+   "mix": "LIQUID 1.000"
+  },
+  {
+   "T": 1729,
+   "threshold": -10.09,
+   "dG": [
+    10.1,
+    5.1,
+    0.1,
+    -4.9,
+    -9.9,
+    -19.9
+   ],
+   "stable": [
+    false,
+    false,
+    false,
+    true,
+    true,
+    true
+   ],
+   "mix": "LIQUID 1.000"
+  },
+  {
+   "T": 1800,
+   "threshold": -10.84,
+   "dG": [
+    10.8,
+    5.8,
+    0.8,
+    -4.2,
+    -9.2,
+    -19.2
+   ],
+   "stable": [
+    false,
+    false,
+    false,
+    true,
+    true,
+    true
+   ],
+   "mix": "LIQUID 1.000"
+  }
+ ]
+}
