@@ -64,7 +64,7 @@
       <div class="text-center py-5">
         <div style="font-size:3rem;">🔬</div>
         <p class="mt-2">Enter a composition and click <strong>Run Phase Check</strong></p>
-        <p class="small">Checks equilibrium at 1100 K, 1300 K, 1375 K, 1450 K, 1600 K</p>
+        <p class="small">Checks equilibrium at seven temperatures, 800–1600 K</p>
       </div>
     </div>
 
@@ -193,9 +193,19 @@ function overallStatus(results) {
   return 'no_target';
 }
 
+// ── Placeholder ────────────────────────────────────────────────────────────
+// The placeholder card carries Bootstrap's d-flex, which is "display:flex !important"
+// and overrides an inline style.display = 'none' — so it stayed visible after a run.
+// Swap the utility classes instead (fixed 25 Oct 2026).
+function hidePlaceholder() {
+  const ph = document.getElementById('results-placeholder');
+  ph.classList.remove('d-flex');
+  ph.classList.add('d-none');
+}
+
 // ── Render results ─────────────────────────────────────────────────────────
 function renderResults(data) {
-  document.getElementById('results-placeholder').style.display = 'none';
+  hidePlaceholder();
   document.getElementById('error-panel').style.display = 'none';
   document.getElementById('results-panel').style.display = 'block';
 
@@ -207,7 +217,7 @@ function renderResults(data) {
   const om = STATUS_META[overall] || STATUS_META.error;
   document.getElementById('overall-icon').textContent = om.icon;
   document.getElementById('overall-text').innerHTML =
-    `<strong>${om.label}</strong> — phase check across 5 temperatures`;
+    `<strong>${om.label}</strong> — phase check across ${data.results.length} temperatures`;
 
   const container = document.getElementById('temp-cards');
   container.innerHTML = '';
@@ -337,7 +347,7 @@ document.getElementById('comp-form').addEventListener('submit', async (e) => {
     const data = await resp.json();
 
     if (data.error) {
-      document.getElementById('results-placeholder').style.display = 'none';
+      hidePlaceholder();
       document.getElementById('results-panel').style.display = 'none';
       const ep = document.getElementById('error-panel');
       ep.style.display = 'block';

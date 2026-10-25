@@ -49,19 +49,15 @@ def make_sweep_chart(x_nd: float, x_fe: float, x_b: float) -> bytes:
         raise RuntimeError(data["error"])
 
     # ── Collect per-phase data ────────────────────────────────────────────────
-    T_vals: list[float] = []
-    phase_data: dict[str, list[float]] = {}   # phase_name → [fraction at each T]
-
-    for row in data["results"]:
-        T_vals.append(row["T"])
-        seen = {p["name"] for p in row["phases"]}
-        for p in row["phases"]:
-            phase_data.setdefault(p["name"], [np.nan] * len(T_vals))
-            phase_data[p["name"]][-1] = p["fraction"]
-        # Pad phases not present at this T with 0
-        for name, arr in phase_data.items():
-            if len(arr) < len(T_vals):
-                arr.append(0.0)
+    # One dict per temperature first, then one array per phase over ALL temperatures
+    # (0 where the phase is absent). Fixed 25 Oct 2026: the old loop wrote each value into
+    # the slot of the PREVIOUS temperature whenever a phase was already present there,
+    # so every curve was shifted one temperature too early (e.g. liquid 1.0 drawn at
+    # 1450 K and 0 at 1600 K, while the cards showed 0.82 and 1.0).
+    T_vals: list[float] = [row["T"] for row in data["results"]]
+    per_T = [{p["name"]: p["fraction"] for p in row["phases"]} for row in data["results"]]
+    names = sorted({n for d in per_T for n in d})
+    phase_data: dict[str, list[float]] = {n: [d.get(n, 0.0) for d in per_T] for n in names}
 
     T_vals_arr = np.array(T_vals)
 
