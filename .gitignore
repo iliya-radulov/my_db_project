@@ -18,3 +18,7 @@ stage_three/chroma_db/
 stage_three/benchmark_runs/
 stage_three/logs/
 stage_three/cache/old_text_merge/
+stage_three/advisor_app/sweep_chart_OLD_shift.py
+stage_three/outdated/advisor_old.html
+stage_three/stage4_step1/results/
+stage_three/phase_qa/

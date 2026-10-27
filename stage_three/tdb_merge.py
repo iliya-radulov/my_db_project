@@ -157,9 +157,9 @@ def merged_text(paths, report=print) -> str:
     return merge_databases(paths, report=report).to_string(fmt="tdb", if_incompatible="ignore")
 
 
-def merged_tdb_path(elements, out_dir=HERE, check=True) -> Path:
+def merged_tdb_path(elements, out_dir=HERE, check=True, tdb_paths=None) -> Path:
     """Merge, write and (by default) check the description for *elements*; return the TDB path."""
-    paths = selected_binaries(elements)
+    paths = tdb_paths if tdb_paths is not None else selected_binaries(elements)
     db = merge_databases(paths)
     out = Path(out_dir) / f"{''.join(e.upper() for e in elements)}_merged_v4.tdb"
     db.to_file(str(out), fmt="tdb", if_exists="overwrite", if_incompatible="ignore")
