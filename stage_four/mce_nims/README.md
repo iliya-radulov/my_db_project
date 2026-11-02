@@ -34,6 +34,7 @@ variants in about 25 substituent families (Si, Si+Co, Si+Mn, Si+Ce, Al, …);
 | `link_samples.py` | Keys for the lab's own samples and their exact / near matches among the literature records |
 | `mcedb_dataset.py`, `import_mcedb.py` | Second source: the LLM-extracted MCE database (GitHub; no licence — internal use only), filtered to La(Fe,Si/Al)₁₃, with row accounting and accuracy against NIMS |
 | `literature_db.py` | Shared database writer for all literature sources |
+| `consistency_report.py` | Roadmap day 7: consistency report over all literature sources in the database |
 | `008_literature_checks_provenance.sql` | Provenance (`quality_flag`) and value checks for the existing Materials Project / OQMD / Alexandria matches |
 | `SERVER_SETUP.md` | Steps to run on the database server (backup, migration, import, linking, checks, undo) |
 | `correct.py` | Step 5: correct the NIMS-trained model with the consistent series (leave-one-out) and the new-series curve; see WORKLOG.md §10b |

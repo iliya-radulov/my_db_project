@@ -125,6 +125,12 @@ Pre-alloy entries always appear (their note reads `pre-alloy … (…g) + raw
 
 ## 5. Check
 
+```bash
+python consistency_report.py         # per source, new compositions, collisions, agreement, own-sample matches
+```
+
+or by hand:
+
 ```sql
 SET search_path TO alloy_lab;
 SELECT quality_flag, count(*), count(DISTINCT composition_key) FROM mce_literature_records GROUP BY 1;
