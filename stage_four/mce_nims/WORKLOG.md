@@ -668,7 +668,7 @@ training and test; nominal stays the default.
 - [ ] Column labels in the extracted Origin tables (which Book = which x;
       the unlabelled second-phase column on stay 2, slide 15).
 - [ ] ChemDataExtractor magnetocaloric set: the paper's link (magneticmaterials.org) now points to NEMAD; email to J. M. Cole sent 2 Nov — waiting for the data file and its licence.
-- [ ] NEMAD (nemad.org, Itani, Zhang, Zang, Nat. Commun. 2025): roadmap priority 5, later; I. Radulov registered; only an interactive search found so far (no bulk download); not reachable from the work environment.
+- [ ] NEMAD (nemad.org, Itani, Zhang, Zang, Nat. Commun. 2025): roadmap priority 5, later; I. Radulov registered; the website has only an interactive search (with per-material "View details"); not reachable from the work environment. Its ML dataset github.com/sumanitani/NEMAD-MagneticML (commit f543f18, checked 2 Nov): no licence file; `Dataset/FM_with_curie.csv` (15,577 rows), `AFM_with_Neel.csv`, `Classification_FM_AFM_NM.csv`; one `Mean_TC_K` per normalised composition, **no DOI or paper per row**. 207 La(Fe,Si/Al)₁₃ compositions (64 not in NIMS); for 135 compositions in both, NEMAD's mean T_C is within 2 K of the NIMS mean for 72 %. Not imported: averaged values without provenance break roadmap §4 step B and make it impossible to keep the test papers out of training.
 - [ ] Answer from the GitHub MCE database authors (permission, licence).
 - [ ] Is more consistently measured La(Fe,Si)₁₃ data available
       (HZDR or own), beyond Thiem and the high-Mn series?
