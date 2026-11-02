@@ -16,15 +16,18 @@ import sys
 from pathlib import Path
 
 import numpy as np
+import pandas as pd
 from psycopg2.extras import Json
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
+from composition_key import composition_key
 from nims_dataset import (DATASET_DOI, DEFAULT_PATH, INTERSTITIALS, METAL_ELEMENTS,
                           expand_points, load_nims, restore_T_tr)
 
 SOURCE = 'nims_lafesi_1_13'
 LICENCE = f'CC BY 4.0 (NIMS MDR, doi:{DATASET_DOI})'
+QUALITY_FLAG = 'experimental_literature'   # measured values, curated from papers by NIMS
 
 RECORD_COLUMNS = {
     # table column: dataframe column
@@ -53,11 +56,15 @@ def _clean(v):
 
 def record_rows(df):
     for nims_id, r in df.iterrows():
-        metal = {e: round(float(r[e]), 4) for e in METAL_ELEMENTS if r[e] > 0}
-        inter = {k: round(float(r[k]), 4) for k in INTERSTITIALS.values() if r[k] > 0}
+        metal_raw = {e: float(r[e]) for e in METAL_ELEMENTS if r[e] > 0}
+        inter_raw = {k: float(r[k]) for k in INTERSTITIALS.values() if r[k] > 0}
+        key = composition_key(metal_raw, inter_raw)          # from unrounded values
+        metal = {e: round(v, 4) for e, v in metal_raw.items()}
+        inter = {e: round(v, 4) for e, v in inter_raw.items()}
         row = {col: _clean(r[src]) for col, src in RECORD_COLUMNS.items()}
         iso = _clean(r['isothermal_protocol'])
-        row.update(source=SOURCE, external_id=str(nims_id), licence=LICENCE,
+        row.update(source=SOURCE, external_id=str(nims_id), licence=LICENCE, quality_flag=QUALITY_FLAG,
+                   composition_key=key,
                    metal_at_pct=Json(metal), interstitial_at_pct=Json(inter) if inter else None,
                    isothermal_protocol=None if iso is None else bool(iso))
         yield int(nims_id), row
@@ -76,6 +83,12 @@ def main():
     print(f"{len(df)} records from {df['doi'].nunique()} papers")
     print(f"  T_tr: {df['T_tr_source'].value_counts().to_dict()}, missing {int(df['T_tr_restored_K'].isna().sum())}")
     print(f"  dS_max points: {int(dS['dS_max'].notna().sum())}, dT_ad_max points: {int(dT['dT_ad_max_K'].notna().sum())}")
+    # same code path as the database rows, so the counts match what is stored
+    keys = pd.Series({nims_id: row['composition_key'] for nims_id, row in record_rows(df)})
+    per_key = df.assign(key=keys).groupby('key')['doi'].nunique()
+    print(f"  composition keys: {keys.nunique()} distinct; {int((per_key > 1).sum())} keys appear in more "
+          f"than one paper (kept as separate records, see the duplicates rule in 007_mce_literature.sql)")
+    print(f"  quality_flag: '{QUALITY_FLAG}' for all {len(df)} records")
     for kind, pts in (('dS', dS), ('dTad', dT)):
         if pts.attrs['length_mismatch']:
             print(f"  {kind}: list lengths differ from the field list, values left empty: {pts.attrs['length_mismatch']}")
