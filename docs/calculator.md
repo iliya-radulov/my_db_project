@@ -34,6 +34,16 @@ formula with no numbers at all was read as equiatomic. Both now raise a
 (`65Fe35Nd`). Formulas must be written with every amount explicit, e.g.
 `Nd2Fe14B1`, `Fe2P1`.
 
+**Second gap (found and fixed 2 November 2026):** characters other than
+letters, digits and the decimal point were skipped, not rejected. A
+bracketed formula such as `La(Fe0.92Co0.08)11.9Si1.1` was therefore read
+as La 0.92, Fe 0.08, Co 11.9, Si 1.1 — every number moved one element
+along, and the element/number count check still passed because the group
+multiplier filled the missing slot. Signs were dropped the same way
+(`Fe-65 Nd-30`). Any character other than letters, digits, `.` and
+spaces now raises a `ValueError`. Found while testing literature formulas
+(the GitHub MCE database) against the parser.
+
 ## at% ↔ wt% conversion
 
 Originally a free-text unit field defaulting silently to `at%` on any

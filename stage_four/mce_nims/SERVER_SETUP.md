@@ -90,6 +90,20 @@ Samples whose composition is not a real element mapping (for example
 the `{'placeholder': 1.0}` written by the GUI's file import) are listed
 as skipped, not keyed. Run again whenever samples are added; it updates.
 
+## 4b. Samples entered with brackets or signs in the formula
+
+Until 2 November 2026 the composition parser skipped brackets and signs
+instead of rejecting them, so a formula such as `La(Fe0.92Co0.08)11.9Si1.1`
+was stored with wrong amounts (La 0.92, Fe 0.08, Co 11.9, Si 1.1). The GUI
+writes the typed formula into the notes; this lists candidates to
+re-enter:
+
+```sql
+SET search_path TO alloy_lab;
+SELECT sample_id, created_at, notes FROM samples
+WHERE notes ~ 'Desktop App: .*[()\[\]{}+\-,;/]' ORDER BY created_at;
+```
+
 ## 5. Check
 
 ```sql

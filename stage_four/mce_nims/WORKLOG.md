@@ -55,6 +55,38 @@ Where the work stands against the roadmap:
 
 ---
 
+## 0c. GitHub MCE database (roadmap priority 3) — first examination
+
+Source: github.com/RunqingYang1996/MCEdatabase, commit 21ec937 (10 Jul
+2024); paper Yuan, Yang, Patra, Liao, AIP Advances 14, 085125 (2024),
+arXiv:2403.02553.
+
+- **No licence file** in the repository (README only). Legally that means
+  all rights reserved, unlike NIMS (CC BY 4.0). Decision needed before the
+  data are used in a publication; not to be committed.
+- Files: `modified6125.csv` (6,614 rows, raw GPT-3.5 extraction, all
+  materials incl. organic), `modified1426.csv` (1,425 rows, inorganic
+  only), `725.csv` / `html/725_updated.csv` (714 rows, the latter
+  human-corrected, with title, DOI and Materials Project ID). Only the 714
+  rows carry a DOI.
+- Provenance can be recovered for the raw rows: the `source` index is the
+  0-based position of the paper in the concatenated Web of Science export
+  in `source/` (`savedrecs.xls`, then `(1)` … `(8)`, 8,772 records).
+  Checked: for all 714 corrected rows the index matches the title's
+  position; DOIs recovered for 97 % of the 6,614 raw rows; where a paper
+  is in both files (539 papers) the DOI agrees in 98 %. Fourteen rows have
+  sources like `948(1)` and are flagged, not guessed.
+- La(Fe,Si/Al)₁₃-like rows in the raw file: 469 from 233 papers; 200 rows
+  (43 %) from papers also in NIMS, 124 papers not in NIMS. Plain numeric
+  values: 369 |ΔS|, 205 T_c. Fields are free text (`'5 T'`, `'0-5 T'`,
+  `'nan T'`, `'10 kOe'`); values too (`'10.07 to 4.47'`,
+  `'0.65(J/mol K)'`, `'Below 360'`); formulas with variables
+  (`Er2-xPrxFe17`), brackets and words (`Nanocrystalline Gd`).
+- Only 142 of the 469 formulas pass the strict parser as it now is (no
+  brackets, every element with an amount).
+
+---
+
 ## 1. Context
 
 The series: Stage 1 captures and screens compositions, Stage 2 makes
@@ -91,6 +123,7 @@ points for leave-one-family-out evaluation.
 | 2 Nov | This log and `audit_checks.py`. |
 | 2 Nov | Step 5: correction on the consistent series (`correct.py`); success criterion fixed before the first run; new-series curve added. |
 | 2 Nov | Governing roadmap clarified; roadmap §1 and §4 items: landing zone, composition key, quality flag, duplicates rule, sample linking, server instructions; tested on a throwaway PostgreSQL with a minimal samples table. |
+| 2 Nov | Roadmap priority 3 started: GitHub MCE database examined (section 0c). Found and fixed a silent bracket bug in the Stage 1/2 composition parser. |
 | 2 Nov | Roadmap priority 1: migration 008 for `literature_checks` (tested on a throwaway database with the original 001 table definition and a deliberately bad legacy row). Krautz 2014 DOI confirmed. |
 
 ---
@@ -509,6 +542,7 @@ Reading:
 | "Unreadable" Origin data was inside the PowerPoint files | inspecting the embedded OLE objects | `origin_from_pptx.py` | look inside the container before digitising |
 | The GUI's file import writes samples with composition `{'placeholder': 1.0}`, which a key function would have accepted as an element | reading the GUI code while designing the key | element-symbol check | validate keys against the domain (real element symbols), not just the type |
 | Composition keys computed after rounding to 4 decimals differed from keys of the unrounded values (660 vs 659 distinct) | dry-run count vs database count | one code path, key from unrounded values | never round twice; report from the same code that writes |
+| Composition parser skipped brackets: `La(Fe0.92Co0.08)11.9Si1.1` became La 0.92, Fe 0.08, Co 11.9, Si 1.1, and the element/number count check still passed | a literature formula that the "strict" parser should have rejected was accepted | reject every character except letters, digits, `.`, spaces (stage one and two parsers); query in `SERVER_SETUP.md` §4b to find affected samples | a count check is not a structure check; test parsers with the real input they will meet |
 | The pre-registered criterion passed (ridge base), yet a straight line through one's own series did as well | adding a no-NIMS reference | new-series curve | a success criterion must include the simplest competitor |
 
 ## 15. Reproducing everything
