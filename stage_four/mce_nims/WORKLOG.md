@@ -1,0 +1,413 @@
+# Work log — Stage 4, magnetocaloric literature workflow
+
+Running record of this workflow, kept so that nothing depends on a chat
+history: what was received, what was checked, what was decided and why,
+every result with the command that produced it, and what is still open.
+Written to be the raw material for a paper (same defect / fix / lesson
+style as Stages 1–3).
+
+Last updated: 2 November 2026. Pull request: #7 (draft).
+
+---
+
+## 0. Status at a glance
+
+| Item | State |
+|---|---|
+| NIMS La(Fe,Si)₁₃ dataset | audited; loader, evaluation, DB import in `stage_four/mce_nims/` |
+| Test set | Ni and Cr series (Moreno-Ramírez 2018, 2019) held out of all training |
+| Missing annealing data | kept as missing (model handles them), per decision 2 Nov |
+| Original values of the test series | extracted from the stay-report slides without Origin; agree with NIMS |
+| Correction step (fit residuals on consistent data) | **not started** |
+| EDX compositions for the test set | known (stay reports); **committing them awaits permission** |
+| High-Mn series as out-of-range test | data located in the first stay report; **not yet used** |
+
+---
+
+## 1. Context
+
+The series: Stage 1 captures and screens compositions, Stage 2 makes
+measurements trustworthy, Stage 3 advises before synthesis, Stage 4 closes
+the loop. Two Stage 4 workflows run in parallel and share only the
+database:
+
+- **Nd–Fe–B / CALPHAD** (plans A–D, ensemble of 84 binary-assessment
+  combinations, discussion with H. Zhang) — handled in a separate chat,
+  not part of this log.
+- **Magnetocaloric literature (this log)** — idea from former colleagues:
+  train a property model on a large, heterogeneous literature dataset
+  (NIMS, 1,113 samples from ~220 papers and many labs) and use small,
+  consistently measured series only for testing and correction, never for
+  training.
+
+Why: the hand-extracted literature set (34 records, 24 with usable |ΔS|)
+was too small for a model; only one family met the gate of ~20 clean
+points for leave-one-family-out evaluation.
+
+---
+
+## 2. Chronology
+
+| Date | What happened |
+|---|---|
+| 3 Oct 2026 | Pre-publication code review of Stages 1–2 (ΔH_mix table, strict parser, XRD fit, …). Merged as PR #1; full record in `docs/changes_2026-10_review.md`. |
+| 2 Nov 2026 (morning) | Received the colleagues' roadmap (`my_alloy_db_General_Road_Map_v2.md`), Plan C, the NIMS file and its example scripts. Feasibility review: roadmap sound in spirit, several concrete corrections (section 4). |
+| 2 Nov | Received plans A/B, extraction notes, the 1 Nov preliminary results (Nd–Fe–B), the colleagues' draft (Fe–Cr Bayesian fusion). Clarified: this workflow is the magnetocaloric one; the Nd–Fe–B one is separate. NIMS licence confirmed: CC BY 4.0. |
+| 2 Nov | Overlap check: the Ni and Cr series and (very likely) Krautz 2014 are already in NIMS (section 6). |
+| 2 Nov | Received the two TU Darmstadt stay reports (L. Moreno; Ni/Mn and Cr) and the publication list (`works.bib`). Decision: hold out only the Ni and Cr papers (section 7). |
+| 2 Nov | Implemented loader, evaluation, DB staging tables and import (commit 4d9dfc3); tested on a throwaway PostgreSQL 16. |
+| 2 Nov | Decision: keep rows with missing annealing data. Wrote `origin_from_pptx.py`; extracted the original Ni and Cr values from the slides (commit 039cec2). |
+| 2 Nov | This log and `audit_checks.py`. |
+
+---
+
+## 3. Inputs received (not in the repository)
+
+| File | What it is | Where it matters |
+|---|---|---|
+| `1-13_dataset.xlsx` | NIMS La(Fe,Si)₁₃ dataset, doi:10.48505/nims.4909, CC BY 4.0 | put in `stage_four/mce_nims/data/` (gitignored) |
+| `ml_1_13.py`, `ml_1_13_functions.py` | NIMS example ML scripts | reviewed, not used (section 5) |
+| `my_alloy_db_General_Road_Map_v2.md` | colleagues' roadmap for importing external data | reviewed (section 4) |
+| `Plan_C___Stage_4_Closing_the_Loop.md`, `planA.md`, `planB.md` | Stage 4 plans (Nd–Fe–B) | context only |
+| `data_extraction_notes.md` | the 34 hand-extracted literature records | sections 6, 7 |
+| `preliminary_results_2026-11-01_v2.md`, `draft_TU.odt` | Nd–Fe–B ensemble results; colleagues' Fe–Cr Bayesian draft | other workflow |
+| `Results_first_stay.pptx` | L. Moreno, TU Darmstadt stay 1: LaFe(Ni)Si and LaFe(Mn)Si, 49 slides, 27 embedded Origin graphs | test-set originals (section 9) |
+| `Results_second_stay.pptx` | L. Moreno, stay 2: LaFe(Cr)Si, 27 slides, 19 embedded Origin graphs | test-set originals (section 9) |
+| `works.bib` | I. Radulov's publication list | co-authorship check (section 7) |
+
+---
+
+## 4. Review of the colleagues' roadmap
+
+Verdict: the integration philosophy is right (thin adapter per source,
+provenance on every row, no mirror of Materials Project, no new core
+schema). But it does not feed Plan C's Nd–Fe–B loop; it is the separate
+magnetocaloric workflow. Corrections found by opening the real file:
+
+| Roadmap assumes | Real file | Consequence / fix |
+|---|---|---|
+| Parse "Composition in the article" with the Stage 1 strict parser | Filled for only 533 of 1,113 rows; often has variables (`La(FexSi(1-x))13`, `…Hy`); plain `LaFe11.4Si1.6` is rejected by the strict parser (La has no number) | Most rows would be rejected. Use the 24 element columns (complete, sum to 100 at.%) |
+| Interstitials part of the composition | H/C/N/B are separate columns, at.% relative to the metal total, not part of the 100 (H = 3.57 for y = 0.5); 313 rows | Store separately, or hydrides look like their parents |
+| DOI identifies a row | DOI only on the first row of each paper (223 of 1,113 cells); some cells hold two DOIs | Fill down; use the NIMS ID as external ID |
+| `.get("|ΔSM|max (J/kg K)")`, `.get("Density (g/cm³)")` | Real headers: `'|ΔSM|max (J/kg K) '` (trailing space), `'Density (g/cm3)'` | `.get()` silently returns nothing: an empty target column with no error. Fail loudly on missing headers |
+| Target table `literature_mce_records` | Does not exist; no MCE property table in the schema | New staging tables (migration 007) |
+| `Ttr` complete | Reported for 835 samples | Restore the rest from peak positions, record the source |
+| "226 papers" | 223 article IDs, 221 distinct DOIs after fill-down | — |
+
+---
+
+## 5. Review of the NIMS example scripts
+
+Not used; `evaluate.py` is a fresh implementation. Findings:
+
+- Fail on current libraries: `mean_squared_error(squared=False)` (removed
+  from scikit-learn; 1.9 installed) and `plt.cm.get_cmap` (removed from
+  matplotlib; 3.11 installed).
+- `process_duplicates` stores IDs such as `"132_4.0"` (sample 132 at 4 T)
+  in a float array; `float('132_4.0')` reads the underscore as a digit
+  separator, so the ID silently becomes 1324. IDs only, not values.
+- `if Xy_names[i] != 'a@PM' or Xy_names[i] != 'c@PM'` is always true, so
+  lattice constants are rounded to 0.01 Å despite the intent.
+- `samples_to_delete += samples_to_delete + [...]` doubles the list each
+  time (harmless).
+- Evaluation is random 80/20 ShuffleSplit only. Measured effect (NIMS
+  loader and model, preliminary run):
+
+| Target | random split | whole papers held out | predict-the-mean |
+|---|---|---|---|
+| T_tr (n = 552, 148 papers) | MAE 6.77 K, R² 0.96 | MAE 10.27 K, R² 0.91 | 42.60 K |
+| \|ΔS_M\|max (n = 870, 170 groups) | MAE 1.63, R² 0.90 | MAE 3.50, R² 0.54 | 6.02 J/kg K |
+
+---
+
+## 6. Overlap of the hand-extracted records with NIMS
+
+Reproduce: `python audit_checks.py` (sections 2–3 of its output).
+
+| Source of the 34 records | In NIMS |
+|---|---|
+| Moreno-Ramírez 2019, Cr (7) | yes, all 7 (IDs 375–381) |
+| Moreno-Ramírez 2018, Ni (5) | yes, all 5 (IDs 323–327) |
+| Krautz 2014, Mn (10) | very likely: doi:10.1016/j.jallcom.2014.02.015 has both series (Si 1.2 and 1.4, x = 0–0.4, 2 T) plus hydrides, 20 rows — **DOI to be confirmed** |
+| Gottschall 2019, library (2) | no |
+| Thiem 2019 BSc, T_c only (10) | no (unpublished) |
+
+So ~22 of the 34 records were already in the training pool. The earlier
+values for Ni were power-law estimates; NIMS and the original data agree
+with each other and differ from the estimates by up to 37 K and
+9 J/kg K:
+
+| x(Ni) | T_tr NIMS | T_tr original | T_tr estimated | \|ΔS\| NIMS | \|ΔS\| original | \|ΔS\| estimated |
+|---|---|---|---|---|---|---|
+| 0.0 | 194.2 | 193.94 | 193 | 19.1 | 19.80 | 22.1 |
+| 0.1 | 193.6 | 193.77 | 201 | 19.0 | 18.98 | 16.3 |
+| 0.2 | 197.9 | 197.27 | 210 | 12.0 | 12.08 | 15.1 |
+| 0.3 | 205.4 | 204.49 | 224 | 8.4 | 8.48 | 14.4 |
+| 0.4 | 214.0 | 214.25 | 251 | 4.3 | 4.30 | 13.7 |
+
+(The estimates' x column used EDX x = 0.10, 0.18, 0.26, 0.33; NIMS and
+the original tables use nominal x.) In the earlier Cr table the x = 0.42
+and 0.47 rows also looked swapped relative to NIMS.
+
+Leave-one-family-out, NIMS-trained (preliminary run, NIMS loader and
+model) against the earlier LOFO on the 34 records:
+
+| Family left out | T_tr MAE NIMS-trained | T_tr earlier | \|ΔS\| MAE NIMS-trained | \|ΔS\| earlier |
+|---|---|---|---|---|
+| Cr (n = 12 / 11) | 14.4 K (mean 42.3) | 13 K | 3.49 (mean 5.74) | 3.4 |
+| Ni (n = 12 / 20) | 3.9 K (mean 23.0) | 28 K | 3.54 (mean 4.33) | 2.7 |
+| Mn (n = 41 / 36) | 13.4 K (mean 69.5) | 38 K | 2.77 (mean 4.56) | 5.5 |
+
+---
+
+## 7. Test-set design (decided 2 November)
+
+- **Test set = Moreno-Ramírez 2018 (Ni, doi:10.1016/j.actamat.2018.08.054)
+  and 2019 (Cr, doi:10.1016/j.actamat.2019.06.022)**: co-authored by
+  I. Radulov, one lab, one protocol, original data available. Both papers
+  are removed from all training and cross-validation.
+- Krautz 2014 (not co-authored), Thiem (published differently) and
+  Gottschall 2019 (not in NIMS) are **not** excluded.
+- Co-authorship alone is not leakage. `works.bib` was checked: none of its
+  32 DOIs is in NIMS (the Ni and Cr entries have no DOI field there). Two
+  NIMS papers likely co-authored — doi:10.1016/j.actamat.2017.01.054
+  (2 rows, `LaFe11.38Mn0.32Si1.30Hx`) and doi:10.1088/1361-6463/aa893e
+  (1 row) — contain none of the test samples and stay in training.
+- The parent alloy LaFe₁₁.₆Si₁.₄ appears 51 times from 37 papers in NIMS,
+  so x = 0 test points are easy; results are reported separately for
+  x = 0 and x > 0.
+- The HZDR materials library (Gottschall 2019) is consistent but covers
+  14 material families with only ~2 La(Fe,Si)₁₃ rows: it cannot serve as
+  the test set for a La(Fe,Si)₁₃ model.
+- High-Mn series (stay 1: nominal x = 0.8–2.5, EDX 0.65–1.87; positive ΔS,
+  displaced loops — antiferromagnetic / spin-glass behaviour): NIMS has one
+  unhydrided row above x ≈ 0.5. Use as an out-of-range test, expected to
+  fail; not for correction.
+
+Compositions from the stay reports (EDX of the 1:13 phase):
+- Ni: La1.00Fe11.2Si1.45; La1.00Fe11.2Ni0.10Si1.42; La1.00Fe11.1Ni0.18Si1.44;
+  La1.00Fe10.9Ni0.26Si1.50; La1.00Fe10.9Ni0.33Si1.54.
+- Cr: La1.00Fe11.5Si1.40; …Cr0.12Si1.42; …Cr0.21Si1.42; …Cr0.35Si1.42;
+  …Cr0.42Si1.53; …Cr0.47Si1.59; …Cr0.56Si1.59. NIMS uses the measured
+  Cr x but Si = 1.4 throughout.
+- Mn (48 h, 1100 °C): La1.00Fe10.5Mn0.65Si1.36 … La1.00Fe9.11Mn1.87Si1.74.
+
+---
+
+## 8. Implementation (`stage_four/mce_nims/`)
+
+| File | Purpose |
+|---|---|
+| `nims_dataset.py` | `load_nims()` (exact-header check, DOI fill-down, composition from element columns, interstitials separate, list columns parsed), `restore_T_tr()`, `expand_points()` |
+| `evaluate.py` | mean / ridge / gradient boosting; random, paper-grouped, leave-one-family-out and held-out-test evaluation; per-point CSV |
+| `007_mce_literature.sql` | `mce_literature_records` (one per source sample; source, external_id, DOI, licence, compositions as JSONB, process, T_tr with source) and `mce_literature_points` (one per quantity per field); not linked to `samples` |
+| `import_nims.py` | upsert on (source, external_id), points replaced per record, one transaction; `--dry-run` |
+| `origin_from_pptx.py` | data from Origin graphs embedded in PowerPoint (section 9) |
+| `audit_checks.py` | reproduces sections 6–7 |
+
+Testing done:
+- Loader on the real file: 1,113 records, 221 papers, 1,386 ΔS points,
+  153 ΔT_ad points; T_tr reported 835 / restored 145 / missing 134; rows
+  530, 531 have mismatched list lengths (values left empty).
+- Migration and import on a throwaway PostgreSQL 16: migration twice, no
+  error; import twice, same 1,113 records and 1,539 points.
+- **Defect found in testing:** `iterrows()` turned the integer NIMS ID
+  into a float (`1.0`), so the record lookup failed. The single
+  transaction rolled back and left the tables empty. Fixed with `int()`.
+
+Feature set: 24 metal at.%, H/C/N/B, annealing time and temperature, and
+for ΔS the field. Models: NIMS hyperparameters; first sklearn
+`GradientBoostingRegressor` (rows without annealing data dropped), now
+`HistGradientBoostingRegressor` (missing values kept; min_samples_split=4
+→ min_samples_leaf=2) and ridge with median imputation + was-missing
+indicators.
+
+---
+
+## 9. Reading Origin data without Origin
+
+Problem: the original measurements are in Origin files, and there is no
+Windows computer or Origin licence available.
+
+Finding: an Origin graph pasted into PowerPoint is an OLE object
+(`ppt/embeddings/oleObjectN.bin`, ProgID `Origin50.Graph`) whose
+`Contents` stream is a complete Origin project (`CPYA 4.3024 45 W64`),
+with all plotted datasets. Block structure: `[int32 size]['\n'][payload]['\n']`;
+a dataset is a 146-byte header with its short name at offset 88,
+followed by a value block; values are float64 stored either as 8 bytes or
+as a 2-byte flag + 8 bytes (detected per column).
+
+Attempt to build the open-source liborigin from GitHub was blocked by the
+sandbox (outside code); `origin_from_pptx.py` is a from-scratch reader
+(Python + olefile).
+
+Validation: the extracted Ni table matches NIMS (section 6); the peaks of
+the seven Cr ΔS(T) curves (stay 2, slide 21) are 22.43, 21.52, 21.18,
+17.32, 14.97, 11.53, 6.65 J/kg K against NIMS 22.4, 21.4, 21.1, 17.0,
+14.9, 11.5, 6.7.
+
+Limitations: numeric columns only; short names (`Book1_A`, `Ni01_C190`),
+no long names or units — map columns to samples via the slide legend;
+standalone `.opj`/`.opju` files not handled yet.
+
+What the slides contain (stay 1: 19 graphs with data; stay 2: 18): XRD
+patterns, M(T), ΔS(T) at 1.9 T per sample, ΔT_ad(T), summary tables
+(T_tr, |ΔS|, ΔT_ad vs x), lattice parameter vs x, high-Mn M(T) and ΔS;
+for Cr also measured x with EDX errors, annealing temperature per x
+(1100, 1106, 1113, 1125, 1150, 1150, 1150 °C — supplies the missing NIMS
+value for x = 0), hysteresis (1.8, 2.3, 4.3, 2.8, 0.5, 0.5, 0 K), a
+second-phase fraction rising to 24.5 % at x = 0.56 (column unlabelled;
+check), the field-dependence exponent n(T) (slide 22) and direct ΔT_ad
+curves (slide 25). Ni: Rietveld α-Fe 0.2 → 21.3 wt % with Ni (so |ΔS|
+per kg is diluted at high Ni).
+
+Exports: one CSV per graph, `python origin_from_pptx.py <pptx> <out_dir>`.
+
+---
+
+## 10. Results
+
+Commands: `python evaluate.py --target T_tr --restore-T-tr` and
+`python evaluate.py --target dS` (add `--drop-missing-anneal` for the
+earlier variant). Mean absolute error; "mean / ridge / GB" =
+predict-the-mean / ridge / gradient boosting.
+
+### Current (rows without annealing data kept, histogram GB)
+
+T_tr: 979 rows from 208 papers (313 without annealing data), 12 test rows.
+
+| Evaluation | n | mean | ridge | GB |
+|---|---|---|---|---|
+| random 80/20 | 967 | 48.78 | 13.26 | 8.20 K |
+| whole papers held out (5 folds) | 967 | 49.49 | 14.28 | 11.12 K |
+| LOFO Si+Cr | 6 | 43.59 | 7.72 | 5.80 |
+| LOFO Si+Ni | 8 | 31.01 | 10.36 | 3.33 |
+| LOFO Si+Mn | 86 | 69.17 | 39.36 | 10.53 |
+| LOFO Si+Co | 154 | 63.71 | 9.81 | 17.80 |
+| LOFO Si+Ce | 59 | 48.75 | 34.54 | 7.58 |
+| LOFO Al | 60 | 45.90 | 25.68 | 22.31 |
+| test, all | 12 | 46.89 | 7.47 | 9.34 |
+| test, x = 0 | 2 | 44.25 | 10.09 | 4.56 |
+| test, x > 0 | 10 | 47.42 | 6.94 | 10.30 |
+
+\|ΔS_M\|max: 1,386 points from 194 papers (397 without annealing data), 12 test points.
+
+| Evaluation | n | mean | ridge | GB |
+|---|---|---|---|---|
+| random 80/20 | 1374 | 6.17 | 3.50 | 1.74 J/kg K |
+| whole papers held out | 1374 | 6.24 | 4.03 | 3.32 |
+| LOFO Si+Cr | 5 | 6.83 | 4.93 | 4.09 |
+| LOFO Si+Ni | 16 | 4.07 | 2.84 | 3.21 |
+| LOFO Si+Mn | 79 | 3.71 | 3.15 | 2.68 |
+| LOFO Si+Co | 226 | 6.71 | 2.47 | 2.23 |
+| LOFO Si+Ce | 85 | 8.52 | 7.71 | 4.86 |
+| LOFO Al | 72 | 7.30 | 2.67 | 2.85 |
+| test, all | 12 | 5.46 | 4.83 | 3.16 |
+| test, x = 0 | 2 | 7.48 | 5.26 | 3.25 |
+| test, x > 0 | 10 | 5.05 | 4.75 | 3.14 |
+
+### Earlier variant (rows without annealing data dropped)
+
+sklearn GB: T_tr 666 rows / 168 papers (313 dropped), 11 test rows —
+random 43.00 / 14.29 / 7.76 K; papers 43.37 / 14.65 / 11.27 K; test
+36.15 / 6.55 / 7.13 K (x > 0: 36.71 / 6.37 / 7.48). LOFO GB: Cr 9.19,
+Ni 3.69, Mn 13.65, Co 8.93, Ce 7.80, Al 30.00 K.
+ΔS 989 points / 157 papers (397 dropped), 11 test points — random
+6.24 / 3.80 / 1.79; papers 6.29 / 4.34 / 3.61; test 5.07 / 4.42 / 3.67
+J/kg K. LOFO GB: Cr 2.98, Ni 3.70, Mn 3.02, Co 2.20, Ce 5.21, Al 2.61.
+Same with histogram GB (`--drop-missing-anneal`): ΔS papers 3.73, test
+2.87.
+
+### Reading
+
+- Random splits flatter: ΔS 1.7 vs 3.3 J/kg K on unseen papers. Only
+  grouped evaluations are reported as results.
+- Keeping rows with missing annealing data improves the paper-level ΔS
+  error (3.73 → 3.32); test-set differences of ~0.3 on 11–12 points are
+  noise.
+- Cr series: the tree model, with ~5 other Cr rows in training, predicts
+  a nearly flat T_tr (~188 K) and ΔS (~15–16 J/kg K) for x ≥ 0.35 while
+  the measured values fall to 170 K and 6.7 J/kg K. Trees do not
+  extrapolate; ridge (linear in Cr content) follows the T_tr trend
+  better (6.9 vs 10.3 K on substituted test samples). Motivates the
+  correction step and, possibly, a linear or physics-informed component.
+- The Ni series is predicted well (LOFO T_tr ≈ 3–4 K).
+
+---
+
+## 11. Decisions
+
+| Date | Decision | Reason |
+|---|---|---|
+| 2 Nov | Magnetocaloric workflow separate from Nd–Fe–B Stage 4 | shares only the database |
+| 2 Nov | Composition from NIMS element columns, not formula strings | complete; strings often have variables |
+| 2 Nov | Test set = Ni + Cr papers only | co-authored, one lab, originals available; other papers not leakage |
+| 2 Nov | Evaluate with whole papers / families held out, always with mean and ridge baselines | random split inflates scores |
+| 2 Nov | Keep rows with missing annealing data | user's choice; better paper-level ΔS error |
+| 2 Nov | NIMS file not committed; licence and citation in README | CC BY 4.0; keep repo free of third-party data |
+| 2 Nov | Read Origin data from PowerPoint embeddings instead of digitising PDFs | exact values, no Origin needed |
+
+---
+
+## 12. Open questions
+
+- [ ] May the test-set EDX compositions be committed as a small CSV?
+- [ ] Confirm that doi:10.1016/j.jallcom.2014.02.015 is Krautz 2014.
+- [ ] Hydrides: keep in training (H as feature) or model separately?
+- [ ] Column labels in the extracted Origin tables (which Book = which x;
+      the unlabelled second-phase column on stay 2, slide 15).
+- [ ] Is more consistently measured La(Fe,Si)₁₃ data available
+      (HZDR or own), beyond Thiem and the high-Mn series?
+
+## 13. Next steps
+
+1. Test set with EDX compositions and original values (from the Origin
+   exports) instead of NIMS nominal values.
+2. Correction step: fit the NIMS-trained model's residuals on the
+   consistent series (constant offset or small Gaussian process),
+   evaluated leave-one-out; success criterion written down before the run.
+3. High-Mn series as out-of-range test.
+4. Optional: a model that extrapolates along a substituent (linear term or
+   physics-informed baseline), given the Cr result.
+
+## 14. Lessons so far (for the paper)
+
+| Defect | How found | Fix | Lesson |
+|---|---|---|---|
+| Header with a trailing space (`'|ΔSM|max (J/kg K) '`); a lookup by the obvious name silently returns an empty column | opening the real file | exact-header check, fail loudly | never trust a column name from a description |
+| Composition strings unusable for most rows | counting non-empty, parseable strings | element columns | check coverage before choosing a field |
+| Random split doubles the apparent ΔS accuracy | re-running the NIMS model with papers held out | grouped evaluation only | evaluation design matters more than the model |
+| 22 of 34 "test" records already in the training pool | DOI overlap check | test papers removed from training | check provenance before calling data independent |
+| Hand-made power-law estimates off by up to 37 K | comparison with NIMS and original data | use reported values | estimates are not data |
+| IDs mangled by `float('132_4.0')` in third-party code | tracing a KeyError | own implementation | underscores are digit separators in Python numbers |
+| Float ID from `iterrows()` broke the import | throwaway-database test | `int()`; single transaction rolled back cleanly | test imports on a disposable database |
+| "Unreadable" Origin data was inside the PowerPoint files | inspecting the embedded OLE objects | `origin_from_pptx.py` | look inside the container before digitising |
+
+## 15. Reproducing everything
+
+```bash
+# data: put 1-13_dataset.xlsx in stage_four/mce_nims/data/
+cd stage_four/mce_nims
+python audit_checks.py                          # sections 6–7
+python evaluate.py --target T_tr --restore-T-tr # section 10
+python evaluate.py --target dS
+python evaluate.py --target dS --drop-missing-anneal
+python import_nims.py --dry-run                 # section 8
+python origin_from_pptx.py Results_first_stay.pptx out/first_stay
+python origin_from_pptx.py Results_second_stay.pptx out/second_stay
+```
+
+## References
+
+- NIMS Materials Data Repository, La(Fe,Si)₁₃ magnetocaloric dataset,
+  doi:10.48505/nims.4909 (CC BY 4.0).
+- Moreno-Ramírez L.M. et al., Acta Mater. 160 (2018) 137,
+  doi:10.1016/j.actamat.2018.08.054 (Ni).
+- Moreno-Ramírez L.M. et al., Acta Mater. 175 (2019) 406,
+  doi:10.1016/j.actamat.2019.06.022 (Cr).
+- Gottschall T. et al., Adv. Energy Mater. 9 (2019) 1901322,
+  doi:10.1002/aenm.201901322 (materials library).
+- Law J.Y. et al., Nat. Commun. 9 (2018) 2680,
+  doi:10.1038/s41467-018-05111-w (field-dependence exponent n).
+- Ling J. et al., Integr. Mater. Manuf. Innov. (2017),
+  doi:10.1007/s40192-017-0098-z (uncertainty-driven sequential learning).

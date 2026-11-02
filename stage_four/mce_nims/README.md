@@ -30,6 +30,8 @@ variants in about 25 substituent families (Si, Si+Co, Si+Mn, Si+Ce, Al, …);
 | `007_mce_literature.sql` | Staging tables `mce_literature_records` and `mce_literature_points` (with source, external ID, DOI, licence) |
 | `import_nims.py` | Load the dataset into those tables (`--dry-run` to only validate and count) |
 | `origin_from_pptx.py` | Extract the worksheet data of Origin graphs embedded in a PowerPoint file, without Origin |
+| `audit_checks.py` | Reproduces the data checks behind the decisions (overlap with the hand-extracted records, test series vs originals) |
+| `WORKLOG.md` | Full record of this workflow: inputs, checks, decisions, results, open questions |
 
 ```bash
 cd stage_four/mce_nims
