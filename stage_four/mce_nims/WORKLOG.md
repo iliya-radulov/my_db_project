@@ -18,6 +18,8 @@ Last updated: 2 November 2026. Pull request: #7 (draft).
 | Test set | Ni and Cr series (Moreno-Ramírez 2018, 2019) held out of all training |
 | Missing annealing data | kept as missing (model handles them), per decision 2 Nov |
 | Original values of the test series | extracted from the stay-report slides without Origin; agree with NIMS |
+| Roadmap (`my_alloy_db_General_Road_Map_v2.md`) | all items done except priority 4 (waiting for J. M. Cole) and priority 5 (NEMAD, later); details in section 0b |
+| Waiting for answers | J. M. Cole (ChemDataExtractor data, licence); Yuan / Yang / Liao (GitHub MCE database permission; one of three addresses bounced) |
 | Correction step (fit residuals on consistent data) | done (`correct.py`); criterion met with ridge base, not with gradient boosting; NIMS helps most for the first 1–3 samples of a new series (section 10b) |
 | EDX compositions for the test set | committed (`test_set_edx.csv`, permission 2 Nov); option `--test-compositions`; makes predictions worse, nominal stays default (section 10c) |
 | High-Mn series as out-of-range test | data located in the first stay report; **not yet used** |
@@ -665,7 +667,7 @@ training and test; nominal stays the default.
 - [ ] Hydrides: keep in training (H as feature) or model separately?
 - [ ] Column labels in the extracted Origin tables (which Book = which x;
       the unlabelled second-phase column on stay 2, slide 15).
-- [ ] ChemDataExtractor magnetocaloric set: the paper's link (magneticmaterials.org) now points to NEMAD; ask J. M. Cole for the data file and its licence.
+- [ ] ChemDataExtractor magnetocaloric set: the paper's link (magneticmaterials.org) now points to NEMAD; email to J. M. Cole sent 2 Nov — waiting for the data file and its licence.
 - [ ] NEMAD (nemad.org, Itani, Zhang, Zang, Nat. Commun. 2025): roadmap priority 5, later; I. Radulov registered; only an interactive search found so far (no bulk download); not reachable from the work environment.
 - [ ] Answer from the GitHub MCE database authors (permission, licence).
 - [ ] Is more consistently measured La(Fe,Si)₁₃ data available
