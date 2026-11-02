@@ -33,6 +33,7 @@ variants in about 25 substituent families (Si, Si+Co, Si+Mn, Si+Ce, Al, …);
 | `composition_key.py` | One composition key for all sources (`Fe81.4-La7.1-Si11.4+H3.6`), and a near-match distance |
 | `link_samples.py` | Keys for the lab's own samples and their exact / near matches among the literature records |
 | `mcedb_dataset.py`, `import_mcedb.py` | Second source: the LLM-extracted MCE database (GitHub; no licence — internal use only), filtered to La(Fe,Si/Al)₁₃, with row accounting and accuracy against NIMS |
+| `import_curie_neel.py` | Third source: Kelly & Cole 2025 Curie/Néel dataset (CC BY 4.0), La(Fe,Si/Al)₁₃ Curie temperatures |
 | `literature_db.py` | Shared database writer for all literature sources |
 | `consistency_report.py` | Roadmap day 7: consistency report over all literature sources in the database |
 | `008_literature_checks_provenance.sql` | Provenance (`quality_flag`) and value checks for the existing Materials Project / OQMD / Alexandria matches |

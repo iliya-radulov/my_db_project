@@ -50,16 +50,22 @@ QUERIES = {
             FROM mce_literature_records a
             JOIN mce_literature_records b
               ON a.composition_key = b.composition_key AND a.source < b.source
-             AND position(lower(a.doi) IN lower(b.doi)) + position(lower(b.doi) IN lower(a.doi)) > 0)
-        SELECT source_a, source_b, count(*) AS record_pairs,
-               count(*) FILTER (WHERE t_a IS NOT NULL AND t_b IS NOT NULL) AS t_tr_pairs,
-               round(avg(CASE WHEN abs(t_a - t_b) <= 2 THEN 1.0 ELSE 0 END)
-                     FILTER (WHERE t_a IS NOT NULL AND t_b IS NOT NULL), 2) AS t_tr_share_within_2K,
-               (SELECT count(*) FROM pairs q
-                  JOIN mce_literature_points pa ON pa.record_id = q.id_a AND pa.quantity = 'dS_max'
-                  JOIN mce_literature_points pb ON pb.record_id = q.id_b AND pb.quantity = 'dS_max'
-                   AND abs(pa.field_t - pb.field_t) < 1e-6) AS ds_pairs_same_field
-        FROM pairs GROUP BY 1, 2""",
+             AND position(lower(a.doi) IN lower(b.doi)) + position(lower(b.doi) IN lower(a.doi)) > 0),
+        t AS (
+            SELECT source_a, source_b, count(*) AS record_pairs,
+                   count(*) FILTER (WHERE t_a IS NOT NULL AND t_b IS NOT NULL) AS t_tr_pairs,
+                   round(avg(CASE WHEN abs(t_a - t_b) <= 2 THEN 1.0 ELSE 0 END)
+                         FILTER (WHERE t_a IS NOT NULL AND t_b IS NOT NULL), 2) AS t_tr_share_within_2k
+            FROM pairs GROUP BY 1, 2),
+        d AS (
+            SELECT q.source_a, q.source_b, count(*) AS ds_pairs_same_field
+            FROM pairs q
+            JOIN mce_literature_points pa ON pa.record_id = q.id_a AND pa.quantity = 'dS_max'
+            JOIN mce_literature_points pb ON pb.record_id = q.id_b AND pb.quantity = 'dS_max'
+             AND abs(pa.field_t - pb.field_t) < 1e-6
+            GROUP BY 1, 2)
+        SELECT t.*, coalesce(d.ds_pairs_same_field, 0) AS ds_pairs_same_field
+        FROM t LEFT JOIN d USING (source_a, source_b) ORDER BY 1, 2""",
     "Own samples with exact matches": """
         SELECT source, quality_flag, count(DISTINCT sample_db_id) AS samples, count(*) AS matched_records
         FROM mce_literature_matches GROUP BY 1, 2 ORDER BY 1, 2""",

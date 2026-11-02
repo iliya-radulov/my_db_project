@@ -51,6 +51,7 @@ Where the work stands against the roadmap:
 | §5 Days 2–3: load NIMS, compare with the 34 hand-extracted records | done | section 6 |
 | §5 Day 7: consistency report (new compositions, collisions, quality flags) | done | `consistency_report.py` (section 0d) |
 | "Insert into a staging table first, then copy the clean rows into the main tables" | done, option B | the literature tables are the final tables, linked to `samples` via `sample_composition_keys` and the view `mce_literature_matches` (`link_samples.py`); server steps in `SERVER_SETUP.md` |
+| §3 Priority 5: broader magnetic databases | partly, for La(Fe,Si/Al)₁₃ only | Kelly & Cole 2025 Curie/Néel dataset (CC BY 4.0), `import_curie_neel.py`: 100 Curie temperatures from 52 papers (section 0e) |
 | §6 Not to do: no live mirror, no core-table redesign, no Airflow, stay MCE-focused | respected | |
 
 ---
@@ -155,6 +156,53 @@ The GitHub MCE database email to the authors was sent by I. Radulov on
 
 ---
 
+## 0e. Curie/Néel temperature dataset (Kelly & Cole 2025)
+
+Paper: Kelly C.R., Cole J.M., Sci. Data (2025),
+doi:10.1038/s41597-025-06244-6; data doi:10.6084/m9.figshare.29559686
+(figshare is not reachable from the work environment; files uploaded by
+I. Radulov on 2 Nov); code github.com/C-R-Kelly/Curie-Neel-temperature-dataset
+(commit c878eba). **Licence CC BY 4.0.** 56,037 records (41,647 Curie,
+14,390 Néel), ChemDataExtractor 2 + Snowball v2; precision 72 %, recall
+61 % (paper). The CSV and JSON files hold the same records; the JSON
+keeps value lists, so the import reads the JSON. quality_flag
+`literature_mined`.
+
+Pitfalls found in the file:
+- `value` is not converted to kelvin: 12,346 records are in °C
+  (`'Celsius^(1.0)'`, e.g. Tc = 250 °C → value 250), plus a few mK / °F.
+  Converted in `to_kelvin()`.
+- Bounds and approximations lose their qualifier: raw `'>580'` → value
+  580. Raw-value shapes: 46,945 plain numbers, 2,927 `∼N`, 1,994 `~N`,
+  1,797 ranges, 674 `>N`, 299 `<N`, … Only plain numbers are accepted.
+- `Tc` / `TC` also stands for ferroelectric and superconducting
+  transitions; `names` can list several compounds (10,815 records).
+
+La(Fe,Si/Al)₁₃ import (`import_curie_neel.py`):
+
+| Records | Outcome |
+|---|---|
+| 55,893 | not La(Fe,Si/Al)₁₃ family |
+| 26 | T_C outside 100–500 K (e.g. 6.9 K, 15 K: ΔT_ad or hysteresis picked up as T_C) |
+| 9 | raw value not a plain number |
+| 4 | several La(Fe,Si/Al)₁₃ compounds in one record |
+| 5 | Néel specifier (`TN`, `Neel temperature`) |
+| **100** | **accepted**, 52 papers, 44 composition keys |
+
+Against NIMS: 33 rows from 16 papers NIMS also has, **36 papers only
+here**; 25 rows match a NIMS paper + composition key; T_C within 2 K of
+NIMS for 67 % of 24 pairs (nearest-match, optimistic; worst 35 K) —
+consistent with the paper's 72 % precision and below the GitHub MCE
+database (81 %).
+
+Consistency report with all three sources (throwaway database, 2 Nov):
+new composition keys only in Kelly & Cole 10, GitHub 56, NIMS 544; 117
+keys and 65 papers in more than one source; T_tr agreement within 2 K
+(every record pair): Kelly & Cole vs NIMS 64 % of 25, Kelly & Cole vs
+GitHub 57 % of 7, GitHub vs NIMS 78 % of 54.
+
+---
+
 ## 1. Context
 
 The series: Stage 1 captures and screens compositions, Stage 2 makes
@@ -193,6 +241,7 @@ points for leave-one-family-out evaluation.
 | 2 Nov | Governing roadmap clarified; roadmap §1 and §4 items: landing zone, composition key, quality flag, duplicates rule, sample linking, server instructions; tested on a throwaway PostgreSQL with a minimal samples table. |
 | 2 Nov | Roadmap priority 3 started: GitHub MCE database examined (section 0c). Found and fixed a silent bracket bug in the Stage 1/2 composition parser. |
 | 2 Nov | GitHub MCE database imported (option (a), internal use): 209 La(Fe,Si/Al)₁₃ rows, extraction accuracy measured against NIMS; shared DB writer `literature_db.py` for both sources; tested on a throwaway database. |
+| 2 Nov | Kelly & Cole 2025 Curie/Néel dataset (uploaded by I. Radulov): checked, imported for La(Fe,Si/Al)₁₃ (100 records), consistency report with three sources; fixed a counting bug in the report. Second GitHub repository of the MCE database identified as its website only. |
 | 2 Nov | Priority 4 (ChemDataExtractor set) blocked by the work environment's network policy; day-7 consistency report written and tested instead. Email to the GitHub MCE database authors sent. |
 | 2 Nov | Roadmap priority 1: migration 008 for `literature_checks` (tested on a throwaway database with the original 001 table definition and a deliberately bad legacy row). Krautz 2014 DOI confirmed. |
 
@@ -347,6 +396,7 @@ Compositions from the stay reports (EDX of the 1:13 phase):
 | `mcedb_dataset.py` | loader and strict value parsers for the GitHub MCE database, provenance recovery via the Web of Science export |
 | `import_mcedb.py` | roadmap priority 3: import with row accounting and comparison with NIMS |
 | `literature_db.py` | shared database writer for all literature sources |
+| `import_curie_neel.py` | Kelly & Cole 2025 Curie/Néel dataset, La(Fe,Si/Al)₁₃ Curie temperatures only, with row accounting and comparison with NIMS |
 | `consistency_report.py` | roadmap day 7: per-source counts, new compositions, collisions, agreement between sources, own-sample matches |
 | `008_literature_checks_provenance.sql` | roadmap priority 1: provenance and checks for the Materials Project / OQMD / Alexandria matches |
 | `correct.py` | step 5: corrections of the NIMS-trained model on the consistent series, leave-one-out, and the new-series curve (section 10b) |
@@ -580,6 +630,7 @@ Reading:
 | 2 Nov | `literature_checks.quality_flag = 'dft'` for Materials Project rows too, not the roadmap's example 'experimental' | the stored values (energy above hull) are computed; observation is recorded separately in `experimentally_known` |
 | 2 Nov | GitHub MCE database: option (a) — import for internal checks now, ask the authors for permission before publishing | repository has no licence |
 | 2 Nov | Published formulas get their own parser (case-sensitive, brackets expanded, implicit 1); the lab calculator stays strict | case-sensitive reading makes implicit 1 unambiguous; the lab parser is case-insensitive and must stay strict |
+| 2 Nov | Kelly & Cole: only plain-number Curie temperatures, 100–500 K, exactly one La(Fe,Si/Al)₁₃ compound per record | the file drops bound qualifiers and unit conversion; text mining mislabels ΔT_ad and hysteresis as T_C; the 100–500 K window is a domain judgement, adjustable (`PLAUSIBLE_TC_K`) |
 | 2 Nov | Database lives only on the user's server: changes are delivered as a migration plus `SERVER_SETUP.md`, tested on a throwaway database here | no access to the server |
 
 ---
@@ -622,6 +673,8 @@ Reading:
 | Composition keys computed after rounding to 4 decimals differed from keys of the unrounded values (660 vs 659 distinct) | dry-run count vs database count | one code path, key from unrounded values | never round twice; report from the same code that writes |
 | Composition parser skipped brackets: `La(Fe0.92Co0.08)11.9Si1.1` became La 0.92, Fe 0.08, Co 11.9, Si 1.1, and the element/number count check still passed | a literature formula that the "strict" parser should have rejected was accepted | reject every character except letters, digits, `.`, spaces (stage one and two parsers); query in `SERVER_SETUP.md` §4b to find affected samples | a count check is not a structure check; test parsers with the real input they will meet |
 | `pd.NA` (pandas' missing value in text columns) cannot be stored by psycopg2; the first GitHub import failed | throwaway-database test; the transaction rolled back, nothing written | `clean()` handles `pd.NA` / `pd.NaT` | every missing-value type of the libraries in use must be mapped to NULL |
+| Kelly & Cole: normalised `value` still in °C for 12,346 records, and `>580` stored as 580 | reading the JSON before writing the import | convert units; accept plain numbers only | a field named "normalised" may normalise the unit's name, not the number |
+| Consistency report showed the same 63 ΔS pairs for every source pair, also for a source without any ΔS | a source with no points made the impossible number visible | per-pair aggregation (CTE + join) | test a report with a case where the right answer is zero |
 | The pre-registered criterion passed (ridge base), yet a straight line through one's own series did as well | adding a no-NIMS reference | new-series curve | a success criterion must include the simplest competitor |
 
 ## 15. Reproducing everything
@@ -635,6 +688,7 @@ python evaluate.py --target dS
 python evaluate.py --target dS --drop-missing-anneal
 python import_nims.py --dry-run                 # section 8
 python import_mcedb.py --dry-run                # section 0c (needs data/MCEdatabase/)
+python import_curie_neel.py --dry-run           # section 0e (needs data/curie_neel/)
 python correct.py --target T_tr --restore-T-tr --base ridge --curve   # section 10b
 python correct.py --target dS --base ridge --curve
 python correct.py --target T_tr --restore-T-tr --base gbr --curve

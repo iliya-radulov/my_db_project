@@ -95,6 +95,20 @@ Expected (commit 21ec937): 209 records, 156 points, source
 `mcedb_github`, quality flag `unverified`. Needs `xlrd` (in
 `requirements.txt`) for the Web of Science `.xls` files.
 
+## 3c. Third source: Kelly & Cole Curie/Néel dataset (CC BY 4.0)
+
+Download `curie_neel_database_data_processed.json` from
+https://doi.org/10.6084/m9.figshare.29559686 into
+`stage_four/mce_nims/data/curie_neel/`, then:
+
+```bash
+python import_curie_neel.py --dry-run
+python import_curie_neel.py
+```
+
+Expected: 100 records, source `curie_neel_kelly_cole_2025`, quality flag
+`literature_mined`, no points (T_C only).
+
 ## 4. Link the lab's samples
 
 ```bash
