@@ -79,6 +79,22 @@ Uses the same `.env` connection settings as the rest of the project
 (`db_config.py`: `POSTGRES_HOST`, `POSTGRES_PORT`, `POSTGRES_DB`,
 `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_SCHEMA`).
 
+## 3b. Second source: the GitHub MCE database (internal use only)
+
+The repository has no licence; nothing derived from it is to be
+published before its authors agree.
+
+```bash
+git clone https://github.com/RunqingYang1996/MCEdatabase stage_four/mce_nims/data/MCEdatabase
+cd stage_four/mce_nims
+python import_mcedb.py --dry-run     # row accounting + comparison with NIMS
+python import_mcedb.py
+```
+
+Expected (commit 21ec937): 209 records, 156 points, source
+`mcedb_github`, quality flag `unverified`. Needs `xlrd` (in
+`requirements.txt`) for the Web of Science `.xls` files.
+
 ## 4. Link the lab's samples
 
 ```bash

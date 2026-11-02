@@ -229,3 +229,4 @@ mp-api
 psycopg2-binary
 openpyxl
 olefile
+xlrd

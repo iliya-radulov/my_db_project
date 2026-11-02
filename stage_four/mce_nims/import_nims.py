@@ -15,13 +15,13 @@ import argparse
 import sys
 from pathlib import Path
 
-import numpy as np
 import pandas as pd
 from psycopg2.extras import Json
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 from composition_key import composition_key
+from literature_db import clean, replace_points, upsert_records
 from nims_dataset import (DATASET_DOI, DEFAULT_PATH, INTERSTITIALS, METAL_ELEMENTS,
                           expand_points, load_nims, restore_T_tr)
 
@@ -41,19 +41,6 @@ RECORD_COLUMNS = {
 }
 
 
-def _clean(v):
-    """NaN/None -> None; numpy scalars -> Python scalars (psycopg2 cannot
-    bind numpy types, and a leaked repr breaks the SQL -- see the Stage 1
-    'schema "np" does not exist' lesson)."""
-    if v is None:
-        return None
-    if isinstance(v, (float, np.floating)) and np.isnan(v):
-        return None
-    if isinstance(v, np.generic):
-        return v.item()
-    return v
-
-
 def record_rows(df):
     for nims_id, r in df.iterrows():
         metal_raw = {e: float(r[e]) for e in METAL_ELEMENTS if r[e] > 0}
@@ -61,8 +48,8 @@ def record_rows(df):
         key = composition_key(metal_raw, inter_raw)          # from unrounded values
         metal = {e: round(v, 4) for e, v in metal_raw.items()}
         inter = {e: round(v, 4) for e, v in inter_raw.items()}
-        row = {col: _clean(r[src]) for col, src in RECORD_COLUMNS.items()}
-        iso = _clean(r['isothermal_protocol'])
+        row = {col: clean(r[src]) for col, src in RECORD_COLUMNS.items()}
+        iso = clean(r['isothermal_protocol'])
         row.update(source=SOURCE, external_id=str(nims_id), licence=LICENCE, quality_flag=QUALITY_FLAG,
                    composition_key=key,
                    metal_at_pct=Json(metal), interstitial_at_pct=Json(inter) if inter else None,
@@ -99,38 +86,12 @@ def main():
     db = get_db()
     cur = db.cursor
     try:
-        ids = {}
-        for nims_id, row in record_rows(df):
-            cols = list(row)
-            updates = ', '.join(f"{c} = EXCLUDED.{c}" for c in cols if c not in ('source', 'external_id'))
-            cur.execute(
-                f"INSERT INTO mce_literature_records ({', '.join(cols)}, retrieved_at) "
-                f"VALUES ({', '.join(['%s'] * len(cols))}, NOW()) "
-                f"ON CONFLICT (source, external_id) DO UPDATE SET {updates}, retrieved_at = NOW() "
-                f"RETURNING id",
-                [row[c] for c in cols])
-            ids[nims_id] = cur.fetchone()['id']
-
-        # Note: iterrows() below yields nims_id as float (the other columns are
-        # float), hence int() on lookup.
-        cur.execute("DELETE FROM mce_literature_points WHERE record_id = ANY(%s)", (list(ids.values()),))
-        n_points = 0
-        for _, p in dS.iterrows():
-            if _clean(p['dS_max']) is None:
-                continue
-            cur.execute("INSERT INTO mce_literature_points (record_id, quantity, field_t, value, t_peak_k, fwhm_k) "
-                        "VALUES (%s, 'dS_max', %s, %s, %s, %s) ON CONFLICT DO NOTHING",
-                        (ids[int(p['nims_id'])], _clean(p['field_T']), _clean(p['dS_max']),
-                         _clean(p['T_peak_K']), _clean(p['dS_fwhm_K'])))
-            n_points += cur.rowcount
-        for _, p in dT.iterrows():
-            if _clean(p['dT_ad_max_K']) is None:
-                continue
-            cur.execute("INSERT INTO mce_literature_points (record_id, quantity, field_t, value, t_peak_k) "
-                        "VALUES (%s, 'dT_ad_max', %s, %s, %s) ON CONFLICT DO NOTHING",
-                        (ids[int(p['nims_id'])], _clean(p['field_T']), _clean(p['dT_ad_max_K']),
-                         _clean(p['T_peak_K'])))
-            n_points += cur.rowcount
+        ids = upsert_records(cur, (row for _, row in record_rows(df)))
+        points = [(str(int(p['nims_id'])), 'dS_max', p['field_T'], p['dS_max'], p['T_peak_K'], p['dS_fwhm_K'])
+                  for _, p in dS.iterrows()]
+        points += [(str(int(p['nims_id'])), 'dT_ad_max', p['field_T'], p['dT_ad_max_K'], p['T_peak_K'], None)
+                   for _, p in dT.iterrows()]
+        n_points = replace_points(cur, ids, points)
         db.commit()
         print(f"Imported {len(ids)} records and {n_points} points (source '{SOURCE}')")
     except Exception:
