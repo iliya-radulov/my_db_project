@@ -22,8 +22,11 @@ Targets:
   dS     |ΔS_M|max, one value per (sample, field); field_T is a feature
 
 Features: the 24 metal at.% columns, the H/C/N/B columns, annealing time
-and temperature (rows without annealing data are dropped and counted),
-and for dS the applied field.
+and temperature, and for dS the applied field. Missing annealing data
+(as-cast, melt-spun or simply unreported) are kept as missing: the
+gradient-boosting model handles them natively, ridge gets median
+imputation plus a was-missing indicator. --drop-missing-anneal restores
+the earlier behaviour of dropping those rows.
 
 Usage:
   python evaluate.py --target T_tr --restore-T-tr
@@ -34,7 +37,8 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
-from sklearn.ensemble import GradientBoostingRegressor
+from sklearn.ensemble import HistGradientBoostingRegressor
+from sklearn.impute import SimpleImputer
 from sklearn.linear_model import RidgeCV
 from sklearn.metrics import mean_absolute_error
 from sklearn.model_selection import GroupKFold, ShuffleSplit
@@ -50,14 +54,16 @@ from nims_dataset import (DEFAULT_PATH, INTERSTITIALS, METAL_ELEMENTS,
 DEFAULT_TEST_DOIS = ['10.1016/j.actamat.2018.08.054', '10.1016/j.actamat.2019.06.022']
 DEFAULT_FAMILIES = ['Si+Cr', 'Si+Ni', 'Si+Mn', 'Si+Co', 'Si+Ce', 'Al']
 
-# Hyperparameters of the NIMS scripts (ml_1_13.py), so results compare.
+# Hyperparameters translated from the NIMS scripts (ml_1_13.py: n_estimators,
+# max_depth, learning_rate; min_samples_split=4 -> min_samples_leaf=2) to the
+# histogram gradient-boosting model, which accepts missing values.
 GBR_PARAMS = {
-    'T_tr': dict(n_estimators=200, max_depth=4, min_samples_split=4, learning_rate=0.1),
-    'dS': dict(n_estimators=400, max_depth=5, min_samples_split=4, learning_rate=0.15),
+    'T_tr': dict(max_iter=200, max_depth=4, min_samples_leaf=2, learning_rate=0.1),
+    'dS': dict(max_iter=400, max_depth=5, min_samples_leaf=2, learning_rate=0.15),
 }
 
 
-def build_table(df, target, use_restored):
+def build_table(df, target, use_restored, drop_missing_anneal=False):
     """Returns (table, feature_names, n_dropped_no_anneal). One row per
     sample (T_tr) or per (sample, field) (dS); 'y', 'paper', 'family' and
     'nims_id' columns are always present."""
@@ -84,15 +90,17 @@ def build_table(df, target, use_restored):
 
     table = table[table['y'].notna()]
     no_anneal = table[['anneal_time_h', 'anneal_temp_K']].isna().any(axis=1)
-    table = table[~no_anneal].reset_index(drop=True)
-    return table, features, int(no_anneal.sum())
+    if drop_missing_anneal:
+        table = table[~no_anneal]
+    return table.reset_index(drop=True), features, int(no_anneal.sum())
 
 
 def models(target):
     return {
         'mean': None,
-        'ridge': make_pipeline(StandardScaler(), RidgeCV(alphas=np.logspace(-3, 3, 13))),
-        'gbr': GradientBoostingRegressor(random_state=0, **GBR_PARAMS[target]),
+        'ridge': make_pipeline(SimpleImputer(strategy='median', add_indicator=True), StandardScaler(),
+                               RidgeCV(alphas=np.logspace(-3, 3, 13))),
+        'gbr': HistGradientBoostingRegressor(random_state=0, **GBR_PARAMS[target]),
     }
 
 
@@ -126,17 +134,20 @@ def main():
                     help='T_tr only: fill missing values from the lowest-field peak temperature')
     ap.add_argument('--test-dois', nargs='*', default=DEFAULT_TEST_DOIS)
     ap.add_argument('--families', nargs='*', default=DEFAULT_FAMILIES)
+    ap.add_argument('--drop-missing-anneal', action='store_true',
+                    help='drop rows without annealing data instead of keeping them as missing')
     ap.add_argument('--out', default=str(Path(__file__).resolve().parent / 'data' / 'results'))
     args = ap.parse_args()
 
     df = load_nims(args.data)
-    table, features, n_dropped = build_table(df, args.target, args.restore_T_tr)
+    table, features, n_missing = build_table(df, args.target, args.restore_T_tr, args.drop_missing_anneal)
     unit = 'K' if args.target == 'T_tr' else 'J/kg K'
     test_dois = [d.lower() for d in args.test_dois]
     is_test = table['paper'].map(lambda p: any(d in p for d in test_dois)).to_numpy()
 
+    action = 'dropped' if args.drop_missing_anneal else 'kept as missing'
     print(f"Target {args.target}: {len(table)} rows from {table['paper'].nunique()} papers "
-          f"({n_dropped} dropped for missing annealing data); {int(is_test.sum())} rows in the test papers")
+          f"({n_missing} without annealing data, {action}); {int(is_test.sum())} rows in the test papers")
     for d in test_dois:
         if not table['paper'].str.contains(d, regex=False).any():
             print(f"  WARNING: test DOI {d} not found in the table")
