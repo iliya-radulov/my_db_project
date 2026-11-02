@@ -30,6 +30,7 @@ variants in about 25 substituent families (Si, Si+Co, Si+Mn, Si+Ce, Al, …);
 | `007_mce_literature.sql` | Staging tables `mce_literature_records` and `mce_literature_points` (with source, external ID, DOI, licence) |
 | `import_nims.py` | Load the dataset into those tables (`--dry-run` to only validate and count) |
 | `origin_from_pptx.py` | Extract the worksheet data of Origin graphs embedded in a PowerPoint file, without Origin |
+| `correct.py` | Step 5: correct the NIMS-trained model with the consistent series (leave-one-out) and the new-series curve; see WORKLOG.md §10b |
 | `audit_checks.py` | Reproduces the data checks behind the decisions (overlap with the hand-extracted records, test series vs originals) |
 | `WORKLOG.md` | Full record of this workflow: inputs, checks, decisions, results, open questions |
 
@@ -148,9 +149,7 @@ Reading:
 1. Replace the test-set compositions with the EDX values; the original
    measured values are now readable from the stay reports with
    `origin_from_pptx.py` (they agree with NIMS, see above).
-2. Correction step on the consistent data: fit the residuals of the
-   NIMS-trained model on the consistent series (a constant offset or a
-   small Gaussian process), evaluated leave-one-out.
+2. ~~Correction step~~ — done, `correct.py`; results in WORKLOG.md §10b.
 3. High-Mn series (x ≈ 0.65–1.87 by EDX, positive ΔS): not in NIMS; use as
    an out-of-range test, expected to fail.
 4. Decide how to treat hydrides (currently in, with H as a feature).

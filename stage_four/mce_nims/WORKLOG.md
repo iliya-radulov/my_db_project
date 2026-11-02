@@ -18,7 +18,7 @@ Last updated: 2 November 2026. Pull request: #7 (draft).
 | Test set | Ni and Cr series (Moreno-Ramírez 2018, 2019) held out of all training |
 | Missing annealing data | kept as missing (model handles them), per decision 2 Nov |
 | Original values of the test series | extracted from the stay-report slides without Origin; agree with NIMS |
-| Correction step (fit residuals on consistent data) | **not started** |
+| Correction step (fit residuals on consistent data) | done (`correct.py`); criterion met with ridge base, not with gradient boosting; NIMS helps most for the first 1–3 samples of a new series (section 10b) |
 | EDX compositions for the test set | known (stay reports); **committing them awaits permission** |
 | High-Mn series as out-of-range test | data located in the first stay report; **not yet used** |
 
@@ -58,6 +58,7 @@ points for leave-one-family-out evaluation.
 | 2 Nov | Implemented loader, evaluation, DB staging tables and import (commit 4d9dfc3); tested on a throwaway PostgreSQL 16. |
 | 2 Nov | Decision: keep rows with missing annealing data. Wrote `origin_from_pptx.py`; extracted the original Ni and Cr values from the slides (commit 039cec2). |
 | 2 Nov | This log and `audit_checks.py`. |
+| 2 Nov | Step 5: correction on the consistent series (`correct.py`); success criterion fixed before the first run; new-series curve added. |
 
 ---
 
@@ -204,6 +205,7 @@ Compositions from the stay reports (EDX of the 1:13 phase):
 | `import_nims.py` | upsert on (source, external_id), points replaced per record, one transaction; `--dry-run` |
 | `origin_from_pptx.py` | data from Origin graphs embedded in PowerPoint (section 9) |
 | `audit_checks.py` | reproduces sections 6–7 |
+| `correct.py` | step 5: corrections of the NIMS-trained model on the consistent series, leave-one-out, and the new-series curve (section 10b) |
 
 Testing done:
 - Loader on the real file: 1,113 records, 221 papers, 1,386 ΔS points,
@@ -333,6 +335,86 @@ Same with histogram GB (`--drop-missing-anneal`): ΔS papers 3.73, test
   correction step and, possibly, a linear or physics-informed component.
 - The Ni series is predicted well (LOFO T_tr ≈ 3–4 K).
 
+### 10b. Step 5 — correction on the consistent series
+
+Command: `python correct.py --target {T_tr --restore-T-tr | dS} --base {gbr | ridge} [--curve]`.
+Base model trained on NIMS without the two test papers. Corrections
+(fitted on consistent points only): `offset` (mean residual of the other
+consistent points), `series_offset` (same series only), `gp` (Gaussian
+process on residuals; inputs substituent at.%, Si at.%, field). References
+without NIMS: `series_mean`, `series_linear` (straight line in
+substituent content through the other points of the series).
+
+**Success criterion, fixed before the first run:** a correction is useful
+if its leave-one-out MAE is at least 20 % below the base model's for both
+T_tr and |ΔS|, and below `series_mean`.
+
+Leave-one-out MAE on the 12 consistent points (5 Ni, 7 Cr):
+
+| Correction | T_tr, GB base | T_tr, ridge base | \|ΔS\|, GB base | \|ΔS\|, ridge base |
+|---|---|---|---|---|
+| none | 9.34 K | 7.47 K | 3.16 | 4.83 J/kg K |
+| offset | 8.42 | 4.29 | 2.88 | 2.15 |
+| series_offset | 7.16 | 2.97 | 3.16 | 2.44 |
+| gp | 8.15 | 4.84 | 2.08 | 2.17 |
+| series_mean (no NIMS) | 7.85 | 7.85 | 5.85 | 5.85 |
+| series_linear (no NIMS) | 3.01 | 3.01 | 2.13 | 2.13 |
+
+Against the criterion: with the GB base no correction meets it for both
+targets (series_offset −23 % for T_tr only, gp −34 % for |ΔS| only); with
+the ridge base all three meet it (offset −43 % / −56 %, series_offset
+−60 % / −49 %, gp −35 % / −55 %).
+
+But a straight line through the other points of the same series, with no
+NIMS at all, is as good as the best corrected model (3.01 K, 2.13 J/kg K).
+With most of a series known, NIMS adds nothing. The realistic question is
+the start of a new series, hence the **new-series curve** (`--curve`):
+MAE on the remaining samples of one series from k known samples of that
+series (all choices of k, averaged; the other series not used).
+
+T_tr (K), ridge base:
+
+| Series | k | base | base+offset | base+gp | series_mean | series_linear |
+|---|---|---|---|---|---|---|
+| Ni | 0 | 11.14 | – | – | – | – |
+| Ni | 1 | 11.14 | 3.65 | – | 10.40 | – |
+| Ni | 2 | 11.14 | 3.20 | 3.20 | 8.98 | 6.02 |
+| Ni | 3 | 11.14 | 3.09 | 3.11 | 8.70 | 5.28 |
+| Cr | 0 | 4.84 | – | – | – | – |
+| Cr | 1 | 4.84 | 3.88 | – | 9.09 | – |
+| Cr | 2 | 4.84 | 3.50 | 3.50 | 7.83 | 2.57 |
+| Cr | 3 | 4.84 | 3.25 | 2.85 | 7.56 | 1.90 |
+| Cr | 5 | 4.84 | 2.91 | 2.29 | 7.33 | 1.79 |
+
+|ΔS| (J/kg K), ridge base:
+
+| Series | k | base | base+offset | base+gp | series_mean | series_linear |
+|---|---|---|---|---|---|---|
+| Ni | 0 | 4.79 | – | – | – | – |
+| Ni | 1 | 4.79 | 1.58 | – | 8.04 | – |
+| Ni | 2 | 4.79 | 1.45 | 1.45 | 6.93 | 2.97 |
+| Ni | 3 | 4.79 | 1.35 | 1.50 | 6.77 | 1.92 |
+| Cr | 0 | 4.86 | – | – | – | – |
+| Cr | 1 | 4.86 | 4.22 | – | 6.96 | – |
+| Cr | 2 | 4.86 | 3.65 | 3.61 | 5.99 | 3.99 |
+| Cr | 3 | 4.86 | 3.48 | 2.94 | 5.73 | 3.28 |
+| Cr | 5 | 4.86 | 3.31 | 1.69 | 5.47 | 2.55 |
+
+With the GB base (k = 0): T_tr 4.22 K (Ni), 13.00 K (Cr); |ΔS| 2.32, 3.76.
+An offset makes GB worse at k = 1 (Ni T_tr 5.94, |ΔS| 2.76; Cr |ΔS| 4.91):
+its errors are not a constant shift (flat predictions on Cr). GB + gp
+becomes very good for Cr |ΔS| only at k ≥ 4 (1.62 → 0.99).
+
+Reading:
+- The NIMS prior pays off for the first one to three samples of a new
+  series — exactly when the next sample is being chosen. Ridge + offset is
+  the most robust choice there (Ni T_tr 3.7 K vs 10.4 K for the series
+  mean at k = 1; Ni |ΔS| 1.6 vs 8.0).
+- From k ≈ 3 on Cr, a straight line through one's own data overtakes;
+  for Ni, whose T_tr is not linear in x, ridge + offset stays ahead.
+- Only two series (5 and 7 points): indicative, not proof. The natural
+  extension is more consistent series (high-Mn, Thiem T_c, others).
+
 ---
 
 ## 11. Decisions
@@ -346,6 +428,9 @@ Same with histogram GB (`--drop-missing-anneal`): ΔS papers 3.73, test
 | 2 Nov | Keep rows with missing annealing data | user's choice; better paper-level ΔS error |
 | 2 Nov | NIMS file not committed; licence and citation in README | CC BY 4.0; keep repo free of third-party data |
 | 2 Nov | Read Origin data from PowerPoint embeddings instead of digitising PDFs | exact values, no Origin needed |
+| 2 Nov | Step 5 success criterion fixed before the run (≥ 20 % below base for both targets, and below series mean) | avoid choosing the criterion after seeing results |
+| 2 Nov | Report the new-series curve beside the criterion | the criterion does not compare against a fit through one's own data; the curve shows where NIMS actually helps |
+| 2 Nov | Origin extractor side project postponed until the official steps are done | stay focused |
 
 ---
 
@@ -363,10 +448,9 @@ Same with histogram GB (`--drop-missing-anneal`): ΔS papers 3.73, test
 
 1. Test set with EDX compositions and original values (from the Origin
    exports) instead of NIMS nominal values.
-2. Correction step: fit the NIMS-trained model's residuals on the
-   consistent series (constant offset or small Gaussian process),
-   evaluated leave-one-out; success criterion written down before the run.
-3. High-Mn series as out-of-range test.
+2. ~~Correction step~~ — done (section 10b).
+3. High-Mn series as out-of-range test, and more consistent series for
+   the new-series curve.
 4. Optional: a model that extrapolates along a substituent (linear term or
    physics-informed baseline), given the Cr result.
 
@@ -382,6 +466,7 @@ Same with histogram GB (`--drop-missing-anneal`): ΔS papers 3.73, test
 | IDs mangled by `float('132_4.0')` in third-party code | tracing a KeyError | own implementation | underscores are digit separators in Python numbers |
 | Float ID from `iterrows()` broke the import | throwaway-database test | `int()`; single transaction rolled back cleanly | test imports on a disposable database |
 | "Unreadable" Origin data was inside the PowerPoint files | inspecting the embedded OLE objects | `origin_from_pptx.py` | look inside the container before digitising |
+| The pre-registered criterion passed (ridge base), yet a straight line through one's own series did as well | adding a no-NIMS reference | new-series curve | a success criterion must include the simplest competitor |
 
 ## 15. Reproducing everything
 
@@ -393,6 +478,10 @@ python evaluate.py --target T_tr --restore-T-tr # section 10
 python evaluate.py --target dS
 python evaluate.py --target dS --drop-missing-anneal
 python import_nims.py --dry-run                 # section 8
+python correct.py --target T_tr --restore-T-tr --base ridge --curve   # section 10b
+python correct.py --target dS --base ridge --curve
+python correct.py --target T_tr --restore-T-tr --base gbr --curve
+python correct.py --target dS --base gbr --curve
 python origin_from_pptx.py Results_first_stay.pptx out/first_stay
 python origin_from_pptx.py Results_second_stay.pptx out/second_stay
 ```
