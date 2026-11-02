@@ -60,6 +60,9 @@ Where the work stands against the roadmap:
 Source: github.com/RunqingYang1996/MCEdatabase, commit 21ec937 (10 Jul
 2024); paper Yuan, Yang, Patra, Liao, AIP Advances 14, 085125 (2024),
 arXiv:2403.02553.
+github.com/bolinliao/mce_database (commit 22d80d6, 8 Jul 2024) is the
+same project's web browser only: its one data file, `725_updated.csv`,
+is byte-identical to the one above; no raw data, no licence file either.
 
 - **No licence file** in the repository (README only). Legally that means
   all rights reserved, unlike NIMS (CC BY 4.0). Decision needed before the
