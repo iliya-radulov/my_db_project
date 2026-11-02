@@ -90,8 +90,8 @@ points for leave-one-family-out evaluation.
 | 2 Nov | Decision: keep rows with missing annealing data. Wrote `origin_from_pptx.py`; extracted the original Ni and Cr values from the slides (commit 039cec2). |
 | 2 Nov | This log and `audit_checks.py`. |
 | 2 Nov | Step 5: correction on the consistent series (`correct.py`); success criterion fixed before the first run; new-series curve added. |
-| 2 Nov | Roadmap priority 1: migration 008 for `literature_checks` (tested on a throwaway database with the original 001 table definition and a deliberately bad legacy row). Krautz 2014 DOI confirmed. |
 | 2 Nov | Governing roadmap clarified; roadmap §1 and §4 items: landing zone, composition key, quality flag, duplicates rule, sample linking, server instructions; tested on a throwaway PostgreSQL with a minimal samples table. |
+| 2 Nov | Roadmap priority 1: migration 008 for `literature_checks` (tested on a throwaway database with the original 001 table definition and a deliberately bad legacy row). Krautz 2014 DOI confirmed. |
 
 ---
 
