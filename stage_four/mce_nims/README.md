@@ -35,6 +35,7 @@ variants in about 25 substituent families (Si, Si+Co, Si+Mn, Si+Ce, Al, …);
 | `mcedb_dataset.py`, `import_mcedb.py` | Second source: the LLM-extracted MCE database (GitHub; no licence — internal use only), filtered to La(Fe,Si/Al)₁₃, with row accounting and accuracy against NIMS |
 | `import_curie_neel.py` | Third source: Kelly & Cole 2025 Curie/Néel dataset (CC BY 4.0), La(Fe,Si/Al)₁₃ Curie temperatures |
 | `literature_db.py` | Shared database writer for all literature sources |
+| `test_set_edx.csv` | EDX compositions of the 12 test samples (stay reports); `--test-compositions` in `evaluate.py` / `correct.py` |
 | `consistency_report.py` | Roadmap day 7: consistency report over all literature sources in the database |
 | `008_literature_checks_provenance.sql` | Provenance (`quality_flag`) and value checks for the existing Materials Project / OQMD / Alexandria matches |
 | `SERVER_SETUP.md` | Steps to run on the database server (backup, migration, import, linking, checks, undo) |

@@ -48,7 +48,7 @@ from sklearn.metrics import mean_absolute_error
 from sklearn.preprocessing import StandardScaler
 
 from evaluate import DEFAULT_TEST_DOIS, build_table, fit_predict, models
-from nims_dataset import DEFAULT_PATH, load_nims
+from nims_dataset import DEFAULT_PATH, apply_composition_overrides, load_nims
 
 SUBSTITUENTS = ['Cr', 'Ni']           # the substituent of each test series
 SUCCESS_REDUCTION = 0.20
@@ -69,10 +69,16 @@ def main():
     ap.add_argument('--restore-T-tr', action='store_true')
     ap.add_argument('--base', choices=['gbr', 'ridge'], default='gbr')
     ap.add_argument('--test-dois', nargs='*', default=DEFAULT_TEST_DOIS)
+    ap.add_argument('--test-compositions', default=None,
+                    help='CSV of measured compositions for test samples (e.g. test_set_edx.csv)')
     ap.add_argument('--curve', action='store_true', help='error vs number of known samples per series')
     args = ap.parse_args()
 
-    table, features, _ = build_table(load_nims(args.data), args.target, args.restore_T_tr)
+    df = load_nims(args.data)
+    if args.test_compositions:
+        df = apply_composition_overrides(df, args.test_compositions)
+        print(f"Test-sample compositions replaced from {args.test_compositions}")
+    table, features, _ = build_table(df, args.target, args.restore_T_tr)
     test_dois = [d.lower() for d in args.test_dois]
     series = table['paper'].map(lambda p: next((d for d in test_dois if d in p), None))
     is_test = series.notna().to_numpy()

@@ -216,3 +216,28 @@ def expand_points(df, kind='dS'):
     points = pd.DataFrame(rows)
     points.attrs['length_mismatch'] = sorted(set(mismatched))
     return points
+
+
+def apply_composition_overrides(df, path):
+    """Replace the metal composition of selected samples with measured
+    values, e.g. EDX of the 1:13 phase instead of the nominal composition.
+    path: CSV with columns nims_id and edx_formula (published-formula
+    notation, read by mcedb_dataset.parse_formula). The metal at.% are
+    renormalised to 100; interstitial columns are left as they are.
+    Returns a copy; raises on an unknown NIMS ID or element."""
+    from mcedb_dataset import parse_formula
+    overrides = pd.read_csv(path)
+    out = df.copy()
+    for _, o in overrides.iterrows():
+        nid = int(o['nims_id'])
+        if nid not in out.index:
+            raise NIMSFormatError(f"override for unknown NIMS ID {nid}")
+        comp = parse_formula(o['edx_formula'])
+        unknown = [e for e in comp if e not in METAL_ELEMENTS]
+        if unknown:
+            raise NIMSFormatError(f"NIMS ID {nid}: elements {unknown} are not NIMS metal columns")
+        total = sum(comp.values())
+        for e in METAL_ELEMENTS:
+            out.at[nid, e] = 100.0 * comp.get(e, 0.0) / total
+    return out
+

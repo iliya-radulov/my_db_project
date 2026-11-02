@@ -45,7 +45,7 @@ from sklearn.model_selection import GroupKFold, ShuffleSplit
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
 
-from nims_dataset import (DEFAULT_PATH, INTERSTITIALS, METAL_ELEMENTS,
+from nims_dataset import (DEFAULT_PATH, INTERSTITIALS, METAL_ELEMENTS, apply_composition_overrides,
                           expand_points, load_nims, restore_T_tr)
 
 # The two series co-authored by the project owner, measured in one lab:
@@ -133,6 +133,8 @@ def main():
     ap.add_argument('--restore-T-tr', action='store_true',
                     help='T_tr only: fill missing values from the lowest-field peak temperature')
     ap.add_argument('--test-dois', nargs='*', default=DEFAULT_TEST_DOIS)
+    ap.add_argument('--test-compositions', default=None,
+                    help='CSV of measured compositions for test samples (e.g. test_set_edx.csv)')
     ap.add_argument('--families', nargs='*', default=DEFAULT_FAMILIES)
     ap.add_argument('--drop-missing-anneal', action='store_true',
                     help='drop rows without annealing data instead of keeping them as missing')
@@ -140,6 +142,9 @@ def main():
     args = ap.parse_args()
 
     df = load_nims(args.data)
+    if args.test_compositions:
+        df = apply_composition_overrides(df, args.test_compositions)
+        print(f"Test-sample compositions replaced from {args.test_compositions}")
     table, features, n_missing = build_table(df, args.target, args.restore_T_tr, args.drop_missing_anneal)
     unit = 'K' if args.target == 'T_tr' else 'J/kg K'
     test_dois = [d.lower() for d in args.test_dois]

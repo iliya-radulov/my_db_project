@@ -19,7 +19,7 @@ Last updated: 2 November 2026. Pull request: #7 (draft).
 | Missing annealing data | kept as missing (model handles them), per decision 2 Nov |
 | Original values of the test series | extracted from the stay-report slides without Origin; agree with NIMS |
 | Correction step (fit residuals on consistent data) | done (`correct.py`); criterion met with ridge base, not with gradient boosting; NIMS helps most for the first 1–3 samples of a new series (section 10b) |
-| EDX compositions for the test set | known (stay reports); **committing them awaits permission** |
+| EDX compositions for the test set | committed (`test_set_edx.csv`, permission 2 Nov); option `--test-compositions`; makes predictions worse, nominal stays default (section 10c) |
 | High-Mn series as out-of-range test | data located in the first stay report; **not yet used** |
 
 ---
@@ -242,6 +242,7 @@ points for leave-one-family-out evaluation.
 | 2 Nov | Roadmap priority 3 started: GitHub MCE database examined (section 0c). Found and fixed a silent bracket bug in the Stage 1/2 composition parser. |
 | 2 Nov | GitHub MCE database imported (option (a), internal use): 209 La(Fe,Si/Al)₁₃ rows, extraction accuracy measured against NIMS; shared DB writer `literature_db.py` for both sources; tested on a throwaway database. |
 | 2 Nov | Kelly & Cole 2025 Curie/Néel dataset (uploaded by I. Radulov): checked, imported for La(Fe,Si/Al)₁₃ (100 records), consistency report with three sources; fixed a counting bug in the report. Second GitHub repository of the MCE database identified as its website only. |
+| 2 Nov | EDX test compositions committed and evaluated (section 10c). Emails sent to the GitHub MCE database authors (three addresses, one bounced); registration on magneticmaterials.org by I. Radulov. |
 | 2 Nov | Priority 4 (ChemDataExtractor set) blocked by the work environment's network policy; day-7 consistency report written and tested instead. Email to the GitHub MCE database authors sent. |
 | 2 Nov | Roadmap priority 1: migration 008 for `literature_checks` (tested on a throwaway database with the original 001 table definition and a deliberately bad legacy row). Krautz 2014 DOI confirmed. |
 
@@ -609,6 +610,27 @@ Reading:
 - Only two series (5 and 7 points): indicative, not proof. The natural
   extension is more consistent series (high-Mn, Thiem T_c, others).
 
+### 10c. Test set with EDX instead of nominal compositions
+
+`test_set_edx.csv` (from the stay reports, slide 13 of each) replaces the
+metal composition of the 12 test samples; training is unchanged (the test
+papers are excluded anyway). `python evaluate.py --target … --test-compositions test_set_edx.csv`.
+
+| Held-out test MAE | ridge, nominal | ridge, EDX | GB, nominal | GB, EDX |
+|---|---|---|---|---|
+| T_tr, all 12 | 7.47 K | 6.67 K | 9.34 K | 10.71 K |
+| T_tr, x > 0 | 6.94 | 6.04 | 10.30 | 12.12 |
+| \|ΔS\|, all 12 | 4.83 | 5.40 | 3.16 | 5.40 J/kg K |
+| \|ΔS\|, x > 0 | 4.75 | 5.30 | 3.14 | 4.97 |
+
+Reading: measured compositions make the predictions worse, mostly for
+|ΔS| with gradient boosting. NIMS stores mostly nominal compositions, so
+the model learned nominal composition → property; EDX moves the test
+samples (Si 10.6–11.5 at.% instead of 10.0, La slightly higher) into a
+region where, in the training data, more Si means a weaker first-order
+transition and lower |ΔS|. Compositions must be on the same basis in
+training and test; nominal stays the default.
+
 ---
 
 ## 11. Decisions
@@ -631,13 +653,14 @@ Reading:
 | 2 Nov | GitHub MCE database: option (a) — import for internal checks now, ask the authors for permission before publishing | repository has no licence |
 | 2 Nov | Published formulas get their own parser (case-sensitive, brackets expanded, implicit 1); the lab calculator stays strict | case-sensitive reading makes implicit 1 unambiguous; the lab parser is case-insensitive and must stay strict |
 | 2 Nov | Kelly & Cole: only plain-number Curie temperatures, 100–500 K, exactly one La(Fe,Si/Al)₁₃ compound per record | the file drops bound qualifiers and unit conversion; text mining mislabels ΔT_ad and hysteresis as T_C; the 100–500 K window is a domain judgement, adjustable (`PLAUSIBLE_TC_K`) |
+| 2 Nov | Test-set compositions: nominal by default, EDX only as an option | training data are nominal; mixing bases worsens predictions (section 10c) |
 | 2 Nov | Database lives only on the user's server: changes are delivered as a migration plus `SERVER_SETUP.md`, tested on a throwaway database here | no access to the server |
 
 ---
 
 ## 12. Open questions
 
-- [ ] May the test-set EDX compositions be committed as a small CSV?
+- [x] Test-set EDX compositions committed (2 Nov).
 - [x] doi:10.1016/j.jallcom.2014.02.015 is Krautz 2014 (confirmed 2 Nov).
 - [ ] Hydrides: keep in training (H as feature) or model separately?
 - [ ] Column labels in the extracted Origin tables (which Book = which x;
@@ -675,6 +698,7 @@ Reading:
 | `pd.NA` (pandas' missing value in text columns) cannot be stored by psycopg2; the first GitHub import failed | throwaway-database test; the transaction rolled back, nothing written | `clean()` handles `pd.NA` / `pd.NaT` | every missing-value type of the libraries in use must be mapped to NULL |
 | Kelly & Cole: normalised `value` still in °C for 12,346 records, and `>580` stored as 580 | reading the JSON before writing the import | convert units; accept plain numbers only | a field named "normalised" may normalise the unit's name, not the number |
 | Consistency report showed the same 63 ΔS pairs for every source pair, also for a source without any ΔS | a source with no points made the impossible number visible | per-pair aggregation (CTE + join) | test a report with a case where the right answer is zero |
+| Measured (EDX) test compositions made predictions worse than nominal ones | evaluation with both | nominal by default | the composition basis must match between training and test data |
 | The pre-registered criterion passed (ridge base), yet a straight line through one's own series did as well | adding a no-NIMS reference | new-series curve | a success criterion must include the simplest competitor |
 
 ## 15. Reproducing everything
