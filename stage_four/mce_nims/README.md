@@ -32,6 +32,7 @@ variants in about 25 substituent families (Si, Si+Co, Si+Mn, Si+Ce, Al, …);
 | `origin_from_pptx.py` | Extract the worksheet data of Origin graphs embedded in a PowerPoint file, without Origin |
 | `composition_key.py` | One composition key for all sources (`Fe81.4-La7.1-Si11.4+H3.6`), and a near-match distance |
 | `link_samples.py` | Keys for the lab's own samples and their exact / near matches among the literature records |
+| `008_literature_checks_provenance.sql` | Provenance (`quality_flag`) and value checks for the existing Materials Project / OQMD / Alexandria matches |
 | `SERVER_SETUP.md` | Steps to run on the database server (backup, migration, import, linking, checks, undo) |
 | `correct.py` | Step 5: correct the NIMS-trained model with the consistent series (leave-one-out) and the new-series curve; see WORKLOG.md §10b |
 | `audit_checks.py` | Reproduces the data checks behind the decisions (overlap with the hand-extracted records, test series vs originals) |

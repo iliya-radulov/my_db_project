@@ -227,10 +227,18 @@ class AlloyDB:
         print(f"Added synthesis record (ID: {syn_id}) for {sample_id}")
         return syn_id
     
+    LITERATURE_SOURCES = ('materials_project', 'oqmd', 'alexandria')
+
     def add_literature_check(self, sample_db_id: int, source_db: str, tier: int,
                             match_formula: str = None, match_id: str = None,
                             stability: float = None, experimentally_known: bool = None,
                             composition_distance: float = None) -> int:
+        # Same rule as the CHECK constraint of migration 008: an unknown
+        # source name fails here, with a readable message, instead of being
+        # stored. quality_flag is not passed: its column default ('dft') is
+        # right for all three sources.
+        if source_db not in self.LITERATURE_SOURCES:
+            raise ValueError(f"unknown source_db {source_db!r}; expected one of {self.LITERATURE_SOURCES}")
         query = """
             INSERT INTO literature_checks (
                 sample_id, source_db, tier, match_formula, match_id,

@@ -24,7 +24,7 @@ from nims_dataset import DEFAULT_PATH, load_nims, restore_T_tr
 EXTRACTION_SOURCES = {
     'Moreno-Ramírez 2019, Cr (7 records)': '10.1016/j.actamat.2019.06.022',
     'Moreno-Ramírez 2018, Ni (5 records)': '10.1016/j.actamat.2018.08.054',
-    'Krautz 2014, Mn (10 records; DOI to be confirmed)': '10.1016/j.jallcom.2014.02.015',
+    'Krautz 2014, Mn (10 records)': '10.1016/j.jallcom.2014.02.015',
     'Gottschall 2019, materials library (2 records)': '10.1002/aenm.201901322',
 }
 

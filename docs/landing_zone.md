@@ -25,7 +25,7 @@ linked to the lab's samples through one composition key
 
 | Where | Columns | Content |
 |---|---|---|
-| `literature_checks` | `source_db` ('materials_project' / 'oqmd' / 'alexandria'), `match_id` (e.g. 'mp-31186'), `match_formula`, `tier`, `checked_at` | DFT database matches per own sample |
+| `literature_checks` | `source_db` ('materials_project' / 'oqmd' / 'alexandria', enforced from migration 008), `match_id` (e.g. 'mp-31186'), `match_formula`, `tier`, `checked_at`, `quality_flag` (migration 008, `'dft'`) | DFT database matches per own sample |
 | `literature_sources` | `doi` (unique), `title`, `authors`, `year` | papers; DOIs from Materials Project synthesis records |
 | `mce_literature_records` | `source`, `external_id` (unique together), `doi`, `article_ref`, `licence`, `quality_flag`, `retrieved_at` | external magnetocaloric records |
 
@@ -65,7 +65,7 @@ Mapping notes between own and literature values:
 
 ## Gaps against the roadmap
 
-- `literature_checks` has no `quality_flag` (roadmap §3, priority 1:
-  "harden the mapping and add provenance flags" for the Materials
-  Project / OQMD / Alexandria clients).
+- ~~`literature_checks` has no `quality_flag`~~ — added by
+  `stage_four/mce_nims/008_literature_checks_provenance.sql` (roadmap §3,
+  priority 1), with checks on `source_db` and `quality_flag` for new rows.
 - No formation-energy column (see above).

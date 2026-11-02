@@ -5,8 +5,10 @@ Everything below was tested on a throwaway PostgreSQL 16 database with a
 minimal `samples` table (2 November 2026); it has not run on the real
 server yet.
 
-The changes only **add** objects: two literature tables, one small key
-table for the lab's samples, one view. No existing table is altered.
+Migration 007 only **adds** objects: two literature tables, one small
+key table for the lab's samples, one view. Migration 008 adds one column
+(with a default), two checks for new rows and an index to the existing
+`literature_checks` table; existing data is not changed.
 
 ## 0. Back up first
 
@@ -28,6 +30,28 @@ Creates `mce_literature_records`, `mce_literature_points`,
 `sample_composition_keys` (references `samples(id)`) and the view
 `mce_literature_matches`. Safe to run twice (`IF NOT EXISTS`,
 `CREATE OR REPLACE VIEW`).
+
+## 1b. Provenance for the existing database matches (migration 008)
+
+```bash
+docker exec -i alloy-postgres psql -U postgres -d alloy_lab -v ON_ERROR_STOP=1 \
+    < stage_four/mce_nims/008_literature_checks_provenance.sql
+```
+
+Adds `literature_checks.quality_flag` (default `'dft'`, so existing rows
+are filled and the GUIs need no change), checks on `source_db` and
+`quality_flag` for new rows, and an index on `(source_db, match_id)`. The
+first query it prints lists existing rows the checks would reject —
+expected empty; if not, fix those rows by hand. Safe to run twice.
+
+Undo:
+```sql
+SET search_path TO alloy_lab;
+ALTER TABLE literature_checks DROP CONSTRAINT IF EXISTS literature_checks_source_db_known,
+                              DROP CONSTRAINT IF EXISTS literature_checks_quality_flag_known,
+                              DROP COLUMN IF EXISTS quality_flag;
+DROP INDEX IF EXISTS idx_literature_checks_match;
+```
 
 ## 2. Put the dataset in place
 
