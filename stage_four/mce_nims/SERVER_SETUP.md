@@ -104,6 +104,9 @@ SELECT sample_id, created_at, notes FROM samples
 WHERE notes ~ 'Desktop App: .*[()\[\]{}+\-,;/]' ORDER BY created_at;
 ```
 
+Pre-alloy entries always appear (their note reads `pre-alloy … (…g) + raw
+… (at%)`); for those, check the two formulas inside the note by eye.
+
 ## 5. Check
 
 ```sql
