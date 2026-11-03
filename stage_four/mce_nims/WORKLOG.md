@@ -22,6 +22,7 @@ Last updated: 3 November 2026. Pull requests: #7 (merged 2 Nov), follow-up on br
 | Permissions | GitHub MCE database: use with citation granted by B. Liao (email, 2 Nov 2026). Waiting only for J. M. Cole (optional) |
 | Correction step (fit residuals on consistent data) | done (`correct.py`); criterion met with ridge base, not with gradient boosting; NIMS helps most for the first 1–3 samples of a new series (section 10b) |
 | EDX compositions for the test set | committed (`test_set_edx.csv`, permission 2 Nov); option `--test-compositions`; makes predictions worse, nominal stays default (section 10c) |
+| Text-mined sources added to training | tested (`augment.py`, section 10d): criterion not met for T_tr or ΔS; train on NIMS only |
 | High-Mn series as out-of-range test | data located in the first stay report; **not yet used** |
 
 ---
@@ -301,6 +302,7 @@ points for leave-one-family-out evaluation.
 | 2 Nov | Priority 4 (ChemDataExtractor set) blocked by the work environment's network policy; day-7 consistency report written and tested instead. Email to the GitHub MCE database authors sent. |
 | 2 Nov | Roadmap priority 1: migration 008 for `literature_checks` (tested on a throwaway database with the original 001 table definition and a deliberately bad legacy row). Krautz 2014 DOI confirmed. |
 | 3 Nov | GitHub MCE database permission received (B. Liao). Court & Cole 2018 database uploaded, checked and imported (80 La(Fe,Si/Al)₁₃ Curie temperatures). Consistency report with four sources. |
+| 3 Nov | Training augmentation with the three text-mined sources tested (`augment.py`, criterion fixed first): not useful; NIMS-only training kept (section 10d). |
 
 ---
 
@@ -690,6 +692,60 @@ training and test; nominal stays the default.
 
 ---
 
+### 10d. Adding the text-mined sources to the training data (3 Nov)
+
+Question: do the three other literature sources (Court & Cole 2018,
+Kelly & Cole 2025, GitHub MCE database) improve the model when added to
+the NIMS training data? Script `augment.py`.
+
+Set-up: accepted La(Fe,Si/Al)₁₃ rows of each source (same acceptance
+rules as the imports), annealing features missing; papers grouped across
+sources by DOI, so a NIMS paper held out takes its copies in the other
+sources with it; Ni and Cr test papers removed from every source; in
+leave-one-family-out the added rows of that family are removed too.
+Scores on NIMS rows only. T_tr: 303 added rows (157 from papers NIMS does
+not have); ΔS: 150 GitHub rows (only that source has ΔS).
+
+**Criterion, written in the script before the first run:** useful if,
+for gradient boosting with all three sources added, the MAE with whole
+papers held out drops by ≥ 5 % and the Ni + Cr test MAE rises by ≤ 5 %.
+
+| T_tr (K) | ridge papers | GB papers | ridge test | GB test |
+|---|---|---|---|---|
+| NIMS only | 14.28 | 11.12 | 7.47 | 9.34 |
+| + Court & Cole 2018 | 14.01 | 10.99 | 7.34 | 9.53 |
+| + Kelly & Cole 2025 | 14.26 | 11.02 | 7.50 | 9.06 |
+| + GitHub MCE db | 14.46 | 12.64 | 11.57 | 14.42 |
+| + all three | 14.16 | 12.65 | 11.75 | 10.88 |
+
+**Result: not met** (GB papers +13.7 %, test +16.4 %). Cause: the GitHub
+T_C values had never been checked for plausibility; among the accepted
+rows are 11 K, 60 K and 500–790 K (the Y-doped series at 620–790 K is
+not the La(Fe,Si)₁₃ transition). The Cole imports already apply 100–500 K.
+
+Exploratory, decided after seeing the first run (`--plausible-mcedb`,
+the same 100–500 K window on the GitHub rows, 8 rows dropped):
+
+| T_tr (K) | ridge papers | GB papers | ridge test | GB test |
+|---|---|---|---|---|
+| NIMS only | 14.28 | 11.12 | 7.47 | 9.34 |
+| + GitHub MCE db (plausible) | 14.23 | 11.31 | 6.90 | 8.42 |
+| + all three | 13.93 | 11.25 | 6.98 | 8.17 |
+
+Still not met: papers +1.1 %; the test improves (−12.5 %) but rests on 12
+points. Leave-one-family-out: mixed, Al family worse (22.3 → 33.3 K).
+
+ΔS (J/kg K), GitHub rows only: GB papers 3.32 → 3.39, test 3.16 → 3.23;
+**not met**.
+
+Reading: the added sources mostly repeat what NIMS has (138 of 295 rows
+from NIMS papers, compositions near NIMS ones) and add noise; they do not
+improve prediction for unseen papers. Decision: train on NIMS only; the
+other sources serve the consistency checks and as coverage for
+compositions NIMS lacks. Side finding: the GitHub import stores the
+implausible T_C values (as `unverified`); a plausibility filter there is
+a candidate follow-up.
+
 ## 11. Decisions
 
 | Date | Decision | Reason |
@@ -712,6 +768,7 @@ training and test; nominal stays the default.
 | 2 Nov | Kelly & Cole: only plain-number Curie temperatures, 100–500 K, exactly one La(Fe,Si/Al)₁₃ compound per record | the file drops bound qualifiers and unit conversion; text mining mislabels ΔT_ad and hysteresis as T_C; the 100–500 K window is a domain judgement, adjustable (`PLAUSIBLE_TC_K`) |
 | 3 Nov | Cole 2021 magnetocaloric set skipped unless the authors answer | link dead, no reply; four sources in hand |
 | 3 Nov | Court & Cole 2018 imported alongside Kelly & Cole 2025; overlapping papers kept as separate records | 8 papers / 23 records not in any other source; duplicates rule |
+| 3 Nov | Train on NIMS only; the other literature sources are for checks and coverage | adding them did not meet the pre-registered criterion (section 10d) |
 | 2 Nov | Test-set compositions: nominal by default, EDX only as an option | training data are nominal; mixing bases worsens predictions (section 10c) |
 | 2 Nov | Database lives only on the user's server: changes are delivered as a migration plus `SERVER_SETUP.md`, tested on a throwaway database here | no access to the server |
 
@@ -760,6 +817,7 @@ training and test; nominal stays the default.
 | Consistency report showed the same 63 ΔS pairs for every source pair, also for a source without any ΔS | a source with no points made the impossible number visible | per-pair aggregation (CTE + join) | test a report with a case where the right answer is zero |
 | Measured (EDX) test compositions made predictions worse than nominal ones | evaluation with both | nominal by default | the composition basis must match between training and test data |
 | The pre-registered criterion passed (ridge base), yet a straight line through one's own series did as well | adding a no-NIMS reference | new-series curve | a success criterion must include the simplest competitor |
+| GitHub MCE database T_C values of 11 K and 500–790 K were accepted and made the augmented model worse | listing the added rows after a failed criterion | 100–500 K window (exploratory option) | apply the same plausibility rules to every source |
 
 ## 15. Reproducing everything
 
@@ -778,6 +836,9 @@ python correct.py --target T_tr --restore-T-tr --base ridge --curve   # section 
 python correct.py --target dS --base ridge --curve
 python correct.py --target T_tr --restore-T-tr --base gbr --curve
 python correct.py --target dS --base gbr --curve
+python augment.py --target T_tr                 # section 10d (needs all three source folders)
+python augment.py --target T_tr --plausible-mcedb
+python augment.py --target dS
 python origin_from_pptx.py Results_first_stay.pptx out/first_stay
 python origin_from_pptx.py Results_second_stay.pptx out/second_stay
 ```
