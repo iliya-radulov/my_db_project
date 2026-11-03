@@ -31,7 +31,9 @@ the Ni + Cr test papers rises by no more than 5 %.
 Result of the first run (T_tr): NOT MET -- papers MAE +13.7 %, test MAE
 +16.4 %. Cause: the mcedb T_c values were never checked for plausibility
 (11 K, 60 K, 500-790 K among them); the two Cole sources were (100-500 K).
---plausible-mcedb applies the same range to mcedb. That variant was
+--plausible-mcedb applies the same range to mcedb (the import's default
+since 3 Nov; this script keeps the unfiltered rows by default so the
+pre-registered run stays reproducible). That variant was
 added AFTER the first run, so it is reported as exploratory, not as a
 test of the criterion.
 
@@ -91,15 +93,14 @@ def extra_rows(target, plausible_mcedb=False):
             st, _, comp, t = c25(rec)
             if st == 'accepted':
                 add('kelly2025', comp, t, re.sub(r'^https?://(dx\.)?doi\.org/', '', str(rec.get('doi', ''))))
-    from import_curie_neel import PLAUSIBLE_TC_K
     from import_mcedb import classify as cm
     from mcedb_dataset import load_mcedb
-    m = cm(load_mcedb(), False)
+    m = cm(load_mcedb(), False, plausible=plausible_mcedb)
+    if plausible_mcedb and target == 'T_tr':
+        dropped['mcedb implausible T_c'] = int(m.loc[m['status'] == 'accepted', 'Tc_implausible'].sum()
+                                               + (m['status'].str.startswith('T_c outside')).sum())
     for _, r in m[m['status'] == 'accepted'].iterrows():
         if target == 'T_tr' and pd.notna(r['Tc']):
-            if plausible_mcedb and not PLAUSIBLE_TC_K[0] <= r['Tc'] <= PLAUSIBLE_TC_K[1]:
-                dropped['mcedb implausible T_c'] = dropped.get('mcedb implausible T_c', 0) + 1
-                continue
             add('mcedb', r['composition'], r['Tc'], r['doi'] if pd.notna(r['doi']) else '')
         if target == 'dS' and pd.notna(r['dS']) and pd.notna(r['field_T']):
             add('mcedb', r['composition'], r['dS'], r['doi'] if pd.notna(r['doi']) else '', r['field_T'])

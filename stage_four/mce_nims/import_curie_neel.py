@@ -45,13 +45,12 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 from composition_key import composition_key, split_composition
 from import_mcedb import family_of, nims_comparison
 from literature_db import upsert_records
-from mcedb_dataset import FormulaError, in_lafesi_family, parse_formula
+from mcedb_dataset import PLAUSIBLE_TC_K, FormulaError, in_lafesi_family, parse_formula
 
 DEFAULT_PATH = Path(__file__).resolve().parent / 'data' / 'curie_neel' / 'curie_neel_database_data_processed.json'
 SOURCE = 'curie_neel_kelly_cole_2025'
 LICENCE = 'CC BY 4.0 (Kelly & Cole, Sci. Data 2025, doi:10.6084/m9.figshare.29559686)'
 QUALITY_FLAG = 'literature_mined'
-PLAUSIBLE_TC_K = (100.0, 500.0)
 CURIE_SPECIFIERS = {'tc', 'curie temperature', 'tcurie', 'curie point', 't_c', 'curie'}
 
 

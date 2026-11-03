@@ -38,6 +38,8 @@ from composition_key import ELEMENTS
 
 DEFAULT_REPO = Path(__file__).resolve().parent / 'data' / 'MCEdatabase'
 WOS_FILES = ['savedrecs.xls'] + [f'savedrecs ({i}).xls' for i in range(1, 9)]
+# T_C window for La(Fe,Si/Al)13 (domain judgement; shared by all literature imports)
+PLAUSIBLE_TC_K = (100.0, 500.0)
 RARE_EARTHS = ('La', 'Ce', 'Pr', 'Nd', 'Sm', 'Gd', 'Tb', 'Dy', 'Ho', 'Er', 'Y')
 
 NUM = r'(\d+(?:\.\d+)?)'

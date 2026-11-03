@@ -22,7 +22,7 @@ Last updated: 3 November 2026. Pull requests: #7 (merged 2 Nov), follow-up on br
 | Permissions | GitHub MCE database: use with citation granted by B. Liao (email, 2 Nov 2026). Waiting only for J. M. Cole (optional) |
 | Correction step (fit residuals on consistent data) | done (`correct.py`); criterion met with ridge base, not with gradient boosting; NIMS helps most for the first 1–3 samples of a new series (section 10b) |
 | EDX compositions for the test set | committed (`test_set_edx.csv`, permission 2 Nov); option `--test-compositions`; makes predictions worse, nominal stays default (section 10c) |
-| Text-mined sources added to training | tested (`augment.py`, section 10d): criterion not met for T_tr or ΔS; train on NIMS only |
+| Text-mined sources added to training | tested (`augment.py`, section 10d): criterion not met for T_tr or ΔS; train on NIMS only. GitHub import now filters implausible T_c (209 → 202 records) |
 | High-Mn series as out-of-range test | data located in the first stay report; **not yet used** |
 
 ---
@@ -302,7 +302,7 @@ points for leave-one-family-out evaluation.
 | 2 Nov | Priority 4 (ChemDataExtractor set) blocked by the work environment's network policy; day-7 consistency report written and tested instead. Email to the GitHub MCE database authors sent. |
 | 2 Nov | Roadmap priority 1: migration 008 for `literature_checks` (tested on a throwaway database with the original 001 table definition and a deliberately bad legacy row). Krautz 2014 DOI confirmed. |
 | 3 Nov | GitHub MCE database permission received (B. Liao). Court & Cole 2018 database uploaded, checked and imported (80 La(Fe,Si/Al)₁₃ Curie temperatures). Consistency report with four sources. |
-| 3 Nov | Training augmentation with the three text-mined sources tested (`augment.py`, criterion fixed first): not useful; NIMS-only training kept (section 10d). |
+| 3 Nov | Training augmentation with the three text-mined sources tested (`augment.py`, criterion fixed first): not useful; NIMS-only training kept (section 10d). Plausibility filter added to the GitHub import (re-run on the server needed). |
 
 ---
 
@@ -742,9 +742,18 @@ Reading: the added sources mostly repeat what NIMS has (138 of 295 rows
 from NIMS papers, compositions near NIMS ones) and add noise; they do not
 improve prediction for unseen papers. Decision: train on NIMS only; the
 other sources serve the consistency checks and as coverage for
-compositions NIMS lacks. Side finding: the GitHub import stores the
-implausible T_C values (as `unverified`); a plausibility filter there is
-a candidate follow-up.
+compositions NIMS lacks.
+
+Follow-up done (3 Nov): `import_mcedb.py` now applies the same 100–500 K
+window (`PLAUSIBLE_TC_K`, moved to `mcedb_dataset.py` and shared by all
+three imports). An implausible T_c is discarded; the row stays if it has
+|ΔS| with a field (1 row), otherwise it is rejected (7 rows): 209 → 202
+records, points unchanged (156). A write removes this source's records
+that are no longer accepted. Tested on a throwaway PostgreSQL 16: old
+import 209, new import 202 with 7 removed, re-run 0 removed. One wrong
+T_c inside the window remains (worst pair against NIMS 286 K off): the
+window catches gross errors, not all errors. `augment.py` keeps the
+unfiltered rows by default so the pre-registered run stays reproducible.
 
 ## 11. Decisions
 
@@ -817,7 +826,7 @@ a candidate follow-up.
 | Consistency report showed the same 63 ΔS pairs for every source pair, also for a source without any ΔS | a source with no points made the impossible number visible | per-pair aggregation (CTE + join) | test a report with a case where the right answer is zero |
 | Measured (EDX) test compositions made predictions worse than nominal ones | evaluation with both | nominal by default | the composition basis must match between training and test data |
 | The pre-registered criterion passed (ridge base), yet a straight line through one's own series did as well | adding a no-NIMS reference | new-series curve | a success criterion must include the simplest competitor |
-| GitHub MCE database T_C values of 11 K and 500–790 K were accepted and made the augmented model worse | listing the added rows after a failed criterion | 100–500 K window (exploratory option) | apply the same plausibility rules to every source |
+| GitHub MCE database T_C values of 11 K and 500–790 K were accepted and made the augmented model worse | listing the added rows after a failed criterion | 100–500 K window, now in the GitHub import as well | apply the same plausibility rules to every source |
 
 ## 15. Reproducing everything
 

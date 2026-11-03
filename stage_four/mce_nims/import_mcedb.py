@@ -16,6 +16,13 @@ redistributed: they are read from a local clone of the authors' repository.
   python import_mcedb.py               # write (same tables as NIMS, source 'mcedb_github')
   python import_mcedb.py --all-families --dry-run
 
+Plausibility (added 3 Nov 2026): for the La(Fe,Si/Al)13 family a T_c
+outside PLAUSIBLE_TC_K (100-500 K, the same window as the Cole imports)
+is discarded; the row is kept if it still has |ΔS| with a field,
+otherwise rejected. The as-extracted value stays in the comments. A
+write removes this source's records that are no longer accepted (their
+points go with them), so the database mirrors the filter.
+
 The report (roadmap §4 step C and §5 day 7):
   - every row accepted or rejected, with the reason;
   - overlap with NIMS by paper (DOI) and by paper + composition key;
@@ -35,7 +42,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 from composition_key import composition_key, split_composition
 from literature_db import replace_points, upsert_records
-from mcedb_dataset import DEFAULT_REPO, load_mcedb
+from mcedb_dataset import DEFAULT_REPO, PLAUSIBLE_TC_K, load_mcedb
 from nims_dataset import DEFAULT_PATH as NIMS_PATH
 from nims_dataset import INTERSTITIALS, METAL_ELEMENTS, expand_points, load_nims
 
@@ -62,10 +69,18 @@ def family_of(metal_pct):
     return '+'.join(subs) if subs else 'none'
 
 
-def classify(df, all_families):
-    """Adds 'status': 'accepted' or the first reason the row is rejected."""
+def classify(df, all_families, plausible=True):
+    """Adds 'status': 'accepted' or the first reason the row is rejected,
+    and 'Tc_implausible'. With plausible=True (and the family filter on),
+    a T_c outside PLAUSIBLE_TC_K is set to NaN before the usable-value check."""
+    out = df.copy()
+    out['Tc_implausible'] = False
+    if plausible and not all_families:
+        bad = out['Tc'].notna() & ~out['Tc'].between(*PLAUSIBLE_TC_K)
+        out['Tc_implausible'] = bad
+        out.loc[bad, 'Tc'] = np.nan
     status = []
-    for _, r in df.iterrows():
+    for _, r in out.iterrows():
         if r['covered_by_corrected']:
             status.append('raw row of a paper in the corrected file (corrected rows used)')
         elif r['source_index_problem']:
@@ -75,10 +90,10 @@ def classify(df, all_families):
         elif not all_families and not r['lafesi_family']:
             status.append('not La(Fe,Si/Al)13 family')
         elif pd.isna(r['Tc']) and (pd.isna(r['dS']) or pd.isna(r['field_T'])):
-            status.append('no usable value (T_c, or |ΔS| with field)')
+            status.append(f'T_c outside {PLAUSIBLE_TC_K[0]:.0f}-{PLAUSIBLE_TC_K[1]:.0f} K and no |ΔS| with field'
+                          if r['Tc_implausible'] else 'no usable value (T_c, or |ΔS| with field)')
         else:
             status.append('accepted')
-    out = df.copy()
     out['status'] = status
     return out
 
@@ -147,6 +162,9 @@ def main():
           f"{acc['quality_flag'].value_counts().to_dict()}; T_c {int(acc['Tc'].notna().sum())}, "
           f"|ΔS| with field {int((acc['dS'].notna() & acc['field_T'].notna()).sum())}; "
           f"{acc['composition_key'].nunique()} composition keys")
+    n_disc = int(acc['Tc_implausible'].sum())
+    if n_disc:
+        print(f"  {n_disc} accepted rows had an implausible T_c, discarded (|ΔS| kept)")
     if not args.no_nims:
         nims_comparison(acc)
     if args.dry_run:
@@ -165,7 +183,9 @@ def main():
             'composition_text': r['Material'],
             't_tr_k': r['Tc'], 't_tr_source': 'reported' if pd.notna(r['Tc']) else None,
             'comments': (f"MCEdatabase {commit}, {r['file']}; as extracted: dS='{r['Magnetic Entropy Change']}', "
-                         f"field='{r['Magnetic Field']}', Tc='{r['Curie Temperature']}'"),
+                         f"field='{r['Magnetic Field']}', Tc='{r['Curie Temperature']}'"
+                         + (f"; T_c discarded: outside {PLAUSIBLE_TC_K[0]:.0f}-{PLAUSIBLE_TC_K[1]:.0f} K"
+                            if r['Tc_implausible'] else '')),
         })
         points.append((r['external_id'], 'dS_max', r['field_T'], r['dS'], None, None))
 
@@ -174,8 +194,12 @@ def main():
     try:
         ids = upsert_records(db.cursor, records)
         n_points = replace_points(db.cursor, ids, points)
+        db.cursor.execute("DELETE FROM mce_literature_records WHERE source = %s AND NOT (external_id = ANY(%s))",
+                          (SOURCE, list(ids)))
+        n_removed = db.cursor.rowcount
         db.commit()
-        print(f"\nImported {len(ids)} records and {n_points} points (source '{SOURCE}')")
+        print(f"\nImported {len(ids)} records and {n_points} points (source '{SOURCE}'); "
+              f"removed {n_removed} records no longer accepted")
     except Exception:
         db.rollback()
         raise
