@@ -7,8 +7,10 @@ literature tables of 007_mce_literature.sql, filtered to the
 La(Fe,Si/Al)13 family (roadmap §5: "filter to compositions that match our
 target systems").
 
-INTERNAL USE ONLY: the source repository has no licence; nothing derived
-from it is to be published before the authors agree.
+PERMISSION: the source repository has no licence file; B. Liao (corresponding
+author) agreed by email on 2 Nov 2026 to its use with citation of the paper
+(Yuan, Yang, Patra, Liao, AIP Advances 14, 085125 (2024)). The data are not
+redistributed: they are read from a local clone of the authors' repository.
 
   python import_mcedb.py --dry-run     # parse, filter, report; no database
   python import_mcedb.py               # write (same tables as NIMS, source 'mcedb_github')
@@ -38,7 +40,8 @@ from nims_dataset import DEFAULT_PATH as NIMS_PATH
 from nims_dataset import INTERSTITIALS, METAL_ELEMENTS, expand_points, load_nims
 
 SOURCE = 'mcedb_github'
-LICENCE = 'none stated (repository has no licence file) -- internal use only'
+LICENCE = ('no licence file; use with citation permitted by B. Liao, email 2 Nov 2026 '
+           '(cite Yuan et al., AIP Advances 14, 085125 (2024))')
 
 
 def repo_commit(repo):

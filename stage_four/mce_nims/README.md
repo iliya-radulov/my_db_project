@@ -32,8 +32,9 @@ variants in about 25 substituent families (Si, Si+Co, Si+Mn, Si+Ce, Al, …);
 | `origin_from_pptx.py` | Extract the worksheet data of Origin graphs embedded in a PowerPoint file, without Origin |
 | `composition_key.py` | One composition key for all sources (`Fe81.4-La7.1-Si11.4+H3.6`), and a near-match distance |
 | `link_samples.py` | Keys for the lab's own samples and their exact / near matches among the literature records |
-| `mcedb_dataset.py`, `import_mcedb.py` | Second source: the LLM-extracted MCE database (GitHub; no licence — internal use only), filtered to La(Fe,Si/Al)₁₃, with row accounting and accuracy against NIMS |
+| `mcedb_dataset.py`, `import_mcedb.py` | Second source: the LLM-extracted MCE database (GitHub; no licence file — use with citation permitted by the authors, email 2 Nov 2026), filtered to La(Fe,Si/Al)₁₃, with row accounting and accuracy against NIMS |
 | `import_curie_neel.py` | Third source: Kelly & Cole 2025 Curie/Néel dataset (CC BY 4.0), La(Fe,Si/Al)₁₃ Curie temperatures |
+| `import_court_cole_2018.py` | Fourth source: Court & Cole 2018 Curie/Néel database (CC BY 4.0), La(Fe,Si/Al)₁₃ Curie temperatures |
 | `literature_db.py` | Shared database writer for all literature sources |
 | `test_set_edx.csv` | EDX compositions of the 12 test samples (stay reports); `--test-compositions` in `evaluate.py` / `correct.py` |
 | `consistency_report.py` | Roadmap day 7: consistency report over all literature sources in the database |

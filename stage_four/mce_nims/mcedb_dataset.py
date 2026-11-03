@@ -5,10 +5,10 @@ Loader for the LLM-extracted magnetocaloric database of Yuan, Yang, Patra
 and Liao (AIP Advances 14, 085125 (2024); arXiv:2403.02553),
 github.com/RunqingYang1996/MCEdatabase.
 
-LICENCE: the repository has no licence file, which legally means all
-rights reserved. Use for internal checks only; do not commit the data;
-ask the authors before publishing anything derived from it. Clone the
-repository into stage_four/mce_nims/data/MCEdatabase/ (gitignored).
+LICENCE: the repository has no licence file. B. Liao (corresponding author)
+agreed by email on 2 Nov 2026 to its use with citation of the paper. Do not
+commit or redistribute the data; clone the authors' repository into
+stage_four/mce_nims/data/MCEdatabase/ (gitignored).
 
 Files used:
   html/725_updated.csv        714 human-corrected rows, with DOI
