@@ -1,0 +1,57 @@
+{
+  "kernel_version": "v2 (GHSER-based reference)",
+  "n_total": 84,
+  "n_attempted": 84,
+  "n_merge_success": 78,
+  "n_edge_passed": 78,
+  "n_survived": 78,
+  "survival_rate": 0.929,
+  "threshold_stats_800K": {
+    "min": -9.264,
+    "q25": -8.867,
+    "median": -8.791,
+    "q75": -8.699,
+    "max": -8.325,
+    "n": 78
+  },
+  "threshold_stats_1000K": {
+    "min": -8.281,
+    "q25": -8.028,
+    "median": -7.88,
+    "q75": -7.756,
+    "max": -7.471,
+    "n": 78
+  },
+  "threshold_stats_1300K": {
+    "min": -7.772,
+    "q25": -7.173,
+    "median": -6.941,
+    "q75": -6.467,
+    "max": -6.072,
+    "n": 78
+  },
+  "threshold_stats_1375K": {
+    "min": -8.015,
+    "q25": -7.303,
+    "median": -7.065,
+    "q75": -6.529,
+    "max": -5.99,
+    "n": 78
+  },
+  "threshold_stats_1450K": {
+    "min": -8.547,
+    "q25": -7.8,
+    "median": -7.452,
+    "q75": -7.003,
+    "max": -6.329,
+    "n": 78
+  },
+  "threshold_stats_1600K": {
+    "min": -9.866,
+    "q25": -9.339,
+    "median": -8.764,
+    "q75": -8.383,
+    "max": -7.514,
+    "n": 78
+  }
+}

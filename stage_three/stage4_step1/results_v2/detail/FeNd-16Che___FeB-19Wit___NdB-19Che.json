@@ -1,0 +1,32 @@
+{
+  "combo_id": "FeNd-16Che___FeB-19Wit___NdB-19Che",
+  "binary_FeNd": "FeNd-16Che.tdb",
+  "binary_FeB": "FeB-19Wit.tdb",
+  "binary_NdB": "NdB-19Che.tdb",
+  "element_order": [
+    "FE",
+    "ND",
+    "B"
+  ],
+  "run_timestamp": "2026-10-27T20:20:11.197915+00:00",
+  "merge_success": false,
+  "edge_check_passed": false,
+  "survived": false,
+  "failure_stage": "merge",
+  "failure_reason": "FENDB_merged_v4__FeNd-16Che___FeB-19Wit___NdB-19Che.tdb: merged description does not reproduce its binaries",
+  "conflict_report": [],
+  "n_phases_after_merge": null,
+  "phases_list": [],
+  "ser_names": {},
+  "temperatures_K": [],
+  "threshold_kJ_mol_atom": [],
+  "threshold_at_800K": null,
+  "threshold_at_1000K": null,
+  "threshold_at_1300K": null,
+  "threshold_at_1375K": null,
+  "threshold_at_1450K": null,
+  "threshold_at_1600K": null,
+  "competing_assemblage": {},
+  "runtime_seconds": 4.7,
+  "notes": "kernel=v2 (GHSER-based reference)"
+}

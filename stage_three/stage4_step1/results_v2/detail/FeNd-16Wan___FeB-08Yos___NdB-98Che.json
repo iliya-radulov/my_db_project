@@ -1,0 +1,80 @@
+{
+  "combo_id": "FeNd-16Wan___FeB-08Yos___NdB-98Che",
+  "binary_FeNd": "FeNd-16Wan.tdb",
+  "binary_FeB": "FeB-08Yos.tdb",
+  "binary_NdB": "NdB-98Che.tdb",
+  "element_order": [
+    "FE",
+    "ND",
+    "B"
+  ],
+  "run_timestamp": "2026-10-27T20:20:28.951771+00:00",
+  "merge_success": true,
+  "edge_check_passed": true,
+  "survived": true,
+  "failure_stage": null,
+  "failure_reason": null,
+  "conflict_report": [
+    "  merged 3 files: 14 phases, 55 parameters, 0 conflicts"
+  ],
+  "n_phases_after_merge": 14,
+  "phases_list": [
+    "BCC_A2",
+    "BETA_RHOMBO_B",
+    "DHCP",
+    "FCC_A1",
+    "FE17ND2",
+    "FE17ND5",
+    "HCP_A3",
+    "LIQUID",
+    "M2B_C16",
+    "MB_B27",
+    "ND2B5",
+    "NDB4_D1E",
+    "NDB66",
+    "NDB6_D21"
+  ],
+  "ser_names": {
+    "FE": "GHSERFE",
+    "ND": "GHSERND",
+    "B": "GHSERBB"
+  },
+  "temperatures_K": [
+    800,
+    1000,
+    1100,
+    1200,
+    1300,
+    1375,
+    1450,
+    1600
+  ],
+  "threshold_kJ_mol_atom": [
+    -8.884,
+    -8.1138,
+    -7.8599,
+    -7.7213,
+    -7.7718,
+    -8.0063,
+    -8.5228,
+    -9.8659
+  ],
+  "threshold_at_800K": -8.884,
+  "threshold_at_1000K": -8.1138,
+  "threshold_at_1300K": -7.7718,
+  "threshold_at_1375K": -8.0063,
+  "threshold_at_1450K": -8.5228,
+  "threshold_at_1600K": -9.8659,
+  "competing_assemblage": {
+    "800": {},
+    "1000": {},
+    "1100": {},
+    "1200": {},
+    "1300": {},
+    "1375": {},
+    "1450": {},
+    "1600": {}
+  },
+  "runtime_seconds": 4.7,
+  "notes": "kernel=v2 (GHSER-based reference)"
+}

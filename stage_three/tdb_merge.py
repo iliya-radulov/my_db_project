@@ -157,11 +157,19 @@ def merged_text(paths, report=print) -> str:
     return merge_databases(paths, report=report).to_string(fmt="tdb", if_incompatible="ignore")
 
 
-def merged_tdb_path(elements, out_dir=HERE, check=True, tdb_paths=None) -> Path:
-    """Merge, write and (by default) check the description for *elements*; return the TDB path."""
+def merged_tdb_path(elements, out_dir=HERE, check=True, tdb_paths=None,
+                    tag: str | None = None) -> Path:
+    """Merge, write and (by default) check the description for *elements*; return the TDB path.
+
+    *tag* appends a per-call suffix to the output filename. Pass it whenever several
+    callers may use the same *out_dir* in parallel (e.g. run_batch_v2.py with workers>1),
+    so the writes do not collide on the fixed `FENDB_merged_v4.tdb` name. Default is None
+    (keeps the historical filename for Stage 3 callers)."""
     paths = tdb_paths if tdb_paths is not None else selected_binaries(elements)
     db = merge_databases(paths)
-    out = Path(out_dir) / f"{''.join(e.upper() for e in elements)}_merged_v4.tdb"
+    base = f"{''.join(e.upper() for e in elements)}_merged_v4"
+    fname = f"{base}__{tag}.tdb" if tag else f"{base}.tdb"
+    out = Path(out_dir) / fname
     db.to_file(str(out), fmt="tdb", if_exists="overwrite", if_incompatible="ignore")
     if check:
         reread = Database(str(out))                   # check what the workers will actually load
