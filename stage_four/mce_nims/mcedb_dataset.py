@@ -5,10 +5,10 @@ Loader for the LLM-extracted magnetocaloric database of Yuan, Yang, Patra
 and Liao (AIP Advances 14, 085125 (2024); arXiv:2403.02553),
 github.com/RunqingYang1996/MCEdatabase.
 
-LICENCE: the repository has no licence file, which legally means all
-rights reserved. Use for internal checks only; do not commit the data;
-ask the authors before publishing anything derived from it. Clone the
-repository into stage_four/mce_nims/data/MCEdatabase/ (gitignored).
+LICENCE: the repository has no licence file. B. Liao (corresponding author)
+agreed by email on 2 Nov 2026 to its use with citation of the paper. Do not
+commit or redistribute the data; clone the authors' repository into
+stage_four/mce_nims/data/MCEdatabase/ (gitignored).
 
 Files used:
   html/725_updated.csv        714 human-corrected rows, with DOI
@@ -38,6 +38,8 @@ from composition_key import ELEMENTS
 
 DEFAULT_REPO = Path(__file__).resolve().parent / 'data' / 'MCEdatabase'
 WOS_FILES = ['savedrecs.xls'] + [f'savedrecs ({i}).xls' for i in range(1, 9)]
+# T_C window for La(Fe,Si/Al)13 (domain judgement; shared by all literature imports)
+PLAUSIBLE_TC_K = (100.0, 500.0)
 RARE_EARTHS = ('La', 'Ce', 'Pr', 'Nd', 'Sm', 'Gd', 'Tb', 'Dy', 'Ho', 'Er', 'Y')
 
 NUM = r'(\d+(?:\.\d+)?)'

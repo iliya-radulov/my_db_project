@@ -79,10 +79,11 @@ Uses the same `.env` connection settings as the rest of the project
 (`db_config.py`: `POSTGRES_HOST`, `POSTGRES_PORT`, `POSTGRES_DB`,
 `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_SCHEMA`).
 
-## 3b. Second source: the GitHub MCE database (internal use only)
+## 3b. Second source: the GitHub MCE database
 
-The repository has no licence; nothing derived from it is to be
-published before its authors agree.
+The repository has no licence file; its corresponding author (B. Liao)
+agreed by email on 2 Nov 2026 to its use with citation of Yuan et al.,
+AIP Advances 14, 085125 (2024). Do not redistribute the data.
 
 ```bash
 git clone https://github.com/RunqingYang1996/MCEdatabase stage_four/mce_nims/data/MCEdatabase
@@ -92,7 +93,12 @@ python import_mcedb.py
 ```
 
 Expected (commit 21ec937): 209 records, 156 points, source
-`mcedb_github`, quality flag `unverified`. Needs `xlrd` (in
+`mcedb_github`, quality flag `unverified`.
+**Since 3 Nov** the import discards T_c values outside 100–500 K (same
+window as the Cole imports) and removes records of this source that are
+no longer accepted. Re-run `python import_mcedb.py` if you imported
+before; expected: 202 records, 156 points, "removed 7 records no longer accepted"
+(0 on any later run). Needs `xlrd` (in
 `requirements.txt`) for the Web of Science `.xls` files.
 
 ## 3c. Third source: Kelly & Cole Curie/Néel dataset (CC BY 4.0)
@@ -108,6 +114,20 @@ python import_curie_neel.py
 
 Expected: 100 records, source `curie_neel_kelly_cole_2025`, quality flag
 `literature_mined`, no points (T_C only).
+
+## 3d. Fourth source: Court & Cole 2018 Curie/Néel database (CC BY 4.0)
+
+Download `phase_transitions.json` from
+https://doi.org/10.6084/m9.figshare.c.3954418 into
+`stage_four/mce_nims/data/court_cole_2018/`, then:
+
+```bash
+python import_court_cole_2018.py --dry-run
+python import_court_cole_2018.py
+```
+
+Expected: 80 records, source `curie_neel_court_cole_2018`, quality flag
+`literature_mined`.
 
 ## 4. Link the lab's samples
 
