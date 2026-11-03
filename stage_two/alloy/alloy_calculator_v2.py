@@ -107,6 +107,17 @@ def parse_composition_input(
     "Co5Si10" must stay exactly 5 and 10, not be rescaled to sum to 100
     between just those two.
     """
+    # Only element symbols, numbers, decimal points and spaces. Anything else
+    # is rejected rather than skipped: skipping brackets silently turned
+    # 'La(Fe0.92Co0.08)11.9Si1.1' into La 0.92, Fe 0.08, Co 11.9, Si 1.1
+    # (every number shifted by one element, and the count check still passed).
+    bad = sorted({c for c in formula if not (c.isalnum() or c in '. ')})
+    if bad:
+        raise ValueError(
+            f"Unsupported character(s) {' '.join(repr(c) for c in bad)} in '{formula}' -- "
+            f"write the formula with plain element amounts, e.g. 'La1Fe11.6Si1.4' "
+            f"(no brackets, signs or separators)")
+
     # Valid single-letter elements
     valid_single = {'B', 'C', 'F', 'H', 'I', 'K', 'N', 'O', 'P', 'S', 'U', 'V', 'W', 'Y'}
     
@@ -401,7 +412,8 @@ if __name__ == "__main__":
     print("  'fe65nd30co5' →", parse_composition_input('fe65nd30co5'))
     
     # Test invalid formulas
-    for bad in ('Fe65Cp30Co5', 'Nd2Fe14B', 'LaFe11.6Si1.4', '65Fe35Nd'):
+    for bad in ('Fe65Cp30Co5', 'Nd2Fe14B', 'LaFe11.6Si1.4', '65Fe35Nd',
+                'La(Fe0.92Co0.08)11.9Si1.1', 'Fe-65 Nd-30'):
         print(f"\nTesting invalid '{bad}':")
         try:
             print(parse_composition_input(bad))
