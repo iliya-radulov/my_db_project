@@ -1,0 +1,305 @@
+file,elements,loads,error,n_phases,ternary_phases,ghser,size_kB,sha256
+other_tdb/new_tdb/Al-Li-Mg.TDB,AL-LI-MG,yes,,11,AL2LI3 ALLI ALMG_BETA ALMG_GAMMA BCC_A2 FCC_A1 HCP_A3 LIQUID TAO,all,12.5,ce64a3b9f568
+other_tdb/new_tdb/AlCoCrNi_Liu2016.tdb,AL-CO-CR-NI,yes,,23,AL3NI2 BCC_A2 BCC_B2 FCC_A1 L12_FCC LIQUID SIGMA_SGTE,all,59.6,2aa473fbfac7
+other_tdb/new_tdb/AlMgSi.tdb,AL-MG-SI,yes,,12,B_PRIME_L FCC_A1 LIQUID U1_PHASE U2_PHASE,all,12.5,9dce272a32a9
+other_tdb/new_tdb/AlNiPt-2005.TDB,AL-NI-PT,yes,,14,AL1PT1 AL3NI2 BCC_B2 FCC_4SL FCC_A1 LIQUID,all,37.5,e2c3bbc4c13d
+other_tdb/new_tdb/AlScZr.tdb,AL-SC-ZR,yes,,3,AL3SC AL3ZR,all,3.2,c91226ca6cf7
+other_tdb/new_tdb/AlSi98.TDB,AL-SI,yes,,3,,all,4.2,a123288f0b7c
+other_tdb/new_tdb/Al_Cr_Ni_Dupin_2001_TDB.TDB,AL-CR-NI,yes,,25,AL3NI2 BCC_A2 FCC_A1 FCC_L12 LIQUID NEWSIGMA SIGMA,all,46.4,68a22299b016
+other_tdb/new_tdb/Al_Li_Zn_Guo.tdb,AL-LI-ZN,yes,,18,AL2LI3 AL4LI9 B32 BCC_A2 BLIM4 FCC_A1 HCP_A3 LIQUID T1,all,19.1,42b4439d1d51
+other_tdb/new_tdb/COST507.pycalphad-1.tdb,AL-AR-B-C-CE-CR-CU-FE-HF-LI-MG-MN-MO-N-NB-ND-NI-O-SI-SN-TA-TI-V-W-Y-ZN-ZR,yes,,243,AL11MN4 AL12MN AL13FE4 AL2FE AL3M_D022 AL4MN AL4SIC4 AL5FE2 AL6MN AL8MN5_D810 AL8SIC7 ALCULI_R ALCULI_T1 ALCULI_T2 ALCULI_TB ALCUZN_T ALCU_DELTA ALCU_EPSILON ALCU_ETA ALCU_ZETA ALFESI_ALPHA ALFESI_BETA ALFESI_DELTA ALFESI_GAMMA ALFESI_TAU1 ALFESI_TAU3 ALMGMN_T ALMG_BETA ALMG_GAMMA ALMNSI_ALPHA ALMNSI_BETA ALMNSI_DELTA ALM_D019 ALSN2ZR5 ALTI B2M B4C B4M3 BCC_A2 BCC_B2 BM CU6Y CUB_A15 CUMGSI_SIGMA CUMGSI_TAU CUZN_GAMMA FCC_A1 GAMMA_H HCP_A3 HCP_ZN LAVES_C14 LAVES_C15 LAVES_C36 LIQUID MG2ZN11 MG2ZN3 MGZN PHI QPHASE SIGMA SPHASE TAU TI2ALN TI3AL2N2 TI3ALN VPHASE,missing: AR,289.8,ca73c4c11769
+other_tdb/new_tdb/COST507.pycalphad.tdb,AL-AR-B-C-CE-CR-CU-FE-HF-LI-MG-MN-MO-N-NB-ND-NI-O-SI-SN-TA-TI-V-W-Y-ZN-ZR,yes,,243,AL11MN4 AL12MN AL13FE4 AL2FE AL3M_D022 AL4MN AL4SIC4 AL5FE2 AL6MN AL8MN5_D810 AL8SIC7 ALCULI_R ALCULI_T1 ALCULI_T2 ALCULI_TB ALCUZN_T ALCU_DELTA ALCU_EPSILON ALCU_ETA ALCU_ZETA ALFESI_ALPHA ALFESI_BETA ALFESI_DELTA ALFESI_GAMMA ALFESI_TAU1 ALFESI_TAU3 ALMGMN_T ALMG_BETA ALMG_GAMMA ALMNSI_ALPHA ALMNSI_BETA ALMNSI_DELTA ALM_D019 ALSN2ZR5 ALTI B2M B4C B4M3 BCC_A2 BCC_B2 BM CU6Y CUB_A15 CUMGSI_SIGMA CUMGSI_TAU CUZN_GAMMA FCC_A1 GAMMA_H HCP_A3 HCP_ZN LAVES_C14 LAVES_C15 LAVES_C36 LIQUID MG2ZN11 MG2ZN3 MGZN PHI QPHASE SIGMA SPHASE TAU TI2ALN TI3AL2N2 TI3ALN VPHASE,missing: AR,289.8,ca73c4c11769
+other_tdb/new_tdb/COST507.tdb,AL-AR-B-C-CE-CR-CU-FE-HF-LI-MG-MN-MO-N-NB-ND-NI-O-SI-SN-TA-TI-V-W-Y-ZN-ZR,no,Invalid TDB syntax.,,,,289.4,80363e1de4aa
+other_tdb/new_tdb/CoCrFeNiV_Choi2019.tdb,CO-CR-FE-NI-V,yes,,12,BCC_A2 FCC_A1 HIGH_SIGMA LIQUID M3V SIGMA,all,32.3,6e8f30ac87e1
+other_tdb/new_tdb/CrFeNb_Jacob2016.tdb,CR-FE-NB,yes,,7,BCC_A2 LAVES_C14 LAVES_C15 LIQUID MU_PHASE SIGMA,all,14.1,c0482c497603
+other_tdb/new_tdb/CuSnTi - ╕▒▒╛.TDB,CU-SN-TI,yes,,23,CU2SNTI CU4TI CUSNTI D88_SN3TI5 FCC_A1 SN5TI6,all,13.2,9674b6f5797e
+other_tdb/new_tdb/CuSnTi.TDB,CU-SN-TI,yes,,23,CU2SNTI CU4TI CUSNTI D88_SN3TI5 FCC_A1 SN5TI6,all,13.2,9674b6f5797e
+other_tdb/new_tdb/Cu_Pb_Sn_mie.TDB,CU-PB-SN,yes,,6,LIQ,all,6.3,759cab084d79
+other_tdb/new_tdb/FeCrNi.tdb,CR-FE-NI,yes,,3,BCC_A2 FCC_A1 SIGMA,all,12.6,f713f965a832
+other_tdb/new_tdb/GaInSnSb.tdb,GA-IN-SB-SN,yes,,11,LIQUID ZINCBLENDE_B3,all,13.8,7368438082a6
+other_tdb/new_tdb/NiCrAl.tdb,AL-CR-NI,yes,,25,AL3NI2 BCC_A2 FCC_A1 FCC_L12 LIQUID NEWSIGMA SIGMA,all,46.7,ac458d165636
+other_tdb/new_tdb/OpenCALPHAD-v6-examples-main/Ag-Cu/agcu.TDB,AG-CU,yes,,4,,all,3.1,66107f161dd8
+other_tdb/new_tdb/OpenCALPHAD-v6-examples-main/Al-Fe/AlFe-4SLBF.TDB,AL-FE,yes,,9,BCC_4SL FCC_4SL,all,8.2,e08f375f7573
+other_tdb/new_tdb/OpenCALPHAD-v6-examples-main/Al-Mg-Zn/Qiu_2015.TDB,AL-B-C-CE-CU-FE-HF-LI-MG-MN-N-ND-NI-O-SI-SN-TA-TI-V-Y-ZN-ZR,no,'utf-8' codec can't decode byte 0xfc in position 193546: invalid start byte,,,,189.4,fcd01db7f07a
+other_tdb/new_tdb/OpenCALPHAD-v6-examples-main/Al-Mg-Zn/Qiu_2015_en.TDB,AL-B-C-CE-CU-FE-HF-LI-MG-MN-N-ND-NI-O-SI-SN-TA-TI-V-Y-ZN-ZR,yes,,221,AL12MG17 AL13FE4 AL4MN AL4SIC4 AL6MN AL8MN5_D810 AL8SIC7 ALCULI_R ALCULI_T1 ALCULI_T2 ALCULI_TB ALCUZN_T ALCU_DELTA ALCU_EPSILON ALCU_ETA ALCU_ZETA ALFA_ALFEMNSI ALFESI_ALPHA ALFESI_BETA ALFESI_DELTA ALFESI_GAMMA ALFESI_TAU ALFESI_TAU1 ALFESI_TAU23 ALLIMG_TAU ALMGMN_T ALMG_BETA ALMG_GAMMA ALMNSI_ALPHA ALMNSI_BETA ALMNSI_DELTA ALM_D019 ALSNZR ALTI B2M B4C B4M3 BCC_A2 BCC_B2 BM CU6Y CUMGSI_SIGMA CUMGSI_TAU CUZN_GAMMA FCC_A1 GAMMA_H HCP_A3 HCP_ZN LAVES_C14 LAVES_C15 LAVES_C36 LIQUID MG2ZN11 MG2ZN3 MGZN PHI PI_ALFEMGSI QPHASE Q_ALCUMGSI SIGMA SPHASE TAU TI2ALN TI3AL2N2 TI3ALN VPHASE,all,189.4,721b7590bf0a
+other_tdb/new_tdb/OpenCALPHAD-v6-examples-main/Al-Mg-Zn/cost507R.TDB,AL-B-C-CE-CR-CU-FE-LI-MG-MN-N-ND-NI-SI-SN-TI-V-Y-ZN-ZR,yes,,191,AL12MG17 AL13FE4 AL1LI1 AL4MN AL6MN AL8MN5_D810 ALCULI_R ALCULI_T1 ALCULI_T2 ALCULI_TB ALFESI_ALPHA ALFESI_BETA ALFESI_DELTA ALFESI_GAMMA ALFESI_TAU1 ALFESI_TAU3 ALLIMG_TAU ALMGMN_T ALMG_BETA ALMNSI_ALPHA ALMNSI_BETA ALMNSI_DELTA B4C BCC_A2 CUB_A13 FCC_A1 HCP_A3 LIQUID,all,143.7,b241d3d6f73c
+other_tdb/new_tdb/OpenCALPHAD-v6-examples-main/Al-Mg-Zn/modified_almgzn_hay_oc6.tdb,AL-MG-ZN,yes,,14,ALMG_B ALMG_G FCC_A1 LAVES_C14 LIQUID MG12ZN13 MG2ZN11 MG2ZN3 PHI TAU,all,17.8,31348a4f531b
+other_tdb/new_tdb/OpenCALPHAD-v6-examples-main/Al-Ni/alni-4slx.TDB,AL-NI,yes,,14,AL3NI2 FCC4 HCP4,all,13.6,34e10b192ba1
+other_tdb/new_tdb/OpenCALPHAD-v6-examples-main/C-Cr-Fe/steel7.TDB,C-CR-FE-MO-SI-V,yes,,40,BCC_A2 CEMENTITE CHI_A12 CR2VC2 FCC_A1 FE8SI2C HCP_A3 KSI_CARBIDE LIQUID M23C6 M3C2 M6C M7C3 MONI_DELTA MU_PHASE P_PHASE R_PHASE SIGMA,all,55.4,6c1474bf3852
+other_tdb/new_tdb/OpenCALPHAD-v6-examples-main/C-Fe/steel1.TDB,C-CR-FE-MO-SI-V,yes,,40,BCC_A2 CEMENTITE CHI_A12 CR2VC2 FCC_A1 FE8SI2C HCP_A3 KSI_CARBIDE LIQUID M23C6 M3C2 M6C M7C3 MONI_DELTA MU_PHASE P_PHASE R_PHASE SIGMA,all,55.4,3862e1ced8bc
+other_tdb/new_tdb/OpenCALPHAD-v6-examples-main/Cr-Fe/steel1.TDB,C-CR-FE-MO-SI-V,yes,,40,BCC_A2 CEMENTITE CHI_A12 CR2VC2 FCC_A1 FE8SI2C HCP_A3 KSI_CARBIDE LIQUID M23C6 M3C2 M6C M7C3 MONI_DELTA MU_PHASE P_PHASE R_PHASE SIGMA,all,55.4,3862e1ced8bc
+other_tdb/new_tdb/OpenCALPHAD-v6-examples-main/Cr-Fe-Mo/steel1.TDB,C-CR-FE-MO-SI-V,yes,,40,BCC_A2 CEMENTITE CHI_A12 CR2VC2 FCC_A1 FE8SI2C HCP_A3 KSI_CARBIDE LIQUID M23C6 M3C2 M6C M7C3 MONI_DELTA MU_PHASE P_PHASE R_PHASE SIGMA,all,55.4,3862e1ced8bc
+other_tdb/new_tdb/OpenCALPHAD-v6-examples-main/Cr-Fe-Ni/saf2507.TDB,CR-FE-MN-MO-N-NI,yes,,29,BCC_A2 CHI_A12 FCC_A1 HCP_A3 LIQUID MONI_DELTA MU_PHASE PI P_PHASE R_PHASE SIGMA,all,50.1,1246785fe7fa
+other_tdb/new_tdb/OpenCALPHAD-v6-examples-main/Fe-Mo/steel1.TDB,C-CR-FE-MO-SI-V,yes,,40,BCC_A2 CEMENTITE CHI_A12 CR2VC2 FCC_A1 FE8SI2C HCP_A3 KSI_CARBIDE LIQUID M23C6 M3C2 M6C M7C3 MONI_DELTA MU_PHASE P_PHASE R_PHASE SIGMA,all,55.4,3862e1ced8bc
+other_tdb/new_tdb/OpenCALPHAD-v6-examples-main/HSS/steel1.TDB,C-CR-FE-MO-SI-V,yes,,40,BCC_A2 CEMENTITE CHI_A12 CR2VC2 FCC_A1 FE8SI2C HCP_A3 KSI_CARBIDE LIQUID M23C6 M3C2 M6C M7C3 MONI_DELTA MU_PHASE P_PHASE R_PHASE SIGMA,all,55.4,3862e1ced8bc
+other_tdb/new_tdb/OpenCALPHAD-v6-examples-main/HSS-melting/steel7.TDB,C-CR-FE-MO-SI-V,yes,,40,BCC_A2 CEMENTITE CHI_A12 CR2VC2 FCC_A1 FE8SI2C HCP_A3 KSI_CARBIDE LIQUID M23C6 M3C2 M6C M7C3 MONI_DELTA MU_PHASE P_PHASE R_PHASE SIGMA,all,55.4,6c1474bf3852
+other_tdb/new_tdb/OpenCALPHAD-v6-examples-main/Mo-Ni-Re/BEF.TDB,MO-NI-RE,no,TDB contains duplicate FUNCTION GBCCNI,,,,20.4,df8eb132a4b2
+other_tdb/new_tdb/OpenCALPHAD-v6-examples-main/TDB_files/MatCalc6/Note.txt,,no,Invalid TDB syntax.,,,,1.5,6631052e1b5b
+other_tdb/new_tdb/OpenCALPHAD-v6-examples-main/TDB_files/MatCalc6/Thermodynamic_databases_original/mc_al_v2.035.tdb,AL-CR-CU-FE-MG-MN-NI-SC-SI-TI-ZN-ZR,no,'utf-8' codec can't decode byte 0xb0 in position 86333: invalid start byte,,,,276.7,a85873ef59ef
+other_tdb/new_tdb/OpenCALPHAD-v6-examples-main/TDB_files/MatCalc6/Thermodynamic_databases_original/mc_fe_bainite.tdb,AL-B-C-CO-CR-CU-FE-H-HF-LA-MN-MO-N-NB-NI-O-P-PD-S-SI-TI-V-W-Y,no,Invalid TDB syntax.,,,,454.3,0a0be57b874d
+other_tdb/new_tdb/OpenCALPHAD-v6-examples-main/TDB_files/MatCalc6/Thermodynamic_databases_original/mc_fe_v2.060.tdb,AL-B-C-CO-CR-CU-FE-H-HF-LA-MN-MO-N-NB-NI-O-P-PD-S-SI-TI-V-W-Y,no,'utf-8' codec can't decode byte 0xb0 in position 147511: invalid start byte,,,,447.4,ae849d5c1b81
+other_tdb/new_tdb/OpenCALPHAD-v6-examples-main/TDB_files/MatCalc6/Thermodynamic_databases_original/mc_ni_v2.034.tdb,AL-B-C-CO-CR-CU-FE-HF-LA-MN-MO-N-NB-NI-O-S-SI-TI-V-W-Y-ZR,no,'utf-8' codec can't decode byte 0xf6 in position 362220: invalid start byte,,,,375.2,6ffaf67146f3
+other_tdb/new_tdb/OpenCALPHAD-v6-examples-main/TDB_files/MatCalc6/new_mc_al_v2.035.tdb,AL-CR-CU-FE-MG-MN-NI-SC-SI-TI-ZN-ZR,no,'utf-8' codec can't decode byte 0xb0 in position 86333: invalid start byte,,,,277.5,3b6a4ed6b282
+other_tdb/new_tdb/OpenCALPHAD-v6-examples-main/TDB_files/MatCalc6/new_mc_fe_bainite.tdb,AL-B-C-CO-CR-CU-FE-H-HF-LA-MN-MO-N-NB-NI-O-P-PD-S-SI-TI-V-W-Y,no,Invalid TDB syntax.,,,,455.5,83bbfc51605e
+other_tdb/new_tdb/OpenCALPHAD-v6-examples-main/TDB_files/MatCalc6/new_mc_fe_v2.060.tdb,AL-B-C-CO-CR-CU-FE-H-HF-LA-MN-MO-N-NB-NI-O-P-PD-S-SI-TI-V-W-Y,no,'utf-8' codec can't decode byte 0xb0 in position 147511: invalid start byte,,,,448.5,4e165b6f54ea
+other_tdb/new_tdb/OpenCALPHAD-v6-examples-main/TDB_files/MatCalc6/new_mc_ni_v2.034.tdb,AL-B-C-CO-CR-CU-FE-HF-LA-MN-MO-N-NB-NI-O-S-SI-TI-V-W-Y-ZR,no,'utf-8' codec can't decode byte 0xf6 in position 362674: invalid start byte,,,,376.2,73f33a4dd271
+other_tdb/new_tdb/OpenCALPHAD-v6-examples-main/stainless_steel_18-8/saf2507.TDB,CR-FE-MN-MO-N-NI,yes,,29,BCC_A2 CHI_A12 FCC_A1 HCP_A3 LIQUID MONI_DELTA MU_PHASE PI P_PHASE R_PHASE SIGMA,all,50.1,1246785fe7fa
+other_tdb/new_tdb/OpenCALPHAD-v6-examples-main/test/Al-Mg-Zn/new_mc_al_v2.035.tdb,AL-CR-CU-FE-MG-MN-NI-SC-SI-TI-ZN-ZR,no,'utf-8' codec can't decode byte 0xb0 in position 86333: invalid start byte,,,,277.5,3b6a4ed6b282
+other_tdb/new_tdb/OpenCALPHAD-v6-examples-main/test/B-Fe-Nd/4-system/Nd-mag-STAM_en.TDB,AL-B-CO-CU-DY-FE-GA-ND,yes,,111,AL2DY ALCUFE_P ALCUFE_T ALCUFE_W ALPHA_CUND BCC_A2 BETA_CUND CO17DY2 CU2DY CUDY FCC_A1 FE13ND6CU FE2ND5B6 FE4NDB4 LAV_C16 LIQUID ND2FE14B TAU1 TAU2 TAU3 TAU4 TAU5 TAU6 TAU7,all,66.1,2da8028187d8
+other_tdb/new_tdb/OpenCALPHAD-v6-examples-main/test/B-Fe-Nd/6-system/Nd-mag-STAM_en.TDB,AL-B-CO-CU-DY-FE-GA-ND,yes,,111,AL2DY ALCUFE_P ALCUFE_T ALCUFE_W ALPHA_CUND BCC_A2 BETA_CUND CO17DY2 CU2DY CUDY FCC_A1 FE13ND6CU FE2ND5B6 FE4NDB4 LAV_C16 LIQUID ND2FE14B TAU1 TAU2 TAU3 TAU4 TAU5 TAU6 TAU7,all,66.1,2da8028187d8
+other_tdb/new_tdb/OpenCALPHAD-v6-examples-main/test/B-Fe-Nd/gibbs-energy/Nd-mag-STAM_en.TDB,AL-B-CO-CU-DY-FE-GA-ND,yes,,111,AL2DY ALCUFE_P ALCUFE_T ALCUFE_W ALPHA_CUND BCC_A2 BETA_CUND CO17DY2 CU2DY CUDY FCC_A1 FE13ND6CU FE2ND5B6 FE4NDB4 LAV_C16 LIQUID ND2FE14B TAU1 TAU2 TAU3 TAU4 TAU5 TAU6 TAU7,all,66.1,2da8028187d8
+other_tdb/new_tdb/OpenCALPHAD-v6-examples-main/test/B-Fe-Nd/gibbs-energy/bfend_hal_en.tdb,B-FE-ND,yes,,16,BCC_A2 FE14ND2B FE2ND5B6 FE4NDB4 LIQUID,all,15.1,33b120c533df
+other_tdb/new_tdb/OpenCALPHAD-v6-examples-main/test/B-Fe-Nd/moles-of-phases/Nd-mag-STAM_en.TDB,AL-B-CO-CU-DY-FE-GA-ND,yes,,111,AL2DY ALCUFE_P ALCUFE_T ALCUFE_W ALPHA_CUND BCC_A2 BETA_CUND CO17DY2 CU2DY CUDY FCC_A1 FE13ND6CU FE2ND5B6 FE4NDB4 LAV_C16 LIQUID ND2FE14B TAU1 TAU2 TAU3 TAU4 TAU5 TAU6 TAU7,all,66.1,2da8028187d8
+other_tdb/new_tdb/OpenCALPHAD-v6-examples-main/test/B-Fe-Nd/moles-of-phases/bfend_hal_en.tdb,B-FE-ND,yes,,16,BCC_A2 FE14ND2B FE2ND5B6 FE4NDB4 LIQUID,all,15.1,33b120c533df
+other_tdb/new_tdb/OpenCALPHAD-v6-examples-main/test/B-Fe-Nd/phase-diagram/Nd-mag-STAM_en.TDB,AL-B-CO-CU-DY-FE-GA-ND,yes,,111,AL2DY ALCUFE_P ALCUFE_T ALCUFE_W ALPHA_CUND BCC_A2 BETA_CUND CO17DY2 CU2DY CUDY FCC_A1 FE13ND6CU FE2ND5B6 FE4NDB4 LAV_C16 LIQUID ND2FE14B TAU1 TAU2 TAU3 TAU4 TAU5 TAU6 TAU7,all,66.1,2da8028187d8
+other_tdb/new_tdb/OpenCALPHAD-v6-examples-main/test/B-Fe-Nd/phase-diagram/bfend_hal_en.tdb,B-FE-ND,yes,,16,BCC_A2 FE14ND2B FE2ND5B6 FE4NDB4 LIQUID,all,15.1,33b120c533df
+other_tdb/new_tdb/OpenCALPHAD-v6-examples-main/test/B-Fe-Nd/solidus-line/Nd-mag-STAM_en.TDB,AL-B-CO-CU-DY-FE-GA-ND,yes,,111,AL2DY ALCUFE_P ALCUFE_T ALCUFE_W ALPHA_CUND BCC_A2 BETA_CUND CO17DY2 CU2DY CUDY FCC_A1 FE13ND6CU FE2ND5B6 FE4NDB4 LAV_C16 LIQUID ND2FE14B TAU1 TAU2 TAU3 TAU4 TAU5 TAU6 TAU7,all,66.1,2da8028187d8
+other_tdb/new_tdb/OpenCALPHAD-v6-examples-main/test/B-Fe-Nd/tenary-phase-diagram-metastable/Nd-mag-STAM_en.TDB,AL-B-CO-CU-DY-FE-GA-ND,yes,,111,AL2DY ALCUFE_P ALCUFE_T ALCUFE_W ALPHA_CUND BCC_A2 BETA_CUND CO17DY2 CU2DY CUDY FCC_A1 FE13ND6CU FE2ND5B6 FE4NDB4 LAV_C16 LIQUID ND2FE14B TAU1 TAU2 TAU3 TAU4 TAU5 TAU6 TAU7,all,66.1,2da8028187d8
+other_tdb/new_tdb/OpenCALPHAD-v6-examples-main/test/B-Fe-Nd/tenary-phase-diagram-metastable/bfend_hal_en.tdb,B-FE-ND,yes,,16,BCC_A2 FE14ND2B FE2ND5B6 FE4NDB4 LIQUID,all,15.1,33b120c533df
+other_tdb/new_tdb/OpenCALPHAD-v6-examples-main/test/Cr-Fe-Mo/new_mc_fe_bainite.tdb,AL-B-C-CO-CR-CU-FE-H-HF-LA-MN-MO-N-NB-NI-O-P-PD-S-SI-TI-V-W-Y,no,Invalid TDB syntax.,,,,455.5,83bbfc51605e
+other_tdb/new_tdb/OpenCALPHAD-v6-examples-main/test/Cr-Fe-Ni/new_mc_ni_v2.034.tdb,AL-B-C-CO-CR-CU-FE-HF-LA-MN-MO-N-NB-NI-O-S-SI-TI-V-W-Y-ZR,no,'utf-8' codec can't decode byte 0xf6 in position 362674: invalid start byte,,,,376.2,73f33a4dd271
+other_tdb/new_tdb/PrecHiMn-04_2.pycalphad.tdb,AL-C-FE-MN-N-NB-SI-TI-V,yes,,93,A1_FCC A2_BCC AL12MN AL13FE4 AL2FE AL4MN_MU AL5FE2 AL6MN_D2H AL8MN5_D810 BCC_2SL BCC_4SL BCC_A2 C14_LAVES CBCC_A12 CEMENTITE_D011 CUB_A13 FCC_4SL FCC_A1 FE4N_L1 FE8SI2C HCP_A3 KAPPA_E21 LIQUID M23C6_D84 M3SI M5C2 M5SI3_D88 M7C3_D101 MSI_B20 MU_D85 SIGMA_D8B SIGMA_OLD TI2N_C4,all,199.0,1fcc52add63c
+other_tdb/new_tdb/SGTE-unary1991-2010.TDB,AC-AG-AL-AM-AR-AS-AT-AU-B-BA-BE-BI-BR-C-CA-CD-CE-CF-CL-CM-CO-CR-CS-CU-D-DY-ER-ES-EU-F-FE-FM-FR-GA-GD-GE-H-HE-HF-HG-HO-I-IN-IR-K-KR-LA-LI-LU-MG-MN-MO-N-NA-NB-ND-NE-NI-NP-O-OS-P-PA-PB-PD-PM-PO-PR-PT-PU-RA-RB-RE-RH-RN-RU-S-SB-SC-SE-SI-SM-SN-SR-T-TA-TB-TC-TE-TH-TI-TL-TM-U-V-W-XE-Y-YB-ZN-ZR,yes,,49,,missing: D T,125.9,d574a432d278
+other_tdb/new_tdb/alcuzr-viscosity-1.tdb,AL-CU-ZR,no,Invalid TDB syntax.,,,,4.2,e72a959f105b
+other_tdb/new_tdb/alcuzr-viscosity.tdb,AL-CU-ZR,no,Invalid TDB syntax.,,,,4.2,e72a959f105b
+other_tdb/new_tdb/bcc-fcc-Co-Ni-Ti.TDB,AL-AU-CO-CR-CU-FE-GA-GE-HF-IR-MO-NB-NI-OS-PD-PT-RE-RH-RU-SB-SC-SN-TA-TC-TI-V-ZN-ZR,yes,,2,,missing: AL AU CO CR CU FE GA GE HF IR MO NB NI OS PD PT RE RH RU SB SC SN TA TC TI V ZN ZR,12.1,363ff47e9862
+other_tdb/new_tdb/cementite.TDB,C-FE,yes,,1,,missing: C FE,1.4,c6ea8d51e69e
+other_tdb/new_tdb/iron-04.tdb,C-CR-CU-FE-MG-MN-MO-N-NB-NI-SI-TI-V,yes,,124,A1_FCC A2_BCC BCC_A2 C14_LAVES C15_LAVES CBCC_A12 CEMENTITE_D011 CHI_A12 CR2VC2 CR3C2_D510 CR3NI5SI2 CR3SI_A15 CR5NI5SI3 CR5SI3_D8M CRNI2_C11B CUB_A13 FCC_4SL FCC_A1 FE3NB4SI5 FE4NB4SI7 FE4N_L1 FE8SI2C FENB2SI2 FENB4SI FENBSI FENBSI2 HCP_A3 HIGH_SIGMA KSI_CARBIDE LIQUID M23C6_D84 M5C2 M5SI3_D88 M6C_E93 M7C3_D101 MC_ETA MN3SI MONI MSI_B20 MU_D85 NI2SI_C37 PI_CRFENIN P_PHASE R_PHASE SIGMA_D8B TI2N_C4,all,410.1,64e3671cbe82
+other_tdb/new_tdb/mc_al_v2.032.pycalphad.tdb,AL-CR-CU-FE-MG-MN-NI-SC-SI-TI-ZN-ZR,yes,,183,AL11CR2 AL11MN4 AL12MG2CR AL12MN AL13CR2 AL13CR4SI4 AL13FE4 AL18CR2MG3 AL23CUFE4 AL2CU3_D AL3NI2 AL3ZR AL4CR AL4MN AL4SI5ZR3 AL58CR31SI11 AL5FE2 AL6MN AL7CU2FE AL8FEMNSI2 AL8MN5_D810 AL9CR3SI AL9CU11_Z ALCRCU_TAU ALCRFEMNSI_A ALCRSI ALCRSI_T3 ALCUMG_V ALCUMN_T1 ALCUZN_T ALCU_E ALCU_ETA ALCU_G_D83 ALFEMNSI_B ALFENI_T2 ALFENI_T3 ALFESI_T1 ALFESI_T10 ALFESI_T11 ALFESI_T2 ALFESI_T3 ALFESI_T4 ALFESI_T5 ALFESI_T6 ALFESI_T7 ALFESI_T8 ALMG4ZN11 ALMGMN_T ALMGZN_GP ALSIZR_T1 ALSIZR_T2 ALZNCU_G_H AL_B_DP A_SIZR BCC_A2 BETA_AL3MG2 BETA_DP B_PRIME_H B_PRIME_L CL_ALMGSI CL_CUMG0 CL_CUMG1 CUB_A13 CUMGSI_S CUMGSI_T CUZN_G ETA_P_ALMGZN FCC_A1 FESI GP_MAT G_AL12MG17 HCP_A3 HCP_ZN LAVES_C15 LAVES_C36 LC14_ZN2MG LC15_CU2MG LC16_NIMG2 LC36_NI2MG LIQUID MG2ZN11 MG2ZN3 MG5SI6_B_DP MGALCUZN_T MGALZN_PHI MGZN PI_ALFEMGSI PRE_B_DP Q_ALCUMG Q_PHASE_H Q_PHASE_L SI2ZR SI3ZR5 SI4ZR5_A SIGMA SIZR2 S_PHASE TH_DP_GPB U1_PHASE U2_PHASE,all,275.7,54624a7b0641
+other_tdb/new_tdb/mc_al_v2037.tdb,AL-CR-CU-FE-MG-MN-NI-SC-SI-TI-ZN-ZR,no,Invalid TDB syntax.,,,,301.5,87ec595f2caa
+other_tdb/new_tdb/mc_fe_v2.059.pycalphad.tdb,AL-B-C-CO-CR-CU-FE-H-HF-LA-MN-MO-N-NB-NI-O-P-PD-S-SI-TI-V-W-Y,yes,,122,ALN_EQU ALPHA_MN BCC_A2 BCC_B2 BETA_MN CEMENTITE CHI_A12 CORUND CR2B CR2VC2 CR3NI2SIN CRB CU2S DIGENITE FCC_A1 FE3NB3B4 FE4N FEB FENBB FES_P G_PHASE HALITE HCP_A3 KSI_CARBIDE K_CARB LAVES_PHASE LIQUID M12C M23C6 M2B M2P M3C2 M3P M5B6 M6C M7C3 MNNI MNNI_T3 MNSIN2 MNS_Q MO2M1B2 MU_PHASE MU_PHASE_I NB3B2 PD6FE5MN2 PDFE_L12 PDMN_B2 PDMN_P PI_PHASE PYRR R_PHASE SIGMA SPINEL TI4C2S2 WC Y2TI2O7 Y2TIO5 Y4AL2O9 YALO3 ZET,all,359.3,467211ab8544
+other_tdb/new_tdb/mc_fe_v2062.tdb,AL-B-C-CO-CR-CU-FE-H-HF-LA-MN-MO-N-NB-NI-O-P-PD-S-SI-TA-TI-V-W-Y,no,Invalid TDB syntax.,,,,477.9,2e814ad2788b
+other_tdb/new_tdb/mc_ni_v2.033_SLi_PC.tdb,AL-B-C-CO-CR-CU-FE-HF-LA-MN-MO-N-NB-NI-O-S-SI-TI-V-W-Y-ZR,no,Invalid TDB syntax.,,,,340.7,0d6b05479a1d
+other_tdb/new_tdb/mc_ni_v2.034.pycalphad.tdb,AL-B-C-CO-CR-CU-FE-HF-LA-MN-MO-N-NB-NI-O-S-SI-TI-V-W-Y-ZR,yes,,97,ALPHA_MN BCC_A2 BCC_B2 BETA_MN CEMENTITE CHI_A12 CORUND CR2B CR2VC2 CRB CU2S DELTA DIGENITE ETA FCC_A1 FE3NB3B4 FE4N FEB FENBB FES_P GAMMA_DP GAMMA_PRIME G_PHASE HALITE HCP_A3 KSI_CARBIDE LAVES LAV_C14 LIQUID M12C M23C6 M2B M3C2 M6C M7C3 MNS_Q MU_PHASE NB3B2 NI2CR NIAL NITI2 PYRR P_PHASE R_PHASE SIGMA SPINEL TI4C2S2 TIB2 ZET,all,370.5,73e349f0bf94
+other_tdb/new_tdb/mpea-02b.tdb,AL-C-CO-CR-FE-MN-NI,yes,,52,A1_FCC A2_BCC AL12MN AL13FE4 AL2FE AL3NI2_D513 AL4MN_MU AL5CO2_D811 AL5FE2 AL6MN_D2H AL71FE5NI24 AL8MN5_D810 B2_BCC BCC_A2 CBCC_A12 CEMENTITE_D011 CR3C2_D510 CUB_A13 FCC_4SL FCC_A1 HCP_A3 HIGH_SIGMA KAPPA_E21 LIQUID M23C6_D84 M23C6_S M5C2 M7C3_D101 MAX_PHASE SIGMA_D8B,all,164.6,13ffd7672ff3
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/Al-C-V/AlVC-12Hal.tdb,AL-C-V,yes,,16,V2ALC V3ALC2 V4ALC3,all,11.9,0ab1a84af8bf
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/Al-Co-Ni/Liu_2016.TDB,AL-CO-CR-NI,yes,,23,AL3NI2 BCC_A2 BCC_B2 FCC_A1 L12_FCC LIQUID SIGMA_SGTE,all,59.6,2aa473fbfac7
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/Al-Cr-Ni/Liu_2016.TDB,AL-CO-CR-NI,yes,,23,AL3NI2 BCC_A2 BCC_B2 FCC_A1 L12_FCC LIQUID SIGMA_SGTE,all,59.6,2aa473fbfac7
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/Al-Cr-Ni/alcocrni.tdb,AL-CO-CR-NI,yes,,23,AL3NI2 BCC_A2 BCC_B2 FCC_A1 L12_FCC LIQUID SIGMA_SGTE,all,58.4,5dd18f31fcd5
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/Al-Cu-Mg/alcumg_hay.tdb,AL-CU-MG,yes,,24,LAVES_C14 LAVES_C15 LAVES_C36 LIQUID Q_PHASE S_PHASE T_PHASE V_MG2ZN11,all,20.9,fdd1e57749b7
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/Al-Cu-Sc/alcusc_bo.tdb,AL-CU-SC,yes,,20,LIQUID TAU1 TAU2,all,12.6,b354dc66112c
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/Al-Cu-Si/AlCuSi-15Hal-final.tdb,AL-CU-SI,yes,,21,BCC_A2 CU15SI4_D86 CU33SI7_A13 CU33SI7_HT CU3SI_HT CU3SI_LT CU3SI_MT FCC_A1 GAMMA_D82 GAMMA_D83 HCP_A3 LIQUID,all,20.0,c02878968fe3
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/Al-Cu-Y/Al-Cu-Y.tdb,AL-CU-Y,yes,,32,AL2Y AL42CU68Y10 AL45CU65Y10 AL7CU2Y3 AL8CU4Y ALCU11Y3 ALCU17Y2 ALCU5Y ALCUY CU6Y LIQUID L_AL3Y L_CU2Y,all,16.3,a9575c77aa5b
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/Al-Cu-Y/easier_user_input/Al-Cu-Y.tdb,AL-CU-Y,yes,,32,AL2Y AL42CU68Y10 AL45CU65Y10 AL7CU2Y3 AL8CU4Y ALCU11Y3 ALCU17Y2 ALCU5Y ALCUY CU6Y LIQUID L_AL3Y L_CU2Y,all,16.3,a9575c77aa5b
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/Al-Cu-Zn/Lia_2016.tdb,AL-CU-ZN,yes,,17,AL5CU4ZN BCC DELTA EPS FCC GAMMA1 GAMMA2 LIQUID,all,11.8,fc248037180d
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/Al-Fe-Mn/Bur_2015.TDB,AL-FE-MN,yes,,21,A1_FCC A2_BCC AL12MN AL13FE4 AL2FE AL4MN AL5FE2 AL6MN AL8MN5 B2_BCC BCC_4SL CBCC_A12 CUB_A13 FCC_4SL HCP_A3 LIQUID,all,27.6,12658a899759
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/Al-Fe-Mn/PrecHiMn-04.tdb,AL-C-FE-MN-N-NB-SI-TI-V,yes,,93,A1_FCC A2_BCC AL12MN AL13FE4 AL2FE AL4MN_MU AL5FE2 AL6MN_D2H AL8MN5_D810 BCC_2SL BCC_4SL BCC_A2 C14_LAVES CBCC_A12 CEMENTITE_D011 CUB_A13 FCC_4SL FCC_A1 FE4N_L1 FE8SI2C HCP_A3 KAPPA_E21 LIQUID M23C6_D84 M3SI M5C2 M5SI3_D88 M7C3_D101 MSI_B20 MU_D85 SIGMA_D8B SIGMA_OLD TI2N_C4,all,197.2,0daae5c79d75
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/Al-Li-Mg/al-li-mg.TDB.txt,AL-LI-MG,yes,,11,AL2LI3 ALLI ALMG_BETA ALMG_GAMMA BCC_A2 FCC_A1 HCP_A3 LIQUID TAO,all,12.3,5404c857b31b
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/Al-Mg/Al-Mg_Zhong.tdb,AL-MG,yes,,6,,all,4.6,d7ce188c2148
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/Al-Mg/easier_user_input/Al-Mg_Zhong.tdb,AL-MG,yes,,6,,all,4.6,d7ce188c2148
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/Al-Mg-Si/almgsi_lac.tdb,AL-MG-SI,yes,,8,LIQUID,all,8.9,5f983071bb6d
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/Al-Mg-Zn/Qiu_2015.TDB,AL-B-C-CE-CU-FE-HF-LI-MG-MN-N-ND-NI-O-SI-SN-TA-TI-V-Y-ZN-ZR,no,'utf-8' codec can't decode byte 0xfc in position 193546: invalid start byte,,,,189.4,fcd01db7f07a
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/Al-Mg-Zn/Qiu_2015_en.TDB,AL-B-C-CE-CU-FE-HF-LI-MG-MN-N-ND-NI-O-SI-SN-TA-TI-V-Y-ZN-ZR,yes,,221,AL12MG17 AL13FE4 AL4MN AL4SIC4 AL6MN AL8MN5_D810 AL8SIC7 ALCULI_R ALCULI_T1 ALCULI_T2 ALCULI_TB ALCUZN_T ALCU_DELTA ALCU_EPSILON ALCU_ETA ALCU_ZETA ALFA_ALFEMNSI ALFESI_ALPHA ALFESI_BETA ALFESI_DELTA ALFESI_GAMMA ALFESI_TAU ALFESI_TAU1 ALFESI_TAU23 ALLIMG_TAU ALMGMN_T ALMG_BETA ALMG_GAMMA ALMNSI_ALPHA ALMNSI_BETA ALMNSI_DELTA ALM_D019 ALSNZR ALTI B2M B4C B4M3 BCC_A2 BCC_B2 BM CU6Y CUMGSI_SIGMA CUMGSI_TAU CUZN_GAMMA FCC_A1 GAMMA_H HCP_A3 HCP_ZN LAVES_C14 LAVES_C15 LAVES_C36 LIQUID MG2ZN11 MG2ZN3 MGZN PHI PI_ALFEMGSI QPHASE Q_ALCUMGSI SIGMA SPHASE TAU TI2ALN TI3AL2N2 TI3ALN VPHASE,all,189.4,721b7590bf0a
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/Al-Mg-Zn/modified_almgzn_hay.tdb,AL-MG-ZN,yes,,14,ALMG_B ALMG_G FCC_A1 LAVES_C14 LIQUID MG12ZN13 MG2ZN11 MG2ZN3 PHI TAU,all,18.4,8485557ced31
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/Al-Mo-Si/almosi_liu.tdb,AL-MO-SI,yes,,14,C40 C54 MO3ALSI MO5SI3 MOSI2_C11B,all,11.3,e3e3a5625bcf
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/Al-Ti-V/AlTiV.TDB,AL-TI-V,yes,,17,AL3M AL8V5 ALTI BCC_4SL BCC_A2 FCC_A1 HCP_A3 LIQUID,all,24.0,73f9eab29a44
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/Al-Ti-V/PrecHiMn-04.tdb,AL-C-FE-MN-N-NB-SI-TI-V,yes,,93,A1_FCC A2_BCC AL12MN AL13FE4 AL2FE AL4MN_MU AL5FE2 AL6MN_D2H AL8MN5_D810 BCC_2SL BCC_4SL BCC_A2 C14_LAVES CBCC_A12 CEMENTITE_D011 CUB_A13 FCC_4SL FCC_A1 FE4N_L1 FE8SI2C HCP_A3 KAPPA_E21 LIQUID M23C6_D84 M3SI M5C2 M5SI3_D88 M7C3_D101 MSI_B20 MU_D85 SIGMA_D8B SIGMA_OLD TI2N_C4,all,197.2,0daae5c79d75
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/Al-Ti-V/Ti-M.TDB_V2.txt,AL-CR-MO-NB-TI-V,yes,,5,,missing: CR MO NB TI V,25.1,c75c09c16e98
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/Al-Ti-V/altiv_Lu.tdb,AL-TI-V,yes,,15,AL3TI_L AL8V5 ALTI ALTI3_D019 BCC_A2 HCP_A3 LIQUID,all,19.3,bfac98260ff4
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/B-Fe-Nd/Nd-Fe-B.TDB,B-FE-ND,yes,,16,BCC_A2 FCC_A1 FE14ND2B FE2ND5B6 FE4NDB4 LIQUID,all,11.3,a9fcd84995e0
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/B-Fe-Nd/Nd-mag-STAM_en.TDB,AL-B-CO-CU-DY-FE-GA-ND,yes,,111,AL2DY ALCUFE_P ALCUFE_T ALCUFE_W ALPHA_CUND BCC_A2 BETA_CUND CO17DY2 CU2DY CUDY FCC_A1 FE13ND6CU FE2ND5B6 FE4NDB4 LAV_C16 LIQUID ND2FE14B TAU1 TAU2 TAU3 TAU4 TAU5 TAU6 TAU7,all,66.1,2da8028187d8
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/B-Fe-Nd/bfend_hal.tdb,B-FE-ND,yes,,16,BCC_A2 FE14ND2B FE2ND5B6 FE4NDB4 LIQUID,all,15.7,b94f679e1d59
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/Bi-Ce-Fe/febice.tdb,BI-CE-FE,yes,,11,,all,8.5,ec479207ee57
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/C-Cr-Fe/CORRECTdatabase.txt,C-CO-CR-FE-HF-NB-NI-TA-TI-W-ZR,yes,,56,BCC_A2 C14 CEMENTITE FCC_A1 HCP_A3 KSI_CARBIDE LIQUID M12C M23C6 M6C M7C3 MU R_PHASE SIGMA,all,63.9,eafea7749550
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/C-Cr-Fe/Enriched_dataseTDB_V2.txt,C-CO-CR-FE-HF-NB-NI-TA-TI-W-ZR,yes,,48,BCC_A2 C14 CEMENTITE FCC_A1 HCP_A3 KSI_CARBIDE LIQUID M12C M23C6 M6C M7C3 MU R_PHASE SIGMA,missing: TI,58.8,0f779ec6d587
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/C-Cu-Fe/FeCuC.tdb,C-CU-FE,yes,,13,FCC_A1 LIQUID,all,8.6,82e1500fdabe
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/Co-Cr-W/Kap_2015.tdb,CO-CR-W,yes,,8,FCC_A1 MU_PHASE R_PHASE SIGMA,all,10.1,8b8079e7c234
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/Cr-Fe-Mo/steel1.TDB,C-CR-FE-MO-SI-V,yes,,40,BCC_A2 CEMENTITE CHI_A12 CR2VC2 FCC_A1 FE8SI2C HCP_A3 KSI_CARBIDE LIQUID M23C6 M3C2 M6C M7C3 MONI_DELTA MU_PHASE P_PHASE R_PHASE SIGMA,all,55.4,3862e1ced8bc
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/Cr-Fe-Ni/CORRECTdatabase.txt,C-CO-CR-FE-HF-NB-NI-TA-TI-W-ZR,yes,,56,BCC_A2 C14 CEMENTITE FCC_A1 HCP_A3 KSI_CARBIDE LIQUID M12C M23C6 M6C M7C3 MU R_PHASE SIGMA,all,63.9,eafea7749550
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/Cr-Fe-Ni/CoCrFeNiV.TDB-R3.txt,CO-CR-FE-NI-V,yes,,12,BCC_A2 FCC_A1 HIGH_SIGMA LIQUID M3V SIGMA,all,31.7,39d895ecc22b
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/Cr-Fe-Ni/Enriched_dataseTDB_V2.txt,C-CO-CR-FE-HF-NB-NI-TA-TI-W-ZR,yes,,48,BCC_A2 C14 CEMENTITE FCC_A1 HCP_A3 KSI_CARBIDE LIQUID M12C M23C6 M6C M7C3 MU R_PHASE SIGMA,missing: TI,58.8,0f779ec6d587
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/Cr-Fe-Ni/crfeni_lee.tdb,CR-FE-NI,yes,,3,BCC_A2 FCC_A1 LIQUID,missing: CR FE NI,9.3,933b245937be
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/Cr-Fe-Ni/crfeni_mie.tdb,CR-FE-NI,yes,,5,BCC_A2 FCC_A1 LIQUID SIGMA,missing: CR FE NI,12.1,560f0ccf0368
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/Cr-Fe-Ni/saf2507.TDB,CR-FE-MN-MO-N-NI,yes,,29,BCC_A2 CHI_A12 FCC_A1 HCP_A3 LIQUID MONI_DELTA MU_PHASE PI P_PHASE R_PHASE SIGMA,all,50.1,1246785fe7fa
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/Cr-Fe-Ti/crfeti_wan.tdb,CR-FE-TI,yes,,10,BCC_A2 BCC_B2 C14 C15 C36 LIQUID TI5CR7FE17,all,17.4,0c6d964d66a8
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/Cr-Ge-Mn/Ber_2015.TDB,CR-GE-MN-SI,yes,,32,A15_CR3SI B20_MNSI CR11GE19 CUB_A13 D8M_CR5SI3 MN11GE8 SIGMA,all,25.1,d51d7d83197e
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/Cr-Ge-Si/Ber_2015.TDB,CR-GE-MN-SI,yes,,32,A15_CR3SI B20_MNSI CR11GE19 CUB_A13 D8M_CR5SI3 MN11GE8 SIGMA,all,25.1,d51d7d83197e
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/Cu-Fe-Ti/CuFeTi_database.TDB,CU-FE-TI,yes,,17,BCC_A2 BCC_B2 CU3TI2 CUTI2 LAVES_PHASE LIQUID T1CU2TI T2CU3TI2 T3CU4TI3 TAO4 TAO5,all,17.9,b6d3a4cc40f4
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/Cu-Ni-Ti/cuniti_zhu.tdb,CU-NI-TI,yes,,19,BCC_A2 BCC_B2 CU2TI CU3TI2 CU4TI CU4TI3 CUNI14TI5_BAPB3_TAO4 CUNI2TI_CU3SB_TAO5 CUNI2TI_TIAL3_TAO6 CUNITI_MOSI2_TAO1 CUTI2 CUTI_B11 FCC_A1 LIQUID NI3TI_ETA NITI2 TAO2 TAO3,all,19.9,4ed9857a5acc
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/Cu-Pb-Sn/Mie_2010.TDB,CU-PB-SN,yes,,6,LIQ,all,6.2,8fdc6766d34b
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/Fe-Mn-Nb/FeMnNb.TDB,FE-MN-NB,yes,,8,MU_D85,all,14.5,3dfcc00b0d9b
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/Fe-Si-Zn/Sha_2010.TDB,FE-SI-ZN,no,'utf-8' codec can't decode byte 0xc8 in position 5849: invalid continuation byte,,,,17.5,9174363c0d20
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/Fe-Si-Zn/Sha_2010_en.TDB,FE-SI-ZN,yes,,16,BCC_A2 DELTA GAMMA GAMMA1 ZETA,all,17.5,f8d3442278da
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/Fe-Ti-V/FETIVRE.TDB,FE-TI-V,yes,,7,B2 BCC_A2 C14 FCC_A1 HCP_A3 LIQUID SIGMA,all,18.4,96a2eb762de4
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/Ga-Sb-Zn/gasbzn_der.tdb,GA-SB-ZN,yes,,11,LIQUID,all,8.1,5d05ca5fca1e
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/LiCoO2-CoO2/LICOO2-COO2.TDB,CO-LI-O-V,yes,,12,O2_ORDER O3_ORDER T2_ORDER,all,8.7,f38120558c05
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/LiNiO2-NiO2/LiNiO2-NiO2.TDB.txt,LI-NI-O-V,yes,,5,O3_ORDER,all,5.7,6b113e5344a5
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/Mo-Nb-Ta/monbta_xiong.tdb,MO-NB-TA,yes,,2,BCC_A2 LIQUID,all,5.6,39ccb11227a1
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/Mo-Ni-Re/Cri_2015.TDB,CR-MO-NI-RE,yes,,4,SIGMA,all,75.5,a0b1c7000259
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/N-Si-Ti/PrecHiMn-04.tdb,AL-C-FE-MN-N-NB-SI-TI-V,yes,,93,A1_FCC A2_BCC AL12MN AL13FE4 AL2FE AL4MN_MU AL5FE2 AL6MN_D2H AL8MN5_D810 BCC_2SL BCC_4SL BCC_A2 C14_LAVES CBCC_A12 CEMENTITE_D011 CUB_A13 FCC_4SL FCC_A1 FE4N_L1 FE8SI2C HCP_A3 KAPPA_E21 LIQUID M23C6_D84 M3SI M5C2 M5SI3_D88 M7C3_D101 MSI_B20 MU_D85 SIGMA_D8B SIGMA_OLD TI2N_C4,all,197.2,0daae5c79d75
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/Nb-Ni-V/Ni-Nb-V-R3.TDB,NB-NI-V,yes,,10,BCC_A2 C14 FCC_A1 LIQUID MU_PHASE NBNI3 NI3V SIGMA,all,11.5,3495c4798c5d
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/Nb-Re/easier_user_input/nbre_liu.tdb,NB-RE,yes,,6,,all,6.3,a4967ac4b924
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/Nb-Re/nbre_liu.tdb,NB-RE,yes,,6,,all,6.3,a4967ac4b924
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/template/case.TDB,CR-MO-NI-RE,yes,,4,SIGMA,all,75.5,a0b1c7000259
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/Ag-Gd-Mg_incomplete_TDB_file/modified_Che_2015.tdb,AG-GD-MG,yes,,16,GDMG5 LIQUID X_PHASE,all,9.4,4d8389dcac20
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/Ag-In-Sn/AgInSn.TDB,AG-CU-IN-SN,yes,,1,LIQUID,missing: AG CU IN SN,4.5,9f613404f55c
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/Ag-In-Sn/AgSbSn.tdb,AG-BI-CU-PB-SB-SN,yes,,15,FCC_A1 HCP_A3 LIQUID,all,19.2,edd91402c25d
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/Ag-Sn-Zn/modified_ASZ_Last.TDB,AG-SN-ZN,yes,,11,AGZN_BRASS FCC_A1 LIQUID,all,15.1,a3a0c37d964e
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/Al-C-Fe/AlCFe_thermo.TDB,AL-C-FE,yes,,15,A1_KAPPA BCC_4SL BCC_B2 FCC_4SL FCC_A1 KAPPA LIQUID,all,27.1,d57fbdfd8f8b
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/Al-C-Mg_incomplete_TDB_file/modified_AlCMg_PANDAT.tdb,AL-C-MG,yes,,12,AL2MGC2 AL4C3,all,7.8,5ea8a9d7973d
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/Al-C-Mg_incomplete_TDB_file/modified_AlCMg_THERMOCALC.tdb,AL-C-MG,yes,,12,AL2MGC2 AL4C3,all,11.8,3dcbefa30c8e
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/Al-C-Mn/AlCMn.TDB,AL-C-MN,yes,,23,A1_KAPPA BCC_B2 FCC_4SL FCC_A1 HCP_A3 KAPPA LIQUID,all,18.9,0b46894eac69
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/Al-Co-Cr/alcocrni.tdb,AL-CO-CR-NI,yes,,23,AL3NI2 BCC_A2 BCC_B2 FCC_A1 L12_FCC LIQUID SIGMA_SGTE,all,58.4,5dd18f31fcd5
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/Al-Co-Gd/Li_2016.TDB,AL-CO-GD,yes,,23,AL2GD CO17GD2 CO2GD CO3GD4 CO5GD COGD3 DELTA THETA,all,12.4,ea0cda6639aa
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/Al-Cu-Fe/Al-Cu-Fe.TDB,AL-CU-FE,yes,,21,AL13FE4 AL2FE AL5FE2 ALCU_EPSILON ALCU_ETA BCC_A2 BCC_B2 FCC_A1 GAMMA_D83 GAMMA_H LIQUID TS01T1 TS01T2 TS01T3 TS01TI,all,15.7,b552ef4b1aec
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/Al-Fe-Nb/ALFENB-B2-2SL.TDB,AL-FE-NB,yes,,14,AL8FE5 ALNB2 B2_2SL BCC_A2 FCC_A1 HCP_A3 LIQUID L_C14 MU_4SL,all,20.9,426b39c8d8a5
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/Al-Fe-O/Al-Fe-O_Lindwall_etal.TDB,AL-FE-O,yes,,13,AL1FE1O3 BCC_A2 BCC_B2 CORUNDUM FCC_A1 HALITE IONIC_LIQ SPINEL_B,missing: O,42.5,2d7f1aba3e10
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/Al-Fe-P_incomplete_TDB_file/modified_Wu_2012.TDB,AL-FE-P,yes,,15,,all,15.7,40e8060b4fe1
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/Al-Mg-Sn/MG-AL-SN-TDB.txt,AL-MG-SN,yes,,8,LIQUID,all,8.3,c4b6e9bbea8a
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/Al-Ni-Pt/Liu_2016.TDB,AL-NI-PT,yes,,16,AL3NI2 BCC_A2 BCC_B2 FCC_A1 FCC_L10 FCC_L12 LIQUID PTAL TERN_L10,all,32.4,75f2832f1101
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/Al-Si-Zn/alsizn_jac.tdb,AL-SI-ZN,yes,,5,,all,11.5,9da98f44eb93
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/Au-Ce-Sn/AuCeSn.TDB,AU-CE-SN,yes,,34,AU2CE AU2CESN2_SIX AU2CESN_THREE AU3CE2SN4_SEVEN AU4CE3SN2_TWO AU51CE14 AU5CESN_ONE AUCE5SN3_FIVE AUCESN_FOUR AUCE_BETA CE3SN5 CE5SN3 CE5SN4 CESN3,all,19.8,e915cd05b019
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/Au-Ni-Sn/AuNiSn.tdb,AU-NI-SN,yes,,20,AU10SN_BETAL AU5SN AUNI2SN4 AUSN4_ETAL BCC_A2 HCP_A3 NI3SN2,all,20.6,08c8f9a4fade
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/Au-Pt-Sn/aupt_gro.tdb,AU-PT-SN,yes,,16,AUPTSN2_DELTA FCC_A1 LIQUID TAU,all,11.2,7938b1256d49
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/Bi-Fe-Ti_incomplete_TDB_file/modified_fe-ti-bi.TDB,BI-FE-TI,yes,,13,BI2FETI4,all,16.4,c548ac087f4a
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/Bi-Mg-Sn/BI-MG-SN.TDB,BI-MG-SN,yes,,7,BI2MG3_H LIQUID MG2SN,all,8.7,395504dbcfaf
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/C-Co-Cr/Co-Cr-C-2014-05-30.TDB,C-CO-CR,yes,,10,BCC_A2 FCC_A1 HCP_A3 LIQUID M23C6 M3C2 M7C3,all,14.7,8731c441716b
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/C-Cr-Nb/Pen_2016.TDB,C-CR-NB,yes,,9,FCC_A1 HCP_A3 LIQUID,all,9.8,7fbc4c7070f3
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/C-Fe-Mn/FeMnC-11Dju.tdb,C-FE-MN,yes,,12,CBCC_A12 CEMENTITE_D011 CUB_A13 FCC_A1 HCP_A3 LIQUID M23C6_D84 M5C2 M7C3_D101,all,18.5,fad29f996243
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/C-Hf-Ta/Pan_2016.tdb,C-HF-TA,yes,,6,BCC_A2 FCC_A1 HCP_A3 LIQUID,all,11.2,31240430dc0e
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/C-Mo-Nb/Zha_2015.TDB,C-MO-NB,yes,,7,BCC_A2 FCC_A1 HCP_A3 LIQUID MC_ETA,all,8.1,94b3faf0bfc1
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/C-Mo-W/C-Mo-W-N.tdb,C-MO-N-W,yes,,8,BCC_A2 FCC_A1 HCP_A3 LIQUID MC_ETA MC_SHP,all,17.5,6b1bc5bcfe9e
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/Ca-Mg-S/Ca-Fe-Mg-Mn_Dil_2016.TDB,CA-FE-MG-MN-S,yes,,12,ALABANDITE IONIC_LIQ PYRITE PYRRHOTITE,all,23.9,7396b264805c
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/Ca-O-S/FeCaOS.TDB.txt,CA-FE-O-S,yes,,24,ALABANDITE ANHYDRITE C1A6 C2F C4WF4 C4WF8 CA3S3FE4OX CASFEO CF CF2 CORUNDUM CW3F CWF HALITE IONIC_LIQ SPINEL,all,42.8,d443aefbde67
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/Ca-Pt-Sb/GAPTSB-re2.TDB,GA-PT-SB,yes,,23,FCC_A1 GA2PT GA3PT2 GA3PT5 GA6PT GA7PT3 GAPT GAPT2 GAPT3 LIQUID PT3SB PT3SB2 PT7SB PTSB PTSB2,all,13.8,f05bf6490f32
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/Ce-Co-Sb/Ce-Co-Sb.TDB_V2.txt,CE-CO-SB,yes,,22,BCC_A2 CECOSB2 CECOSB3 CESB FCC_A1 LIQUID,all,11.3,4fe8e36b1231
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/Ce-Cu-Sn/cesncu.tdb,CE-CU-SN,yes,,32,CE11SN10 LIQUID T1CE5CUSN3 T2CECUSN T3CE3CU4SN4 T4CECUSN T5CECUSN2 T6CECU2SN2 T7CECU9SN4 T8CE2CU9SN3 T9CECU5SN,all,14.4,0688473f86d4
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/Ce-Fe-Sb/Zhu_2019.TXT,CE-FE-SB,yes,,17,CE2FE4SB5 CEFE4SB12 CEFESB2 CESB FESB LIQUID,all,12.1,fdccca593c74
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/Ce-La-Mg/celamg_guo.tdb,CE-LA-MG,yes,,11,B2 BCC LIQUID RMG12,all,13.1,d09d483c41cc
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/Co-Cr-Ti/co-cr-ti.TDB,CO-CR-TI,yes,,12,BCC_A2 BCC_B2 CHI FCC_A1 HCP_A3 L12_FCC LAVES_C15 LAVES_C36 LIQUID SIGMA,all,17.7,30be9c1133b0
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/Co-Fe-O/model2-f.TDB,CO-FE-O,yes,,13,C2F3O4 CORUNDUM F3C2F3 HALITE IONIC_LIQUID SPINEL,all,23.0,6049caafad74
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/Co-Fe-Sb/co-fe-sb.TDB,CO-FE-SB,yes,,9,BCC_A2 BCC_B2 COFESB COFESB2 COFESB3 FCC_A1 HCP_A3 LIQUID,all,17.7,a2d087eb5d87
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/Co-Gd-Ti_incomplete_TDB_file/modified_Mat_2016.tdb,CO-GD-TI,yes,,16,CO17GD2 CO2TI_C15 CO3GD CO7GD2 LIQUID TAU,missing: CO GD TI,21.0,2a3fb3ea5199
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/Co-Mo-W/Co-Mo-W.TDB,CO-MO-W,yes,,17,MU_PHASE R_PHASE SIGMA,all,16.5,e27a66ab5bb5
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/Co-Ni-Ti/coniti-re1.txt,CO-NI-TI,yes,,15,B2 BCC_A2 C15 C36 E93 FCC_A1 L12 LIQUID NI3TI TAO,all,25.9,dd45262b11c1
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/Co-Ti-V/Zha_2018.TDB,CO-TI-V,yes,,1,,all,13.4,6835c9ccaba7
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/Cr-Nb-Sn/Laf_2019.txt,CR-NB-SN-ZR,yes,,14,A15 BCC_A2 LAVES_C14 LAVES_C15 LAVES_C36,all,26.0,21533df43b63
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/Cr-Nb-Zr/zr-nb-cr.tdb,CR-NB-ZR,yes,,6,BCC_A2 HCP_A3 LAVES_C14 LAVES_C15 LAVES_C36 LIQUID,missing: CR NB ZR,11.7,dc2043ae5575
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/Cr-O-Y/Cr-Y-O.tdb,CR-O-Y,yes,,11,CR2O3 CR3O4 IONIC_LIQUID YCRO3,all,17.3,17e0abbb388e
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/Cr-Si-V/Cha_2015.tdb,CR-SI-V,yes,,10,LIQUID M11SI8 M6SI5 MSI,all,10.3,a1bed23b3f88
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/Cr-Ti-V/crtiv_ghosh.tdb,CR-TI-V,yes,,6,BCC_A2 LAVES_C15 LAVES_C36,all,13.2,9b065d8cdb8e
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/Cu-Fe-Zr/Zr-Fe-Cu.txt,CU-FE-ZR,no,'utf-8' codec can't decode byte 0xa1 in position 14195: invalid start byte,,,,14.8,797d76ea9aa1
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/Cu-Fe-Zr/Zr-Fe-Cu_en.txt,CU-FE-ZR,yes,,16,CU51ZR14 CU8ZR3 CUZR2 FE23ZR6 FEZR3 LAVES_C15 LIQUID ZR2M ZRM,all,14.8,27bea5914f9c
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/Cu-La-Ni/La-Ni-Cu.tdb,CU-LA-NI,yes,,20,ALFA_NI7LA2 CU2LA CU85LA10NI5 CULA CUNI5LA LIQUID NI16LA7 NI3LA NI3LA2 NILA,missing: CU LA NI,8.6,ccb9164685a3
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/Fe-Mn-S/FeMnS.TDB,FE-MN-S,yes,,11,ALABANDITE IONIC_LIQ PYRITE PYRRHOTITE,all,14.8,a6015767562a
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/Fe-Nb-Ni/CORRECTdatabase.txt,C-CO-CR-FE-HF-NB-NI-TA-TI-W-ZR,yes,,56,BCC_A2 C14 CEMENTITE FCC_A1 HCP_A3 KSI_CARBIDE LIQUID M12C M23C6 M6C M7C3 MU R_PHASE SIGMA,all,63.9,eafea7749550
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/Fe-Nb-Ni/Enriched_dataseTDB_V2.txt,C-CO-CR-FE-HF-NB-NI-TA-TI-W-ZR,yes,,48,BCC_A2 C14 CEMENTITE FCC_A1 HCP_A3 KSI_CARBIDE LIQUID M12C M23C6 M6C M7C3 MU R_PHASE SIGMA,missing: TI,58.8,0f779ec6d587
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/Fe-Ni-V/Fe-Ni-V.tdb,FE-NI-V,yes,,14,BCC_A2 D022_NI3V FCC_A1 LIQUID SIGMA,all,19.2,9a200e0bd974
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/Fe-Ta-Ti/Yan_2019.txt,FE-TA-TI,yes,,7,BCC_A2 FE2TATI FE7TA6 FETI LIQUID,all,21.3,449583228b2d
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/H-La-Ni/La-Ni-H_Ya.tdb,H-LA-NI,yes,,16,LANI5H1-X LANI5H7,missing: H LA NI,7.1,5fa3b594ceea
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/H-Nd-Ni/Luo_2015.tdb,H-ND-NI,yes,,17,NDNI5 NDNI5H3 NDNI5H6,missing: H ND NI,9.0,932f96b82965
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/Li-Ni-Si/LISINI.TDB,LI-NI-SI,yes,,28,LI12NI108SI12 LI13NI40SI31 LI13NI9SI18 LI75NI20SI128 LINI2SI LINI6SI6,all,15.7,479521a9aff2
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/Mg-Mn-Ni/MgMnNi.TDB,H-MG-MN-NI,yes,,14,C36_LAVES HCP_A3 LIQUID MG3MNNI2,missing: H,24.5,6f1df999764c
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/Mg-Mn-Sr/Zho_2016.TDB,MG-MN-SR,yes,,13,,all,13.6,a0df9ebdd799
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/Mg-Sn-Sr/MgSnSr.TDB,MG-SN-SR,yes,,21,SNSR2_X,all,13.6,9d8e08d50735
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/Mo-Ni-W/Co-Mo-Ni.TDB,CO-MO-NI,yes,,10,FCC_A1 HCP_A3 MONI MU_PHASE,all,12.9,a9d5de08bda4
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/Mo-Ni-W/Mo-Ni-W.TDB,MO-NI-W,yes,,8,FCC_A1 MONI,all,7.6,781e64fbc73c
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/Mo-Ni-W/Nd-Fe-B.TDB,B-FE-ND,yes,,16,BCC_A2 FCC_A1 FE14ND2B FE2ND5B6 FE4NDB4 LIQUID,all,11.3,a9fcd84995e0
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/Mo-Ni-Zr/MoNiZr.tdb,MO-NI-ZR,yes,,18,FCC_A1 LAVES_C15 LIQUID MONI3 NI3ZR1 NI7ZR2 T1 T2,all,17.3,2853285db47b
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/N-Si-Zr/Sri_2018.TDB,N-SI-ZR,yes,,17,SI3ZR5N,all,12.1,3037e6a30258
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/N-Ti-Zr/TiZrN.TDB,N-TI-ZR,yes,,6,FCC_A1,all,9.6,25cddff8a07e
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/Nb-Ni-Si/dos_2015.tdb,NB-NI-SI,yes,,26,C14_NB2NI3SI E_NBNISI FCC_A1 G_NB6NI16SI7 H_NB3NI2SI NB7NI6 NI3NB T_NB4NISI V_NB4NI3SI7,all,18.2,b9bea654b955
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/Nb-Ni-V/Ni-Nb-V-R3.TDB,NB-NI-V,yes,,10,BCC_A2 C14 FCC_A1 LIQUID MU_PHASE NBNI3 NI3V SIGMA,all,11.5,3495c4798c5d
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/Nb-Si-Sn/NbSiSn.tdb,NB-SI-SN,yes,,12,BCC_A2 LIQUID NB3SI NB3SN NB5SI3 NB5SISN2,missing: SN,10.2,2de50e04a484
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/Nb-Si-W/NB-SI-W.TDB,NB-SI-W,yes,,8,BCC_A2 LIQUID NB3SI NB5SI3H NB5SI3L NBSI2 SI2W,all,9.9,7722b2dfc065
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/Ni-Sb-Sn/nisbsn_10.TDB,NI-SB-SN,yes,,17,BCC_A2 BCT_A5 FCC_A1 LIQUID NI3SB_DELTA NI3SN4 NI3SN_LT NI5SB2 NIAS_TYPE NISB2 NISBSN_TAU SB2SN3 SBSN,all,21.1,7238054aa15f
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/Ni-Ti-V/nitiv-re.txt,NI-TI-V,yes,,17,B2 BCC_A2 FCC_A1 LIQUID NI3TI NI3V SIGMA,all,21.5,e6a1dd6ac3c6
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/Sb-Sn-Zn/Zob_2015.tdb,SB-SN-ZN,yes,,15,EPSILON_SB3ZN4 LIQUID SB2SNZN,all,11.1,cd6fcf6b61fa
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/databases/AL_CU_MG_SI.tdb,AL-CU-MG-SI,yes,,3,AUCU_L10 GAMMA_L12,missing: AL CU MG SI,14.3,8f1096d205f8
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/databases/Al-Fe_sundman2009.tdb,AL-FE,yes,,15,B2_BCC BCC_4SL BCC_NOB BCC_VA FCC_4SL,all,22.2,828a4cb7ba12
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/databases/C-Cr-Cu-Fe-Mo-Nb-Ni-08-22.tdb,C-CR-CU-FE-MO-NB-NI,yes,,27,BCC_A2 DELTA D_NIMO FCC_A1 HCP_A3 HP24 LAVES LAVES_PHASE_C15 LIQUID MC_ETA MU_PHASE ORD_FCC SIGMA,all,277.8,7a7d2afdd7f7
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/databases/FeNi_deep_branching.tdb,FE-NI,yes,,2,,all,22.3,10091d561109
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/databases/ONBZRDATFILE.TDB,NB-O-ZR,yes,,11,IONIC_LIQ,all,21.5,298b2df226f6
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/databases/al2o3_nd2o3_zro2.tdb,AL-ND-O-ZR,yes,,11,BETA FLUO I_LIQUID ND2O3_A ND2O3_H ND2O3_X NDAP PYRO TETR,all,19.2,7718b8d591b9
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/databases/al_parameter.tdb,AL,yes,,1,,missing: AL,0.2,ca4998649bde
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/databases/alcfe_b2.tdb,AL-C-FE,yes,,2,B2_BCC,all,6.5,6984c0a65355
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/databases/alcocrni.tdb,AL-CO-CR-NI,yes,,23,AL3NI2 BCC_A2 BCC_B2 FCC_A1 L12_FCC LIQUID SIGMA_SGTE,all,58.4,5dd18f31fcd5
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/databases/alcrni.tdb,AL-CR-NI,yes,,5,BCC_A2 FCC_A1 L12_FCC LIQUID,all,13.0,f226fbbf40c5
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/databases/alfe.tdb,AL-FE,yes,,9,,all,8.7,d59a73a437df
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/databases/alfeo.tdb,AL-FE-O,yes,,12,AL1FE1O3 BCC_A2 BCC_B2 CORUNDUM FCC_A1 HALITE SPINEL_B,missing: O,40.0,bb4e3a57aa59
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/databases/alni_dupin_2001.tdb,AL-NI,yes,,8,AL3NI2 FCC_L12,all,11.8,ce3e7d23986a
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/databases/alni_tough_chempot.tdb,AL-NI,yes,,6,,all,12.1,01878f95a9e0
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/databases/alnifcc4sl.tdb,AL-NI,yes,,6,,all,10.6,db4f0859da35
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/databases/alnipt.tdb,AL-NI-PT,yes,,14,AL3NI2 ALPT BCC_B2 FCC_A1 FCC_L12 LIQUID,all,41.7,f385ea9ed090
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/databases/cfe_broshe.tdb,C-FE,yes,,8,,all,47.2,e59f9a8fe5dc
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/databases/crfe_bcc_magnetic.tdb,CR-FE,yes,,1,,all,1.1,72693b1c5e97
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/databases/crtiv_ghosh.tdb,CR-TI-V,yes,,6,BCC_A2 LAVES_C15 LAVES_C36,all,13.1,e079215b1e3d
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/databases/cumg.tdb,CU-MG,yes,,5,CU2MG,all,4.1,8870ab5b8b58
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/databases/cumg_parameters.tdb,CU-MG,yes,,5,,all,6.4,825def4c076a
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/databases/cuo.tdb,CU-O,yes,,5,IONIC_LIQ,all,5.4,16c14600ac21
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/databases/diffusion.tdb,AG-AL-BE-CA-CD-CE-EU-FE-GA-GD-IN-LA-MG-MN-ND-NI-PR-SB-SM-SN-U-Y-ZN,yes,,1,,missing: AG AL BE CA CD CE EU FE GA GD IN LA MG MN ND NI PR SB SM SN U Y ZN,4.7,dd5fa27187ae
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/databases/femn.tdb,FE-MN,yes,,1,,missing: MN,4.4,939bffdb7f86
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/databases/femns.tdb,FE-MN-S,yes,,1,IONIC_LIQ,missing: S,4.0,552a15e0f90c
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/databases/gibbs_phase_rule.tdb,C-FE,yes,,4,,all,3.9,e09bec96d537
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/databases/issue43.tdb,AL-CR-NI,yes,,2,FCC_A1 GAMMA_PRIME,all,4.9,9911503368b4
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/databases/mc_fecocrnbti.tdb,AL-B-C-CO-CR-CU-FE-H-HF-LA-MN-MO-N-NB-NI-O-P-PD-S-SI-TI-V-W-Y,yes,,122,BCC_A2 FCC_A1 LAVES_PHASE LIQUID SIGMA,all,53.2,7f8bcaccaa51
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/databases/parameter_filter_test.tdb,A-B-C,yes,,2,,missing: A B C,0.8,68b11a382cfa
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/databases/pbsn.tdb,PB-SN,yes,,3,,all,4.4,6bbbd02a49fd
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/databases/rose.tdb,B-BE-C-F-H-HE-LI-N-NE-O,yes,,1,TEST,missing: B BE C F H HE LI N NE O,23.5,3b60d6ee8209
+other_tdb/new_tdb/pycalphad-v.0.10.3-examples-main/test/databases/zrlayalo.tdb,AL-LA-O-Y-ZR,yes,,18,BETA_AL11LA1O18 FLUORITE IONIC_LIQ LA2O3_A LA2O3_H LA2O3_X LAAP_ALO3LA LAYP M2O3B M2O3C PYROCHLORE TETR YAG_AL5O12Y3 YAM_AL2O9Y4 YAP_ALO3Y ZR3Y4O12,all,29.2,e8d206849eb9
+other_tdb/new_tdb/steel1.TDB,C-CR-FE-MO-SI-V,yes,,40,BCC_A2 CEMENTITE CHI_A12 CR2VC2 FCC_A1 FE8SI2C HCP_A3 KSI_CARBIDE LIQUID M23C6 M3C2 M6C M7C3 MONI_DELTA MU_PHASE P_PHASE R_PHASE SIGMA,all,55.1,c7de6b7b07a6
+other_tdb/new_tdb/tdb-Courtney/HfNbTiV_BCC_PhaseForge_v1_Tindep.tdb,HF-NB-TI-V,yes,,2,,missing: HF NB TI V,5.9,6a6c471ffeb9
+other_tdb/new_tdb/tdb-Courtney/HfNbTiV_BCC_PhaseForge_v2_Tdep.tdb,HF-NB-TI-V,yes,,2,BCC_A2 HCP_A3,missing: HF NB TI V,11.5,ca8b53e40c38
+other_tdb/new_tdb/tdb-Courtney/HfNbTiV_BCC_PhaseForge_v3.tdb,HF-NB-TI-V,yes,,1,BCC_A2,missing: HF NB TI V,3.8,99ef53efa25d
+other_tdb/old_tdb/Al-Cu-Y.tdb,,no,Invalid TDB syntax.,,,,415.5,6d81eebb48f4
+other_tdb/old_tdb/Al-Fe_sundman2009.tdb,AL-FE,yes,,15,B2_BCC BCC_4SL BCC_NOB BCC_VA FCC_4SL,all,22.2,828a4cb7ba12
+other_tdb/old_tdb/Al-Mg_Zhong.tdb,,no,Invalid TDB syntax.,,,,271.4,d634238520a9
+other_tdb/old_tdb/AuSn-13Don.tdb,AU-SN,yes,,11,,all,10.9,57df00cf2b36
+other_tdb/old_tdb/COST507.tdb,AL-AR-B-C-CE-CR-CU-FE-HF-LI-MG-MN-MO-N-NB-ND-NI-O-SI-SN-TA-TI-V-W-Y-ZN-ZR,yes,,243,AL11MN4 AL12MN AL13FE4 AL2FE AL3M_D022 AL4MN AL4SIC4 AL5FE2 AL6MN AL8MN5_D810 AL8SIC7 ALCULI_R ALCULI_T1 ALCULI_T2 ALCULI_TB ALCUZN_T ALCU_DELTA ALCU_EPSILON ALCU_ETA ALCU_ZETA ALFESI_ALPHA ALFESI_BETA ALFESI_DELTA ALFESI_GAMMA ALFESI_TAU1 ALFESI_TAU3 ALMGMN_T ALMG_BETA ALMG_GAMMA ALMNSI_ALPHA ALMNSI_BETA ALMNSI_DELTA ALM_D019 ALSN2ZR5 ALTI B2M B4C B4M3 BCC_A2 BCC_B2 BM CU6Y CUB_A15 CUMGSI_SIGMA CUMGSI_TAU CUZN_GAMMA FCC_A1 GAMMA_H HCP_A3 HCP_ZN LAVES_C14 LAVES_C15 LAVES_C36 LIQUID MG2ZN11 MG2ZN3 MGZN PHI QPHASE SIGMA SPHASE TAU TI2ALN TI3AL2N2 TI3ALN VPHASE,missing: AR,289.5,6565f4d67695
+other_tdb/old_tdb/C_A_S_Fe_O_M.tdb,A-FE-L-M-N-O-Q-X,yes,,52,AKER ALPHA ALPHA_PRIME C2AS CAS2 CLINO HALITE LIQUID LOW_CLINO MER OLIVINE ORTHO PROTO SPINEL TERN WOLL YEL,missing: A L M N O Q X,51.1,8af53c051ae4
+other_tdb/old_tdb/CoV-20Wan.tdb,CO-V,yes,,10,,all,10.9,966a8f412c8d
+other_tdb/old_tdb/Cr-Fe-Ni_shallow_bcc.tdb,CR-FE-NI,yes,,1,BCC_A2,all,2.9,dffeb4a0cac7
+other_tdb/old_tdb/CrFeNb_Jacob2016.tdb,,no,Invalid TDB syntax.,,,,369.0,3c77c5c1b5ab
+other_tdb/old_tdb/Fe-O.tdb,,no,Invalid TDB syntax.,,,,445.6,6462bdb79637
+other_tdb/old_tdb/FeMn-04Wit.tdb,FE-MN,yes,,6,,all,8.1,df83d8360609
+other_tdb/old_tdb/FeMn-19Big-3g.tdb,FE-MN,yes,,6,,all,13.3,fc3b68475c2b
+other_tdb/old_tdb/FeMn-23Jac.tdb,FE-MN,yes,,6,,all,8.1,b1d4b760eabb
+other_tdb/old_tdb/FeNi_deep_branching.tdb,FE-NI,yes,,2,,all,22.3,10091d561109
+other_tdb/old_tdb/KLiNdCl.tdb,CL-K-LI-ND,yes,,8,HALITE IONIC_LIQUID K2NDCL5 K3NDCL6 KND2CL7 LIND2CL7,missing: CL,11.7,583ad380a975
+other_tdb/old_tdb/LaSi-10Zho.tdb,LA-SI,yes,,12,,all,7.1,40aef7ee33d5
+other_tdb/old_tdb/NI_AL_DUPIN_2001.TDB,,no,Invalid TDB syntax.,,,,334.5,c983327b96b9
+other_tdb/old_tdb/Nd-Fe-B.TDB,B-FE-ND,yes,,16,BCC_A2 FCC_A1 FE14ND2B FE2ND5B6 FE4NDB4 LIQUID,all,11.6,97074741db5b
+other_tdb/old_tdb/TiO-17Yan.tdb,O-TI,yes,,21,B1_OXIDE RUTILE_C4 TI10O19 TI20O39 TI3O2 TI3O5 TI4O7 TI5O9 TI6O11 TI7O13 TI8O15 TI9O17,all,19.1,f79af7f26633
+other_tdb/old_tdb/al2o3_nd2o3_zro2.tdb,AL-ND-O-ZR,yes,,11,BETA FLUO I_LIQUID ND2O3_A ND2O3_H ND2O3_X NDAP PYRO TETR,all,19.2,7718b8d591b9
+other_tdb/old_tdb/al_parameter.tdb,AL,yes,,1,,missing: AL,0.2,ca4998649bde
+other_tdb/old_tdb/alcfe_b2.tdb,AL-C-FE,yes,,2,B2_BCC,all,6.5,6984c0a65355
+other_tdb/old_tdb/alcocrni.tdb,AL-CO-CR-NI,yes,,23,AL3NI2 BCC_A2 BCC_B2 FCC_A1 L12_FCC LIQUID SIGMA_SGTE,all,58.4,5dd18f31fcd5
+other_tdb/old_tdb/alcrni.tdb,AL-CR-NI,yes,,5,BCC_A2 FCC_A1 L12_FCC LIQUID,all,13.0,f226fbbf40c5
+other_tdb/old_tdb/alcuzr-viscosity.tdb,,no,Invalid TDB syntax.,,,,266.6,c8f1e5e15fb2
+other_tdb/old_tdb/alfe.tdb,AL-FE,yes,,9,,all,8.7,d59a73a437df
+other_tdb/old_tdb/alfe_sei.tdb,,no,Invalid TDB syntax.,,,,303.9,1fdaf97d041f
+other_tdb/old_tdb/alfeo.tdb,AL-FE-O,yes,,12,AL1FE1O3 BCC_A2 BCC_B2 CORUNDUM FCC_A1 HALITE SPINEL_B,missing: O,40.0,bb4e3a57aa59
+other_tdb/old_tdb/alni_dupin_2001.tdb,AL-NI,yes,,8,AL3NI2 FCC_L12,all,11.8,ce3e7d23986a
+other_tdb/old_tdb/alni_tough_chempot.tdb,AL-NI,yes,,6,,all,12.1,01878f95a9e0
+other_tdb/old_tdb/alnifcc4sl.tdb,AL-NI,yes,,6,,all,10.6,db4f0859da35
+other_tdb/old_tdb/alnipt.tdb,AL-NI-PT,yes,,14,AL3NI2 ALPT BCC_B2 FCC_A1 FCC_L12 LIQUID,all,41.7,f385ea9ed090
+other_tdb/old_tdb/alzn_mey.tdb,,no,Invalid TDB syntax.,,,,268.7,c37c8f1c1d94
+other_tdb/old_tdb/cfe_broshe.tdb,C-FE,yes,,8,,all,47.2,e59f9a8fe5dc
+other_tdb/old_tdb/crfe_bcc_magnetic.tdb,CR-FE,yes,,1,,all,1.1,72693b1c5e97
+other_tdb/old_tdb/crtiv_ghosh.tdb,CR-TI-V,yes,,6,BCC_A2 LAVES_C15 LAVES_C36,all,13.1,e079215b1e3d
+other_tdb/old_tdb/cumg.tdb,CU-MG,yes,,5,CU2MG,all,4.1,8870ab5b8b58
+other_tdb/old_tdb/cumg_parameters.tdb,CU-MG,yes,,5,,all,6.4,825def4c076a
+other_tdb/old_tdb/cuo.tdb,CU-O,yes,,5,IONIC_LIQ,all,5.4,16c14600ac21
+other_tdb/old_tdb/diffusion.tdb,AG-AL-BE-CA-CD-CE-EU-FE-GA-GD-IN-LA-MG-MN-ND-NI-PR-SB-SM-SN-U-Y-ZN,yes,,1,,missing: AG AL BE CA CD CE EU FE GA GD IN LA MG MN ND NI PR SB SM SN U Y ZN,4.7,dd5fa27187ae
+other_tdb/old_tdb/fe-ti-bi.TDB,BI-FE-TI,no,"C_S does not match ['DISORDERED_PART', 'MAGNETIC', 'NEVER_DISORDER']",,,,16.0,8ff1ee26e15c
+other_tdb/old_tdb/febice.tdb,BI-CE-FE,yes,,11,,all,8.7,417d02407ba4
+other_tdb/old_tdb/femn.tdb,FE-MN,yes,,1,,missing: MN,4.4,939bffdb7f86
+other_tdb/old_tdb/femns.tdb,FE-MN-S,yes,,1,IONIC_LIQ,missing: S,4.0,552a15e0f90c
+other_tdb/old_tdb/gibbs_phase_rule.tdb,C-FE,yes,,4,,all,3.9,e09bec96d537
+other_tdb/old_tdb/halite_tivo.tdb,O-TI-V,yes,,1,HALITE_B1,all,3.8,a36efb1d15b8
+other_tdb/old_tdb/ionic_liquid_metal_minimal.tdb,HF-NB,yes,,2,,all,2.1,9707b514905c
+other_tdb/old_tdb/issue43.tdb,AL-CR-NI,yes,,2,FCC_A1 GAMMA_PRIME,all,4.9,9911503368b4
+other_tdb/old_tdb/mc_fe_v2.059.pycalphad.tdb,,no,Invalid TDB syntax.,,,,994.5,88ea2524fa5e
+other_tdb/old_tdb/mc_fecocrnbti.tdb,AL-B-C-CO-CR-CU-FE-H-HF-LA-MN-MO-N-NB-NI-O-P-PD-S-SI-TI-V-W-Y,yes,,122,BCC_A2 FCC_A1 LAVES_PHASE LIQUID SIGMA,all,53.2,7f8bcaccaa51
+other_tdb/old_tdb/mc_ni_v2.034.tbd,AL-B-C-CO-CR-CU-FE-HF-LA-MN-MO-N-NB-NI-O-S-SI-TI-V-W-Y-ZR,no,Invalid TDB syntax.,,,,375.2,46278b0c093b
+other_tdb/old_tdb/mmc1.TDB,AL-B-C-CE-CU-FE-HF-LI-MG-MN-N-ND-NI-O-SI-SN-TA-TI-V-Y-ZN-ZR,no,'utf-8' codec can't decode byte 0xfc in position 193546: invalid start byte,,,,189.4,fcd01db7f07a
+other_tdb/old_tdb/mmc1.TDB 2,AL-B-C-CE-CU-FE-HF-LI-MG-MN-N-ND-NI-O-SI-SN-TA-TI-V-Y-ZN-ZR,no,'utf-8' codec can't decode byte 0xfc in position 193546: invalid start byte,,,,189.4,fcd01db7f07a
+other_tdb/old_tdb/mmc1.TDB 3,AL-FE-P,yes,,15,,all,11.7,c079aaca13f0
+other_tdb/old_tdb/mmc1.TDB 4,AL-B-C-CE-CU-FE-HF-LI-MG-MN-N-ND-NI-O-SI-SN-TA-TI-V-Y-ZN-ZR,no,'utf-8' codec can't decode byte 0xfc in position 193546: invalid start byte,,,,189.4,fcd01db7f07a
+other_tdb/old_tdb/nbre_liu.tdb,,no,Invalid TDB syntax.,,,,283.4,c1724cc5babf
+other_tdb/old_tdb/parameter_filter_test.tdb,A-B-C,yes,,2,,missing: A B C,0.8,68b11a382cfa
+other_tdb/old_tdb/pbsn.tdb,PB-SN,yes,,3,,all,4.4,6bbbd02a49fd
+other_tdb/old_tdb/rose.tdb,B-BE-C-F-H-HE-LI-N-NE-O,yes,,1,TEST,missing: B BE C F H HE LI N NE O,23.5,3b60d6ee8209
+other_tdb/old_tdb/steel.tdb,AL-B-C-CO-CR-CU-FE-H-HF-LA-MN-MO-N-NB-NI-O-P-PD-S-SI-TI-V-W-Y,no,Invalid TDB syntax.,,,,359.3,1b12f7dcd1ec
+other_tdb/old_tdb/unary50.tdb,AG-AL-AM-AS-AU-B-BA-BE-BI-C-CA-CD-CE-CO-CR-CS-CU-DY-ER-EU-FE-GA-GD-GE-HF-HG-HO-IN-IR-K-LA-LI-LU-MG-MN-MO-N-NA-NB-ND-NI-NP-O-OS-P-PA-PB-PD-PR-PT-PU-RB-RE-RH-RU-S-SB-SC-SE-SI-SM-SN-SR-TA-TB-TC-TE-TH-TI-TL-TM-U-V-W-Y-YB-ZN-ZR,yes,,34,,all,115.4,8e38dcefbeaa
+other_tdb/old_tdb/zrlayalo.tdb,AL-LA-O-Y-ZR,yes,,18,BETA_AL11LA1O18 FLUORITE IONIC_LIQ LA2O3_A LA2O3_H LA2O3_X LAAP_ALO3LA LAYP M2O3B M2O3C PYROCHLORE TETR YAG_AL5O12Y3 YAM_AL2O9Y4 YAP_ALO3Y ZR3Y4O12,all,29.2,e8d206849eb9
