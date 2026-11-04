@@ -1,0 +1,115 @@
+==============================================================================
+SECTION 0  — phase structure (quick overview)
+==============================================================================
+phase                                 FeB-19Wit        FeB-20Tak
+------------------------------------------------------------------------------
+BCC_A2                                      1+3              1+3
+BETA_RHOMBO_B                                 1            101+4
+FCC_A1                                      1+1              1+1
+FE3B_D0E                                    3+1                —
+FE3B_HT                                     3+1                —
+HCP_A3                                    1+0.5            1+0.5
+LIQUID                                        1                1
+M2B_C16                                     2+1              2+1
+MB_B27                                      1+1              1+1
+MB_B33                                      1+1                —
+
+==============================================================================
+SECTION 1  — symbols (FUNCTION blocks) only in some files
+==============================================================================
+  [+ .]  GBCCBB
+  [. +]  GFE2B
+  [. +]  GFEB
+  [+ .]  GHCPBB
+
+==============================================================================
+SECTION 2  — shared symbols with different expressions
+==============================================================================
+  (all shared symbols have identical expressions)
+==============================================================================
+SECTION 3  — parameters only in some files
+==============================================================================
+  [. +]  G(BCC_A2,B:VA;0)
+  [. +]  L(BCC_A2,B,FE:VA;0)
+  [. +]  L(BCC_A2,B,FE:VA;1)
+  [+ .]  G(BCC_A2,FE:B;0)
+  [+ .]  G(BETA_RHOMBO_B,B;0)
+  [. +]  G(BETA_RHOMBO_B,B:B;0)
+  [+ .]  L(BETA_RHOMBO_B,B,FE;0)
+  [. +]  L(BETA_RHOMBO_B,B,FE:B;0)
+  [+ .]  G(BETA_RHOMBO_B,FE;0)
+  [. +]  G(BETA_RHOMBO_B,FE:B;0)
+  [. +]  G(FCC_A1,B:VA;0)
+  [. +]  L(FCC_A1,B,FE:VA;0)
+  [. +]  L(FCC_A1,B,FE:VA;1)
+  [+ .]  G(FCC_A1,FE:B;0)
+  [+ .]  BMAGN(FE3B_D0E,FE:B;0)
+  [+ .]  G(FE3B_D0E,FE:B;0)
+  [+ .]  TC(FE3B_D0E,FE:B;0)
+  [+ .]  BMAGN(FE3B_HT,FE:B;0)
+  [+ .]  G(FE3B_HT,FE:B;0)
+  [+ .]  TC(FE3B_HT,FE:B;0)
+  [. +]  G(HCP_A3,B:VA;0)
+  [. +]  G(HCP_A3,B,FE:VA;0)
+  [+ .]  G(HCP_A3,FE:B;0)
+  [+ .]  L(LIQUID,B,FE;3)
+  [+ .]  L(LIQUID,B,FE;4)
+  [+ .]  G(MB_B27,B:B;0)
+  [+ .]  G(MB_B27,B:FE;0)
+  [+ .]  G(MB_B27,FE:FE;0)
+  [+ .]  G(MB_B33,B:B;0)
+  [+ .]  G(MB_B33,B:FE;0)
+  [+ .]  BMAGN(MB_B33,FE:B;0)
+  [+ .]  G(MB_B33,FE:B;0)
+  [+ .]  TC(MB_B33,FE:B;0)
+  [+ .]  G(MB_B33,FE:FE;0)
+
+==============================================================================
+SECTION 4  — shared parameters with different values
+==============================================================================
+  9 parameter(s) differ:
+
+  PARAM  L(LIQUID,B,FE;0)
+    [FeB-19Wit]  Piecewise((-143907.0 + 44.467*T, 0.01 <= T), (0, True))
+    [FeB-20Tak]  Piecewise((-140000.0 + 24.54*T, 0.01 <= T), (0, True))
+
+  PARAM  L(LIQUID,B,FE;1)
+    [FeB-19Wit]  Piecewise((10780.0 - 1.234*T, 0.01 <= T), (0, True))
+    [FeB-20Tak]  Piecewise((5020.0, 0.01 <= T), (0, True))
+
+  PARAM  L(LIQUID,B,FE;2)
+    [FeB-19Wit]  Piecewise((78151.0 - 35.315*T, 0.01 <= T), (0, True))
+    [FeB-20Tak]  Piecewise((34444.0, 0.01 <= T), (0, True))
+
+  PARAM  BMAGN(M2B_C16,FE:B;0)
+    [FeB-19Wit]  Piecewise((1.91, 0.01 <= T), (0, True))
+    [FeB-20Tak]  Piecewise((23.64, 0.01 <= T), (0, True))
+
+  PARAM  G(M2B_C16,FE:B;0)
+    [FeB-19Wit]  Piecewise((-95113.0 + 500.492*T - 81.307*T*log(T) + 731991.0*T**(-1.0) - 0.007071*T**2.0, 0.01 <= T), (0, True))
+    [FeB-20Tak]  Piecewise((3.0*GFE2B, 0.01 <= T), (0, True))
+
+  PARAM  TC(M2B_C16,FE:B;0)
+    [FeB-19Wit]  Piecewise((1015.0, 0.01 <= T), (0, True))
+    [FeB-20Tak]  Piecewise((1018.0, 0.01 <= T), (0, True))
+
+  PARAM  BMAGN(MB_B27,FE:B;0)
+    [FeB-19Wit]  Piecewise((1.09, 0.01 <= T), (0, True))
+    [FeB-20Tak]  Piecewise((3.12, 0.01 <= T), (0, True))
+
+  PARAM  G(MB_B27,FE:B;0)
+    [FeB-19Wit]  Piecewise((-84530.0 + 321.971*T - 50.0*T*log(T) + 530000.0*T**(-1.0) - 0.005*T**2.0, 0.01 <= T), (0, True))
+    [FeB-20Tak]  Piecewise((2.0*GFEB, 0.01 <= T), (0, True))
+
+  PARAM  TC(MB_B27,FE:B;0)
+    [FeB-19Wit]  Piecewise((580.0, 0.01 <= T), (0, True))
+    [FeB-20Tak]  Piecewise((600.0, 0.01 <= T), (0, True))
+
+==============================================================================
+SUMMARY
+==============================================================================
+  Files compared        : 2
+  Symbols unique        : 4
+  Symbols differing     : 0
+  Parameters unique     : 34
+  Parameters differing  : 9

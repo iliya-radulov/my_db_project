@@ -1,0 +1,115 @@
+==============================================================================
+SECTION 0  — phase structure (quick overview)
+==============================================================================
+phase                                 NdB-19Che     NdB-95Hal-LB        FeB-19Wit
+------------------------------------------------------------------------------
+BCC_A2                                      1+3              1+3              1+3
+BETA_RHOMBO_B                                 1                1                1
+DHCP                                          1                1                —
+FCC_A1                                      1+1              1+1              1+1
+FE3B_D0E                                      —                —              3+1
+FE3B_HT                                       —                —              3+1
+HCP_A3                                    1+0.5            1+0.5            1+0.5
+LIQUID                                        1                1                1
+M2B_C16                                       —                —              2+1
+MB_B27                                        —                —              1+1
+MB_B33                                        —                —              1+1
+ND2B5                                       2+5              2+5                —
+NDB4_D1E                                    1+4              1+4                —
+NDB66                                      1+66             1+66                —
+NDB6_D21                                    1+6              1+6                —
+
+==============================================================================
+SECTION 1  — symbols (FUNCTION blocks) only in some files
+==============================================================================
+  [. . +]  GBCCBB
+  [+ + .]  GBCCND
+  [. . +]  GFCCFE
+  [. . +]  GHCPBB
+  [. . +]  GHCPFE
+  [. . +]  GHSERFE
+  [+ + .]  GHSERND
+  [. . +]  GLIQFE
+  [+ + .]  GLIQND
+  [+ . .]  GNDB4
+  [+ . .]  GNDB6
+
+==============================================================================
+SECTION 2  — shared symbols with different expressions
+==============================================================================
+  (all shared symbols have identical expressions)
+==============================================================================
+SECTION 3  — parameters only in some files
+==============================================================================
+  [+ . .]  G(BCC_A2,B:VA;0)
+  [+ . .]  L(BCC_A2,B,ND:VA;0)
+  [. . +]  G(BCC_A2,FE:B;0)
+  [. . +]  BMAGN(BCC_A2,FE:VA;0)
+  [. . +]  G(BCC_A2,FE:VA;0)
+  [. . +]  TC(BCC_A2,FE:VA;0)
+  [. + .]  G(BCC_A2,ND:B;0)
+  [+ + .]  G(BCC_A2,ND:VA;0)
+  [. . +]  L(BETA_RHOMBO_B,B,FE;0)
+  [. . +]  G(BETA_RHOMBO_B,FE;0)
+  [+ + .]  G(DHCP,ND;0)
+  [+ . .]  G(FCC_A1,B:VA;0)
+  [+ . .]  L(FCC_A1,B,ND:VA;0)
+  [. . +]  G(FCC_A1,FE:B;0)
+  [. . +]  BMAGN(FCC_A1,FE:VA;0)
+  [. . +]  G(FCC_A1,FE:VA;0)
+  [. . +]  TC(FCC_A1,FE:VA;0)
+  [+ + .]  G(FCC_A1,ND:VA;0)
+  [. . +]  BMAGN(FE3B_D0E,FE:B;0)
+  [. . +]  G(FE3B_D0E,FE:B;0)
+  [. . +]  TC(FE3B_D0E,FE:B;0)
+  [. . +]  BMAGN(FE3B_HT,FE:B;0)
+  [. . +]  G(FE3B_HT,FE:B;0)
+  [. . +]  TC(FE3B_HT,FE:B;0)
+  [+ . .]  G(HCP_A3,B:VA;0)
+  [. . +]  G(HCP_A3,FE:B;0)
+  [. . +]  G(HCP_A3,FE:VA;0)
+  [+ + .]  G(HCP_A3,ND:VA;0)
+  [. . +]  L(LIQUID,B,FE;0)
+  [. . +]  L(LIQUID,B,FE;1)
+  [. . +]  L(LIQUID,B,FE;2)
+  [. . +]  L(LIQUID,B,FE;3)
+  [. . +]  L(LIQUID,B,FE;4)
+  [+ + .]  L(LIQUID,B,ND;0)
+  [+ + .]  L(LIQUID,B,ND;1)
+  [+ . .]  L(LIQUID,B,ND;2)
+  [. . +]  G(LIQUID,FE;0)
+  [+ + .]  G(LIQUID,ND;0)
+  [. . +]  BMAGN(M2B_C16,FE:B;0)
+  [. . +]  G(M2B_C16,FE:B;0)
+  [. . +]  TC(M2B_C16,FE:B;0)
+  [. . +]  G(MB_B27,B:B;0)
+  [. . +]  G(MB_B27,B:FE;0)
+  [. . +]  BMAGN(MB_B27,FE:B;0)
+  [. . +]  G(MB_B27,FE:B;0)
+  [. . +]  TC(MB_B27,FE:B;0)
+  [. . +]  G(MB_B27,FE:FE;0)
+  [. . +]  G(MB_B33,B:B;0)
+  [. . +]  G(MB_B33,B:FE;0)
+  [. . +]  BMAGN(MB_B33,FE:B;0)
+  [. . +]  G(MB_B33,FE:B;0)
+  [. . +]  TC(MB_B33,FE:B;0)
+  [. . +]  G(MB_B33,FE:FE;0)
+  [+ + .]  G(ND2B5,ND:B;0)
+  [+ + .]  G(NDB4_D1E,ND:B;0)
+  [+ + .]  G(NDB66,ND:B;0)
+  [+ . .]  G(NDB6_D21,B:B;0)
+  [+ . .]  L(NDB6_D21,B,ND:B;0)
+  [+ + .]  G(NDB6_D21,ND:B;0)
+
+==============================================================================
+SECTION 4  — shared parameters with different values
+==============================================================================
+  (all shared parameters have identical values)
+==============================================================================
+SUMMARY
+==============================================================================
+  Files compared        : 3
+  Symbols unique        : 11
+  Symbols differing     : 0
+  Parameters unique     : 59
+  Parameters differing  : 0

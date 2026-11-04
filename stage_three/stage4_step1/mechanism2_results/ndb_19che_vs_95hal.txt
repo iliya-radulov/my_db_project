@@ -1,0 +1,76 @@
+==============================================================================
+SECTION 0  — phase structure (quick overview)
+==============================================================================
+phase                                 NdB-19Che     NdB-95Hal-LB
+------------------------------------------------------------------------------
+BCC_A2                                      1+3              1+3
+BETA_RHOMBO_B                                 1                1
+DHCP                                          1                1
+FCC_A1                                      1+1              1+1
+HCP_A3                                    1+0.5            1+0.5
+LIQUID                                        1                1
+ND2B5                                       2+5              2+5
+NDB4_D1E                                    1+4              1+4
+NDB66                                      1+66             1+66
+NDB6_D21                                    1+6              1+6
+
+==============================================================================
+SECTION 1  — symbols (FUNCTION blocks) only in some files
+==============================================================================
+  [+ .]  GNDB4
+  [+ .]  GNDB6
+
+==============================================================================
+SECTION 2  — shared symbols with different expressions
+==============================================================================
+  (all shared symbols have identical expressions)
+==============================================================================
+SECTION 3  — parameters only in some files
+==============================================================================
+  [+ .]  G(BCC_A2,B:VA;0)
+  [+ .]  L(BCC_A2,B,ND:VA;0)
+  [. +]  G(BCC_A2,ND:B;0)
+  [+ .]  G(FCC_A1,B:VA;0)
+  [+ .]  L(FCC_A1,B,ND:VA;0)
+  [+ .]  G(HCP_A3,B:VA;0)
+  [+ .]  L(LIQUID,B,ND;2)
+  [+ .]  G(NDB6_D21,B:B;0)
+  [+ .]  L(NDB6_D21,B,ND:B;0)
+
+==============================================================================
+SECTION 4  — shared parameters with different values
+==============================================================================
+  6 parameter(s) differ:
+
+  PARAM  L(LIQUID,B,ND;0)
+    [NdB-19Che]  Piecewise((-50000.0 + 2.0295*T, 0.01 <= T), (0, True))
+    [NdB-95Hal-LB]  Piecewise((-108000.0 + 36.3*T, 0.01 <= T), (0, True))
+
+  PARAM  L(LIQUID,B,ND;1)
+    [NdB-19Che]  Piecewise((-12000.0 + 1.4369*T, 0.01 <= T), (0, True))
+    [NdB-95Hal-LB]  Piecewise((-65600.0 + 10.0*T, 0.01 <= T), (0, True))
+
+  PARAM  G(ND2B5,ND:B;0)
+    [NdB-19Che]  Piecewise((-420000.0 + 5.0*GHSERBB + 2.0*GHSERND + 80.0625*T, 0.01 <= T), (0, True))
+    [NdB-95Hal-LB]  Piecewise((-442813.0 + 5.0*GHSERBB + 2.0*GHSERND + 99.33*T, 0.01 <= T), (0, True))
+
+  PARAM  G(NDB4_D1E,ND:B;0)
+    [NdB-19Che]  Piecewise((5.0*GNDB4, 0.01 <= T), (0, True))
+    [NdB-95Hal-LB]  Piecewise((-355330.0 + 4.0*GHSERBB + GHSERND + 83.1*T, 0.01 <= T), (0, True))
+
+  PARAM  G(NDB66,ND:B;0)
+    [NdB-19Che]  Piecewise((-469000.0 + 66.0*GHSERBB + GHSERND + 58.692*T, 0.01 <= T), (0, True))
+    [NdB-95Hal-LB]  Piecewise((-484142.0 + 66.0*GHSERBB + GHSERND + 75.911*T, 0.01 <= T), (0, True))
+
+  PARAM  G(NDB6_D21,ND:B;0)
+    [NdB-19Che]  Piecewise((7.0*GNDB6, 0.01 <= T), (0, True))
+    [NdB-95Hal-LB]  Piecewise((-356370.0 + 6.0*GHSERBB + GHSERND + 62.846*T, 0.01 <= T), (0, True))
+
+==============================================================================
+SUMMARY
+==============================================================================
+  Files compared        : 2
+  Symbols unique        : 2
+  Symbols differing     : 0
+  Parameters unique     : 9
+  Parameters differing  : 6
