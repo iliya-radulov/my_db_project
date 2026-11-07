@@ -7,6 +7,8 @@ __old__venv__py314/
 *.pyd
 *.backup
 *.messy
+*.csv
+
 .DS_Store
 
 data/
@@ -23,3 +25,8 @@ stage_three/outdated/advisor_old.html
 stage_three/stage4_step1/results/
 stage_three/phase_qa/
 resources_stage_four/
+/.vscode
+# stage_three/stage4_step1/results_v2/
+# stage_three/stage4_step1/ternary_results/ 
+# stage_three/stage4_step1/mechanism2_results/
+stage_three/stage4_step1/backup

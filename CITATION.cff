@@ -1,0 +1,37 @@
+# Citation metadata for this repository. GitHub shows a "Cite this repository"
+# button from this file (it must sit in the repository root), and Zenodo reads
+# it when a release is archived. Before each release, update `version` and
+# `date-released` to match the new tag.
+
+cff-version: 1.2.0
+message: "If you use this software or its data, please cite it as below."
+type: software
+title: "An ensemble of open binary CALPHAD assessments quantifies the uncertainty of the Nd2Fe14B feasibility threshold and surfaces inconsistencies invisible to single-assessment users"
+abstract: >
+    Code, per-combination results and diagnostic scripts for an ensemble of
+    84 combinations of open binary CALPHAD assessments (3 Fe-Nd x 7 Fe-B x
+    4 Nd-B) of the Nd-Fe-B system. Seventy-eight combinations pass a strict
+    merge-then-edge-check protocol; for these the feasibility threshold of
+    Nd2Fe14B is computed at eight temperatures between 800 and 1600 K and
+    compared with two full ternary assessments.
+authors:
+  - given-names: "Iliya Angelov"
+    family-names: "Radulov"
+    orcid: "https://orcid.org/0000-0001-8943-5083"
+  - name: "Claude (Anthropic)"
+
+doi: "10.5281/zenodo.24034300"
+version: v4.0-stage4_trackA
+date-released: "2026-11-07"
+license: MIT
+
+repository-code: "https://github.com/iliya-radulov/my_db_project"
+url: "https://iliya-radulov.github.io/projects/active/alloy-lab-database/alloy_db_stage4_trackA.html"
+
+keywords:
+  - CALPHAD
+  - Nd2Fe14B
+  - uncertainty
+  - feasibility threshold
+  - thermodynamic assessments
+  - pycalphad
