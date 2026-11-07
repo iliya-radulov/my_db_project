@@ -1,0 +1,57 @@
+{
+  "tdb_file": "Nd-Fe-B.TDB",
+  "suppressed_phase": "FE14ND2B",
+  "composition_Fe_Nd_B": [
+    0.8235294117647058,
+    0.11764705882352941,
+    0.058823529411764705
+  ],
+  "ser_names": {
+    "FE": "GHSERFE",
+    "ND": "GHSERND",
+    "B": "GHSERBB"
+  },
+  "kernel_version": "ternary (direct), GHSER-based reference",
+  "rows": [
+    {
+      "T_K": 800,
+      "threshold_kJ_mol_atom": -9.0981,
+      "competing_phases": {}
+    },
+    {
+      "T_K": 1000,
+      "threshold_kJ_mol_atom": -8.0514,
+      "competing_phases": {}
+    },
+    {
+      "T_K": 1100,
+      "threshold_kJ_mol_atom": -7.5349,
+      "competing_phases": {}
+    },
+    {
+      "T_K": 1200,
+      "threshold_kJ_mol_atom": -7.0368,
+      "competing_phases": {}
+    },
+    {
+      "T_K": 1300,
+      "threshold_kJ_mol_atom": -6.5573,
+      "competing_phases": {}
+    },
+    {
+      "T_K": 1375,
+      "threshold_kJ_mol_atom": -6.4054,
+      "competing_phases": {}
+    },
+    {
+      "T_K": 1450,
+      "threshold_kJ_mol_atom": -6.7543,
+      "competing_phases": {}
+    },
+    {
+      "T_K": 1600,
+      "threshold_kJ_mol_atom": -8.0143,
+      "competing_phases": {}
+    }
+  ]
+}
