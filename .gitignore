@@ -8,6 +8,10 @@ __old__venv__py314/
 *.backup
 *.messy
 *.csv
+*.aux
+*.log
+*.out
+*.synctex.gz
 
 .DS_Store
 
