@@ -96,3 +96,64 @@ falsifiability.
 
 This project would rather move slower and stay checkable than move fast
 on a claim nobody can verify.
+
+## AI assistance in the work itself
+
+The sections above are about AI/ML models used *inside* a pipeline. The same
+question applies to the assistant used to *build* the pipeline, and it deserves
+the same answer.
+
+**Where this started.** I began working with an AI assistant roughly four
+months ago, without having thought through what role it should play. The
+rules below are not a plan I wrote beforehand. They are the habits that
+survived contact with real work, and I am still learning.
+
+**An assistant's explanation is a hypothesis too.** The rule of this project is
+that a prediction is a hypothesis to verify. That holds for an assistant's
+output exactly as it holds for a model's. A fluent, confident explanation is not
+evidence. It becomes a result only after a test that could have failed.
+
+**A worked example.** In the Track A study (an ensemble of open CALPHAD
+assessments for Nd-Fe-B), six of 84 combinations failed a consistency check.
+Two explanations were proposed in turn, an extra crystal phase in one
+assessment and a set of silently introduced symbols. Both were plausible and
+both were wrong. They were rejected by direct tests, the cause was then
+isolated by a test that restored the original sublattice model and removed the
+deviation completely, and the rejected hypotheses stayed in the supplementary
+material instead of being deleted. A project that hides its reversals does not
+earn trust in the claims it does not reverse.
+
+**The assistant makes ordinary errors, and the process has to catch them.**
+During the same work, the direction of a key quantity was stated backwards
+in the draft and had to be corrected, the assistant stated that a folder was
+excluded from version control without checking, and it overwrote a text edit made
+on another machine. None of these were
+dramatic, and all of them were found because the work leaves checkable
+traces: checksums, tests, a README that has to run, and a record that is
+compared against the files.
+
+**Dialogue, not orders.** What I need is not an assistant that executes
+commands to assemble a pipeline. Mining documents and moving data are
+necessary and I do some of it that way, but the valuable part is the
+discussion: objecting, proposing a test, saying that an argument does not follow.
+The decision, and the responsibility for it, stay with the author.
+
+**The data must not simply confess.** There is an old saying that if you
+torture the data long enough, it will confess to anything. An assistant that
+is eager to please makes this easier, because it will help to build a
+convincing story for whatever result is wanted. The defence is the same as
+for any analysis: fix the criterion before looking (the 1 J/mol edge check was
+fixed in advance), report what does not fit, and show how conclusions change
+if the criterion is relaxed (the six failures were re-admitted and the result
+was unchanged).
+
+**Disclosure.** Where an assistant contributed to code or text, it is stated:
+the software records list it as a creator, the paper acknowledges it by name
+and version, and the author reviewed the content and is responsible for it.
+This is not an apology and not a claim of credit. It tells the reader what
+kind of checking to expect.
+
+**What I would not do.** I would not publish a claim whose only support is that
+the assistant said so, and I would not use an assistant to produce results I
+cannot reproduce without it. If the work cannot be re-run from the released
+files, it is not finished.

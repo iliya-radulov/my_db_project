@@ -20,8 +20,8 @@ authors:
     orcid: "https://orcid.org/0000-0001-8943-5083"
   - name: "Claude (Anthropic)"
 
-doi: "10.5281/zenodo.24034300"
-version: v4.0-stage4_trackA
+doi: "10.5281/zenodo.24039719"
+version: v4.1-stage4_trackA
 date-released: "2026-11-07"
 license: MIT
 
