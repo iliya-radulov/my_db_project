@@ -1,0 +1,3 @@
+# Transcribed literature tables are the source data of this stage: keep CSVs in git
+!*.csv
+results/

@@ -1,0 +1,16 @@
+fact,value,where_in_paper
+tau1_x_range_1173K,0.086-0.211,section 4.1
+tau2_x_range_1173K,0.251-0.398,section 4.1
+tau1_x_range_1373K,0.096-0.229,section 4.1
+tau2_x_range_1373K,0.266-0.402,section 4.1
+tau1_x_range_1573K,0.162-0.279,section 4.1
+tau2_x_range_1573K,0.291-0.376,section 4.1
+LaFeSi_melting_K,~1553,section 4.1 (DSC)
+tau1_formation,alphaFe (or L_FeSi) + L_La + LaFe2Si2 -> tau1 at ~1665 K (peritectic),abstract; section 5
+tau2_formation,tau1 + L_FeSi + LaFe2Si2 -> tau2 at ~1623 K (peritectic),abstract; section 5
+tau1_lowSi_formation,alphaFe + L_La -> tau1 (peritectic; low-Si tau1),section 5
+tau2_peritectic_composition,~La7Fe63Si28 at.% (coincides with LaFe9Si4 stoichiometry),section 4.1
+tau1_kinetics,x=0.108: tau1 formation incomplete after 45 days at 1173 K; complete after 5 days at 1373 K,section 4.2.2 and Fig. 10
+tau1_tau2_shift,tau1 and tau2 single-phase regions shift to higher Si with increasing temperature,abstract; section 4.1
+solubility_statement,all ternary phases except tau1 and tau2 have only small solubility ranges,abstract; section 5
+LaFe2Si2_stability,LaFe2Si2 equilibrates with all ternary phases at all temperatures (high stability),section 4.2.1
