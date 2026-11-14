@@ -1,0 +1,18 @@
+x,Si_at_pct,T_K,reaction,note
+0.108,10.0,1497,alpha + tau1 + La5Si3 -> alpha + tau1 + L_La,
+0.108,10.0,1568,alpha + tau1 + L_La -> alpha + L_La,
+0.140,13.0,1573,tau1 -> alpha + tau1 + L_La,
+0.140,13.0,1638,alpha + tau1 + L_La -> alpha + L_La,
+0.182,16.9,1661,tau1 -> (alpha + tau1 + L_La) -> alpha + L_La,brace group with x=0.204
+0.204,18.9,1665,tau1 -> (alpha + tau1 + L_La) -> alpha + L_La,brace group with x=0.182
+0.224,20.8,1665,tau1 -> alpha + L_La + LaFe2Si2,brace group with x=0.230
+0.230,21.4,1658,tau1 -> alpha + L_La + LaFe2Si2,brace group with x=0.224
+0.259,24.1,1657,tau1 -> (LaFe2Si2 + L_Si-rich) -> LaFe2Si2 + L_Si-rich,liquid subscript partly illegible in the PDF (printed like 'L_r.Si'); read as Si-rich liquid
+0.270,25.1,1610,tau1 + tau2 -> tau1,
+0.270,25.1,1648,tau1 -> (tau1 + LaFe2Si2 + L_FeSi) -> LaFe2Si2 + L_FeSi,
+0.296,27.5,1620,tau1 + tau2 -> tau1,
+0.296,27.5,1633,tau1 -> (tau1 + LaFe2Si2 + L_FeSi) -> LaFe2Si2 + L_FeSi,
+0.312,29.0,1625,tau2 -> (tau2 + LaFe2Si2 + L_FeSi) -> LaFe2Si2 + L_FeSi,brace group x=0.312-0.393
+0.327,30.4,1622,tau2 -> (tau2 + LaFe2Si2 + L_FeSi) -> LaFe2Si2 + L_FeSi,brace group x=0.312-0.393
+0.367,34.1,1597,tau2 -> (tau2 + LaFe2Si2 + L_FeSi) -> LaFe2Si2 + L_FeSi,brace group x=0.312-0.393
+0.393,36.5,1583,tau2 -> (tau2 + LaFe2Si2 + L_FeSi) -> LaFe2Si2 + L_FeSi,brace group x=0.312-0.393

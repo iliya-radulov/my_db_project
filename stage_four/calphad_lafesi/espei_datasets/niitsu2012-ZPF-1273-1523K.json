@@ -1,0 +1,123 @@
+{
+ "components": [
+  "FE",
+  "LA",
+  "SI",
+  "VA"
+ ],
+ "phases": [
+  "TAU1",
+  "TAU2"
+ ],
+ "conditions": {
+  "P": 101325,
+  "T": [
+   1273.0,
+   1423.0,
+   1473.0,
+   1523.0
+  ]
+ },
+ "output": "ZPF",
+ "values": [
+  [
+   [
+    "TAU1",
+    [
+     "LA",
+     "SI"
+    ],
+    [
+     0.07,
+     0.2
+    ]
+   ],
+   [
+    "TAU2",
+    [
+     "LA",
+     "SI"
+    ],
+    [
+     0.072,
+     0.234
+    ]
+   ]
+  ],
+  [
+   [
+    "TAU1",
+    [
+     "LA",
+     "SI"
+    ],
+    [
+     0.072,
+     0.218
+    ]
+   ],
+   [
+    "TAU2",
+    [
+     "LA",
+     "SI"
+    ],
+    [
+     0.07,
+     0.248
+    ]
+   ]
+  ],
+  [
+   [
+    "TAU1",
+    [
+     "LA",
+     "SI"
+    ],
+    [
+     0.07,
+     0.226
+    ]
+   ],
+   [
+    "TAU2",
+    [
+     "LA",
+     "SI"
+    ],
+    [
+     0.071,
+     0.253
+    ]
+   ]
+  ],
+  [
+   [
+    "TAU1",
+    [
+     "LA",
+     "SI"
+    ],
+    [
+     0.07,
+     0.232
+    ]
+   ],
+   [
+    "TAU2",
+    [
+     "LA",
+     "SI"
+    ],
+    [
+     0.071,
+     0.258
+    ]
+   ]
+  ]
+ ],
+ "reference": "niitsu2012",
+ "bibtex": "K. Niitsu, R. Kainuma, Intermetallics 20 (2012) 160-169, doi:10.1016/j.intermet.2011.06.005",
+ "comment": "Transcribed from Table 7; phase names are placeholders mapped in data_niitsu2012/phase_registry.csv. Equilibria whose nominal composition misses the measured simplex by >2.0 at.% (kept as printed): T2 10.0/60.0 epsilon/LaSi2a2; T2 30.0/60.0 epsilon/LaSi2a2; T2 35.0/57.0 epsilon/LaSi2a2; T3 7.0/6.0 tau1/alphaFe; T3 8.0/22.0 tau2/LaFe2Si2; T3 14.0/60.0 epsilon/LaSi2a2; T3 33.3/33.3 LaFe2Si2/LaSi/LaFexSi2-x; T3 33.3/53.3 LaFeSi/LaFe2Si2/La5Si4; T3 40.0/20.0 tau1/La5Si3; T3 55.0/41.0 LaFeSi/La5Si4; T4 10.0/50.0 tau2/LaFe2Si2/Liq; T4 33.3/33.3 tau1/Liq"
+}
