@@ -16,6 +16,9 @@ state of every step are in `WORKLOG.md`.
 | `niitsu2012.py` | loader, validation battery, ESPEI ZPF export (`--espei`) |
 | `espei_datasets/` | generated ESPEI zero-phase-fraction datasets |
 | `plot_tielines.py` | ternary tie-line plots per temperature (visual check against the paper's Fig. 3) |
+| `data_feng2023/table5_parameters.md` | Feng et al. (2023) — every CALPHAD parameter (the assessment to audit) |
+| `data_feng2023/table4_epma.csv` | Feng's 21 validation alloys, EPMA phase compositions at 1373 K |
+| `data_feng2023/table6_comparison.csv` | Feng's own experiment-vs-calculation comparison |
 
 ```bash
 python niitsu2012.py            # run all validation checks

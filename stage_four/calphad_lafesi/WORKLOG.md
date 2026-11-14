@@ -7,7 +7,7 @@
 | Item | State |
 |---|---|
 | Plan | reproduce the published La–Fe–Si assessment → audit it against Niitsu & Kainuma (2012) and our own data → use it for hypothesis tests → extend (ORCHID-SAGE style) |
-| 2023 assessment paper (CALPHAD journal, S0364591623001153) | **waiting for the PDF** (I. Radulov, via institution) |
+| 2023 assessment paper (Feng et al., Calphad 83 (2023) 102643) | **received and fully transcribed** — all parameters, EPMA data and comparison captured (section 7) |
 | Niitsu & Kainuma (2012) experimental data | transcribed, validated, ESPEI datasets generated (sections 2–3) |
 | Computational leg | proven end-to-end: Setty et al. Mo–Si–Y–Hf TDB (Zenodo 20848011) downloaded and an isothermal section computed with pycalphad 0.11.2 (the Track A pin) in this environment |
 | ESPEI | does not install on Python 3.13 (pins `emcee<3`, which no longer builds); fallback options in section 5 |
@@ -89,6 +89,68 @@ probable table swap in a well-cited experimental paper on day 1.
 | 14 Nov | CSVs committed (local `.gitignore` override of the repo-wide `*.csv` rule) | they are our transcription (source data of this stage), not redistributed third-party files |
 | 14 Nov | ESPEI ZPF datasets generated now, even though the fit comes later | same datasets serve the audit (overlay + residuals) and any later re-optimization |
 | 14 Nov | New cloud environment `alloy-lab` (zenodo.org, orchid-project.org) instead of widening the Default | the Zenodo records are material for this project only |
+
+## 7. The 2023 assessment: Feng et al. (received)
+
+The paper is **E. Feng, K. Huang, J. Wang et al., "Thermodynamic
+assessment of La–Fe–Si systems", Calphad 83 (2023) 102643**
+(doi:10.1016/j.calphad.2023.102643). It is a complete, self-contained
+CALPHAD assessment of the 1373 K isothermal section — **all parameters
+are in the paper (Table 5); no supplementary TDB is needed.** It builds on
+the binaries La–Si (Zhou 2010), Fe–Si (Cui 2017), La–Fe (Su 2022) and
+optimises the ternary τ phases plus a few binary-into-ternary solubility
+terms, with Thermo-Calc's PARROT.
+
+Captured in `data_feng2023/` (all transcribed from the PDF, as printed):
+- `table5_parameters.md` — **every parameter**: Liquid, FCC_A1, BCC_A2,
+  the Fe–Si B2/D03 ordering, the Fe–Si line compounds, the six
+  La–Si(Fe) compounds, and the six ternary τ1–τ6 compounds with their
+  sublattice models. Cross-checked against the page images (the PDF text
+  layer scrambles subscripts and rotates page 9).
+- `table4_epma.csv` — 21 alloys, 46 EPMA phase compositions, 1373 K /
+  30 days. Validated: all sum to 100 at.% (one printed as 99.0, kept as
+  printed — alloy 20 D03).
+- `table6_comparison.csv` — Feng's own experiment-vs-calculation table.
+
+**First result, from Feng's own Table 6: their assessment reproduces
+their own experiment fully for only 11 of 21 alloys** (10 partial
+mismatches at 1373 K — e.g. alloys 9, 11, 12 predict a different phase
+count in the Fe-rich corner). So the published assessment is itself
+imperfect in exactly the Fe-rich region the magnetocaloric τ1 phase lives
+in. That is the audit's starting point, not a flaw we introduced.
+
+### Phase-naming caveat (important)
+Feng's τ1–τ6 are **not** Niitsu's τ1/τ2. Only τ1 and τ2 — the two
+La(Fe,Si)13 structures (cubic NaZn13 and tetragonal Ce2Ni17Si9) — map
+across directly. Feng's τ3–τ6 are the Si-rich/La-rich ternary compounds
+that Niitsu names LaFe2Si2, LaFeSi2, LaFeSi, La3Fe2Si8. The map is in
+`table5_parameters.md`; the audit overlay must use it, or τ-labels will
+be compared wrongly.
+
+## 8. TDB build plan (next session)
+
+Building a working `.tdb` from Table 5 needs three things, in rising
+difficulty:
+1. **SGTE unary functions** (La, Fe, Si; Dinsdale 1991). Fe is in the
+   repo's Nd–Fe–B TDBs (`stage_three/FENDB_merged_v4.tdb`, `GHSERFE`);
+   Si and La must be added. Transcribe from SGTE, or source an unary TDB
+   (check `orchid-data` on Zenodo first).
+2. **The disordered + compound phases** — Liquid, FCC_A1, BCC_A2, the
+   Fe–Si line compounds, the six La–Si(Fe) compounds, and τ1/τ2
+   ((La)(Fe,Si) 1:13). These are straightforward PARAMETER statements.
+   This subset already computes the **magnetocaloric-relevant** τ1
+   single-phase window and the τ1/τ2/αFe equilibria — enough to overlay
+   Niitsu's low-Si tie-lines and answer the annealing-window question.
+3. **The hard parts** — the Fe–Si BCC_B2/D03 ordering (4-sublattice,
+   Cui 2017) and the τ3–τ6 three-sublattice (La)(Si,Fe)(Si,Fe) model
+   (Feng's eq. 8 with neutralisation variables). These matter for the
+   full Si-rich section but are error-prone; build and validate them
+   separately, against Feng's Fig. 5 topology and Table 4.
+
+**Validation gate before any science:** the built TDB must reproduce
+Feng's own Table 4 phase assemblages and Fig. 5 topology at 1373 K. Only
+then overlay the Niitsu tie-lines and compute residuals. A subtly wrong
+TDB is worse than none — do not shortcut this gate.
 
 ## 5. Next steps
 
