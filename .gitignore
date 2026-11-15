@@ -38,3 +38,4 @@ stage_four/mce_nims/data/
 
 # built TDB section renders (regenerable via audit.py)
 stage_four/calphad_lafesi/tdb_build/*.png
+stage_four/calphad_lafesi/tdb_build/merged_*.tdb

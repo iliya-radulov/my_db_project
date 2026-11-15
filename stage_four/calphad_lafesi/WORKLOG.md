@@ -9,6 +9,7 @@
 | Plan | reproduce the published La–Fe–Si assessment → audit it against Niitsu & Kainuma (2012) and our own data → use it for hypothesis tests → extend (ORCHID-SAGE style) |
 | 2023 assessment paper (Feng et al., Calphad 83 (2023) 102643) | **received and fully transcribed** — all parameters, EPMA data and comparison captured (section 7) |
 | TDB reconstruction (τ1/τ2 subset) | **built and validated** — acceptance test passed, WP4 descriptor computed (section 9) |
+| Full merged build (real binaries) | **done** — 20-combination WP4 band; faithful combo matches self-contained to <0.2 J/mol (section 10) |
 | Niitsu & Kainuma (2012) experimental data | transcribed, validated, ESPEI datasets generated (sections 2–3) |
 | Computational leg | proven end-to-end: Setty et al. Mo–Si–Y–Hf TDB (Zenodo 20848011) downloaded and an isothermal section computed with pycalphad 0.11.2 (the Track A pin) in this environment |
 | ESPEI | does not install on Python 3.13 (pins `emcee<3`, which no longer builds); fallback options in section 5 |
@@ -190,6 +191,42 @@ Lessons carried / added:
 3. WP4 uncertainty band — swap Feng's binaries for the Track A collection
    (needs the external `data/tdb/sgte_binary/` files; build script already
    accepts an external backbone).
+
+## 10. Full merged build on the real binaries + WP4 band (15 Nov)
+
+Binary collection obtained (`iliya-radulov/projects_documentation`,
+`AlloyDB/Data/tdb/sgte_binary/`). Feng's exact cited binaries are all there:
+**FeLa-23Su** (Su), **LaSi-10Zho** (Zhou), **FeSi-17Cui** (Cui) — so a
+faithful merged build on real files is possible, plus the WP4 band over the
+full 2 FeLa x 2 LaSi x 5 FeSi = 20 combinations.
+
+`build_merged_tdb.py` merges three binary TDBs at the pycalphad
+Database-object level (union constituents for shared solution phases; keep
+binary compounds; drop Cui's 4SL ordering, as Feng did) and injects Feng's
+τ1/τ2 + ternary liquid term. `wp4_band.py` runs the 20 combinations.
+Pre-merge: all 9 binaries pass standalone-compute and the 3rd-gen screen;
+unaries numerically identical across files.
+
+**Faithfulness proof (the Lindahl criterion):** the faithful combo
+reproduces the self-contained Feng-Table-5 build to **< 0.2 J/mol-atom**
+(ΔG_f(τ1) −20992.6 vs −20992.7 at 1373 K; window identical). The merge of
+the binaries reproduces the assessment because the binaries match — the
+reconstruction is faithful, confirmed two ways.
+
+**WP4 result (`RESULTS_MERGED.md`):**
+- ΔG_f(τ1) vs elements is **binary-independent** (−20.99 kJ/mol-atom, band
+  = 0): τ1's energy is Feng's fixed parameters, the binaries never enter it.
+- The binary-sensitive descriptor is the **τ1 formation driving force**
+  (G_compete − G_τ1): **+84.7 kJ/mol-atom for 16/20**, **+82.6 for the 4
+  using FeSi-23Wit**. Band 2064 J/mol-atom (~2.5 %).
+- τ1 single-phase at the frozen point in **all 20** combinations (robust
+  window). The spread is **entirely Fe–Si-driven** — La–Fe and La–Si
+  choices make zero difference at this Fe-rich composition — and
+  **FeSi-23Wit (Witusiewicz) is the single outlier**, exactly as flagged
+  (it stabilises Fe₂Si as a competitor).
+
+Merged `.tdb` files are gitignored (derived from third-party binaries,
+regenerable via the scripts).
 
 ## 5. Next steps
 
