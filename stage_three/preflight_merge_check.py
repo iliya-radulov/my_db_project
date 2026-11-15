@@ -48,25 +48,41 @@ def blocks(text, keyword):
             inside = False
 
 
+NUM_RE = re.compile(r"(?<![A-Z_0-9.])(\d+\.\d*|\.\d+|\d+)(E[+-]?\d+)?")
+
+
 def norm_expr(s):
-    # Normalise whitespace, case and trailing reference tags for comparison.
-    s = s.upper()
+    # Normalise whitespace, case, '#' symbol markers, number formatting and
+    # trailing reference tags, so that formatting-only differences
+    # (1519 vs 1.51900E+03, ZERO# vs ZERO) are not reported as conflicts.
+    s = s.upper().replace("#", "")
     s = re.sub(r"\s+", " ", s)
     s = re.sub(r"\bN\b\s+\S+\s*$", "", s)   # drop trailing 'N REF'
+    s = NUM_RE.sub(lambda m: repr(float(m.group(0))), s)
+    s = re.sub(r"(?<=[\s;(,])\+", "", s)     # leading '+' after separator
     s = s.replace("+-", "-").replace(" ", "")
     return s
 
 
+def read_text(path):
+    raw = open(path, "rb").read()
+    try:
+        return raw.decode("utf-8"), "utf-8"
+    except UnicodeDecodeError:
+        return raw.decode("latin-1"), "latin-1"
+
+
 def parse(path):
-    with open(path, encoding="utf-8", errors="replace") as f:
-        text = strip_comments(f.read())
+    text, _ = read_text(path)
+    text = strip_comments(text)
     funcs, types, phases = {}, {}, {}
     for b in blocks(text, r"FUNC(?:TION)?"):
         m = re.match(r"FUNC(?:TION)?\s+(\S+)\s+(.*)$", b, re.IGNORECASE)
         if m:
             funcs[m.group(1).upper()] = norm_expr(m.group(2))
-    for b in blocks(text, r"TYPE_DEF(?:INITION)?"):
-        m = re.match(r"TYPE_DEF(?:INITION)?\s+(\S+)\s+(.*)$", b, re.IGNORECASE)
+    # SGTE collection writes TYPE-DEF (hyphen); others TYPE_DEFINITION.
+    for b in blocks(text, r"TYPE[_-]DEF\w*"):
+        m = re.match(r"TYPE[_-]DEF\w*\s+(\S+)\s+(.*)$", b, re.IGNORECASE)
         if m:
             types[m.group(1)] = norm_expr(m.group(2))
     for b in blocks(text, r"PHASE"):
@@ -100,11 +116,21 @@ def pycalphad_view(paths, target_phases):
         return
     print("\n=== Target phases as pycalphad reads them ===")
     for p in paths:
+        text, enc = read_text(p)
         try:
-            db = Database(p)
+            db = Database.from_string(text, fmt="tdb")
         except Exception as e:
             print(f"  {os.path.basename(p)}: LOAD FAILED - {e}")
             continue
+        if enc != "utf-8":
+            print(f"  {os.path.basename(p)}: note - decoded as {enc} "
+                  f"(file is not valid UTF-8)")
+        # Confirm pycalphad picked up magnetism / disordered parts.
+        for ph in ("BCC_A2", "A2_BCC", "B2_BCC", "BCC_4SL", "FCC_A1", "FCC_4SL"):
+            if ph in db.phases:
+                hints = db.phases[ph].model_hints
+                keys = sorted(k for k in hints if "magnetic" in k or "disordered" in k)
+                print(f"  {os.path.basename(p):30s} {ph:14s} hints={keys}")
         for ph in target_phases:
             if ph in db.phases:
                 obj = db.phases[ph]
