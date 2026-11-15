@@ -228,6 +228,33 @@ reconstruction is faithful, confirmed two ways.
 Merged `.tdb` files are gitignored (derived from third-party binaries,
 regenerable via the scripts).
 
+## 11. tau3-tau6: not reconstructable from the paper (15 Nov)
+
+Attempted to add Feng's tau3-tau6 (the Si-rich/La-rich ternary compounds).
+**Finding: they cannot be faithfully reconstructed from Feng (2023).**
+Table 5 omits the GHSER reference terms (tau1/tau2 print them, tau3-tau6 do
+not) and the sublattice site ratios. Three reconstructions, each tested
+against Feng's own Table 4 (eq. 8 model (La)x(Si,Fe)y(Si,Fe)z, site ratios
+inferred from the Table-4 EPMA compositions): as-printed = never stable;
+printed + site-weighted GHSER = too weak, never stable (tau1/tau2
+preserved); site-count-scaled + GHSER = tau4 takes over the whole diagram.
+None reproduces Feng's phase stabilities. Details and the recommendation
+(request the authors' TDB) in `tdb_build/TAU36_RECONSTRUCTION.md`.
+
+The production TDB keeps tau1/tau2 only (validated). `tau36_block.py` ships
+the physically-sensible non-destructive hypothesis, flagged non-validated,
+for correction once the authors' file is obtained. **No impact on the WP4
+descriptor** (Fe-rich tau1 corner).
+
+A reusable methodology write-up was committed to the projects_documentation
+repo (`AlloyDB/Stage4/LaFeSi_CALPHAD_reconstruction_procedure.md`),
+including the forward-looking "no ternary reference" route (merge binaries +
+fit the ternary to experimental tie-lines with ESPEI).
+
+Test-harness lesson added: a composition slip (passing the Fe at.% where Si
+was meant) evaluates a different alloy and produces "impossible" assemblages
+that look like a solver failure. Always echo the composition actually passed.
+
 ## 5. Next steps
 
 1. **When the 2023 PDF arrives:** transcribe its parameter tables to a TDB
