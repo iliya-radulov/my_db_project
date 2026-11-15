@@ -8,6 +8,7 @@
 |---|---|
 | Plan | reproduce the published La–Fe–Si assessment → audit it against Niitsu & Kainuma (2012) and our own data → use it for hypothesis tests → extend (ORCHID-SAGE style) |
 | 2023 assessment paper (Feng et al., Calphad 83 (2023) 102643) | **received and fully transcribed** — all parameters, EPMA data and comparison captured (section 7) |
+| TDB reconstruction (τ1/τ2 subset) | **built and validated** — acceptance test passed, WP4 descriptor computed (section 9) |
 | Niitsu & Kainuma (2012) experimental data | transcribed, validated, ESPEI datasets generated (sections 2–3) |
 | Computational leg | proven end-to-end: Setty et al. Mo–Si–Y–Hf TDB (Zenodo 20848011) downloaded and an isothermal section computed with pycalphad 0.11.2 (the Track A pin) in this environment |
 | ESPEI | does not install on Python 3.13 (pins `emcee<3`, which no longer builds); fallback options in section 5 |
@@ -151,6 +152,44 @@ difficulty:
 Feng's own Table 4 phase assemblages and Fig. 5 topology at 1373 K. Only
 then overlay the Niitsu tie-lines and compute residuals. A subtly wrong
 TDB is worse than none — do not shortcut this gate.
+
+## 9. TDB reconstruction and WP4 descriptor (15 Nov)
+
+Built `tdb_build/LaFeSi_feng2023.tdb` from Feng Table 5 + SGTE unaries
+(Dinsdale 1991, verified identical across pycalphad-bundled sources). This
+is the faithful reconstruction: the binary backbone is Feng's own Table 5,
+so the ternary τ parameters sit on exactly the binaries they were fitted on
+(Zhou/Cui/Su) — no hybrid. Pilot discipline followed: `FROZEN_SPEC.md`
+(composition La(Fe11.5Si1.5) and the A1–A5 acceptance test) written before
+any parameter was typed; every PARAMETER block carries a provenance comment.
+
+**Acceptance test passed** (`tdb_build/RESULTS.md`): parses & computes (A1);
+unaries SGTE-consistent numerically (A2); τ1 single-phase at the frozen 1:13
+point (A3); τ1 correct in all 5 Feng Table-4 τ1 alloys with αFe where
+reported (A4); τ1/τ2 window x≈0.10–0.23 / ≥0.27 matches the literature
+0.096–0.229 / 0.266+ (A5).
+
+**WP4 descriptor:** ΔG_f(τ1) at La(Fe11.5Si1.5) = **−20.99 kJ/mol-atom at
+1373 K** (−20.6 at 1173 → −21.2 at 1473; ≈ −1.9 J/mol-atom·K). The Track B
+physics descriptor is in hand.
+
+Deferred (do not affect the Fe-rich τ1 descriptor): τ3–τ6 three-sublattice
+compounds (need the site ratios from Feng's eq. 8, which the PDF text layer
+garbled) and the Fe–Si B2/D03 ordering (Table 5 gives only its ΔG anchors).
+
+Lessons carried / added:
+- `calculate()` on a coarse internal grid missed τ1's ideal site occupancy
+  and gave a wrong-sign ΔG_f (+23 kJ); the equilibrium GM is the right
+  source (−21 kJ). Verify descriptors from equilibrium, not raw grids.
+- The two Track A unary lessons held: numeric (not text) unary comparison
+  (A2), and a 3rd-gen screen (no Einstein terms; all sources 2nd-gen).
+
+### Next TDB layers
+1. τ3–τ6 site ratios — re-read Feng eq. 8 from the PDF (page 5) carefully.
+2. Fe–Si B2/D03 ordering from Cui 2017 (for the full Si-rich section).
+3. WP4 uncertainty band — swap Feng's binaries for the Track A collection
+   (needs the external `data/tdb/sgte_binary/` files; build script already
+   accepts an external backbone).
 
 ## 5. Next steps
 
