@@ -303,7 +303,7 @@ unified into one schema, auto-detected per file.
 
 On 3 September 2026, the database was migrated from a local Docker
 container on the development Mac to a dedicated home server
-(`192.168.2.42`). Migration: `pg_dump` (compressed format) → `scp` →
+(`<server-ip>`). Migration: `pg_dump` (compressed format) → `scp` →
 `pg_restore`. One session, zero data loss.
 
 - **Home server**: AMD FX-4320, Ubuntu Server 26.04, Docker Engine,
@@ -312,9 +312,9 @@ container on the development Mac to a dedicated home server
   persists the setting across reboots; BIOS `Power On By PCI-E/PCI`
   enabled. Server wakes from cold poweroff in ~60 seconds via
   `wakeonlan 2c:56:dc:74:c4:ff`
-- **Remote access**: `pg_hba.conf` allows `192.168.2.0/24`; `listen_addresses = '*'`
+- **Remote access**: `pg_hba.conf` allows `<server-ip>/24`; `listen_addresses = '*'`
   in `postgresql.conf`
-- **All machines updated**: `.env` changed to `POSTGRES_HOST=192.168.2.42`
+- **All machines updated**: `.env` changed to `POSTGRES_HOST=<server-ip>`
   on Mac and ML Desktop. SSH installed on ML Desktop during this session
 - **`path_repair.py`**: scans `characterization.file_path` and
   `vsm_files.file_path` for broken paths, auto-searches by filename under
@@ -420,7 +420,7 @@ Stage 3 is about closing the loop: composition → measurement → prediction
 
 **Infrastructure:**
 - ML Desktop: Ryzen 9900X, RTX 5060 Ti 16 GB, Ubuntu 26.04, CUDA 13.2
-- Database: home server `192.168.2.42`, always-on, wake-on-LAN
+- Database: home server `<server-ip>`, always-on, wake-on-LAN
 - All machines read/write the same canonical database
 
 ---

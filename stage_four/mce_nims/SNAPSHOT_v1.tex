@@ -123,7 +123,7 @@
   {\small\color{tgray}
     Repository: \texttt{iliya-radulov/my\_db\_project} \quad
     Branch: \texttt{main} \quad
-    Database: \texttt{alloy\_lab} @ \texttt{192.168.178.10}}
+    Database: \texttt{alloy\_lab} @ \texttt{<server-ip>}}
 \end{center}
 
 \vspace{2mm}\hrule\vspace{6mm}
@@ -328,7 +328,7 @@ the verified database state.
 \label{sec:checks}
 
 All four checks were run on 7~November~2026 from the desktop machine
-(\texttt{192.168.178.47}) against the server (\texttt{192.168.178.10}).\\
+(\texttt{<server-ip>}) against the server (\texttt{<server-ip>}).\\
 
 The working directory was
 \texttt{\textasciitilde/Documents/github/active/my\_db\_project/stage\_four/mce\_nims/}.
@@ -336,7 +336,7 @@ The working directory was
 \subsection{Record and point counts}
 
 \begin{lstlisting}[style=terminal, caption={Database record counts.}]
-$ ssh r@192.168.178.10 "docker exec alloy-postgres psql -U postgres \
+$ ssh r@<server-ip> "docker exec alloy-postgres psql -U postgres \
     -d alloy_lab -c 'SELECT source, COUNT(*) as records \
     FROM alloy_lab.mce_literature_records GROUP BY source;'"
 
@@ -345,7 +345,7 @@ $ ssh r@192.168.178.10 "docker exec alloy-postgres psql -U postgres \
  nims_lafesi_1_13 |    1113
 (1 row)
 
-$ ssh r@192.168.178.10 "docker exec alloy-postgres psql -U postgres \
+$ ssh r@<server-ip> "docker exec alloy-postgres psql -U postgres \
     -d alloy_lab -c 'SELECT COUNT(*) as points \
     FROM alloy_lab.mce_literature_points;'"
 
@@ -559,7 +559,7 @@ python link_samples.py
 python consistency_report.py
 
 # 4. Bracket-composition audit
-ssh r@192.168.178.10 "docker exec alloy-postgres psql -U postgres \
+ssh r@<server-ip> "docker exec alloy-postgres psql -U postgres \
   -d alloy_lab -c \"SET search_path TO alloy_lab; \
   SELECT sample_id, created_at, notes FROM samples \
   WHERE notes ~ 'Desktop App: .*[()\[\]{}+\-,;/]' \
