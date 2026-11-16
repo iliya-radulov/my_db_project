@@ -1,5 +1,7 @@
 # Table 5 — thermodynamic parameters of the La–Fe–Si system
 
+> **Re-checked against the PDF on 16 Nov 2026** (pages 7-9, page images; see `WP4b_Step2_Transcription_Check_20261116.md`). Three sign errors in tau4-tau6 corrected below (marked CORRECTED); everything else matched as printed. Note: the printed positive signs of G(tau4,La:Fe:Fe) and G(tau5,La:Fe:Si) are as printed, not verified for physical sense; flag, do not fix.
+
 Transcribed from Feng et al., Calphad 83 (2023) 102643, Table 5 (© Elsevier).
 Energies in J/mol, T in K. `(cid:0)` in the PDF text layer = minus sign;
 values cross-checked against the page images. Ref tags: [20] Zhou 2010
@@ -115,10 +117,10 @@ tau3 (La3Fe2Si8)   G(La:Fe:Si) = -55000 - 11.2*T
                    L(La:Si,Fe:Si)=L(La:Si,Fe:Fe)=L(La:Si:Si,Fe)=L(La:Fe:Si,Fe)=L(La:Si,Fe:Si,Fe)
 tau4 (LaFeSi2)     G(La:Fe:Si) = -53021.2027 - 16*T
                    G(La:Si:Fe) = -32022.4058 - 10.01*T
-                   G(La:Fe:Fe) = -10001 - 5.002*T
+                   G(La:Fe:Fe) = +10001 - 5.002*T      [CORRECTED 16 Nov 2026: printed +10001 (page 9); earlier transcription had -10001]
                    G(La:Si:Si) = -40016.0024 - 8.0032*T
                    L(La:Si,Fe:Si,Fe) = -171189.014 + 10*T  (and equalities as tau3)
-tau5 (LaFeSi)      G(La:Fe:Si) = -48500 - 13.6*T
+tau5 (LaFeSi)      G(La:Fe:Si) = +48500 - 13.6*T       [CORRECTED 16 Nov 2026: printed +48500 (page 9); earlier transcription had -48500]
                    G(La:Si:Fe) = -20002 - 5.005*T
                    G(La:Fe:Fe) = 15000 + 15*T
                    G(La:Si:Si) = 8000.800 - 17.50175*T
@@ -127,7 +129,7 @@ tau6 (La3Fe2Si8*)  G(La:Fe:Si) = -67855 - 11*T
                    G(La:Si:Fe) = 20004 + 10*T
                    G(La:Fe:Fe) = 20008.012 - 15*T
                    G(La:Si:Si) = -49009 - 20*T
-                   L(La:Si,Fe:Si,Fe) = 65006.5 + 10*T  (and equalities)
+                   L(La:Si,Fe:Si,Fe) = -65006.5 + 10*T  (and equalities)   [CORRECTED 16 Nov 2026: printed -65006.5 (page 9); earlier transcription had +65006.5]
 ```
 
 ## Phase name map (Feng 2023 → Niitsu 2012, our registry)
