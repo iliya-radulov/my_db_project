@@ -45,3 +45,14 @@ stage_four/*.pkl
 # built TDB section renders (regenerable via audit.py)
 stage_four/calphad_lafesi/tdb_build/*.png
 stage_four/calphad_lafesi/tdb_build/merged_*.tdb
+*.zip
+stage_three/cache/
+stage_three/stage4_step1/diagnostics/*.zip
+stage_three/stage4_step1/results_v2/merged_tdbs/
+stage_three/stage4_step1/results_v2/*.csv
+stage_three/FENDB_merged_v4.tdb
+stage_four/calphad_lafesi/tdb_build/*.tdb
+stage_four/mce_nims/test_set_edx.csv
+stage_four/mce_nims/SNAPSHOT_v1.pdf
+stage_three/stage4_step1/backup/
+stage_three/rag_benchmark_questions*.csv

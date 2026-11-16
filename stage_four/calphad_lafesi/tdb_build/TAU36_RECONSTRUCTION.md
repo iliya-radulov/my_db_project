@@ -65,3 +65,16 @@ for phase-stability work until validated.
 phase and its descriptor live in the Fe-rich corner, where τ1/τ2 + the
 binary backbone are fully validated. The WP4 descriptor and the uncertainty
 band are unaffected.
+
+
+## Update 16 Nov 2026 — rerun with corrected Table 5 signs
+
+An independent check of Table 5 against the PDF found three sign errors in the earlier
+transcription (tau4 G(La:Fe:Fe) = +10001-5.002T; tau5 G(La:Fe:Si) = +48500-13.6T;
+tau6 L = -65006.5+10T). They are corrected in table5_parameters.md and tau36_block.py.
+Rerun (tau36_rerun.py, 21 alloys, 1373 K, hypotheses A/B/E, old vs corrected signs):
+the conclusion does not change. A and B never make tau3-tau6 stable (identical to the run
+without them; 5/21 exact phase-set matches vs experiment); E lets tau4 take over the
+diagram (0/21). The missing piece is the reference/scaling (GHSER terms, site ratios),
+not the signs. tau3-tau6 stay excluded from the WP4b descriptor.
+Record: WP4b_Step3_Tau36_Rerun_20261116.md (private documentation repo).
