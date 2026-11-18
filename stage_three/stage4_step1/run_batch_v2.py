@@ -39,6 +39,8 @@ Usage (from stage_three/, venv active):
 """
 from __future__ import annotations
 
+import math
+
 import argparse
 import csv
 import json
@@ -135,6 +137,10 @@ def _feasibility_at_T(db, ser_names: dict, T_K: float,
 
     eq = equilibrium(db, comps, phases, conds, calc_opts={"pdens": 500})
     G_competing = float(eq.GM.squeeze().values)                         # J/mol-atom
+    # silent-failure guard (18 Nov 2026): a NaN/inf from a non-converged
+    # equilibrium must be an error, never a number
+    if not math.isfinite(G_competing):
+        raise ValueError(f"equilibrium returned non-finite GM at T={T_K} K")
 
     G_SER = g_ser_at(db, ser_names, T_K,
                      {"FE": x_fe, "ND": x_nd, "B": x_b})                # J/mol-atom
@@ -284,6 +290,21 @@ def run_one(fend: str, feb: str, ndb: str) -> dict:
     result["temperatures_K"]          = T_vals
     result["threshold_kJ_mol_atom"]   = thresh_vals
     result["competing_assemblage"]    = competing
+
+    # silent-failure guard (18 Nov 2026): a combination is a survivor only if
+    # EVERY temperature gave a finite threshold. A missing or non-finite value
+    # (SER lookup failure, failed equilibrium, NaN) makes it a failure with a reason.
+    bad = [T for T, thr in zip(T_vals, thresh_vals)
+           if thr is None or not math.isfinite(thr)]
+    if bad or not T_vals:
+        result["survived"] = False
+        result["failure_stage"] = "feasibility"
+        errs = sorted({str(c.get("error")) for c in competing.values()
+                       if isinstance(c, dict) and "error" in c})
+        result["failure_reason"] = (f"no finite threshold at T={bad or 'all'}"
+                                    + (f"; errors: {errs}" if errs else ""))
+        result["runtime_seconds"] = round(time.time() - t0, 1)
+        return result
 
     for T_key, col in [(800,  "threshold_at_800K"),
                        (1000, "threshold_at_1000K"),

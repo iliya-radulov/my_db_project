@@ -27,6 +27,12 @@ the ternary files used for the overlay are listed in Supplementary Table S1b.
 Expected: 78 of 84 combinations survive; the threshold at 800 K spans −9.26 to −8.33 kJ/mol
 (per mole of atoms; median −8.79). Chen 2019 (ternary) −9.10, Hallemans 1995 (ternary) −8.78 at 800 K.
 
+### Failure rule
+
+A calculation that returns no finite number is a failed run, never a result. `run_batch_v2.py` marks a combination as not surviving (`failure_stage = feasibility`, with the reason in `failure_reason`) if any temperature gives no finite threshold. `ternary_threshold.py` exits with a non-zero code on a missing threshold, an unknown phase or a missing SER function. An empty or partial output file is a failed run. (Added 18 Nov 2026; the released results are unchanged: no survivor of the 78 had a missing threshold.)
+
+
+
 ## Contents
 | Path | Purpose |
 |---|---|

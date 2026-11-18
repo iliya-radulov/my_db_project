@@ -25,6 +25,13 @@ python niitsu2012.py            # run all validation checks
 python niitsu2012.py --espei    # regenerate the ESPEI datasets
 python plot_tielines.py         # write results/tielines_<T>K.png
 ```
+## Environment variable `SGTE_BINARY_DIR`
+
+`build_merged_tdb_fixed.py` (used by `wp4b_descriptor.py` and `wp4_band_fixed.py`) reads the folder with the binary TDB files from the environment variable `SGTE_BINARY_DIR`:
+
+    export SGTE_BINARY_DIR=/path/to/data/tdb/sgte_binary
+
+If the variable is not set, or the folder has no `.tdb` files, the script stops with an error. Before 18 Nov 2026 it fell back to a hard-coded path; on 16 Nov this produced an all-empty band result that was caught only by the test step.
 
 ## Provenance and use
 

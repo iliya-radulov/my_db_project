@@ -22,7 +22,11 @@ import copy
 
 from pycalphad import Database
 
-COLL = os.environ.get('SGTE_BINARY_DIR', '/home/user/projects_documentation/AlloyDB/Data/tdb/sgte_binary')
+COLL = os.environ.get('SGTE_BINARY_DIR')
+# no hard-coded fallback (18 Nov 2026): a wrong path gave an all-empty band run on 16 Nov
+if not COLL or not os.path.isdir(COLL) or not any(f.endswith('.tdb') for f in os.listdir(COLL)):
+    raise SystemExit("SGTE_BINARY_DIR is not set or does not point to a folder with .tdb files: "
+                     f"{COLL!r}. Set it, e.g. export SGTE_BINARY_DIR=/path/to/data/tdb/sgte_binary")
 HERE = os.path.dirname(os.path.abspath(__file__))
 CONFLICTS = []          # filled by merge_binaries: duplicates whose expressions differ (first kept)
 SKIP_PHASES = {'A2_BCC', 'B2_BCC', 'BCC_4SL'}      # Cui ordering: added separately, as Feng did

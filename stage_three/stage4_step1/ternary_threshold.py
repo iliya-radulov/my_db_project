@@ -30,6 +30,9 @@ can pick the Nd₂Fe₁₄B name.
 """
 from __future__ import annotations
 
+import math
+import sys
+
 import argparse
 import json
 import warnings
@@ -73,6 +76,8 @@ def threshold_at_T(db, ser_names: dict, T_K: float,
 
     eq = equilibrium(db, comps, phases_to_use, conds, calc_opts={"pdens": 500})
     G_competing = float(eq.GM.squeeze().values)
+    if not math.isfinite(G_competing):   # silent-failure guard (18 Nov 2026)
+        raise ValueError(f"equilibrium returned non-finite GM at T={T_K} K")
 
     G_SER = g_ser_at(db, ser_names, T_K, X_TARGET)
     threshold_kJ = (G_competing - G_SER) / 1000.0
@@ -116,7 +121,7 @@ def main():
     if args.suppress not in db.phases:
         print(f"\nERROR: phase '{args.suppress}' not in this database.")
         print(f"Available phases are listed above.")
-        return
+        sys.exit(2)
 
     phases_to_use = [p for p in all_phases if p != args.suppress]
 
@@ -124,7 +129,7 @@ def main():
         ser_names = {el: ser_function(db, el) for el in ELEMENTS}
     except KeyError as e:
         print(f"ERROR: {e}")
-        return
+        sys.exit(2)
 
     print(f"\nSuppressing {args.suppress}; using {len(phases_to_use)} phases.")
     print(f"SER lookup: {ser_names}\n")
@@ -156,6 +161,13 @@ def main():
         }
         args.out.write_text(json.dumps(payload, indent=2))
         print(f"\nWritten: {args.out}")
+
+    # silent-failure guard (18 Nov 2026): any temperature without a finite
+    # threshold is a failed run (non-zero exit), not a quiet partial output
+    n_bad = sum(1 for r in out_rows if r["threshold_kJ_mol_atom"] is None)
+    if n_bad:
+        print(f"FAILED: {n_bad} of {len(out_rows)} temperatures gave no threshold")
+        sys.exit(1)
 
 
 if __name__ == "__main__":
