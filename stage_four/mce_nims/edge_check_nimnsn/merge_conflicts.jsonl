@@ -1,0 +1,178 @@
+{"combo": "MnNi-01Mie___NiSn-03Mie___MnSn-01Mie", "conflict": "FUNCTION GBCCNI: NiSn-03Mie.tdb defines it differently \u2014 first definition kept"}
+{"combo": "MnNi-01Mie___NiSn-03Mie___MnSn-04Liu", "conflict": "FUNCTION GBCCNI: NiSn-03Mie.tdb defines it differently \u2014 first definition kept"}
+{"combo": "MnNi-01Mie___NiSn-04Liu___MnSn-01Mie", "conflict": "FUNCTION GBCCNI: NiSn-04Liu.tdb defines it differently \u2014 first definition kept"}
+{"combo": "MnNi-01Mie___NiSn-04Liu___MnSn-01Mie", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-01Mie.tdb \u2014 first kept"}
+{"combo": "MnNi-01Mie___NiSn-04Liu___MnSn-04Liu", "conflict": "FUNCTION GBCCNI: NiSn-04Liu.tdb defines it differently \u2014 first definition kept"}
+{"combo": "MnNi-01Mie___NiSn-04Liu___MnSn-04Liu", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-04Liu.tdb \u2014 first kept"}
+{"combo": "MnNi-01Mie___NiSn-05Liu___MnSn-01Mie", "conflict": "FUNCTION GBCCNI: NiSn-05Liu.tdb defines it differently \u2014 first definition kept"}
+{"combo": "MnNi-01Mie___NiSn-05Liu___MnSn-04Liu", "conflict": "FUNCTION GBCCNI: NiSn-05Liu.tdb defines it differently \u2014 first definition kept"}
+{"combo": "MnNi-01Mie___NiSn-12Zem___MnSn-01Mie", "conflict": "FUNCTION GBCCNI: NiSn-12Zem.tdb defines it differently \u2014 first definition kept"}
+{"combo": "MnNi-01Mie___NiSn-12Zem___MnSn-01Mie", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-01Mie.tdb \u2014 first kept"}
+{"combo": "MnNi-01Mie___NiSn-13Don___MnSn-01Mie", "conflict": "FUNCTION GBCCNI: NiSn-13Don.tdb defines it differently \u2014 first definition kept"}
+{"combo": "MnNi-01Mie___NiSn-13Don___MnSn-01Mie", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-01Mie.tdb \u2014 first kept"}
+{"combo": "MnNi-01Mie___NiSn-12Zem___MnSn-04Liu", "conflict": "FUNCTION GBCCNI: NiSn-12Zem.tdb defines it differently \u2014 first definition kept"}
+{"combo": "MnNi-01Mie___NiSn-12Zem___MnSn-04Liu", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-04Liu.tdb \u2014 first kept"}
+{"combo": "MnNi-01Mie___NiSn-13Don___MnSn-04Liu", "conflict": "FUNCTION GBCCNI: NiSn-13Don.tdb defines it differently \u2014 first definition kept"}
+{"combo": "MnNi-01Mie___NiSn-13Don___MnSn-04Liu", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-04Liu.tdb \u2014 first kept"}
+{"combo": "MnNi-01Mie___NiSn-13Liu___MnSn-01Mie", "conflict": "FUNCTION GBCCNI: NiSn-13Liu.tdb defines it differently \u2014 first definition kept"}
+{"combo": "MnNi-01Mie___NiSn-13Liu___MnSn-01Mie", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-01Mie.tdb \u2014 first kept"}
+{"combo": "MnNi-01Mie___NiSn-13Liu___MnSn-04Liu", "conflict": "FUNCTION GBCCNI: NiSn-13Liu.tdb defines it differently \u2014 first definition kept"}
+{"combo": "MnNi-01Mie___NiSn-13Liu___MnSn-04Liu", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-04Liu.tdb \u2014 first kept"}
+{"combo": "MnNi-01Mie___NiSn-13Liu-fractional___MnSn-01Mie", "conflict": "FUNCTION GBCCNI: NiSn-13Liu-fractional.tdb defines it differently \u2014 first definition kept"}
+{"combo": "MnNi-01Mie___NiSn-13Liu-fractional___MnSn-01Mie", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-01Mie.tdb \u2014 first kept"}
+{"combo": "MnNi-01Mie___NiSn-13Liu-fractional___MnSn-04Liu", "conflict": "FUNCTION GBCCNI: NiSn-13Liu-fractional.tdb defines it differently \u2014 first definition kept"}
+{"combo": "MnNi-01Mie___NiSn-13Liu-fractional___MnSn-04Liu", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-04Liu.tdb \u2014 first kept"}
+{"combo": "MnNi-01Mie___NiSn-16Ber___MnSn-01Mie", "conflict": "FUNCTION GBCCNI: NiSn-16Ber.tdb defines it differently \u2014 first definition kept"}
+{"combo": "MnNi-01Mie___NiSn-16Ber___MnSn-01Mie", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-01Mie.tdb \u2014 first kept"}
+{"combo": "MnNi-01Mie___NiSn-21Zha___MnSn-01Mie", "conflict": "FUNCTION GBCCNI: NiSn-21Zha.tdb defines it differently \u2014 first definition kept"}
+{"combo": "MnNi-01Mie___NiSn-21Zha___MnSn-01Mie", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-01Mie.tdb \u2014 first kept"}
+{"combo": "MnNi-01Mie___NiSn-16Ber___MnSn-04Liu", "conflict": "FUNCTION GBCCNI: NiSn-16Ber.tdb defines it differently \u2014 first definition kept"}
+{"combo": "MnNi-01Mie___NiSn-16Ber___MnSn-04Liu", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-04Liu.tdb \u2014 first kept"}
+{"combo": "MnNi-01Mie___NiSn-21Zha___MnSn-04Liu", "conflict": "FUNCTION GBCCNI: NiSn-21Zha.tdb defines it differently \u2014 first definition kept"}
+{"combo": "MnNi-01Mie___NiSn-21Zha___MnSn-04Liu", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-04Liu.tdb \u2014 first kept"}
+{"combo": "MnNi-01Mie___NiSn-22Lia___MnSn-01Mie", "conflict": "FUNCTION GBCCNI: NiSn-22Lia.tdb defines it differently \u2014 first definition kept"}
+{"combo": "MnNi-01Mie___NiSn-22Lia___MnSn-01Mie", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-01Mie.tdb \u2014 first kept"}
+{"combo": "MnNi-01Mie___NiSn-22Lia___MnSn-04Liu", "conflict": "FUNCTION GBCCNI: NiSn-22Lia.tdb defines it differently \u2014 first definition kept"}
+{"combo": "MnNi-01Mie___NiSn-22Lia___MnSn-04Liu", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-04Liu.tdb \u2014 first kept"}
+{"combo": "MnNi-01Mie___NiSn-99Gho___MnSn-01Mie", "conflict": "FUNCTION GBCCNI: NiSn-99Gho.tdb defines it differently \u2014 first definition kept"}
+{"combo": "MnNi-01Mie___NiSn-99Gho___MnSn-04Liu", "conflict": "FUNCTION GBCCNI: NiSn-99Gho.tdb defines it differently \u2014 first definition kept"}
+{"combo": "MnNi-07Fra___NiSn-03Mie___MnSn-01Mie", "conflict": "FUNCTION GBCCNI: NiSn-03Mie.tdb defines it differently \u2014 first definition kept"}
+{"combo": "MnNi-07Fra___NiSn-03Mie___MnSn-04Liu", "conflict": "FUNCTION GBCCNI: NiSn-03Mie.tdb defines it differently \u2014 first definition kept"}
+{"combo": "MnNi-07Fra___NiSn-04Liu___MnSn-01Mie", "conflict": "FUNCTION GBCCNI: NiSn-04Liu.tdb defines it differently \u2014 first definition kept"}
+{"combo": "MnNi-07Fra___NiSn-04Liu___MnSn-01Mie", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-01Mie.tdb \u2014 first kept"}
+{"combo": "MnNi-07Fra___NiSn-04Liu___MnSn-04Liu", "conflict": "FUNCTION GBCCNI: NiSn-04Liu.tdb defines it differently \u2014 first definition kept"}
+{"combo": "MnNi-07Fra___NiSn-04Liu___MnSn-04Liu", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-04Liu.tdb \u2014 first kept"}
+{"combo": "MnNi-07Fra___NiSn-05Liu___MnSn-01Mie", "conflict": "FUNCTION GBCCNI: NiSn-05Liu.tdb defines it differently \u2014 first definition kept"}
+{"combo": "MnNi-07Fra___NiSn-05Liu___MnSn-04Liu", "conflict": "FUNCTION GBCCNI: NiSn-05Liu.tdb defines it differently \u2014 first definition kept"}
+{"combo": "MnNi-07Fra___NiSn-12Zem___MnSn-01Mie", "conflict": "FUNCTION GBCCNI: NiSn-12Zem.tdb defines it differently \u2014 first definition kept"}
+{"combo": "MnNi-07Fra___NiSn-12Zem___MnSn-01Mie", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-01Mie.tdb \u2014 first kept"}
+{"combo": "MnNi-07Fra___NiSn-12Zem___MnSn-04Liu", "conflict": "FUNCTION GBCCNI: NiSn-12Zem.tdb defines it differently \u2014 first definition kept"}
+{"combo": "MnNi-07Fra___NiSn-12Zem___MnSn-04Liu", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-04Liu.tdb \u2014 first kept"}
+{"combo": "MnNi-07Fra___NiSn-13Don___MnSn-01Mie", "conflict": "FUNCTION GBCCNI: NiSn-13Don.tdb defines it differently \u2014 first definition kept"}
+{"combo": "MnNi-07Fra___NiSn-13Don___MnSn-01Mie", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-01Mie.tdb \u2014 first kept"}
+{"combo": "MnNi-07Fra___NiSn-13Don___MnSn-04Liu", "conflict": "FUNCTION GBCCNI: NiSn-13Don.tdb defines it differently \u2014 first definition kept"}
+{"combo": "MnNi-07Fra___NiSn-13Don___MnSn-04Liu", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-04Liu.tdb \u2014 first kept"}
+{"combo": "MnNi-07Fra___NiSn-13Liu___MnSn-01Mie", "conflict": "FUNCTION GBCCNI: NiSn-13Liu.tdb defines it differently \u2014 first definition kept"}
+{"combo": "MnNi-07Fra___NiSn-13Liu___MnSn-01Mie", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-01Mie.tdb \u2014 first kept"}
+{"combo": "MnNi-07Fra___NiSn-13Liu___MnSn-04Liu", "conflict": "FUNCTION GBCCNI: NiSn-13Liu.tdb defines it differently \u2014 first definition kept"}
+{"combo": "MnNi-07Fra___NiSn-13Liu___MnSn-04Liu", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-04Liu.tdb \u2014 first kept"}
+{"combo": "MnNi-07Fra___NiSn-13Liu-fractional___MnSn-01Mie", "conflict": "FUNCTION GBCCNI: NiSn-13Liu-fractional.tdb defines it differently \u2014 first definition kept"}
+{"combo": "MnNi-07Fra___NiSn-13Liu-fractional___MnSn-01Mie", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-01Mie.tdb \u2014 first kept"}
+{"combo": "MnNi-07Fra___NiSn-13Liu-fractional___MnSn-04Liu", "conflict": "FUNCTION GBCCNI: NiSn-13Liu-fractional.tdb defines it differently \u2014 first definition kept"}
+{"combo": "MnNi-07Fra___NiSn-13Liu-fractional___MnSn-04Liu", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-04Liu.tdb \u2014 first kept"}
+{"combo": "MnNi-07Fra___NiSn-16Ber___MnSn-01Mie", "conflict": "FUNCTION GBCCNI: NiSn-16Ber.tdb defines it differently \u2014 first definition kept"}
+{"combo": "MnNi-07Fra___NiSn-16Ber___MnSn-01Mie", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-01Mie.tdb \u2014 first kept"}
+{"combo": "MnNi-07Fra___NiSn-21Zha___MnSn-01Mie", "conflict": "FUNCTION GBCCNI: NiSn-21Zha.tdb defines it differently \u2014 first definition kept"}
+{"combo": "MnNi-07Fra___NiSn-21Zha___MnSn-01Mie", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-01Mie.tdb \u2014 first kept"}
+{"combo": "MnNi-07Fra___NiSn-16Ber___MnSn-04Liu", "conflict": "FUNCTION GBCCNI: NiSn-16Ber.tdb defines it differently \u2014 first definition kept"}
+{"combo": "MnNi-07Fra___NiSn-16Ber___MnSn-04Liu", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-04Liu.tdb \u2014 first kept"}
+{"combo": "MnNi-07Fra___NiSn-21Zha___MnSn-04Liu", "conflict": "FUNCTION GBCCNI: NiSn-21Zha.tdb defines it differently \u2014 first definition kept"}
+{"combo": "MnNi-07Fra___NiSn-21Zha___MnSn-04Liu", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-04Liu.tdb \u2014 first kept"}
+{"combo": "MnNi-07Fra___NiSn-22Lia___MnSn-01Mie", "conflict": "FUNCTION GBCCNI: NiSn-22Lia.tdb defines it differently \u2014 first definition kept"}
+{"combo": "MnNi-07Fra___NiSn-22Lia___MnSn-01Mie", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-01Mie.tdb \u2014 first kept"}
+{"combo": "MnNi-07Fra___NiSn-22Lia___MnSn-04Liu", "conflict": "FUNCTION GBCCNI: NiSn-22Lia.tdb defines it differently \u2014 first definition kept"}
+{"combo": "MnNi-07Fra___NiSn-22Lia___MnSn-04Liu", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-04Liu.tdb \u2014 first kept"}
+{"combo": "MnNi-07Fra___NiSn-99Gho___MnSn-01Mie", "conflict": "FUNCTION GBCCNI: NiSn-99Gho.tdb defines it differently \u2014 first definition kept"}
+{"combo": "MnNi-07Fra___NiSn-99Gho___MnSn-04Liu", "conflict": "FUNCTION GBCCNI: NiSn-99Gho.tdb defines it differently \u2014 first definition kept"}
+{"combo": "MnNi-07Fra-2SL___NiSn-04Liu___MnSn-01Mie", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-01Mie.tdb \u2014 first kept"}
+{"combo": "MnNi-07Fra-2SL___NiSn-04Liu___MnSn-04Liu", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-04Liu.tdb \u2014 first kept"}
+{"combo": "MnNi-07Fra-2SL___NiSn-12Zem___MnSn-01Mie", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-01Mie.tdb \u2014 first kept"}
+{"combo": "MnNi-07Fra-2SL___NiSn-12Zem___MnSn-04Liu", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-04Liu.tdb \u2014 first kept"}
+{"combo": "MnNi-07Fra-2SL___NiSn-13Don___MnSn-01Mie", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-01Mie.tdb \u2014 first kept"}
+{"combo": "MnNi-07Fra-2SL___NiSn-13Don___MnSn-04Liu", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-04Liu.tdb \u2014 first kept"}
+{"combo": "MnNi-07Fra-2SL___NiSn-13Liu___MnSn-01Mie", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-01Mie.tdb \u2014 first kept"}
+{"combo": "MnNi-07Fra-2SL___NiSn-13Liu___MnSn-04Liu", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-04Liu.tdb \u2014 first kept"}
+{"combo": "MnNi-07Fra-2SL___NiSn-13Liu-fractional___MnSn-01Mie", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-01Mie.tdb \u2014 first kept"}
+{"combo": "MnNi-07Fra-2SL___NiSn-13Liu-fractional___MnSn-04Liu", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-04Liu.tdb \u2014 first kept"}
+{"combo": "MnNi-07Fra-2SL___NiSn-16Ber___MnSn-01Mie", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-01Mie.tdb \u2014 first kept"}
+{"combo": "MnNi-07Fra-2SL___NiSn-16Ber___MnSn-04Liu", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-04Liu.tdb \u2014 first kept"}
+{"combo": "MnNi-07Fra-2SL___NiSn-21Zha___MnSn-01Mie", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-01Mie.tdb \u2014 first kept"}
+{"combo": "MnNi-07Fra-2SL___NiSn-21Zha___MnSn-04Liu", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-04Liu.tdb \u2014 first kept"}
+{"combo": "MnNi-07Fra-2SL___NiSn-22Lia___MnSn-01Mie", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-01Mie.tdb \u2014 first kept"}
+{"combo": "MnNi-07Fra-2SL___NiSn-22Lia___MnSn-04Liu", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-04Liu.tdb \u2014 first kept"}
+{"combo": "MnNi-07Fra-no-wildcards___NiSn-03Mie___MnSn-01Mie", "conflict": "FUNCTION GBCCNI: NiSn-03Mie.tdb defines it differently \u2014 first definition kept"}
+{"combo": "MnNi-07Fra-no-wildcards___NiSn-03Mie___MnSn-04Liu", "conflict": "FUNCTION GBCCNI: NiSn-03Mie.tdb defines it differently \u2014 first definition kept"}
+{"combo": "MnNi-07Fra-no-wildcards___NiSn-04Liu___MnSn-01Mie", "conflict": "FUNCTION GBCCNI: NiSn-04Liu.tdb defines it differently \u2014 first definition kept"}
+{"combo": "MnNi-07Fra-no-wildcards___NiSn-04Liu___MnSn-01Mie", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-01Mie.tdb \u2014 first kept"}
+{"combo": "MnNi-07Fra-no-wildcards___NiSn-04Liu___MnSn-04Liu", "conflict": "FUNCTION GBCCNI: NiSn-04Liu.tdb defines it differently \u2014 first definition kept"}
+{"combo": "MnNi-07Fra-no-wildcards___NiSn-04Liu___MnSn-04Liu", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-04Liu.tdb \u2014 first kept"}
+{"combo": "MnNi-07Fra-no-wildcards___NiSn-05Liu___MnSn-01Mie", "conflict": "FUNCTION GBCCNI: NiSn-05Liu.tdb defines it differently \u2014 first definition kept"}
+{"combo": "MnNi-07Fra-no-wildcards___NiSn-05Liu___MnSn-04Liu", "conflict": "FUNCTION GBCCNI: NiSn-05Liu.tdb defines it differently \u2014 first definition kept"}
+{"combo": "MnNi-07Fra-no-wildcards___NiSn-12Zem___MnSn-01Mie", "conflict": "FUNCTION GBCCNI: NiSn-12Zem.tdb defines it differently \u2014 first definition kept"}
+{"combo": "MnNi-07Fra-no-wildcards___NiSn-12Zem___MnSn-01Mie", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-01Mie.tdb \u2014 first kept"}
+{"combo": "MnNi-07Fra-no-wildcards___NiSn-12Zem___MnSn-04Liu", "conflict": "FUNCTION GBCCNI: NiSn-12Zem.tdb defines it differently \u2014 first definition kept"}
+{"combo": "MnNi-07Fra-no-wildcards___NiSn-12Zem___MnSn-04Liu", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-04Liu.tdb \u2014 first kept"}
+{"combo": "MnNi-07Fra-no-wildcards___NiSn-13Don___MnSn-01Mie", "conflict": "FUNCTION GBCCNI: NiSn-13Don.tdb defines it differently \u2014 first definition kept"}
+{"combo": "MnNi-07Fra-no-wildcards___NiSn-13Don___MnSn-01Mie", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-01Mie.tdb \u2014 first kept"}
+{"combo": "MnNi-07Fra-no-wildcards___NiSn-13Don___MnSn-04Liu", "conflict": "FUNCTION GBCCNI: NiSn-13Don.tdb defines it differently \u2014 first definition kept"}
+{"combo": "MnNi-07Fra-no-wildcards___NiSn-13Don___MnSn-04Liu", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-04Liu.tdb \u2014 first kept"}
+{"combo": "MnNi-07Fra-no-wildcards___NiSn-13Liu___MnSn-01Mie", "conflict": "FUNCTION GBCCNI: NiSn-13Liu.tdb defines it differently \u2014 first definition kept"}
+{"combo": "MnNi-07Fra-no-wildcards___NiSn-13Liu___MnSn-01Mie", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-01Mie.tdb \u2014 first kept"}
+{"combo": "MnNi-07Fra-no-wildcards___NiSn-13Liu___MnSn-04Liu", "conflict": "FUNCTION GBCCNI: NiSn-13Liu.tdb defines it differently \u2014 first definition kept"}
+{"combo": "MnNi-07Fra-no-wildcards___NiSn-13Liu___MnSn-04Liu", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-04Liu.tdb \u2014 first kept"}
+{"combo": "MnNi-07Fra-no-wildcards___NiSn-13Liu-fractional___MnSn-01Mie", "conflict": "FUNCTION GBCCNI: NiSn-13Liu-fractional.tdb defines it differently \u2014 first definition kept"}
+{"combo": "MnNi-07Fra-no-wildcards___NiSn-13Liu-fractional___MnSn-01Mie", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-01Mie.tdb \u2014 first kept"}
+{"combo": "MnNi-07Fra-no-wildcards___NiSn-13Liu-fractional___MnSn-04Liu", "conflict": "FUNCTION GBCCNI: NiSn-13Liu-fractional.tdb defines it differently \u2014 first definition kept"}
+{"combo": "MnNi-07Fra-no-wildcards___NiSn-13Liu-fractional___MnSn-04Liu", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-04Liu.tdb \u2014 first kept"}
+{"combo": "MnNi-07Fra-no-wildcards___NiSn-16Ber___MnSn-01Mie", "conflict": "FUNCTION GBCCNI: NiSn-16Ber.tdb defines it differently \u2014 first definition kept"}
+{"combo": "MnNi-07Fra-no-wildcards___NiSn-16Ber___MnSn-01Mie", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-01Mie.tdb \u2014 first kept"}
+{"combo": "MnNi-07Fra-no-wildcards___NiSn-16Ber___MnSn-04Liu", "conflict": "FUNCTION GBCCNI: NiSn-16Ber.tdb defines it differently \u2014 first definition kept"}
+{"combo": "MnNi-07Fra-no-wildcards___NiSn-16Ber___MnSn-04Liu", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-04Liu.tdb \u2014 first kept"}
+{"combo": "MnNi-07Fra-no-wildcards___NiSn-21Zha___MnSn-01Mie", "conflict": "FUNCTION GBCCNI: NiSn-21Zha.tdb defines it differently \u2014 first definition kept"}
+{"combo": "MnNi-07Fra-no-wildcards___NiSn-21Zha___MnSn-01Mie", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-01Mie.tdb \u2014 first kept"}
+{"combo": "MnNi-07Fra-no-wildcards___NiSn-21Zha___MnSn-04Liu", "conflict": "FUNCTION GBCCNI: NiSn-21Zha.tdb defines it differently \u2014 first definition kept"}
+{"combo": "MnNi-07Fra-no-wildcards___NiSn-21Zha___MnSn-04Liu", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-04Liu.tdb \u2014 first kept"}
+{"combo": "MnNi-07Fra-no-wildcards___NiSn-22Lia___MnSn-01Mie", "conflict": "FUNCTION GBCCNI: NiSn-22Lia.tdb defines it differently \u2014 first definition kept"}
+{"combo": "MnNi-07Fra-no-wildcards___NiSn-22Lia___MnSn-01Mie", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-01Mie.tdb \u2014 first kept"}
+{"combo": "MnNi-07Fra-no-wildcards___NiSn-22Lia___MnSn-04Liu", "conflict": "FUNCTION GBCCNI: NiSn-22Lia.tdb defines it differently \u2014 first definition kept"}
+{"combo": "MnNi-07Fra-no-wildcards___NiSn-22Lia___MnSn-04Liu", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-04Liu.tdb \u2014 first kept"}
+{"combo": "MnNi-07Fra-no-wildcards___NiSn-99Gho___MnSn-01Mie", "conflict": "FUNCTION GBCCNI: NiSn-99Gho.tdb defines it differently \u2014 first definition kept"}
+{"combo": "MnNi-07Fra-no-wildcards___NiSn-99Gho___MnSn-04Liu", "conflict": "FUNCTION GBCCNI: NiSn-99Gho.tdb defines it differently \u2014 first definition kept"}
+{"combo": "MnNi-08Liu___NiSn-04Liu___MnSn-01Mie", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-01Mie.tdb \u2014 first kept"}
+{"combo": "MnNi-08Liu___NiSn-04Liu___MnSn-04Liu", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-04Liu.tdb \u2014 first kept"}
+{"combo": "MnNi-08Liu___NiSn-12Zem___MnSn-01Mie", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-01Mie.tdb \u2014 first kept"}
+{"combo": "MnNi-08Liu___NiSn-12Zem___MnSn-04Liu", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-04Liu.tdb \u2014 first kept"}
+{"combo": "MnNi-08Liu___NiSn-13Don___MnSn-01Mie", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-01Mie.tdb \u2014 first kept"}
+{"combo": "MnNi-08Liu___NiSn-13Don___MnSn-04Liu", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-04Liu.tdb \u2014 first kept"}
+{"combo": "MnNi-08Liu___NiSn-13Liu___MnSn-01Mie", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-01Mie.tdb \u2014 first kept"}
+{"combo": "MnNi-08Liu___NiSn-13Liu___MnSn-04Liu", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-04Liu.tdb \u2014 first kept"}
+{"combo": "MnNi-08Liu___NiSn-13Liu-fractional___MnSn-01Mie", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-01Mie.tdb \u2014 first kept"}
+{"combo": "MnNi-08Liu___NiSn-13Liu-fractional___MnSn-04Liu", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-04Liu.tdb \u2014 first kept"}
+{"combo": "MnNi-08Liu___NiSn-16Ber___MnSn-01Mie", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-01Mie.tdb \u2014 first kept"}
+{"combo": "MnNi-08Liu___NiSn-16Ber___MnSn-04Liu", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-04Liu.tdb \u2014 first kept"}
+{"combo": "MnNi-08Liu___NiSn-21Zha___MnSn-01Mie", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-01Mie.tdb \u2014 first kept"}
+{"combo": "MnNi-08Liu___NiSn-22Lia___MnSn-01Mie", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-01Mie.tdb \u2014 first kept"}
+{"combo": "MnNi-08Liu___NiSn-21Zha___MnSn-04Liu", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-04Liu.tdb \u2014 first kept"}
+{"combo": "MnNi-08Liu___NiSn-22Lia___MnSn-04Liu", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-04Liu.tdb \u2014 first kept"}
+{"combo": "MnNi-19Wal___NiSn-04Liu___MnSn-01Mie", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-01Mie.tdb \u2014 first kept"}
+{"combo": "MnNi-19Wal___NiSn-04Liu___MnSn-04Liu", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-04Liu.tdb \u2014 first kept"}
+{"combo": "MnNi-19Wal___NiSn-12Zem___MnSn-01Mie", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-01Mie.tdb \u2014 first kept"}
+{"combo": "MnNi-19Wal___NiSn-13Don___MnSn-01Mie", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-01Mie.tdb \u2014 first kept"}
+{"combo": "MnNi-19Wal___NiSn-12Zem___MnSn-04Liu", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-04Liu.tdb \u2014 first kept"}
+{"combo": "MnNi-19Wal___NiSn-13Don___MnSn-04Liu", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-04Liu.tdb \u2014 first kept"}
+{"combo": "MnNi-19Wal___NiSn-13Liu___MnSn-01Mie", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-01Mie.tdb \u2014 first kept"}
+{"combo": "MnNi-19Wal___NiSn-13Liu___MnSn-04Liu", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-04Liu.tdb \u2014 first kept"}
+{"combo": "MnNi-19Wal___NiSn-13Liu-fractional___MnSn-01Mie", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-01Mie.tdb \u2014 first kept"}
+{"combo": "MnNi-19Wal___NiSn-16Ber___MnSn-01Mie", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-01Mie.tdb \u2014 first kept"}
+{"combo": "MnNi-19Wal___NiSn-13Liu-fractional___MnSn-04Liu", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-04Liu.tdb \u2014 first kept"}
+{"combo": "MnNi-19Wal___NiSn-16Ber___MnSn-04Liu", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-04Liu.tdb \u2014 first kept"}
+{"combo": "MnNi-19Wal___NiSn-21Zha___MnSn-01Mie", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-01Mie.tdb \u2014 first kept"}
+{"combo": "MnNi-19Wal___NiSn-21Zha___MnSn-04Liu", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-04Liu.tdb \u2014 first kept"}
+{"combo": "MnNi-19Wal___NiSn-22Lia___MnSn-01Mie", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-01Mie.tdb \u2014 first kept"}
+{"combo": "MnNi-19Wal___NiSn-22Lia___MnSn-04Liu", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-04Liu.tdb \u2014 first kept"}
+{"combo": "MnNi-19Wal-4sl___NiSn-04Liu___MnSn-01Mie", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-01Mie.tdb \u2014 first kept"}
+{"combo": "MnNi-19Wal-4sl___NiSn-04Liu___MnSn-04Liu", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-04Liu.tdb \u2014 first kept"}
+{"combo": "MnNi-19Wal-4sl___NiSn-12Zem___MnSn-01Mie", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-01Mie.tdb \u2014 first kept"}
+{"combo": "MnNi-19Wal-4sl___NiSn-13Don___MnSn-01Mie", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-01Mie.tdb \u2014 first kept"}
+{"combo": "MnNi-19Wal-4sl___NiSn-12Zem___MnSn-04Liu", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-04Liu.tdb \u2014 first kept"}
+{"combo": "MnNi-19Wal-4sl___NiSn-13Don___MnSn-04Liu", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-04Liu.tdb \u2014 first kept"}
+{"combo": "MnNi-19Wal-4sl___NiSn-13Liu___MnSn-01Mie", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-01Mie.tdb \u2014 first kept"}
+{"combo": "MnNi-19Wal-4sl___NiSn-13Liu___MnSn-04Liu", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-04Liu.tdb \u2014 first kept"}
+{"combo": "MnNi-19Wal-4sl___NiSn-13Liu-fractional___MnSn-01Mie", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-01Mie.tdb \u2014 first kept"}
+{"combo": "MnNi-19Wal-4sl___NiSn-16Ber___MnSn-01Mie", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-01Mie.tdb \u2014 first kept"}
+{"combo": "MnNi-19Wal-4sl___NiSn-13Liu-fractional___MnSn-04Liu", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-04Liu.tdb \u2014 first kept"}
+{"combo": "MnNi-19Wal-4sl___NiSn-21Zha___MnSn-01Mie", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-01Mie.tdb \u2014 first kept"}
+{"combo": "MnNi-19Wal-4sl___NiSn-16Ber___MnSn-04Liu", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-04Liu.tdb \u2014 first kept"}
+{"combo": "MnNi-19Wal-4sl___NiSn-21Zha___MnSn-04Liu", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-04Liu.tdb \u2014 first kept"}
+{"combo": "MnNi-19Wal-4sl___NiSn-22Lia___MnSn-01Mie", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-01Mie.tdb \u2014 first kept"}
+{"combo": "MnNi-19Wal-4sl___NiSn-22Lia___MnSn-04Liu", "conflict": "PARAMETER G(FCC_A1,SN:VA;0): differs in MnSn-04Liu.tdb \u2014 first kept"}

@@ -1,0 +1,72 @@
+{
+  "command": "python nimnsn_edge_check.py --system alfemn_2g --out qual_alfemn --workers 6",
+  "started": "2026-11-18T11:38:34",
+  "pycalphad": "0.11.2",
+  "system": "alfemn_2g",
+  "groups": {
+    "AlFe": [
+      "AlFe-09Sun.tdb",
+      "AlFe-09Sun-no-option-F.tdb",
+      "AlFe-17Zhe.tdb",
+      "AlFe-21Mur.tdb"
+    ],
+    "AlMn": [
+      "AlMn-07Du.tdb",
+      "AlMn-17Cui.tdb",
+      "AlMn-19Mie.tdb",
+      "AlMn-92Jan.tdb",
+      "AlMn-98Jan.tdb",
+      "AlMn-99Liu-LB.tdb"
+    ],
+    "FeMn": [
+      "FeMn-04Wit.tdb",
+      "FeMn-23Jac.tdb",
+      "FeMn-87Hua.tdb",
+      "FeMn-89Hua-LB.tdb",
+      "FeMn-89Hua-modified.tdb",
+      "FeMn-89Lee.tdb"
+    ]
+  },
+  "file_set_rule": "all files second-generation SGTE unaries (file-text check); a non-computable file gives failed combinations, which count as non-surviving",
+  "rule": {
+    "temps": [
+      800.0,
+      1200.0,
+      1600.0
+    ],
+    "x": [
+      0.05,
+      0.15,
+      0.25,
+      0.35,
+      0.45,
+      0.55,
+      0.65,
+      0.75,
+      0.85,
+      0.95
+    ],
+    "tol_J_per_mol": 1.0,
+    "max_unverified_per_edge": 2,
+    "fallback": true
+  },
+  "n_combinations": 144,
+  "files_sha256": {
+    "AlFe-09Sun.tdb": "5d81bdcb3a4d8f17612980486163cba99fe8f8b195d242369eaaab87c8f008dd",
+    "AlFe-09Sun-no-option-F.tdb": "884d6fe9e57d8ed3070359cca0e94a13def64865778691cae1700b6b3e5ee075",
+    "AlFe-17Zhe.tdb": "ebe1dc119ebdbd61f4816770bd724ebb0f3589c9426dcf664ac2ae9791a38cfe",
+    "AlFe-21Mur.tdb": "01ab7de1d7d061d43ce85c7eec2b69ddb2da2697be786914c2781796d42be107",
+    "AlMn-07Du.tdb": "4ae5aff6bfd8f63ddb0b703c1bc5230eb0854be1683821fcd68702ebf86cc1a1",
+    "AlMn-17Cui.tdb": "9e3ba0c71ba4440c9a4fd79b4bb6c590ca993e2a141a81daf9d1e533dacc42c2",
+    "AlMn-19Mie.tdb": "a02590e2b9ef31d51065ddc9fec359d21934a44bb6cca8a39fbe68a4448005c8",
+    "AlMn-92Jan.tdb": "2ba454e592e714093688a2689bbaf18a3fd93e81742cf1616194509f6fec95b0",
+    "AlMn-98Jan.tdb": "aefb06e2e257b9aa3d6a6a4cf8a114d1e030339a073775baec0a1e4142fe3234",
+    "AlMn-99Liu-LB.tdb": "0984f6432fe9feec050bbf07d239613b47ecc06d9c3f6c184f7f7b2dde34c077",
+    "FeMn-04Wit.tdb": "df83d83606098227a3c4ec8e0ae81239ccda189f63af5f7ee1886a8a2b90d8c7",
+    "FeMn-23Jac.tdb": "b1d4b760eabbecaed228481258d9ed0e492ec87a500710a4da07f623450ad371",
+    "FeMn-87Hua.tdb": "3c63e147d2ae5b365173e4eccd8453ec996a1703a13442fe2ac6eb4b563f7d23",
+    "FeMn-89Hua-LB.tdb": "e2d34b9be367a6592d55ec938ccbdd03ee8ff5fe60c738aef370802237c719fb",
+    "FeMn-89Hua-modified.tdb": "8767948ee291af1ef9b059b2c7afcc03d248c90512e1b6d2fb52f40903dd06e4",
+    "FeMn-89Lee.tdb": "8d5883ffc9634f3577d0b3ded68da5f3f96c501faa7893d2fbba9bbe29c1d1bd"
+  }
+}

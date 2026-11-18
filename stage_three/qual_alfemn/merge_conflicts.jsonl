@@ -1,0 +1,114 @@
+{"combo": "AlFe-09Sun___AlMn-07Du___FeMn-89Lee", "conflict": "PARAMETER TC(FCC_A1,FE:VA;0): differs in FeMn-89Lee.tdb \u2014 first kept"}
+{"combo": "AlFe-09Sun___AlMn-17Cui___FeMn-89Lee", "conflict": "PARAMETER TC(FCC_A1,FE:VA;0): differs in FeMn-89Lee.tdb \u2014 first kept"}
+{"combo": "AlFe-09Sun___AlMn-19Mie___FeMn-89Lee", "conflict": "PARAMETER TC(FCC_A1,FE:VA;0): differs in FeMn-89Lee.tdb \u2014 first kept"}
+{"combo": "AlFe-09Sun___AlMn-92Jan___FeMn-89Lee", "conflict": "PARAMETER TC(FCC_A1,FE:VA;0): differs in FeMn-89Lee.tdb \u2014 first kept"}
+{"combo": "AlFe-09Sun___AlMn-98Jan___FeMn-89Lee", "conflict": "PARAMETER TC(FCC_A1,FE:VA;0): differs in FeMn-89Lee.tdb \u2014 first kept"}
+{"combo": "AlFe-09Sun___AlMn-99Liu-LB___FeMn-04Wit", "conflict": "FUNCTION LB2ALVA: AlMn-99Liu-LB.tdb defines it differently \u2014 first definition kept"}
+{"combo": "AlFe-09Sun___AlMn-99Liu-LB___FeMn-04Wit", "conflict": "PARAMETER L(A2_BCC,AL,VA:VA;0): differs in AlMn-99Liu-LB.tdb \u2014 first kept"}
+{"combo": "AlFe-09Sun___AlMn-99Liu-LB___FeMn-04Wit", "conflict": "PARAMETER G(B2_BCC,VA:AL:VA;0): differs in AlMn-99Liu-LB.tdb \u2014 first kept"}
+{"combo": "AlFe-09Sun___AlMn-99Liu-LB___FeMn-04Wit", "conflict": "PARAMETER G(B2_BCC,AL:VA:VA;0): differs in AlMn-99Liu-LB.tdb \u2014 first kept"}
+{"combo": "AlFe-09Sun___AlMn-99Liu-LB___FeMn-04Wit", "conflict": "PARAMETER G(A2_BCC,VA:VA;0): differs in AlMn-99Liu-LB.tdb \u2014 first kept"}
+{"combo": "AlFe-09Sun___AlMn-99Liu-LB___FeMn-87Hua", "conflict": "FUNCTION LB2ALVA: AlMn-99Liu-LB.tdb defines it differently \u2014 first definition kept"}
+{"combo": "AlFe-09Sun___AlMn-99Liu-LB___FeMn-87Hua", "conflict": "PARAMETER L(A2_BCC,AL,VA:VA;0): differs in AlMn-99Liu-LB.tdb \u2014 first kept"}
+{"combo": "AlFe-09Sun___AlMn-99Liu-LB___FeMn-87Hua", "conflict": "PARAMETER G(B2_BCC,VA:AL:VA;0): differs in AlMn-99Liu-LB.tdb \u2014 first kept"}
+{"combo": "AlFe-09Sun___AlMn-99Liu-LB___FeMn-87Hua", "conflict": "PARAMETER G(B2_BCC,AL:VA:VA;0): differs in AlMn-99Liu-LB.tdb \u2014 first kept"}
+{"combo": "AlFe-09Sun___AlMn-99Liu-LB___FeMn-87Hua", "conflict": "PARAMETER G(A2_BCC,VA:VA;0): differs in AlMn-99Liu-LB.tdb \u2014 first kept"}
+{"combo": "AlFe-09Sun___AlMn-99Liu-LB___FeMn-23Jac", "conflict": "FUNCTION LB2ALVA: AlMn-99Liu-LB.tdb defines it differently \u2014 first definition kept"}
+{"combo": "AlFe-09Sun___AlMn-99Liu-LB___FeMn-23Jac", "conflict": "PARAMETER L(A2_BCC,AL,VA:VA;0): differs in AlMn-99Liu-LB.tdb \u2014 first kept"}
+{"combo": "AlFe-09Sun___AlMn-99Liu-LB___FeMn-23Jac", "conflict": "PARAMETER G(B2_BCC,VA:AL:VA;0): differs in AlMn-99Liu-LB.tdb \u2014 first kept"}
+{"combo": "AlFe-09Sun___AlMn-99Liu-LB___FeMn-23Jac", "conflict": "PARAMETER G(B2_BCC,AL:VA:VA;0): differs in AlMn-99Liu-LB.tdb \u2014 first kept"}
+{"combo": "AlFe-09Sun___AlMn-99Liu-LB___FeMn-23Jac", "conflict": "PARAMETER G(A2_BCC,VA:VA;0): differs in AlMn-99Liu-LB.tdb \u2014 first kept"}
+{"combo": "AlFe-09Sun___AlMn-99Liu-LB___FeMn-89Hua-LB", "conflict": "FUNCTION LB2ALVA: AlMn-99Liu-LB.tdb defines it differently \u2014 first definition kept"}
+{"combo": "AlFe-09Sun___AlMn-99Liu-LB___FeMn-89Hua-LB", "conflict": "PARAMETER L(A2_BCC,AL,VA:VA;0): differs in AlMn-99Liu-LB.tdb \u2014 first kept"}
+{"combo": "AlFe-09Sun___AlMn-99Liu-LB___FeMn-89Hua-LB", "conflict": "PARAMETER G(B2_BCC,VA:AL:VA;0): differs in AlMn-99Liu-LB.tdb \u2014 first kept"}
+{"combo": "AlFe-09Sun___AlMn-99Liu-LB___FeMn-89Hua-LB", "conflict": "PARAMETER G(B2_BCC,AL:VA:VA;0): differs in AlMn-99Liu-LB.tdb \u2014 first kept"}
+{"combo": "AlFe-09Sun___AlMn-99Liu-LB___FeMn-89Hua-LB", "conflict": "PARAMETER G(A2_BCC,VA:VA;0): differs in AlMn-99Liu-LB.tdb \u2014 first kept"}
+{"combo": "AlFe-09Sun___AlMn-99Liu-LB___FeMn-89Lee", "conflict": "FUNCTION LB2ALVA: AlMn-99Liu-LB.tdb defines it differently \u2014 first definition kept"}
+{"combo": "AlFe-09Sun___AlMn-99Liu-LB___FeMn-89Lee", "conflict": "PARAMETER L(A2_BCC,AL,VA:VA;0): differs in AlMn-99Liu-LB.tdb \u2014 first kept"}
+{"combo": "AlFe-09Sun___AlMn-99Liu-LB___FeMn-89Lee", "conflict": "PARAMETER G(B2_BCC,VA:AL:VA;0): differs in AlMn-99Liu-LB.tdb \u2014 first kept"}
+{"combo": "AlFe-09Sun___AlMn-99Liu-LB___FeMn-89Lee", "conflict": "PARAMETER G(B2_BCC,AL:VA:VA;0): differs in AlMn-99Liu-LB.tdb \u2014 first kept"}
+{"combo": "AlFe-09Sun___AlMn-99Liu-LB___FeMn-89Lee", "conflict": "PARAMETER G(A2_BCC,VA:VA;0): differs in AlMn-99Liu-LB.tdb \u2014 first kept"}
+{"combo": "AlFe-09Sun___AlMn-99Liu-LB___FeMn-89Lee", "conflict": "PARAMETER TC(FCC_A1,FE:VA;0): differs in FeMn-89Lee.tdb \u2014 first kept"}
+{"combo": "AlFe-09Sun___AlMn-99Liu-LB___FeMn-89Hua-modified", "conflict": "FUNCTION LB2ALVA: AlMn-99Liu-LB.tdb defines it differently \u2014 first definition kept"}
+{"combo": "AlFe-09Sun___AlMn-99Liu-LB___FeMn-89Hua-modified", "conflict": "PARAMETER L(A2_BCC,AL,VA:VA;0): differs in AlMn-99Liu-LB.tdb \u2014 first kept"}
+{"combo": "AlFe-09Sun___AlMn-99Liu-LB___FeMn-89Hua-modified", "conflict": "PARAMETER G(B2_BCC,VA:AL:VA;0): differs in AlMn-99Liu-LB.tdb \u2014 first kept"}
+{"combo": "AlFe-09Sun___AlMn-99Liu-LB___FeMn-89Hua-modified", "conflict": "PARAMETER G(B2_BCC,AL:VA:VA;0): differs in AlMn-99Liu-LB.tdb \u2014 first kept"}
+{"combo": "AlFe-09Sun___AlMn-99Liu-LB___FeMn-89Hua-modified", "conflict": "PARAMETER G(A2_BCC,VA:VA;0): differs in AlMn-99Liu-LB.tdb \u2014 first kept"}
+{"combo": "AlFe-09Sun-no-option-F___AlMn-07Du___FeMn-89Lee", "conflict": "PARAMETER TC(FCC_A1,FE:VA;0): differs in FeMn-89Lee.tdb \u2014 first kept"}
+{"combo": "AlFe-09Sun-no-option-F___AlMn-17Cui___FeMn-89Lee", "conflict": "PARAMETER TC(FCC_A1,FE:VA;0): differs in FeMn-89Lee.tdb \u2014 first kept"}
+{"combo": "AlFe-09Sun-no-option-F___AlMn-19Mie___FeMn-89Lee", "conflict": "PARAMETER TC(FCC_A1,FE:VA;0): differs in FeMn-89Lee.tdb \u2014 first kept"}
+{"combo": "AlFe-09Sun-no-option-F___AlMn-92Jan___FeMn-89Lee", "conflict": "PARAMETER TC(FCC_A1,FE:VA;0): differs in FeMn-89Lee.tdb \u2014 first kept"}
+{"combo": "AlFe-09Sun-no-option-F___AlMn-98Jan___FeMn-89Lee", "conflict": "PARAMETER TC(FCC_A1,FE:VA;0): differs in FeMn-89Lee.tdb \u2014 first kept"}
+{"combo": "AlFe-09Sun-no-option-F___AlMn-99Liu-LB___FeMn-04Wit", "conflict": "PARAMETER L(A2_BCC,AL,VA:VA;0): differs in AlMn-99Liu-LB.tdb \u2014 first kept"}
+{"combo": "AlFe-09Sun-no-option-F___AlMn-99Liu-LB___FeMn-04Wit", "conflict": "PARAMETER G(B2_BCC,VA:AL:VA;0): differs in AlMn-99Liu-LB.tdb \u2014 first kept"}
+{"combo": "AlFe-09Sun-no-option-F___AlMn-99Liu-LB___FeMn-04Wit", "conflict": "PARAMETER G(B2_BCC,AL:VA:VA;0): differs in AlMn-99Liu-LB.tdb \u2014 first kept"}
+{"combo": "AlFe-09Sun-no-option-F___AlMn-99Liu-LB___FeMn-04Wit", "conflict": "PARAMETER G(A2_BCC,VA:VA;0): differs in AlMn-99Liu-LB.tdb \u2014 first kept"}
+{"combo": "AlFe-09Sun-no-option-F___AlMn-99Liu-LB___FeMn-87Hua", "conflict": "PARAMETER L(A2_BCC,AL,VA:VA;0): differs in AlMn-99Liu-LB.tdb \u2014 first kept"}
+{"combo": "AlFe-09Sun-no-option-F___AlMn-99Liu-LB___FeMn-87Hua", "conflict": "PARAMETER G(B2_BCC,VA:AL:VA;0): differs in AlMn-99Liu-LB.tdb \u2014 first kept"}
+{"combo": "AlFe-09Sun-no-option-F___AlMn-99Liu-LB___FeMn-87Hua", "conflict": "PARAMETER G(B2_BCC,AL:VA:VA;0): differs in AlMn-99Liu-LB.tdb \u2014 first kept"}
+{"combo": "AlFe-09Sun-no-option-F___AlMn-99Liu-LB___FeMn-87Hua", "conflict": "PARAMETER G(A2_BCC,VA:VA;0): differs in AlMn-99Liu-LB.tdb \u2014 first kept"}
+{"combo": "AlFe-09Sun-no-option-F___AlMn-99Liu-LB___FeMn-23Jac", "conflict": "PARAMETER L(A2_BCC,AL,VA:VA;0): differs in AlMn-99Liu-LB.tdb \u2014 first kept"}
+{"combo": "AlFe-09Sun-no-option-F___AlMn-99Liu-LB___FeMn-23Jac", "conflict": "PARAMETER G(B2_BCC,VA:AL:VA;0): differs in AlMn-99Liu-LB.tdb \u2014 first kept"}
+{"combo": "AlFe-09Sun-no-option-F___AlMn-99Liu-LB___FeMn-23Jac", "conflict": "PARAMETER G(B2_BCC,AL:VA:VA;0): differs in AlMn-99Liu-LB.tdb \u2014 first kept"}
+{"combo": "AlFe-09Sun-no-option-F___AlMn-99Liu-LB___FeMn-23Jac", "conflict": "PARAMETER G(A2_BCC,VA:VA;0): differs in AlMn-99Liu-LB.tdb \u2014 first kept"}
+{"combo": "AlFe-09Sun-no-option-F___AlMn-99Liu-LB___FeMn-89Hua-LB", "conflict": "PARAMETER L(A2_BCC,AL,VA:VA;0): differs in AlMn-99Liu-LB.tdb \u2014 first kept"}
+{"combo": "AlFe-09Sun-no-option-F___AlMn-99Liu-LB___FeMn-89Hua-LB", "conflict": "PARAMETER G(B2_BCC,VA:AL:VA;0): differs in AlMn-99Liu-LB.tdb \u2014 first kept"}
+{"combo": "AlFe-09Sun-no-option-F___AlMn-99Liu-LB___FeMn-89Hua-LB", "conflict": "PARAMETER G(B2_BCC,AL:VA:VA;0): differs in AlMn-99Liu-LB.tdb \u2014 first kept"}
+{"combo": "AlFe-09Sun-no-option-F___AlMn-99Liu-LB___FeMn-89Hua-LB", "conflict": "PARAMETER G(A2_BCC,VA:VA;0): differs in AlMn-99Liu-LB.tdb \u2014 first kept"}
+{"combo": "AlFe-09Sun-no-option-F___AlMn-99Liu-LB___FeMn-89Lee", "conflict": "PARAMETER L(A2_BCC,AL,VA:VA;0): differs in AlMn-99Liu-LB.tdb \u2014 first kept"}
+{"combo": "AlFe-09Sun-no-option-F___AlMn-99Liu-LB___FeMn-89Lee", "conflict": "PARAMETER G(B2_BCC,VA:AL:VA;0): differs in AlMn-99Liu-LB.tdb \u2014 first kept"}
+{"combo": "AlFe-09Sun-no-option-F___AlMn-99Liu-LB___FeMn-89Lee", "conflict": "PARAMETER G(B2_BCC,AL:VA:VA;0): differs in AlMn-99Liu-LB.tdb \u2014 first kept"}
+{"combo": "AlFe-09Sun-no-option-F___AlMn-99Liu-LB___FeMn-89Lee", "conflict": "PARAMETER G(A2_BCC,VA:VA;0): differs in AlMn-99Liu-LB.tdb \u2014 first kept"}
+{"combo": "AlFe-09Sun-no-option-F___AlMn-99Liu-LB___FeMn-89Lee", "conflict": "PARAMETER TC(FCC_A1,FE:VA;0): differs in FeMn-89Lee.tdb \u2014 first kept"}
+{"combo": "AlFe-09Sun-no-option-F___AlMn-99Liu-LB___FeMn-89Hua-modified", "conflict": "PARAMETER L(A2_BCC,AL,VA:VA;0): differs in AlMn-99Liu-LB.tdb \u2014 first kept"}
+{"combo": "AlFe-09Sun-no-option-F___AlMn-99Liu-LB___FeMn-89Hua-modified", "conflict": "PARAMETER G(B2_BCC,VA:AL:VA;0): differs in AlMn-99Liu-LB.tdb \u2014 first kept"}
+{"combo": "AlFe-09Sun-no-option-F___AlMn-99Liu-LB___FeMn-89Hua-modified", "conflict": "PARAMETER G(B2_BCC,AL:VA:VA;0): differs in AlMn-99Liu-LB.tdb \u2014 first kept"}
+{"combo": "AlFe-09Sun-no-option-F___AlMn-99Liu-LB___FeMn-89Hua-modified", "conflict": "PARAMETER G(A2_BCC,VA:VA;0): differs in AlMn-99Liu-LB.tdb \u2014 first kept"}
+{"combo": "AlFe-17Zhe___AlMn-07Du___FeMn-89Lee", "conflict": "PARAMETER TC(FCC_A1,FE:VA;0): differs in FeMn-89Lee.tdb \u2014 first kept"}
+{"combo": "AlFe-17Zhe___AlMn-17Cui___FeMn-89Lee", "conflict": "PARAMETER TC(FCC_A1,FE:VA;0): differs in FeMn-89Lee.tdb \u2014 first kept"}
+{"combo": "AlFe-17Zhe___AlMn-19Mie___FeMn-89Lee", "conflict": "PARAMETER TC(FCC_A1,FE:VA;0): differs in FeMn-89Lee.tdb \u2014 first kept"}
+{"combo": "AlFe-17Zhe___AlMn-92Jan___FeMn-89Lee", "conflict": "PARAMETER TC(FCC_A1,FE:VA;0): differs in FeMn-89Lee.tdb \u2014 first kept"}
+{"combo": "AlFe-17Zhe___AlMn-98Jan___FeMn-89Lee", "conflict": "PARAMETER TC(FCC_A1,FE:VA;0): differs in FeMn-89Lee.tdb \u2014 first kept"}
+{"combo": "AlFe-17Zhe___AlMn-99Liu-LB___FeMn-04Wit", "conflict": "PHASE A2_BCC: model hint ordered_phase differs in AlMn-99Liu-LB.tdb \u2014 first kept"}
+{"combo": "AlFe-17Zhe___AlMn-99Liu-LB___FeMn-87Hua", "conflict": "PHASE A2_BCC: model hint ordered_phase differs in AlMn-99Liu-LB.tdb \u2014 first kept"}
+{"combo": "AlFe-17Zhe___AlMn-99Liu-LB___FeMn-23Jac", "conflict": "PHASE A2_BCC: model hint ordered_phase differs in AlMn-99Liu-LB.tdb \u2014 first kept"}
+{"combo": "AlFe-17Zhe___AlMn-99Liu-LB___FeMn-89Hua-LB", "conflict": "PHASE A2_BCC: model hint ordered_phase differs in AlMn-99Liu-LB.tdb \u2014 first kept"}
+{"combo": "AlFe-17Zhe___AlMn-99Liu-LB___FeMn-89Lee", "conflict": "PHASE A2_BCC: model hint ordered_phase differs in AlMn-99Liu-LB.tdb \u2014 first kept"}
+{"combo": "AlFe-17Zhe___AlMn-99Liu-LB___FeMn-89Lee", "conflict": "PARAMETER TC(FCC_A1,FE:VA;0): differs in FeMn-89Lee.tdb \u2014 first kept"}
+{"combo": "AlFe-17Zhe___AlMn-99Liu-LB___FeMn-89Hua-modified", "conflict": "PHASE A2_BCC: model hint ordered_phase differs in AlMn-99Liu-LB.tdb \u2014 first kept"}
+{"combo": "AlFe-21Mur___AlMn-07Du___FeMn-89Lee", "conflict": "PARAMETER TC(FCC_A1,FE:VA;0): differs in FeMn-89Lee.tdb \u2014 first kept"}
+{"combo": "AlFe-21Mur___AlMn-17Cui___FeMn-89Lee", "conflict": "PARAMETER TC(FCC_A1,FE:VA;0): differs in FeMn-89Lee.tdb \u2014 first kept"}
+{"combo": "AlFe-21Mur___AlMn-19Mie___FeMn-89Lee", "conflict": "PARAMETER TC(FCC_A1,FE:VA;0): differs in FeMn-89Lee.tdb \u2014 first kept"}
+{"combo": "AlFe-21Mur___AlMn-92Jan___FeMn-89Lee", "conflict": "PARAMETER TC(FCC_A1,FE:VA;0): differs in FeMn-89Lee.tdb \u2014 first kept"}
+{"combo": "AlFe-21Mur___AlMn-98Jan___FeMn-89Lee", "conflict": "PARAMETER TC(FCC_A1,FE:VA;0): differs in FeMn-89Lee.tdb \u2014 first kept"}
+{"combo": "AlFe-21Mur___AlMn-99Liu-LB___FeMn-04Wit", "conflict": "FUNCTION LB2ALVA: AlMn-99Liu-LB.tdb defines it differently \u2014 first definition kept"}
+{"combo": "AlFe-21Mur___AlMn-99Liu-LB___FeMn-04Wit", "conflict": "PARAMETER L(A2_BCC,AL,VA:VA;0): differs in AlMn-99Liu-LB.tdb \u2014 first kept"}
+{"combo": "AlFe-21Mur___AlMn-99Liu-LB___FeMn-04Wit", "conflict": "PARAMETER G(B2_BCC,VA:AL:VA;0): differs in AlMn-99Liu-LB.tdb \u2014 first kept"}
+{"combo": "AlFe-21Mur___AlMn-99Liu-LB___FeMn-04Wit", "conflict": "PARAMETER G(B2_BCC,AL:VA:VA;0): differs in AlMn-99Liu-LB.tdb \u2014 first kept"}
+{"combo": "AlFe-21Mur___AlMn-99Liu-LB___FeMn-04Wit", "conflict": "PARAMETER G(A2_BCC,VA:VA;0): differs in AlMn-99Liu-LB.tdb \u2014 first kept"}
+{"combo": "AlFe-21Mur___AlMn-99Liu-LB___FeMn-23Jac", "conflict": "FUNCTION LB2ALVA: AlMn-99Liu-LB.tdb defines it differently \u2014 first definition kept"}
+{"combo": "AlFe-21Mur___AlMn-99Liu-LB___FeMn-23Jac", "conflict": "PARAMETER L(A2_BCC,AL,VA:VA;0): differs in AlMn-99Liu-LB.tdb \u2014 first kept"}
+{"combo": "AlFe-21Mur___AlMn-99Liu-LB___FeMn-23Jac", "conflict": "PARAMETER G(B2_BCC,VA:AL:VA;0): differs in AlMn-99Liu-LB.tdb \u2014 first kept"}
+{"combo": "AlFe-21Mur___AlMn-99Liu-LB___FeMn-23Jac", "conflict": "PARAMETER G(B2_BCC,AL:VA:VA;0): differs in AlMn-99Liu-LB.tdb \u2014 first kept"}
+{"combo": "AlFe-21Mur___AlMn-99Liu-LB___FeMn-23Jac", "conflict": "PARAMETER G(A2_BCC,VA:VA;0): differs in AlMn-99Liu-LB.tdb \u2014 first kept"}
+{"combo": "AlFe-21Mur___AlMn-99Liu-LB___FeMn-87Hua", "conflict": "FUNCTION LB2ALVA: AlMn-99Liu-LB.tdb defines it differently \u2014 first definition kept"}
+{"combo": "AlFe-21Mur___AlMn-99Liu-LB___FeMn-87Hua", "conflict": "PARAMETER L(A2_BCC,AL,VA:VA;0): differs in AlMn-99Liu-LB.tdb \u2014 first kept"}
+{"combo": "AlFe-21Mur___AlMn-99Liu-LB___FeMn-87Hua", "conflict": "PARAMETER G(B2_BCC,VA:AL:VA;0): differs in AlMn-99Liu-LB.tdb \u2014 first kept"}
+{"combo": "AlFe-21Mur___AlMn-99Liu-LB___FeMn-87Hua", "conflict": "PARAMETER G(B2_BCC,AL:VA:VA;0): differs in AlMn-99Liu-LB.tdb \u2014 first kept"}
+{"combo": "AlFe-21Mur___AlMn-99Liu-LB___FeMn-87Hua", "conflict": "PARAMETER G(A2_BCC,VA:VA;0): differs in AlMn-99Liu-LB.tdb \u2014 first kept"}
+{"combo": "AlFe-21Mur___AlMn-99Liu-LB___FeMn-89Hua-LB", "conflict": "FUNCTION LB2ALVA: AlMn-99Liu-LB.tdb defines it differently \u2014 first definition kept"}
+{"combo": "AlFe-21Mur___AlMn-99Liu-LB___FeMn-89Hua-LB", "conflict": "PARAMETER L(A2_BCC,AL,VA:VA;0): differs in AlMn-99Liu-LB.tdb \u2014 first kept"}
+{"combo": "AlFe-21Mur___AlMn-99Liu-LB___FeMn-89Hua-LB", "conflict": "PARAMETER G(B2_BCC,VA:AL:VA;0): differs in AlMn-99Liu-LB.tdb \u2014 first kept"}
+{"combo": "AlFe-21Mur___AlMn-99Liu-LB___FeMn-89Hua-LB", "conflict": "PARAMETER G(B2_BCC,AL:VA:VA;0): differs in AlMn-99Liu-LB.tdb \u2014 first kept"}
+{"combo": "AlFe-21Mur___AlMn-99Liu-LB___FeMn-89Hua-LB", "conflict": "PARAMETER G(A2_BCC,VA:VA;0): differs in AlMn-99Liu-LB.tdb \u2014 first kept"}
+{"combo": "AlFe-21Mur___AlMn-99Liu-LB___FeMn-89Lee", "conflict": "FUNCTION LB2ALVA: AlMn-99Liu-LB.tdb defines it differently \u2014 first definition kept"}
+{"combo": "AlFe-21Mur___AlMn-99Liu-LB___FeMn-89Lee", "conflict": "PARAMETER L(A2_BCC,AL,VA:VA;0): differs in AlMn-99Liu-LB.tdb \u2014 first kept"}
+{"combo": "AlFe-21Mur___AlMn-99Liu-LB___FeMn-89Lee", "conflict": "PARAMETER G(B2_BCC,VA:AL:VA;0): differs in AlMn-99Liu-LB.tdb \u2014 first kept"}
+{"combo": "AlFe-21Mur___AlMn-99Liu-LB___FeMn-89Lee", "conflict": "PARAMETER G(B2_BCC,AL:VA:VA;0): differs in AlMn-99Liu-LB.tdb \u2014 first kept"}
+{"combo": "AlFe-21Mur___AlMn-99Liu-LB___FeMn-89Lee", "conflict": "PARAMETER G(A2_BCC,VA:VA;0): differs in AlMn-99Liu-LB.tdb \u2014 first kept"}
+{"combo": "AlFe-21Mur___AlMn-99Liu-LB___FeMn-89Lee", "conflict": "PARAMETER TC(FCC_A1,FE:VA;0): differs in FeMn-89Lee.tdb \u2014 first kept"}
+{"combo": "AlFe-21Mur___AlMn-99Liu-LB___FeMn-89Hua-modified", "conflict": "FUNCTION LB2ALVA: AlMn-99Liu-LB.tdb defines it differently \u2014 first definition kept"}
+{"combo": "AlFe-21Mur___AlMn-99Liu-LB___FeMn-89Hua-modified", "conflict": "PARAMETER L(A2_BCC,AL,VA:VA;0): differs in AlMn-99Liu-LB.tdb \u2014 first kept"}
+{"combo": "AlFe-21Mur___AlMn-99Liu-LB___FeMn-89Hua-modified", "conflict": "PARAMETER G(B2_BCC,VA:AL:VA;0): differs in AlMn-99Liu-LB.tdb \u2014 first kept"}
+{"combo": "AlFe-21Mur___AlMn-99Liu-LB___FeMn-89Hua-modified", "conflict": "PARAMETER G(B2_BCC,AL:VA:VA;0): differs in AlMn-99Liu-LB.tdb \u2014 first kept"}
+{"combo": "AlFe-21Mur___AlMn-99Liu-LB___FeMn-89Hua-modified", "conflict": "PARAMETER G(A2_BCC,VA:VA;0): differs in AlMn-99Liu-LB.tdb \u2014 first kept"}

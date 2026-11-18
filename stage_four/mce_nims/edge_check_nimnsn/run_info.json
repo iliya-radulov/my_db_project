@@ -1,0 +1,80 @@
+{
+  "command": "python nimnsn_edge_check.py --system nimnsn --out edge_check_nimnsn --workers 6",
+  "started": "2026-11-18T13:34:15",
+  "pycalphad": "0.11.2",
+  "system": "nimnsn",
+  "groups": {
+    "MnNi": [
+      "MnNi-01Mie.tdb",
+      "MnNi-07Fra.tdb",
+      "MnNi-07Fra-2SL.tdb",
+      "MnNi-07Fra-no-wildcards.tdb",
+      "MnNi-08Liu.tdb",
+      "MnNi-19Wal.tdb",
+      "MnNi-19Wal-4sl.tdb"
+    ],
+    "NiSn": [
+      "NiSn-03Mie.tdb",
+      "NiSn-04Liu.tdb",
+      "NiSn-05Liu.tdb",
+      "NiSn-12Zem.tdb",
+      "NiSn-13Don.tdb",
+      "NiSn-13Liu.tdb",
+      "NiSn-13Liu-fractional.tdb",
+      "NiSn-16Ber.tdb",
+      "NiSn-21Zha.tdb",
+      "NiSn-22Lia.tdb",
+      "NiSn-99Gho.tdb"
+    ],
+    "MnSn": [
+      "MnSn-01Mie.tdb",
+      "MnSn-04Liu.tdb"
+    ]
+  },
+  "file_set_rule": "all files second-generation SGTE unaries (file-text check); a non-computable file gives failed combinations, which count as non-surviving",
+  "rule": {
+    "temps": [
+      800.0,
+      1200.0,
+      1600.0
+    ],
+    "x": [
+      0.05,
+      0.15,
+      0.25,
+      0.35,
+      0.45,
+      0.55,
+      0.65,
+      0.75,
+      0.85,
+      0.95
+    ],
+    "tol_J_per_mol": 1.0,
+    "max_unverified_per_edge": 2,
+    "fallback": true
+  },
+  "n_combinations": 154,
+  "files_sha256": {
+    "MnNi-01Mie.tdb": "e2b0b529a311eb052d2b0f0161166ae04c703319f45e59f28713a6e857bc37be",
+    "MnNi-07Fra.tdb": "558d698d326d88c8a3b2be23be487c96b069602a7dd75dad5b7855017e150642",
+    "MnNi-07Fra-2SL.tdb": "0484cb934a365f175b5b6890216670d3f56a9992d327952d4e55353bb610a19f",
+    "MnNi-07Fra-no-wildcards.tdb": "d0981ad5d93e98725144bc0de1431add4fd0845cb738ca378b07f311aebc0eca",
+    "MnNi-08Liu.tdb": "7bcf108656ae69db1b08b82fe6b168a952674dfa0161c8efc123554cbb8b5214",
+    "MnNi-19Wal.tdb": "a1c3320a40c90e99efdae9106728605993609231d7fc238e09cd8529db4f7638",
+    "MnNi-19Wal-4sl.tdb": "6d03ce76bc9ea5d67068655020ae6781bb4f8710bdc3e3f926b191f5c2c949cb",
+    "NiSn-03Mie.tdb": "bf702f4f673747c5534ef9e8733edeea11fa6a8391cdcdf0f4605b7d9737da6f",
+    "NiSn-04Liu.tdb": "061359e985b11ca5a7efb8a174aba2bbd91da01eb7998e717e8d3e5dd85e6823",
+    "NiSn-05Liu.tdb": "98f3d4a745f05d8d423af00cd9f6880a5443ab97eb7166791edd1d3ebb5f661c",
+    "NiSn-12Zem.tdb": "e035e90c6e12d1ba7660af704042db15cfae0169c87dddf144bc4f016371767a",
+    "NiSn-13Don.tdb": "1ec92032331a26efcb6f105ebbd84567ec0ff3ddcf552ef573039cc5f42c2cd7",
+    "NiSn-13Liu.tdb": "e4e7faf54d0e9f3580a0ebd78fb38138d1943ded6c8b241e8bd5379190ad1ce9",
+    "NiSn-13Liu-fractional.tdb": "9456f6462e88edd86056fd480bdabf6ca1fed85b2a2207de33d920b2f4ebcada",
+    "NiSn-16Ber.tdb": "60b3cb64e41801701509dd3c9970b62c9b4aa4d36aedb251a3fa2bd1a29170f1",
+    "NiSn-21Zha.tdb": "6200df0f25695f406304ab867660d8db704c43f5b775c0106b4d0af5004b07ca",
+    "NiSn-22Lia.tdb": "71bc441b3e8ce8cf804f762c1f845579b54e1b27222e00cbeb584eb6bb3e730b",
+    "NiSn-99Gho.tdb": "1a39810f3db73ba04d884e159234ba41900bfeaee955a82121df27a6a70d5eb7",
+    "MnSn-01Mie.tdb": "d25c910b69f2cf886904751ce699861c902ba4c4be6f6b571f213aa352f40d2d",
+    "MnSn-04Liu.tdb": "6e280c7deef7994250989ec67fca0711dda5c061ef2b1fad2c95adff1fe35b21"
+  }
+}
