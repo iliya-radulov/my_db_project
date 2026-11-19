@@ -58,3 +58,49 @@ Written after the first refit was rejected (RESULTS.md) and **before** this run.
   refit (train 1.02e4, validation 1.05e3, same loss settings; the regulariser term is ~0 at w = 0).
 - C1 may be unreachable with a tighter model; it is reported as failed if so. Acceptance still
   needs all of C1–C4. One run, one outcome.
+
+---
+## Addendum B (19 Nov 2026) — add LaFe2Si2, LaFeSi, LaFeSi2 as fitted stoichiometric phases ("last chance")
+Written **before** the run. Only equilibrium counts were looked at, no losses.
+
+**Model change.** Three stoichiometric compounds (La)(Fe)(Si) with site counts 1:2:2, 1:1:1, 1:1:2 are added to
+the TDB. Their energies are *not* from any assessment (Feng's τ3–τ6 could not be reconstructed); they are
+**effective, fitted** parameters: G = ΣGHSER + n·(−30 kJ + 1000·w + 10·v·T) per formula unit, n = atoms per
+formula unit; −30 kJ/mol-atom is a frozen prior of the right order (τ1 ≈ −21, La silicides ≈ −35 kJ/mol-atom),
+w in kJ/mol-atom, v in 10 J/mol-atom/K. Their structures and Niitsu's label identities are as in `phase_registry.csv`.
+
+**Free parameters (12):** w,v for each of the 3 new phases; the 6 τ1/τ2 constants (as in Addendum A).
+**Regulariser:** `regularization_weight: 100` on all w,v (one value, no sweep). Lr 0.1, 1000 epochs, seed 42, latent_mu_lr 100.
+
+**Data.** Same rule as before (an equilibrium is used only if all its phases exist in the TDB); the new phases
+make 30 train (was 17) and 17 held-out 1373 K (was 7) equilibria usable. Still excluded: LaSi2a1/a2,
+LaFexSi2-x (AlB2), n.d. (24 equilibria). New phases enter with blank composition.
+
+**Baseline for C1/C2** = the *prior model*: new phases at the −30 kJ prior (w = v = 0), τ1/τ2 as published,
+parameters frozen (lr 1e-9), same μ′ settings, on the same train/held-out sets. (The original TDB cannot
+evaluate these equilibria.)
+
+**Acceptance (all required):**
+- C1 train data loss ≤ 90 % of the prior baseline. C2 held-out 1373 K loss ≤ 105 % of the prior baseline.
+- C3 at La(Fe11.5Si1.5), 1373 K τ1 phase fraction ≥ 0.9; A5 window along La(Fe1−xSix)13 still overlaps 0.096–0.229;
+  descriptor D > 0 at all 15 points.
+- C4 |w| ≤ 20, |v| ≤ 1; each new phase's fitted formation energy at 1373 K between −80 and 0 kJ/mol-atom
+  (formation energy = (G − ΣGHSER)/n, from the fitted parameters).
+- Beyond the gate, reported: the fitted τ1/τ2 changes, fitted new-phase energies, and which equilibria stay
+  worst-fitted. An accepted outcome means "τ1/τ2 refit supported *given* fitted competing phases" — the new
+  phase energies are effective, not assessed, and are not to be used as thermodynamic data without validation.
+
+---
+## Addendum C (19 Nov 2026) — per-equilibrium residual analysis (decides whether further refit effort is justified)
+Fixed **before** any residual was computed. For every usable Niitsu equilibrium (47 with Addendum B's phases;
+24 for the original TDB), compute the equilibrium at the alloy's *nominal* composition and temperature and compare with the measured tie-line:
+- **phase-set match:** calculated phases (NP > 1e-3) equal the measured set → else the point is an **outlier of kind "phase set"**.
+- **composition residual** for matched solution/τ phases (BCC_A2, FCC_A1, LIQUID, TAU1, TAU2): ΔSi and ΔLa in at.% (calc − exp).
+  **Reproduced within scatter** = phase set matches and every |ΔSi| ≤ 2.0 at.% and |ΔLa| ≤ 1.0 at.% (a stated, generous
+  EPMA-scatter band; Niitsu's own tie-line spread between repeat anneals is of that order).
+- **Systematic residual:** mean signed ΔSi of TAU1 and TAU2 (a) over all points, (b) per temperature; a shift is called
+  systematic if |mean| > 1.0 at.% and the sign is the same in ≥ 75 % of the points.
+- Models compared: Feng-reconstructed baseline (24 equilibria it can evaluate); Addendum B prior model and fitted model (47).
+Decision rule: further refit effort is justified only if the fitted model reproduces ≥ 10 percentage points more of the
+points within scatter than its baseline **and** passes Addendum B's C1–C4. Otherwise: freeze the reconstructed Feng
+description as "best available given the public data".
