@@ -26,7 +26,7 @@ def normalise(text):
         out.append(ln)
     return '\n'.join(out) + '\n'
 
-def parameterise(text):
+def parameterise(text, constants_only=False):
     """Add 1000*w + 10*v*T (w in kJ/mol, v in 10 J/mol/K) to the six TAU1/TAU2
     parameters. Plain symbols = trainable in eqopt (zero-initialised)."""
     names = []
@@ -34,16 +34,16 @@ def parameterise(text):
         tag = cons.replace(':', '').replace(',', '').replace(';0', '')
         wn, vn = f'w{ph[-1]}{tag}', f'v{ph[-1]}{tag}'
         pat = re.compile(r'(PARAMETER G\(%s,%s\)\s+298\.15\s+)([^;]*?)(\s*;)' % (ph, re.escape(cons)))
-        text, c = pat.subn(lambda m: f'{m.group(1)}{m.group(2)}+1000*{wn}+10*{vn}*T{m.group(3)}', text)
+        text, c = pat.subn(lambda m: f'{m.group(1)}{m.group(2)}+1000*{wn}{"" if constants_only else f"+10*{vn}*T"}{m.group(3)}', text)
         assert c == 1, (ph, cons, c)
-        names += [wn, vn]
+        names += [wn] if constants_only else [wn, vn]
     return text, names
 
-def main(tdb, ties, out):
+def main(tdb, ties, out, constants_only=False):
     out = Path(out); out.mkdir(parents=True, exist_ok=True)
     base = normalise(Path(tdb).read_text())
     (out / 'baseline_eq.tdb').write_text(base)
-    ptxt, names = parameterise(base)
+    ptxt, names = parameterise(base, constants_only)
     (out / 'param.tdb').write_text(ptxt)
     rows = list(csv.DictReader(open(ties, encoding='utf-8')))
     tr, va, skipped = [], [], []
@@ -68,4 +68,4 @@ def main(tdb, ties, out):
     (out / 'report.txt').write_text('\n'.join(rep) + '\n'); print('\n'.join(rep))
     print('parameters:', names)
 
-if __name__ == '__main__': main(*sys.argv[1:4])
+if __name__ == '__main__': main(*sys.argv[1:4], constants_only='--constants-only' in sys.argv)

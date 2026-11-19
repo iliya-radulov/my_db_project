@@ -45,3 +45,31 @@ magnetocaloric composition. GM at La(Fe11.5Si1.5), 1373 K: −91444 → −89417
 - Inputs recovered from git history (the CSVs are gitignored). Run artefacts (logs, optimized TDB)
   are not committed; reproduce with `make_inputs.py`, `eqopt-calphad … --config config.yaml`,
   `make_valid_tdbs.py`, `evaluate.py`.
+
+---
+# Addendum A results — constants-only refit, regularisation weight 1000
+
+Setup frozen in `FROZEN_SPEC.md` Addendum A before the run (6 constants, one regulariser value, no sweep).
+
+## Outcome: **rejected again — baseline retained**
+
+| criterion | result | verdict |
+|---|---|---|
+| C1 train loss ≤ 90 % of baseline | data loss (stable + unstable) 1.002e4 vs 1.020e4 = **98 %** (total 1.01e4 incl. regulariser 41.5) | fail |
+| C2 held-out 1373 K loss ≤ 105 % of baseline | 1.13e3 vs 1.05e3 = **107.6 %** (stable 871 → 917, unstable 178 → 209) | fail (marginal) |
+| C3 A3/A5 | τ1 stays single-phase at La(Fe11.5Si1.5), 1373 K; dominant window 0.08–0.26 (baseline 0.08–0.24), overlaps 0.096–0.229 | pass |
+| C4 corrections sane | max |Δ| 173 J/mol (all six constants listed below) | pass |
+
+Fitted constants (J/mol): τ1 G(La:Fe) −3.6, G(La:Si) −47.0, L −29.4; τ2 G(La:Fe) +173.3, G(La:Si) +75.0, L +52.5.
+Descriptor D changes by +10 to +14 J/mol-atom (baseline 1.3–3.2 kJ): the model is essentially unchanged.
+GM at La(Fe11.5Si1.5), 1373 K: −91444 → −91456 J/mol-atom.
+
+## Reading
+Strong regularisation does what it should for safety — τ1 is no longer destroyed (the first refit's failure) —
+but the 17 training equilibria with 6 constants then offer only a ~2 % loss reduction, and the held-out
+loss rises slightly. Together with the first refit this says the usable Niitsu data do not constrain the
+τ1/τ2 parameters beyond the published ones: the loss is dominated by terms (unstable-phase penalties
+from LaSi2/La–Si compounds, stable-phase offsets of the Fe–Si phases) that τ1/τ2 constants cannot move.
+Not tried: adding the missing ternary phases (LaFe2Si2, LaFeSi, LaFeSi2) so the 47 excluded
+equilibria become usable — the data most informative for τ1/τ2 competition — or a different split.
+Run artefacts are in the session scratchpad, not committed.
