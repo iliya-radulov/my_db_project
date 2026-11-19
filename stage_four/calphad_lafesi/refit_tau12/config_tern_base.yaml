@@ -1,0 +1,8 @@
+general:
+  seed: 42
+  initial_parameter_scale: 0
+optimization:
+  epochs: 1000
+  lr: 1.0e-9
+  latent_mu_lr: 100
+  loss_threshold: null
