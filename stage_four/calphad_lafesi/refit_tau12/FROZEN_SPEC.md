@@ -89,3 +89,18 @@ evaluate these equilibria.)
 - Beyond the gate, reported: the fitted τ1/τ2 changes, fitted new-phase energies, and which equilibria stay
   worst-fitted. An accepted outcome means "τ1/τ2 refit supported *given* fitted competing phases" — the new
   phase energies are effective, not assessed, and are not to be used as thermodynamic data without validation.
+
+---
+## Addendum C (19 Nov 2026) — per-equilibrium residual analysis (decides whether further refit effort is justified)
+Fixed **before** any residual was computed. For every usable Niitsu equilibrium (47 with Addendum B's phases;
+24 for the original TDB), compute the equilibrium at the alloy's *nominal* composition and temperature and compare with the measured tie-line:
+- **phase-set match:** calculated phases (NP > 1e-3) equal the measured set → else the point is an **outlier of kind "phase set"**.
+- **composition residual** for matched solution/τ phases (BCC_A2, FCC_A1, LIQUID, TAU1, TAU2): ΔSi and ΔLa in at.% (calc − exp).
+  **Reproduced within scatter** = phase set matches and every |ΔSi| ≤ 2.0 at.% and |ΔLa| ≤ 1.0 at.% (a stated, generous
+  EPMA-scatter band; Niitsu's own tie-line spread between repeat anneals is of that order).
+- **Systematic residual:** mean signed ΔSi of TAU1 and TAU2 (a) over all points, (b) per temperature; a shift is called
+  systematic if |mean| > 1.0 at.% and the sign is the same in ≥ 75 % of the points.
+- Models compared: Feng-reconstructed baseline (24 equilibria it can evaluate); Addendum B prior model and fitted model (47).
+Decision rule: further refit effort is justified only if the fitted model reproduces ≥ 10 percentage points more of the
+points within scatter than its baseline **and** passes Addendum B's C1–C4. Otherwise: freeze the reconstructed Feng
+description as "best available given the public data".
