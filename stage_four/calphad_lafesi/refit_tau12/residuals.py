@@ -23,6 +23,7 @@ def main(ties, out, models):
     dbs = {k: Database(p) for k, p in models}
     res = []
     for i, r in enumerate(rows):
+        if any(r[f'phase{j}'] and (r[f'La{j}'] == '' or r[f'Si{j}'] == '') for j in (1, 2, 3)): continue  # n.d. rows
         ph = [(r[f'phase{j}'], float(r[f'La{j}']) / 100, float(r[f'Si{j}']) / 100) for j in (1, 2, 3) if r[f'phase{j}']]
         if any(p not in ALL for p, _, _ in ph): continue
         exp = {ALL[p]: (la, si) for p, la, si in ph}
