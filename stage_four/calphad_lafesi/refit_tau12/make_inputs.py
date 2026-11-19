@@ -54,14 +54,14 @@ def add_ternary(text):
         names += [f'w_{ph}', f'v_{ph}']
     return text, names
 
-def main(tdb, ties, out, constants_only=False, ternary=False):
+def main(tdb, ties, out, constants_only=False, ternary=False, no_tau=False):
     out = Path(out); out.mkdir(parents=True, exist_ok=True)
     base = normalise(Path(tdb).read_text())
     (out / 'baseline_eq.tdb').write_text(base)
     if ternary:
         base, tnames = add_ternary(base); MAP.update(TER_MAP); WITH_NO = True
         (out / 'baseline_eq.tdb').write_text(base)
-    ptxt, names = parameterise(base, constants_only)
+    ptxt, names = (base, []) if no_tau else parameterise(base, constants_only)   # --no-tau: control run, tau1/tau2 frozen
     if ternary: names += tnames
     (out / 'param.tdb').write_text(ptxt)
     rows = list(csv.DictReader(open(ties, encoding='utf-8')))
@@ -87,4 +87,4 @@ def main(tdb, ties, out, constants_only=False, ternary=False):
     (out / 'report.txt').write_text('\n'.join(rep) + '\n'); print('\n'.join(rep))
     print('parameters:', names)
 
-if __name__ == '__main__': main(*sys.argv[1:4], constants_only='--constants-only' in sys.argv, ternary='--ternary' in sys.argv)
+if __name__ == '__main__': main(*sys.argv[1:4], constants_only='--constants-only' in sys.argv, ternary='--ternary' in sys.argv, no_tau='--no-tau' in sys.argv)
