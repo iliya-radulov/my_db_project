@@ -1,0 +1,13 @@
+run	epoch	loss	stable	unstable	regularization
+M1_prior train (frozen)	1/1000	2.59e+04	2.09e+04	4.93e+03	1.20e-27
+M1_prior train (frozen)	1000/1000	2.45e+04	2.01e+04	4.40e+03	3.92e-22
+M2_control train	1/1000	2.50e+04	2.01e+04	4.96e+03	6.00e+00
+M2_control train	1000/1000	9.73e+03	2.68e+03	5.30e+03	1.74e+03
+M3_full train	1/1000	2.49e+04	2.00e+04	4.83e+03	1.20e+01
+M3_full train	1000/1000	9.55e+03	2.62e+03	5.17e+03	1.77e+03
+M1 held-out	1/400	3.09e+04	3.00e+04	9.81e+02	6.00e-28
+M1 held-out	400/400	3.03e+04	2.92e+04	1.13e+03	3.47e-23
+M2 held-out	1/400	3.23e+03	3.08e+03	1.50e+02	0.00e+00
+M2 held-out	400/400	2.35e+03	2.26e+03	8.99e+01	0.00e+00
+M3 held-out	1/400	3.34e+03	3.10e+03	2.40e+02	0.00e+00
+M3 held-out	400/400	2.45e+03	2.33e+03	1.20e+02	0.00e+00
