@@ -47,3 +47,14 @@ overfit, baseline retained. Outcome is reported whichever way it goes.
 Authors' defaults except: `initial_parameter_scale: 0`, `seed: 42`,
 `epochs: 1000`, `lr` 0.1 → tuned only on the **training** loss if needed
 (any change logged in RESULTS.md).
+
+---
+## Addendum A (19 Nov 2026) — constants-only refit with a stronger regulariser
+Written after the first refit was rejected (RESULTS.md) and **before** this run.
+- Free parameters: the 6 constants `1000·w` only (no T coefficients `v`).
+- Regulariser: `regularization_weight: 1000` (was 1e-10) on the w symbols (kJ units; w = 1 costs 1e3,
+  about 10 % of the baseline training loss). One value, chosen now; **no sweep, no tuning on validation**.
+- Everything else, data split and criteria C1–C4 unchanged. Baseline losses reused from the first
+  refit (train 1.02e4, validation 1.05e3, same loss settings; the regulariser term is ~0 at w = 0).
+- C1 may be unreachable with a tighter model; it is reported as failed if so. Acceptance still
+  needs all of C1–C4. One run, one outcome.

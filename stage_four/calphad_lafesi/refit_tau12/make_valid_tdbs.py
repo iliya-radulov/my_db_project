@@ -32,10 +32,11 @@ def build(corr):
     for (ph, cons), (w, v) in corr.items():
         tag = cons.replace(':', '').replace(',', '').replace(';0', '')
         n = f'{ph[-1]}{tag}'
-        txt = txt.replace(f'+1000*w{n}+10*v{n}*T', f'+({w:.6f})+({v:.8f})*T')
+        new = f'+({w:.6f})+({v:.8f})*T'
+        txt = txt.replace(f'+1000*w{n}+10*v{n}*T', new).replace(f'+1000*w{n};', new + ';')
     # dummy symbol on the first TAU1 parameter
     txt = txt.replace('+(', '+0*zz+(', 1)
-    assert 'w1LAFE' not in txt
+    assert 'w1LAFE' not in txt and 'w2LAFE' not in txt
     return txt
 (d / 'valid_base.tdb').write_text(build({k: (0.0, 0.0) for k in base}))
 (d / 'valid_fit.tdb').write_text(build(delta))
