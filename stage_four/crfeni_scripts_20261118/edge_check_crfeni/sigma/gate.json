@@ -1,0 +1,103 @@
+{
+  "n_combinations_in_edge_check": 288,
+  "n_surviving": 81,
+  "valid_S_primary": 81,
+  "valid_fraction": 1.0,
+  "run_valid": true,
+  "G1": {
+    "surviving": 81,
+    "of": 288,
+    "threshold": 60,
+    "pass": true
+  },
+  "G2": {
+    "per_class": {
+      "A": {
+        "files": {
+          "CrFe-82Her": 0,
+          "CrFe-87And-LB": 15
+        },
+        "best": 15,
+        "pass": true
+      },
+      "B": {
+        "files": {
+          "CrFe-21Laf": 15
+        },
+        "best": 15,
+        "pass": true
+      },
+      "C": {
+        "files": {
+          "CrFe-18Jac": 17,
+          "CrFe-20Ost": 17,
+          "CrFe-23Zha": 17
+        },
+        "best": 17,
+        "pass": true
+      }
+    },
+    "threshold_per_file": 5,
+    "pass": true
+  },
+  "G3": {
+    "T_K": 900.0,
+    "n_valid": 81,
+    "n_S_above_floor": 0,
+    "fraction": 0.0,
+    "pass": false
+  },
+  "sensitivity_T_G3": {
+    "800": {
+      "T_K": 800.0,
+      "n_valid": 81,
+      "n_S_above_floor": 0,
+      "fraction": 0.0,
+      "pass": false
+    },
+    "1000": {
+      "T_K": 1000.0,
+      "n_valid": 81,
+      "n_S_above_floor": 0,
+      "fraction": 0.0,
+      "pass": false
+    }
+  },
+  "survivors_per_file": {
+    "CrFe": {
+      "CrFe-87And-LB": 15,
+      "CrFe-21Laf": 15,
+      "CrFe-18Jac": 17,
+      "CrFe-20Ost": 17,
+      "CrFe-23Zha": 17
+    },
+    "CrNi": {
+      "CrNi-06Hal": 18,
+      "CrNi-16Tan": 15,
+      "CrNi-86Din": 30,
+      "CrNi-92Lee-LB": 18
+    },
+    "FeNi": {
+      "FeNi-23Jac": 20,
+      "FeNi-85Xin": 20,
+      "FeNi-23Wit": 20,
+      "FeNi-00Ans-2SL": 11,
+      "FeNi-00Ans-4SL": 5,
+      "FeNi-03Dup-LB": 5
+    }
+  },
+  "survivors_per_class": {
+    "A": 15,
+    "B": 15,
+    "C": 51
+  },
+  "lineage_combinations": {
+    "total": 140,
+    "with_survivor": 44
+  },
+  "primary_T_K": 900.0,
+  "verdict": "FAIL: sigma stabilisation not informative for the class question in this system; close the topic",
+  "failed_gates": [
+    "G3"
+  ]
+}

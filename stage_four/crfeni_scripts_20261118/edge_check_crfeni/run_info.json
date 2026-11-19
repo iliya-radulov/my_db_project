@@ -1,0 +1,84 @@
+{
+  "command": "python crfeni_edge_check.py --system crfeni --out edge_check_crfeni --workers 6",
+  "started": "2026-11-19T11:24:14",
+  "pycalphad": "0.11.2",
+  "system": "crfeni",
+  "groups": {
+    "CrFe": [
+      "CrFe-82Her.tdb",
+      "CrFe-87And-LB.tdb",
+      "CrFe-21Laf.tdb",
+      "CrFe-18Jac.tdb",
+      "CrFe-20Ost.tdb",
+      "CrFe-23Zha.tdb"
+    ],
+    "CrNi": [
+      "CrNi-06Hal.tdb",
+      "CrNi-16Tan.tdb",
+      "CrNi-86Din.tdb",
+      "CrNi-92Lee-LB.tdb"
+    ],
+    "FeNi": [
+      "FeNi-00Ans-2SL.tdb",
+      "FeNi-00Ans-4SL.tdb",
+      "FeNi-03Dup-LB.tdb",
+      "FeNi-03Dup-mod.tdb",
+      "FeNi-10Cac.tdb",
+      "FeNi-11Xio.tdb",
+      "FeNi-19Ohn.tdb",
+      "FeNi-23Jac.tdb",
+      "FeNi-23Wit.tdb",
+      "FeNi-23Zha.tdb",
+      "FeNi-85Xin.tdb",
+      "FeNi-95Ans.tdb"
+    ]
+  },
+  "file_set_rule": "pre-registration Cr-Fe-Ni Pilot-M (18 Nov 2026); a non-computable file gives failed combinations, which count as non-surviving",
+  "rule": {
+    "temps": [
+      800.0,
+      1200.0,
+      1600.0
+    ],
+    "x": [
+      0.05,
+      0.15,
+      0.25,
+      0.35,
+      0.45,
+      0.55,
+      0.65,
+      0.75,
+      0.85,
+      0.95
+    ],
+    "tol_J_per_mol": 1.0,
+    "max_unverified_per_edge": 2,
+    "fallback": true
+  },
+  "n_combinations": 288,
+  "files_sha256": {
+    "CrFe-82Her.tdb": "a426ac8fa1a94471f75c7e0d4516289611e7f9daa425b1e4f3994192ab647c6f",
+    "CrFe-87And-LB.tdb": "aee44c07511fe31fafc1820fb834ac00d83c33694bee14d12683186b365a4128",
+    "CrFe-21Laf.tdb": "a466cbb58ce8fff8fdf17e733aca444159849b99ad58a98cf499bdf444bf95ac",
+    "CrFe-18Jac.tdb": "97353b426c2d299a2d1b73107eb46563ba26c48fde727232f57b1930b5d512b8",
+    "CrFe-20Ost.tdb": "c009125a792bbcf5101b4ed48c62f95d5c72499ab184c3a5bbe8e400bc45f9b0",
+    "CrFe-23Zha.tdb": "093591c8faaf3d7d245f74994a48296529fb11f8e3413b4e43127195da675cd6",
+    "CrNi-06Hal.tdb": "c4cfbab32c583ed34c0ef4efb4c756ded81da7d0daa10ba8b214f9af05bb65ca",
+    "CrNi-16Tan.tdb": "d6a051a1fa81b2256ddc76ac32d7b614036cbad64dd32aad3738caebac4a662f",
+    "CrNi-86Din.tdb": "83ef9abf459d8a802f801dea51574fc32f1979d74d7c8cc734b412de5dff3c09",
+    "CrNi-92Lee-LB.tdb": "5efa2cd29b52a1041c18ba4d324ffd2bc113b086a5a67d9a4528241300b73cb2",
+    "FeNi-00Ans-2SL.tdb": "79b9e2435a00dd13114a6ab484f46b25cd1262873c905b8a75b9ef484682ea7f",
+    "FeNi-00Ans-4SL.tdb": "a4d9738122fd5737ada943edafad1a4fd4b80104d6e84e0d482af41ef0d9459f",
+    "FeNi-03Dup-LB.tdb": "f10470dbf794292e45191eb5a757e818280cd6eb3961a182ab4876c087168b74",
+    "FeNi-03Dup-mod.tdb": "7ec5d4a5548add6917ce41483775e43d672505f225e83cb4628d3719723cbba5",
+    "FeNi-10Cac.tdb": "37c0af627bda598904d46d4e9102e40d34491d6e26624eec256b91987628b4b3",
+    "FeNi-11Xio.tdb": "220b0102be8248795839cf026450b3247ae7d2979def2424c876572211d16966",
+    "FeNi-19Ohn.tdb": "ce2ce2a7c3f6c47575f5dda0c2f63c73d4ab0d99638f75adb953226a13537fc8",
+    "FeNi-23Jac.tdb": "1c6890e44cf1a0f48f1c1424b66cc59e4f8b5921863458aeca158f2b1a7c5b9b",
+    "FeNi-23Wit.tdb": "65e467a6d693b565c8f73beb62efa4b5420704ab8533fae1b30e01308b261a76",
+    "FeNi-23Zha.tdb": "c205b78c12aa1e7362c21bf3dde8a1dacf4a48c08a2e1a61d69d695dac2a3017",
+    "FeNi-85Xin.tdb": "89060926e9804263dac9b21393a3ed417ec0f6455d0327448a94f47d41844770",
+    "FeNi-95Ans.tdb": "e629405a3fc1ba63c082eb583e87a290b6f68c780f5b3ece09f766636fb51022"
+  }
+}

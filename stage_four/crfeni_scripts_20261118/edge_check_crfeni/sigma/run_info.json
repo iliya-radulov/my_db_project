@@ -1,0 +1,31 @@
+{
+  "command": "python crfeni_sigma.py --system crfeni --run-dir edge_check_crfeni --workers 6",
+  "started": "2026-11-19T11:32:46",
+  "pycalphad": "0.11.2",
+  "numpy": "2.5.3",
+  "system": "crfeni",
+  "x_star": {
+    "CR": 0.45,
+    "NI": 0.1
+  },
+  "sigma_phase": "SIGMA_D8B",
+  "excluded_in_both": [
+    "SIGMA_OLD",
+    "HIGH_SIGMA"
+  ],
+  "temps": [
+    900.0,
+    800.0,
+    1000.0
+  ],
+  "primary_T": 900.0,
+  "noise_floor_kJ_per_mol_atom": 0.05,
+  "n_edge_check_rows": 288,
+  "n_survivors": 81,
+  "script_sha256": "77bbbbe38f9d6fa683d069c963079e1d4bd7cb70455abd7a330cf932ef9b1f61",
+  "finished": "2026-11-19T11:32:53",
+  "rows_written": 243,
+  "rows_expected": 243,
+  "failed_points": 0,
+  "seconds": 7
+}

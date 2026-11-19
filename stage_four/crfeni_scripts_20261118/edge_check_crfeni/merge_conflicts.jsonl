@@ -1,0 +1,480 @@
+{"combo": "CrFe-82Her___CrNi-06Hal___FeNi-11Xio", "conflict": "PARAMETER G(FCC_A1,CR:VA;0): differs in CrNi-06Hal.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-06Hal___FeNi-11Xio", "conflict": "PARAMETER TC(FCC_A1,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-06Hal___FeNi-11Xio", "conflict": "PARAMETER BMAGN(FCC_A1,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-06Hal___FeNi-11Xio", "conflict": "PARAMETER TC(BCC_A2,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-06Hal___FeNi-11Xio", "conflict": "PARAMETER BMAGN(BCC_A2,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-06Hal___FeNi-00Ans-2SL", "conflict": "PARAMETER G(FCC_A1,CR:VA;0): differs in CrNi-06Hal.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-06Hal___FeNi-00Ans-4SL", "conflict": "PARAMETER G(FCC_A1,CR:VA;0): differs in CrNi-06Hal.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-06Hal___FeNi-00Ans-4SL", "conflict": "PHASE A1_FCC: model hint ordered_phase differs in FeNi-00Ans-4SL.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-06Hal___FeNi-03Dup-mod", "conflict": "PARAMETER G(FCC_A1,CR:VA;0): differs in CrNi-06Hal.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-06Hal___FeNi-03Dup-mod", "conflict": "PHASE A1_FCC: model hint ordered_phase differs in FeNi-03Dup-mod.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-06Hal___FeNi-03Dup-mod", "conflict": "PARAMETER G(A2_BCC,VA:VA;0): differs in FeNi-03Dup-mod.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-06Hal___FeNi-03Dup-LB", "conflict": "PARAMETER G(FCC_A1,CR:VA;0): differs in CrNi-06Hal.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-06Hal___FeNi-03Dup-LB", "conflict": "PHASE A1_FCC: model hint ordered_phase differs in FeNi-03Dup-LB.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-06Hal___FeNi-23Jac", "conflict": "PARAMETER G(FCC_A1,CR:VA;0): differs in CrNi-06Hal.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-06Hal___FeNi-10Cac", "conflict": "PARAMETER G(FCC_A1,CR:VA;0): differs in CrNi-06Hal.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-06Hal___FeNi-10Cac", "conflict": "PHASE A1_FCC: model hint ordered_phase differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-06Hal___FeNi-10Cac", "conflict": "PARAMETER L(A2_BCC,NI,VA:VA;0): differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-06Hal___FeNi-10Cac", "conflict": "PARAMETER G(B2_BCC,VA:NI:VA;0): differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-06Hal___FeNi-10Cac", "conflict": "PARAMETER G(B2_BCC,NI:VA:VA;0): differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-06Hal___FeNi-10Cac", "conflict": "PARAMETER G(A2_BCC,VA:VA;0): differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-06Hal___FeNi-85Xin", "conflict": "PARAMETER G(FCC_A1,CR:VA;0): differs in CrNi-06Hal.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-06Hal___FeNi-23Wit", "conflict": "PARAMETER G(FCC_A1,CR:VA;0): differs in CrNi-06Hal.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-06Hal___FeNi-23Zha", "conflict": "PARAMETER G(FCC_A1,CR:VA;0): differs in CrNi-06Hal.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-06Hal___FeNi-95Ans", "conflict": "PARAMETER G(FCC_A1,CR:VA;0): differs in CrNi-06Hal.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-06Hal___FeNi-19Ohn", "conflict": "PARAMETER G(FCC_A1,CR:VA;0): differs in CrNi-06Hal.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-06Hal___FeNi-19Ohn", "conflict": "PHASE A1_FCC: model hint ordered_phase differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-06Hal___FeNi-19Ohn", "conflict": "PARAMETER TC(FCC_A1,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-06Hal___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(FCC_A1,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-06Hal___FeNi-19Ohn", "conflict": "PARAMETER TC(A1_FCC,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-06Hal___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(A1_FCC,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-06Hal___FeNi-19Ohn", "conflict": "PARAMETER TC(BCC_A2,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-06Hal___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(BCC_A2,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-06Hal___FeNi-19Ohn", "conflict": "PARAMETER TC(HCP_A3,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-06Hal___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(HCP_A3,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-16Tan___FeNi-00Ans-4SL", "conflict": "PARAMETER G(FCC_A1,CR:VA;0): differs in CrNi-16Tan.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-16Tan___FeNi-00Ans-2SL", "conflict": "PARAMETER G(FCC_A1,CR:VA;0): differs in CrNi-16Tan.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-16Tan___FeNi-00Ans-2SL", "conflict": "PHASE A1_FCC: model hint ordered_phase differs in FeNi-00Ans-2SL.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-16Tan___FeNi-03Dup-LB", "conflict": "PARAMETER G(FCC_A1,CR:VA;0): differs in CrNi-16Tan.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-16Tan___FeNi-03Dup-mod", "conflict": "PARAMETER G(FCC_A1,CR:VA;0): differs in CrNi-16Tan.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-16Tan___FeNi-03Dup-mod", "conflict": "PARAMETER G(A2_BCC,VA:VA;0): differs in FeNi-03Dup-mod.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-16Tan___FeNi-11Xio", "conflict": "PARAMETER G(FCC_A1,CR:VA;0): differs in CrNi-16Tan.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-16Tan___FeNi-11Xio", "conflict": "PARAMETER TC(FCC_A1,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-16Tan___FeNi-11Xio", "conflict": "PARAMETER BMAGN(FCC_A1,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-16Tan___FeNi-11Xio", "conflict": "PARAMETER TC(BCC_A2,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-16Tan___FeNi-11Xio", "conflict": "PARAMETER BMAGN(BCC_A2,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-16Tan___FeNi-23Jac", "conflict": "PARAMETER G(FCC_A1,CR:VA;0): differs in CrNi-16Tan.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-16Tan___FeNi-23Wit", "conflict": "PARAMETER G(FCC_A1,CR:VA;0): differs in CrNi-16Tan.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-16Tan___FeNi-10Cac", "conflict": "PARAMETER G(FCC_A1,CR:VA;0): differs in CrNi-16Tan.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-16Tan___FeNi-10Cac", "conflict": "PARAMETER L(A2_BCC,NI,VA:VA;0): differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-16Tan___FeNi-10Cac", "conflict": "PARAMETER G(B2_BCC,VA:NI:VA;0): differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-16Tan___FeNi-10Cac", "conflict": "PARAMETER G(B2_BCC,NI:VA:VA;0): differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-16Tan___FeNi-10Cac", "conflict": "PARAMETER G(A2_BCC,VA:VA;0): differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-16Tan___FeNi-85Xin", "conflict": "PARAMETER G(FCC_A1,CR:VA;0): differs in CrNi-16Tan.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-16Tan___FeNi-23Zha", "conflict": "PARAMETER G(FCC_A1,CR:VA;0): differs in CrNi-16Tan.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-16Tan___FeNi-23Zha", "conflict": "PHASE A1_FCC: model hint ordered_phase differs in FeNi-23Zha.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-86Din___FeNi-00Ans-2SL", "conflict": "PARAMETER G(FCC_A1,CR:VA;0): differs in CrNi-86Din.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-86Din___FeNi-00Ans-4SL", "conflict": "PARAMETER G(FCC_A1,CR:VA;0): differs in CrNi-86Din.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-86Din___FeNi-03Dup-LB", "conflict": "PARAMETER G(FCC_A1,CR:VA;0): differs in CrNi-86Din.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-16Tan___FeNi-95Ans", "conflict": "PARAMETER G(FCC_A1,CR:VA;0): differs in CrNi-16Tan.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-16Tan___FeNi-95Ans", "conflict": "PHASE A1_FCC: model hint ordered_phase differs in FeNi-95Ans.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-86Din___FeNi-11Xio", "conflict": "PARAMETER G(FCC_A1,CR:VA;0): differs in CrNi-86Din.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-86Din___FeNi-11Xio", "conflict": "PARAMETER TC(FCC_A1,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-86Din___FeNi-11Xio", "conflict": "PARAMETER BMAGN(FCC_A1,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-86Din___FeNi-11Xio", "conflict": "PARAMETER TC(BCC_A2,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-86Din___FeNi-11Xio", "conflict": "PARAMETER BMAGN(BCC_A2,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-86Din___FeNi-03Dup-mod", "conflict": "PARAMETER G(FCC_A1,CR:VA;0): differs in CrNi-86Din.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-16Tan___FeNi-19Ohn", "conflict": "PARAMETER G(FCC_A1,CR:VA;0): differs in CrNi-16Tan.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-16Tan___FeNi-19Ohn", "conflict": "PARAMETER TC(FCC_A1,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-16Tan___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(FCC_A1,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-16Tan___FeNi-19Ohn", "conflict": "PARAMETER TC(A1_FCC,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-16Tan___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(A1_FCC,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-16Tan___FeNi-19Ohn", "conflict": "PARAMETER TC(BCC_A2,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-16Tan___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(BCC_A2,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-16Tan___FeNi-19Ohn", "conflict": "PARAMETER TC(HCP_A3,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-16Tan___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(HCP_A3,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-86Din___FeNi-23Jac", "conflict": "PARAMETER G(FCC_A1,CR:VA;0): differs in CrNi-86Din.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-86Din___FeNi-23Wit", "conflict": "PARAMETER G(FCC_A1,CR:VA;0): differs in CrNi-86Din.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-86Din___FeNi-85Xin", "conflict": "PARAMETER G(FCC_A1,CR:VA;0): differs in CrNi-86Din.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-86Din___FeNi-95Ans", "conflict": "PARAMETER G(FCC_A1,CR:VA;0): differs in CrNi-86Din.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-86Din___FeNi-23Zha", "conflict": "PARAMETER G(FCC_A1,CR:VA;0): differs in CrNi-86Din.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-86Din___FeNi-10Cac", "conflict": "PARAMETER G(FCC_A1,CR:VA;0): differs in CrNi-86Din.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-86Din___FeNi-19Ohn", "conflict": "PARAMETER G(FCC_A1,CR:VA;0): differs in CrNi-86Din.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-86Din___FeNi-19Ohn", "conflict": "PARAMETER TC(FCC_A1,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-86Din___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(FCC_A1,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-86Din___FeNi-19Ohn", "conflict": "PARAMETER TC(BCC_A2,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-86Din___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(BCC_A2,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-92Lee-LB___FeNi-00Ans-2SL", "conflict": "PARAMETER G(FCC_A1,CR:VA;0): differs in CrNi-92Lee-LB.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-92Lee-LB___FeNi-11Xio", "conflict": "PARAMETER G(FCC_A1,CR:VA;0): differs in CrNi-92Lee-LB.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-92Lee-LB___FeNi-11Xio", "conflict": "PARAMETER TC(FCC_A1,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-92Lee-LB___FeNi-11Xio", "conflict": "PARAMETER BMAGN(FCC_A1,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-92Lee-LB___FeNi-11Xio", "conflict": "PARAMETER TC(BCC_A2,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-92Lee-LB___FeNi-11Xio", "conflict": "PARAMETER BMAGN(BCC_A2,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-92Lee-LB___FeNi-00Ans-4SL", "conflict": "PARAMETER G(FCC_A1,CR:VA;0): differs in CrNi-92Lee-LB.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-92Lee-LB___FeNi-00Ans-4SL", "conflict": "PHASE A1_FCC: model hint ordered_phase differs in FeNi-00Ans-4SL.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-92Lee-LB___FeNi-03Dup-LB", "conflict": "PARAMETER G(FCC_A1,CR:VA;0): differs in CrNi-92Lee-LB.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-92Lee-LB___FeNi-03Dup-LB", "conflict": "PHASE A1_FCC: model hint ordered_phase differs in FeNi-03Dup-LB.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-92Lee-LB___FeNi-03Dup-mod", "conflict": "PARAMETER G(FCC_A1,CR:VA;0): differs in CrNi-92Lee-LB.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-92Lee-LB___FeNi-03Dup-mod", "conflict": "PHASE A1_FCC: model hint ordered_phase differs in FeNi-03Dup-mod.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-92Lee-LB___FeNi-03Dup-mod", "conflict": "PARAMETER G(A2_BCC,VA:VA;0): differs in FeNi-03Dup-mod.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-92Lee-LB___FeNi-23Jac", "conflict": "PARAMETER G(FCC_A1,CR:VA;0): differs in CrNi-92Lee-LB.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-92Lee-LB___FeNi-23Wit", "conflict": "PARAMETER G(FCC_A1,CR:VA;0): differs in CrNi-92Lee-LB.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-92Lee-LB___FeNi-10Cac", "conflict": "PARAMETER G(FCC_A1,CR:VA;0): differs in CrNi-92Lee-LB.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-92Lee-LB___FeNi-10Cac", "conflict": "PHASE A1_FCC: model hint ordered_phase differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-92Lee-LB___FeNi-10Cac", "conflict": "PARAMETER L(A2_BCC,NI,VA:VA;0): differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-92Lee-LB___FeNi-10Cac", "conflict": "PARAMETER G(B2_BCC,VA:NI:VA;0): differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-92Lee-LB___FeNi-10Cac", "conflict": "PARAMETER G(B2_BCC,NI:VA:VA;0): differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-92Lee-LB___FeNi-10Cac", "conflict": "PARAMETER G(A2_BCC,VA:VA;0): differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-92Lee-LB___FeNi-85Xin", "conflict": "PARAMETER G(FCC_A1,CR:VA;0): differs in CrNi-92Lee-LB.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-92Lee-LB___FeNi-23Zha", "conflict": "PARAMETER G(FCC_A1,CR:VA;0): differs in CrNi-92Lee-LB.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-92Lee-LB___FeNi-19Ohn", "conflict": "PARAMETER G(FCC_A1,CR:VA;0): differs in CrNi-92Lee-LB.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-92Lee-LB___FeNi-19Ohn", "conflict": "PHASE A1_FCC: model hint ordered_phase differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-92Lee-LB___FeNi-19Ohn", "conflict": "PARAMETER TC(FCC_A1,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-92Lee-LB___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(FCC_A1,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-92Lee-LB___FeNi-19Ohn", "conflict": "PARAMETER TC(A1_FCC,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-92Lee-LB___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(A1_FCC,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-92Lee-LB___FeNi-19Ohn", "conflict": "PARAMETER TC(BCC_A2,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-92Lee-LB___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(BCC_A2,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-92Lee-LB___FeNi-19Ohn", "conflict": "PARAMETER TC(HCP_A3,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-92Lee-LB___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(HCP_A3,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-82Her___CrNi-92Lee-LB___FeNi-95Ans", "conflict": "PARAMETER G(FCC_A1,CR:VA;0): differs in CrNi-92Lee-LB.tdb \u2014 first kept"}
+{"combo": "CrFe-87And-LB___CrNi-06Hal___FeNi-00Ans-4SL", "conflict": "PHASE A1_FCC: model hint ordered_phase differs in FeNi-00Ans-4SL.tdb \u2014 first kept"}
+{"combo": "CrFe-87And-LB___CrNi-06Hal___FeNi-03Dup-LB", "conflict": "PHASE A1_FCC: model hint ordered_phase differs in FeNi-03Dup-LB.tdb \u2014 first kept"}
+{"combo": "CrFe-87And-LB___CrNi-06Hal___FeNi-11Xio", "conflict": "PARAMETER TC(FCC_A1,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-87And-LB___CrNi-06Hal___FeNi-11Xio", "conflict": "PARAMETER BMAGN(FCC_A1,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-87And-LB___CrNi-06Hal___FeNi-11Xio", "conflict": "PARAMETER TC(BCC_A2,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-87And-LB___CrNi-06Hal___FeNi-11Xio", "conflict": "PARAMETER BMAGN(BCC_A2,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-87And-LB___CrNi-06Hal___FeNi-03Dup-mod", "conflict": "PHASE A1_FCC: model hint ordered_phase differs in FeNi-03Dup-mod.tdb \u2014 first kept"}
+{"combo": "CrFe-87And-LB___CrNi-06Hal___FeNi-03Dup-mod", "conflict": "PARAMETER G(A2_BCC,VA:VA;0): differs in FeNi-03Dup-mod.tdb \u2014 first kept"}
+{"combo": "CrFe-87And-LB___CrNi-06Hal___FeNi-10Cac", "conflict": "PHASE A1_FCC: model hint ordered_phase differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-87And-LB___CrNi-06Hal___FeNi-10Cac", "conflict": "PARAMETER L(A2_BCC,NI,VA:VA;0): differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-87And-LB___CrNi-06Hal___FeNi-10Cac", "conflict": "PARAMETER G(B2_BCC,VA:NI:VA;0): differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-87And-LB___CrNi-06Hal___FeNi-10Cac", "conflict": "PARAMETER G(B2_BCC,NI:VA:VA;0): differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-87And-LB___CrNi-06Hal___FeNi-10Cac", "conflict": "PARAMETER G(A2_BCC,VA:VA;0): differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-87And-LB___CrNi-06Hal___FeNi-19Ohn", "conflict": "PHASE A1_FCC: model hint ordered_phase differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-87And-LB___CrNi-06Hal___FeNi-19Ohn", "conflict": "PARAMETER TC(FCC_A1,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-87And-LB___CrNi-06Hal___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(FCC_A1,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-87And-LB___CrNi-06Hal___FeNi-19Ohn", "conflict": "PARAMETER TC(A1_FCC,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-87And-LB___CrNi-06Hal___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(A1_FCC,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-87And-LB___CrNi-06Hal___FeNi-19Ohn", "conflict": "PARAMETER TC(BCC_A2,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-87And-LB___CrNi-06Hal___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(BCC_A2,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-87And-LB___CrNi-06Hal___FeNi-19Ohn", "conflict": "PARAMETER TC(HCP_A3,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-87And-LB___CrNi-06Hal___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(HCP_A3,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-87And-LB___CrNi-16Tan___FeNi-00Ans-2SL", "conflict": "PHASE A1_FCC: model hint ordered_phase differs in FeNi-00Ans-2SL.tdb \u2014 first kept"}
+{"combo": "CrFe-87And-LB___CrNi-16Tan___FeNi-03Dup-mod", "conflict": "PARAMETER G(A2_BCC,VA:VA;0): differs in FeNi-03Dup-mod.tdb \u2014 first kept"}
+{"combo": "CrFe-87And-LB___CrNi-16Tan___FeNi-11Xio", "conflict": "PARAMETER TC(FCC_A1,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-87And-LB___CrNi-16Tan___FeNi-11Xio", "conflict": "PARAMETER BMAGN(FCC_A1,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-87And-LB___CrNi-16Tan___FeNi-11Xio", "conflict": "PARAMETER TC(BCC_A2,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-87And-LB___CrNi-16Tan___FeNi-11Xio", "conflict": "PARAMETER BMAGN(BCC_A2,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-87And-LB___CrNi-16Tan___FeNi-10Cac", "conflict": "PARAMETER L(A2_BCC,NI,VA:VA;0): differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-87And-LB___CrNi-16Tan___FeNi-10Cac", "conflict": "PARAMETER G(B2_BCC,VA:NI:VA;0): differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-87And-LB___CrNi-16Tan___FeNi-10Cac", "conflict": "PARAMETER G(B2_BCC,NI:VA:VA;0): differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-87And-LB___CrNi-16Tan___FeNi-10Cac", "conflict": "PARAMETER G(A2_BCC,VA:VA;0): differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-87And-LB___CrNi-16Tan___FeNi-23Zha", "conflict": "PHASE A1_FCC: model hint ordered_phase differs in FeNi-23Zha.tdb \u2014 first kept"}
+{"combo": "CrFe-87And-LB___CrNi-16Tan___FeNi-95Ans", "conflict": "PHASE A1_FCC: model hint ordered_phase differs in FeNi-95Ans.tdb \u2014 first kept"}
+{"combo": "CrFe-87And-LB___CrNi-86Din___FeNi-11Xio", "conflict": "PARAMETER TC(FCC_A1,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-87And-LB___CrNi-86Din___FeNi-11Xio", "conflict": "PARAMETER BMAGN(FCC_A1,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-87And-LB___CrNi-86Din___FeNi-11Xio", "conflict": "PARAMETER TC(BCC_A2,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-87And-LB___CrNi-86Din___FeNi-11Xio", "conflict": "PARAMETER BMAGN(BCC_A2,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-87And-LB___CrNi-16Tan___FeNi-19Ohn", "conflict": "PARAMETER TC(FCC_A1,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-87And-LB___CrNi-16Tan___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(FCC_A1,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-87And-LB___CrNi-16Tan___FeNi-19Ohn", "conflict": "PARAMETER TC(A1_FCC,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-87And-LB___CrNi-16Tan___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(A1_FCC,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-87And-LB___CrNi-16Tan___FeNi-19Ohn", "conflict": "PARAMETER TC(BCC_A2,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-87And-LB___CrNi-16Tan___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(BCC_A2,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-87And-LB___CrNi-16Tan___FeNi-19Ohn", "conflict": "PARAMETER TC(HCP_A3,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-87And-LB___CrNi-16Tan___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(HCP_A3,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-87And-LB___CrNi-86Din___FeNi-19Ohn", "conflict": "PARAMETER TC(FCC_A1,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-87And-LB___CrNi-86Din___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(FCC_A1,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-87And-LB___CrNi-86Din___FeNi-19Ohn", "conflict": "PARAMETER TC(BCC_A2,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-87And-LB___CrNi-86Din___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(BCC_A2,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-87And-LB___CrNi-92Lee-LB___FeNi-00Ans-4SL", "conflict": "PHASE A1_FCC: model hint ordered_phase differs in FeNi-00Ans-4SL.tdb \u2014 first kept"}
+{"combo": "CrFe-87And-LB___CrNi-92Lee-LB___FeNi-03Dup-LB", "conflict": "PHASE A1_FCC: model hint ordered_phase differs in FeNi-03Dup-LB.tdb \u2014 first kept"}
+{"combo": "CrFe-87And-LB___CrNi-92Lee-LB___FeNi-11Xio", "conflict": "PARAMETER TC(FCC_A1,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-87And-LB___CrNi-92Lee-LB___FeNi-11Xio", "conflict": "PARAMETER BMAGN(FCC_A1,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-87And-LB___CrNi-92Lee-LB___FeNi-11Xio", "conflict": "PARAMETER TC(BCC_A2,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-87And-LB___CrNi-92Lee-LB___FeNi-11Xio", "conflict": "PARAMETER BMAGN(BCC_A2,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-87And-LB___CrNi-92Lee-LB___FeNi-03Dup-mod", "conflict": "PHASE A1_FCC: model hint ordered_phase differs in FeNi-03Dup-mod.tdb \u2014 first kept"}
+{"combo": "CrFe-87And-LB___CrNi-92Lee-LB___FeNi-03Dup-mod", "conflict": "PARAMETER G(A2_BCC,VA:VA;0): differs in FeNi-03Dup-mod.tdb \u2014 first kept"}
+{"combo": "CrFe-87And-LB___CrNi-92Lee-LB___FeNi-10Cac", "conflict": "PHASE A1_FCC: model hint ordered_phase differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-87And-LB___CrNi-92Lee-LB___FeNi-10Cac", "conflict": "PARAMETER L(A2_BCC,NI,VA:VA;0): differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-87And-LB___CrNi-92Lee-LB___FeNi-10Cac", "conflict": "PARAMETER G(B2_BCC,VA:NI:VA;0): differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-87And-LB___CrNi-92Lee-LB___FeNi-10Cac", "conflict": "PARAMETER G(B2_BCC,NI:VA:VA;0): differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-87And-LB___CrNi-92Lee-LB___FeNi-10Cac", "conflict": "PARAMETER G(A2_BCC,VA:VA;0): differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-87And-LB___CrNi-92Lee-LB___FeNi-19Ohn", "conflict": "PHASE A1_FCC: model hint ordered_phase differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-87And-LB___CrNi-92Lee-LB___FeNi-19Ohn", "conflict": "PARAMETER TC(FCC_A1,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-87And-LB___CrNi-92Lee-LB___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(FCC_A1,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-87And-LB___CrNi-92Lee-LB___FeNi-19Ohn", "conflict": "PARAMETER TC(A1_FCC,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-87And-LB___CrNi-92Lee-LB___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(A1_FCC,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-87And-LB___CrNi-92Lee-LB___FeNi-19Ohn", "conflict": "PARAMETER TC(BCC_A2,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-87And-LB___CrNi-92Lee-LB___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(BCC_A2,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-87And-LB___CrNi-92Lee-LB___FeNi-19Ohn", "conflict": "PARAMETER TC(HCP_A3,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-87And-LB___CrNi-92Lee-LB___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(HCP_A3,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-21Laf___CrNi-06Hal___FeNi-00Ans-4SL", "conflict": "PHASE A1_FCC: model hint ordered_phase differs in FeNi-00Ans-4SL.tdb \u2014 first kept"}
+{"combo": "CrFe-21Laf___CrNi-06Hal___FeNi-03Dup-mod", "conflict": "PHASE A1_FCC: model hint ordered_phase differs in FeNi-03Dup-mod.tdb \u2014 first kept"}
+{"combo": "CrFe-21Laf___CrNi-06Hal___FeNi-03Dup-mod", "conflict": "PARAMETER G(A2_BCC,VA:VA;0): differs in FeNi-03Dup-mod.tdb \u2014 first kept"}
+{"combo": "CrFe-21Laf___CrNi-06Hal___FeNi-03Dup-LB", "conflict": "PHASE A1_FCC: model hint ordered_phase differs in FeNi-03Dup-LB.tdb \u2014 first kept"}
+{"combo": "CrFe-21Laf___CrNi-06Hal___FeNi-11Xio", "conflict": "PARAMETER TC(FCC_A1,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-21Laf___CrNi-06Hal___FeNi-11Xio", "conflict": "PARAMETER BMAGN(FCC_A1,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-21Laf___CrNi-06Hal___FeNi-11Xio", "conflict": "PARAMETER TC(BCC_A2,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-21Laf___CrNi-06Hal___FeNi-11Xio", "conflict": "PARAMETER BMAGN(BCC_A2,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-21Laf___CrNi-06Hal___FeNi-10Cac", "conflict": "PHASE A1_FCC: model hint ordered_phase differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-21Laf___CrNi-06Hal___FeNi-10Cac", "conflict": "PARAMETER L(A2_BCC,NI,VA:VA;0): differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-21Laf___CrNi-06Hal___FeNi-10Cac", "conflict": "PARAMETER G(B2_BCC,VA:NI:VA;0): differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-21Laf___CrNi-06Hal___FeNi-10Cac", "conflict": "PARAMETER G(B2_BCC,NI:VA:VA;0): differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-21Laf___CrNi-06Hal___FeNi-10Cac", "conflict": "PARAMETER G(A2_BCC,VA:VA;0): differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-21Laf___CrNi-06Hal___FeNi-19Ohn", "conflict": "PHASE A1_FCC: model hint ordered_phase differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-21Laf___CrNi-06Hal___FeNi-19Ohn", "conflict": "PARAMETER TC(FCC_A1,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-21Laf___CrNi-06Hal___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(FCC_A1,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-21Laf___CrNi-06Hal___FeNi-19Ohn", "conflict": "PARAMETER TC(A1_FCC,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-21Laf___CrNi-06Hal___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(A1_FCC,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-21Laf___CrNi-06Hal___FeNi-19Ohn", "conflict": "PARAMETER TC(BCC_A2,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-21Laf___CrNi-06Hal___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(BCC_A2,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-21Laf___CrNi-06Hal___FeNi-19Ohn", "conflict": "PARAMETER TC(HCP_A3,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-21Laf___CrNi-06Hal___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(HCP_A3,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-21Laf___CrNi-16Tan___FeNi-00Ans-2SL", "conflict": "PHASE A1_FCC: model hint ordered_phase differs in FeNi-00Ans-2SL.tdb \u2014 first kept"}
+{"combo": "CrFe-21Laf___CrNi-16Tan___FeNi-03Dup-mod", "conflict": "PARAMETER G(A2_BCC,VA:VA;0): differs in FeNi-03Dup-mod.tdb \u2014 first kept"}
+{"combo": "CrFe-21Laf___CrNi-16Tan___FeNi-11Xio", "conflict": "PARAMETER TC(FCC_A1,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-21Laf___CrNi-16Tan___FeNi-11Xio", "conflict": "PARAMETER BMAGN(FCC_A1,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-21Laf___CrNi-16Tan___FeNi-11Xio", "conflict": "PARAMETER TC(BCC_A2,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-21Laf___CrNi-16Tan___FeNi-11Xio", "conflict": "PARAMETER BMAGN(BCC_A2,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-21Laf___CrNi-16Tan___FeNi-10Cac", "conflict": "PARAMETER L(A2_BCC,NI,VA:VA;0): differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-21Laf___CrNi-16Tan___FeNi-10Cac", "conflict": "PARAMETER G(B2_BCC,VA:NI:VA;0): differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-21Laf___CrNi-16Tan___FeNi-10Cac", "conflict": "PARAMETER G(B2_BCC,NI:VA:VA;0): differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-21Laf___CrNi-16Tan___FeNi-10Cac", "conflict": "PARAMETER G(A2_BCC,VA:VA;0): differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-21Laf___CrNi-16Tan___FeNi-23Zha", "conflict": "PHASE A1_FCC: model hint ordered_phase differs in FeNi-23Zha.tdb \u2014 first kept"}
+{"combo": "CrFe-21Laf___CrNi-86Din___FeNi-11Xio", "conflict": "PARAMETER TC(FCC_A1,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-21Laf___CrNi-86Din___FeNi-11Xio", "conflict": "PARAMETER BMAGN(FCC_A1,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-21Laf___CrNi-86Din___FeNi-11Xio", "conflict": "PARAMETER TC(BCC_A2,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-21Laf___CrNi-86Din___FeNi-11Xio", "conflict": "PARAMETER BMAGN(BCC_A2,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-21Laf___CrNi-16Tan___FeNi-95Ans", "conflict": "PHASE A1_FCC: model hint ordered_phase differs in FeNi-95Ans.tdb \u2014 first kept"}
+{"combo": "CrFe-21Laf___CrNi-16Tan___FeNi-19Ohn", "conflict": "PARAMETER TC(FCC_A1,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-21Laf___CrNi-16Tan___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(FCC_A1,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-21Laf___CrNi-16Tan___FeNi-19Ohn", "conflict": "PARAMETER TC(A1_FCC,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-21Laf___CrNi-16Tan___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(A1_FCC,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-21Laf___CrNi-16Tan___FeNi-19Ohn", "conflict": "PARAMETER TC(BCC_A2,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-21Laf___CrNi-16Tan___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(BCC_A2,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-21Laf___CrNi-16Tan___FeNi-19Ohn", "conflict": "PARAMETER TC(HCP_A3,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-21Laf___CrNi-16Tan___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(HCP_A3,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-21Laf___CrNi-86Din___FeNi-19Ohn", "conflict": "PARAMETER TC(FCC_A1,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-21Laf___CrNi-86Din___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(FCC_A1,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-21Laf___CrNi-86Din___FeNi-19Ohn", "conflict": "PARAMETER TC(BCC_A2,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-21Laf___CrNi-86Din___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(BCC_A2,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-21Laf___CrNi-92Lee-LB___FeNi-00Ans-4SL", "conflict": "PHASE A1_FCC: model hint ordered_phase differs in FeNi-00Ans-4SL.tdb \u2014 first kept"}
+{"combo": "CrFe-21Laf___CrNi-92Lee-LB___FeNi-11Xio", "conflict": "PARAMETER TC(FCC_A1,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-21Laf___CrNi-92Lee-LB___FeNi-11Xio", "conflict": "PARAMETER BMAGN(FCC_A1,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-21Laf___CrNi-92Lee-LB___FeNi-11Xio", "conflict": "PARAMETER TC(BCC_A2,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-21Laf___CrNi-92Lee-LB___FeNi-11Xio", "conflict": "PARAMETER BMAGN(BCC_A2,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-21Laf___CrNi-92Lee-LB___FeNi-03Dup-LB", "conflict": "PHASE A1_FCC: model hint ordered_phase differs in FeNi-03Dup-LB.tdb \u2014 first kept"}
+{"combo": "CrFe-21Laf___CrNi-92Lee-LB___FeNi-03Dup-mod", "conflict": "PHASE A1_FCC: model hint ordered_phase differs in FeNi-03Dup-mod.tdb \u2014 first kept"}
+{"combo": "CrFe-21Laf___CrNi-92Lee-LB___FeNi-03Dup-mod", "conflict": "PARAMETER G(A2_BCC,VA:VA;0): differs in FeNi-03Dup-mod.tdb \u2014 first kept"}
+{"combo": "CrFe-21Laf___CrNi-92Lee-LB___FeNi-10Cac", "conflict": "PHASE A1_FCC: model hint ordered_phase differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-21Laf___CrNi-92Lee-LB___FeNi-10Cac", "conflict": "PARAMETER L(A2_BCC,NI,VA:VA;0): differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-21Laf___CrNi-92Lee-LB___FeNi-10Cac", "conflict": "PARAMETER G(B2_BCC,VA:NI:VA;0): differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-21Laf___CrNi-92Lee-LB___FeNi-10Cac", "conflict": "PARAMETER G(B2_BCC,NI:VA:VA;0): differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-21Laf___CrNi-92Lee-LB___FeNi-10Cac", "conflict": "PARAMETER G(A2_BCC,VA:VA;0): differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-21Laf___CrNi-92Lee-LB___FeNi-19Ohn", "conflict": "PHASE A1_FCC: model hint ordered_phase differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-21Laf___CrNi-92Lee-LB___FeNi-19Ohn", "conflict": "PARAMETER TC(FCC_A1,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-21Laf___CrNi-92Lee-LB___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(FCC_A1,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-21Laf___CrNi-92Lee-LB___FeNi-19Ohn", "conflict": "PARAMETER TC(A1_FCC,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-21Laf___CrNi-92Lee-LB___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(A1_FCC,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-21Laf___CrNi-92Lee-LB___FeNi-19Ohn", "conflict": "PARAMETER TC(BCC_A2,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-21Laf___CrNi-92Lee-LB___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(BCC_A2,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-21Laf___CrNi-92Lee-LB___FeNi-19Ohn", "conflict": "PARAMETER TC(HCP_A3,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-21Laf___CrNi-92Lee-LB___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(HCP_A3,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-18Jac___CrNi-06Hal___FeNi-00Ans-4SL", "conflict": "PHASE A1_FCC: model hint ordered_phase differs in FeNi-00Ans-4SL.tdb \u2014 first kept"}
+{"combo": "CrFe-18Jac___CrNi-06Hal___FeNi-03Dup-LB", "conflict": "PHASE A1_FCC: model hint ordered_phase differs in FeNi-03Dup-LB.tdb \u2014 first kept"}
+{"combo": "CrFe-18Jac___CrNi-06Hal___FeNi-03Dup-mod", "conflict": "PHASE A1_FCC: model hint ordered_phase differs in FeNi-03Dup-mod.tdb \u2014 first kept"}
+{"combo": "CrFe-18Jac___CrNi-06Hal___FeNi-03Dup-mod", "conflict": "PARAMETER G(A2_BCC,VA:VA;0): differs in FeNi-03Dup-mod.tdb \u2014 first kept"}
+{"combo": "CrFe-18Jac___CrNi-06Hal___FeNi-11Xio", "conflict": "PARAMETER TC(FCC_A1,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-18Jac___CrNi-06Hal___FeNi-11Xio", "conflict": "PARAMETER BMAGN(FCC_A1,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-18Jac___CrNi-06Hal___FeNi-11Xio", "conflict": "PARAMETER TC(BCC_A2,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-18Jac___CrNi-06Hal___FeNi-11Xio", "conflict": "PARAMETER BMAGN(BCC_A2,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-18Jac___CrNi-06Hal___FeNi-10Cac", "conflict": "PHASE A1_FCC: model hint ordered_phase differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-18Jac___CrNi-06Hal___FeNi-10Cac", "conflict": "PARAMETER L(A2_BCC,NI,VA:VA;0): differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-18Jac___CrNi-06Hal___FeNi-10Cac", "conflict": "PARAMETER G(B2_BCC,VA:NI:VA;0): differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-18Jac___CrNi-06Hal___FeNi-10Cac", "conflict": "PARAMETER G(B2_BCC,NI:VA:VA;0): differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-18Jac___CrNi-06Hal___FeNi-10Cac", "conflict": "PARAMETER G(A2_BCC,VA:VA;0): differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-18Jac___CrNi-06Hal___FeNi-19Ohn", "conflict": "PHASE A1_FCC: model hint ordered_phase differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-18Jac___CrNi-06Hal___FeNi-19Ohn", "conflict": "PARAMETER TC(FCC_A1,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-18Jac___CrNi-06Hal___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(FCC_A1,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-18Jac___CrNi-06Hal___FeNi-19Ohn", "conflict": "PARAMETER TC(A1_FCC,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-18Jac___CrNi-06Hal___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(A1_FCC,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-18Jac___CrNi-06Hal___FeNi-19Ohn", "conflict": "PARAMETER TC(BCC_A2,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-18Jac___CrNi-06Hal___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(BCC_A2,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-18Jac___CrNi-06Hal___FeNi-19Ohn", "conflict": "PARAMETER TC(HCP_A3,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-18Jac___CrNi-06Hal___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(HCP_A3,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-18Jac___CrNi-16Tan___FeNi-00Ans-2SL", "conflict": "PHASE A1_FCC: model hint ordered_phase differs in FeNi-00Ans-2SL.tdb \u2014 first kept"}
+{"combo": "CrFe-18Jac___CrNi-16Tan___FeNi-03Dup-mod", "conflict": "PARAMETER G(A2_BCC,VA:VA;0): differs in FeNi-03Dup-mod.tdb \u2014 first kept"}
+{"combo": "CrFe-18Jac___CrNi-16Tan___FeNi-11Xio", "conflict": "PARAMETER TC(FCC_A1,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-18Jac___CrNi-16Tan___FeNi-11Xio", "conflict": "PARAMETER BMAGN(FCC_A1,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-18Jac___CrNi-16Tan___FeNi-11Xio", "conflict": "PARAMETER TC(BCC_A2,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-18Jac___CrNi-16Tan___FeNi-11Xio", "conflict": "PARAMETER BMAGN(BCC_A2,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-18Jac___CrNi-16Tan___FeNi-10Cac", "conflict": "PARAMETER L(A2_BCC,NI,VA:VA;0): differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-18Jac___CrNi-16Tan___FeNi-10Cac", "conflict": "PARAMETER G(B2_BCC,VA:NI:VA;0): differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-18Jac___CrNi-16Tan___FeNi-10Cac", "conflict": "PARAMETER G(B2_BCC,NI:VA:VA;0): differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-18Jac___CrNi-16Tan___FeNi-10Cac", "conflict": "PARAMETER G(A2_BCC,VA:VA;0): differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-18Jac___CrNi-16Tan___FeNi-23Zha", "conflict": "PHASE A1_FCC: model hint ordered_phase differs in FeNi-23Zha.tdb \u2014 first kept"}
+{"combo": "CrFe-18Jac___CrNi-16Tan___FeNi-95Ans", "conflict": "PHASE A1_FCC: model hint ordered_phase differs in FeNi-95Ans.tdb \u2014 first kept"}
+{"combo": "CrFe-18Jac___CrNi-86Din___FeNi-11Xio", "conflict": "PARAMETER TC(FCC_A1,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-18Jac___CrNi-86Din___FeNi-11Xio", "conflict": "PARAMETER BMAGN(FCC_A1,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-18Jac___CrNi-86Din___FeNi-11Xio", "conflict": "PARAMETER TC(BCC_A2,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-18Jac___CrNi-86Din___FeNi-11Xio", "conflict": "PARAMETER BMAGN(BCC_A2,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-18Jac___CrNi-16Tan___FeNi-19Ohn", "conflict": "PARAMETER TC(FCC_A1,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-18Jac___CrNi-16Tan___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(FCC_A1,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-18Jac___CrNi-16Tan___FeNi-19Ohn", "conflict": "PARAMETER TC(A1_FCC,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-18Jac___CrNi-16Tan___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(A1_FCC,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-18Jac___CrNi-16Tan___FeNi-19Ohn", "conflict": "PARAMETER TC(BCC_A2,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-18Jac___CrNi-16Tan___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(BCC_A2,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-18Jac___CrNi-16Tan___FeNi-19Ohn", "conflict": "PARAMETER TC(HCP_A3,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-18Jac___CrNi-16Tan___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(HCP_A3,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-18Jac___CrNi-86Din___FeNi-19Ohn", "conflict": "PARAMETER TC(FCC_A1,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-18Jac___CrNi-86Din___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(FCC_A1,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-18Jac___CrNi-86Din___FeNi-19Ohn", "conflict": "PARAMETER TC(BCC_A2,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-18Jac___CrNi-86Din___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(BCC_A2,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-18Jac___CrNi-92Lee-LB___FeNi-11Xio", "conflict": "PARAMETER TC(FCC_A1,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-18Jac___CrNi-92Lee-LB___FeNi-11Xio", "conflict": "PARAMETER BMAGN(FCC_A1,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-18Jac___CrNi-92Lee-LB___FeNi-11Xio", "conflict": "PARAMETER TC(BCC_A2,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-18Jac___CrNi-92Lee-LB___FeNi-11Xio", "conflict": "PARAMETER BMAGN(BCC_A2,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-18Jac___CrNi-92Lee-LB___FeNi-00Ans-4SL", "conflict": "PHASE A1_FCC: model hint ordered_phase differs in FeNi-00Ans-4SL.tdb \u2014 first kept"}
+{"combo": "CrFe-18Jac___CrNi-92Lee-LB___FeNi-03Dup-LB", "conflict": "PHASE A1_FCC: model hint ordered_phase differs in FeNi-03Dup-LB.tdb \u2014 first kept"}
+{"combo": "CrFe-18Jac___CrNi-92Lee-LB___FeNi-03Dup-mod", "conflict": "PHASE A1_FCC: model hint ordered_phase differs in FeNi-03Dup-mod.tdb \u2014 first kept"}
+{"combo": "CrFe-18Jac___CrNi-92Lee-LB___FeNi-03Dup-mod", "conflict": "PARAMETER G(A2_BCC,VA:VA;0): differs in FeNi-03Dup-mod.tdb \u2014 first kept"}
+{"combo": "CrFe-18Jac___CrNi-92Lee-LB___FeNi-10Cac", "conflict": "PHASE A1_FCC: model hint ordered_phase differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-18Jac___CrNi-92Lee-LB___FeNi-10Cac", "conflict": "PARAMETER L(A2_BCC,NI,VA:VA;0): differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-18Jac___CrNi-92Lee-LB___FeNi-10Cac", "conflict": "PARAMETER G(B2_BCC,VA:NI:VA;0): differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-18Jac___CrNi-92Lee-LB___FeNi-10Cac", "conflict": "PARAMETER G(B2_BCC,NI:VA:VA;0): differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-18Jac___CrNi-92Lee-LB___FeNi-10Cac", "conflict": "PARAMETER G(A2_BCC,VA:VA;0): differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-18Jac___CrNi-92Lee-LB___FeNi-19Ohn", "conflict": "PHASE A1_FCC: model hint ordered_phase differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-18Jac___CrNi-92Lee-LB___FeNi-19Ohn", "conflict": "PARAMETER TC(FCC_A1,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-18Jac___CrNi-92Lee-LB___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(FCC_A1,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-18Jac___CrNi-92Lee-LB___FeNi-19Ohn", "conflict": "PARAMETER TC(A1_FCC,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-18Jac___CrNi-92Lee-LB___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(A1_FCC,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-18Jac___CrNi-92Lee-LB___FeNi-19Ohn", "conflict": "PARAMETER TC(BCC_A2,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-18Jac___CrNi-92Lee-LB___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(BCC_A2,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-18Jac___CrNi-92Lee-LB___FeNi-19Ohn", "conflict": "PARAMETER TC(HCP_A3,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-18Jac___CrNi-92Lee-LB___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(HCP_A3,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-20Ost___CrNi-06Hal___FeNi-00Ans-4SL", "conflict": "PHASE A1_FCC: model hint ordered_phase differs in FeNi-00Ans-4SL.tdb \u2014 first kept"}
+{"combo": "CrFe-20Ost___CrNi-06Hal___FeNi-03Dup-LB", "conflict": "PHASE A1_FCC: model hint ordered_phase differs in FeNi-03Dup-LB.tdb \u2014 first kept"}
+{"combo": "CrFe-20Ost___CrNi-06Hal___FeNi-03Dup-mod", "conflict": "PHASE A1_FCC: model hint ordered_phase differs in FeNi-03Dup-mod.tdb \u2014 first kept"}
+{"combo": "CrFe-20Ost___CrNi-06Hal___FeNi-03Dup-mod", "conflict": "PARAMETER G(A2_BCC,VA:VA;0): differs in FeNi-03Dup-mod.tdb \u2014 first kept"}
+{"combo": "CrFe-20Ost___CrNi-06Hal___FeNi-11Xio", "conflict": "PARAMETER TC(FCC_A1,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-20Ost___CrNi-06Hal___FeNi-11Xio", "conflict": "PARAMETER BMAGN(FCC_A1,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-20Ost___CrNi-06Hal___FeNi-11Xio", "conflict": "PARAMETER TC(BCC_A2,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-20Ost___CrNi-06Hal___FeNi-11Xio", "conflict": "PARAMETER BMAGN(BCC_A2,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-20Ost___CrNi-06Hal___FeNi-10Cac", "conflict": "PHASE A1_FCC: model hint ordered_phase differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-20Ost___CrNi-06Hal___FeNi-10Cac", "conflict": "PARAMETER L(A2_BCC,NI,VA:VA;0): differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-20Ost___CrNi-06Hal___FeNi-10Cac", "conflict": "PARAMETER G(B2_BCC,VA:NI:VA;0): differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-20Ost___CrNi-06Hal___FeNi-10Cac", "conflict": "PARAMETER G(B2_BCC,NI:VA:VA;0): differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-20Ost___CrNi-06Hal___FeNi-10Cac", "conflict": "PARAMETER G(A2_BCC,VA:VA;0): differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-20Ost___CrNi-06Hal___FeNi-19Ohn", "conflict": "PHASE A1_FCC: model hint ordered_phase differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-20Ost___CrNi-06Hal___FeNi-19Ohn", "conflict": "PARAMETER TC(FCC_A1,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-20Ost___CrNi-06Hal___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(FCC_A1,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-20Ost___CrNi-06Hal___FeNi-19Ohn", "conflict": "PARAMETER TC(A1_FCC,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-20Ost___CrNi-06Hal___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(A1_FCC,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-20Ost___CrNi-06Hal___FeNi-19Ohn", "conflict": "PARAMETER TC(BCC_A2,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-20Ost___CrNi-06Hal___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(BCC_A2,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-20Ost___CrNi-06Hal___FeNi-19Ohn", "conflict": "PARAMETER TC(HCP_A3,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-20Ost___CrNi-06Hal___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(HCP_A3,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-20Ost___CrNi-16Tan___FeNi-00Ans-2SL", "conflict": "PHASE A1_FCC: model hint ordered_phase differs in FeNi-00Ans-2SL.tdb \u2014 first kept"}
+{"combo": "CrFe-20Ost___CrNi-16Tan___FeNi-03Dup-mod", "conflict": "PARAMETER G(A2_BCC,VA:VA;0): differs in FeNi-03Dup-mod.tdb \u2014 first kept"}
+{"combo": "CrFe-20Ost___CrNi-16Tan___FeNi-11Xio", "conflict": "PARAMETER TC(FCC_A1,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-20Ost___CrNi-16Tan___FeNi-11Xio", "conflict": "PARAMETER BMAGN(FCC_A1,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-20Ost___CrNi-16Tan___FeNi-11Xio", "conflict": "PARAMETER TC(BCC_A2,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-20Ost___CrNi-16Tan___FeNi-11Xio", "conflict": "PARAMETER BMAGN(BCC_A2,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-20Ost___CrNi-16Tan___FeNi-10Cac", "conflict": "PARAMETER L(A2_BCC,NI,VA:VA;0): differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-20Ost___CrNi-16Tan___FeNi-10Cac", "conflict": "PARAMETER G(B2_BCC,VA:NI:VA;0): differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-20Ost___CrNi-16Tan___FeNi-10Cac", "conflict": "PARAMETER G(B2_BCC,NI:VA:VA;0): differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-20Ost___CrNi-16Tan___FeNi-10Cac", "conflict": "PARAMETER G(A2_BCC,VA:VA;0): differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-20Ost___CrNi-16Tan___FeNi-23Zha", "conflict": "PHASE A1_FCC: model hint ordered_phase differs in FeNi-23Zha.tdb \u2014 first kept"}
+{"combo": "CrFe-20Ost___CrNi-16Tan___FeNi-95Ans", "conflict": "PHASE A1_FCC: model hint ordered_phase differs in FeNi-95Ans.tdb \u2014 first kept"}
+{"combo": "CrFe-20Ost___CrNi-86Din___FeNi-11Xio", "conflict": "PARAMETER TC(FCC_A1,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-20Ost___CrNi-86Din___FeNi-11Xio", "conflict": "PARAMETER BMAGN(FCC_A1,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-20Ost___CrNi-86Din___FeNi-11Xio", "conflict": "PARAMETER TC(BCC_A2,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-20Ost___CrNi-86Din___FeNi-11Xio", "conflict": "PARAMETER BMAGN(BCC_A2,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-20Ost___CrNi-16Tan___FeNi-19Ohn", "conflict": "PARAMETER TC(FCC_A1,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-20Ost___CrNi-16Tan___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(FCC_A1,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-20Ost___CrNi-16Tan___FeNi-19Ohn", "conflict": "PARAMETER TC(A1_FCC,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-20Ost___CrNi-16Tan___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(A1_FCC,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-20Ost___CrNi-16Tan___FeNi-19Ohn", "conflict": "PARAMETER TC(BCC_A2,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-20Ost___CrNi-16Tan___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(BCC_A2,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-20Ost___CrNi-16Tan___FeNi-19Ohn", "conflict": "PARAMETER TC(HCP_A3,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-20Ost___CrNi-16Tan___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(HCP_A3,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-20Ost___CrNi-86Din___FeNi-19Ohn", "conflict": "PARAMETER TC(FCC_A1,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-20Ost___CrNi-86Din___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(FCC_A1,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-20Ost___CrNi-86Din___FeNi-19Ohn", "conflict": "PARAMETER TC(BCC_A2,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-20Ost___CrNi-86Din___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(BCC_A2,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-20Ost___CrNi-92Lee-LB___FeNi-00Ans-4SL", "conflict": "PHASE A1_FCC: model hint ordered_phase differs in FeNi-00Ans-4SL.tdb \u2014 first kept"}
+{"combo": "CrFe-20Ost___CrNi-92Lee-LB___FeNi-11Xio", "conflict": "PARAMETER TC(FCC_A1,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-20Ost___CrNi-92Lee-LB___FeNi-11Xio", "conflict": "PARAMETER BMAGN(FCC_A1,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-20Ost___CrNi-92Lee-LB___FeNi-11Xio", "conflict": "PARAMETER TC(BCC_A2,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-20Ost___CrNi-92Lee-LB___FeNi-11Xio", "conflict": "PARAMETER BMAGN(BCC_A2,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-20Ost___CrNi-92Lee-LB___FeNi-03Dup-LB", "conflict": "PHASE A1_FCC: model hint ordered_phase differs in FeNi-03Dup-LB.tdb \u2014 first kept"}
+{"combo": "CrFe-20Ost___CrNi-92Lee-LB___FeNi-03Dup-mod", "conflict": "PHASE A1_FCC: model hint ordered_phase differs in FeNi-03Dup-mod.tdb \u2014 first kept"}
+{"combo": "CrFe-20Ost___CrNi-92Lee-LB___FeNi-03Dup-mod", "conflict": "PARAMETER G(A2_BCC,VA:VA;0): differs in FeNi-03Dup-mod.tdb \u2014 first kept"}
+{"combo": "CrFe-20Ost___CrNi-92Lee-LB___FeNi-10Cac", "conflict": "PHASE A1_FCC: model hint ordered_phase differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-20Ost___CrNi-92Lee-LB___FeNi-10Cac", "conflict": "PARAMETER L(A2_BCC,NI,VA:VA;0): differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-20Ost___CrNi-92Lee-LB___FeNi-10Cac", "conflict": "PARAMETER G(B2_BCC,VA:NI:VA;0): differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-20Ost___CrNi-92Lee-LB___FeNi-10Cac", "conflict": "PARAMETER G(B2_BCC,NI:VA:VA;0): differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-20Ost___CrNi-92Lee-LB___FeNi-10Cac", "conflict": "PARAMETER G(A2_BCC,VA:VA;0): differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-20Ost___CrNi-92Lee-LB___FeNi-19Ohn", "conflict": "PHASE A1_FCC: model hint ordered_phase differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-20Ost___CrNi-92Lee-LB___FeNi-19Ohn", "conflict": "PARAMETER TC(FCC_A1,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-20Ost___CrNi-92Lee-LB___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(FCC_A1,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-20Ost___CrNi-92Lee-LB___FeNi-19Ohn", "conflict": "PARAMETER TC(A1_FCC,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-20Ost___CrNi-92Lee-LB___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(A1_FCC,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-20Ost___CrNi-92Lee-LB___FeNi-19Ohn", "conflict": "PARAMETER TC(BCC_A2,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-20Ost___CrNi-92Lee-LB___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(BCC_A2,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-20Ost___CrNi-92Lee-LB___FeNi-19Ohn", "conflict": "PARAMETER TC(HCP_A3,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-20Ost___CrNi-92Lee-LB___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(HCP_A3,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-23Zha___CrNi-06Hal___FeNi-00Ans-4SL", "conflict": "PHASE A1_FCC: model hint ordered_phase differs in FeNi-00Ans-4SL.tdb \u2014 first kept"}
+{"combo": "CrFe-23Zha___CrNi-06Hal___FeNi-03Dup-LB", "conflict": "PHASE A1_FCC: model hint ordered_phase differs in FeNi-03Dup-LB.tdb \u2014 first kept"}
+{"combo": "CrFe-23Zha___CrNi-06Hal___FeNi-03Dup-mod", "conflict": "PHASE A1_FCC: model hint ordered_phase differs in FeNi-03Dup-mod.tdb \u2014 first kept"}
+{"combo": "CrFe-23Zha___CrNi-06Hal___FeNi-03Dup-mod", "conflict": "PARAMETER G(A2_BCC,VA:VA;0): differs in FeNi-03Dup-mod.tdb \u2014 first kept"}
+{"combo": "CrFe-23Zha___CrNi-06Hal___FeNi-11Xio", "conflict": "PARAMETER TC(FCC_A1,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-23Zha___CrNi-06Hal___FeNi-11Xio", "conflict": "PARAMETER BMAGN(FCC_A1,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-23Zha___CrNi-06Hal___FeNi-11Xio", "conflict": "PARAMETER TC(BCC_A2,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-23Zha___CrNi-06Hal___FeNi-11Xio", "conflict": "PARAMETER BMAGN(BCC_A2,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-23Zha___CrNi-06Hal___FeNi-10Cac", "conflict": "PHASE A1_FCC: model hint ordered_phase differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-23Zha___CrNi-06Hal___FeNi-10Cac", "conflict": "PARAMETER L(A2_BCC,NI,VA:VA;0): differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-23Zha___CrNi-06Hal___FeNi-10Cac", "conflict": "PARAMETER G(B2_BCC,VA:NI:VA;0): differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-23Zha___CrNi-06Hal___FeNi-10Cac", "conflict": "PARAMETER G(B2_BCC,NI:VA:VA;0): differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-23Zha___CrNi-06Hal___FeNi-10Cac", "conflict": "PARAMETER G(A2_BCC,VA:VA;0): differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-23Zha___CrNi-06Hal___FeNi-19Ohn", "conflict": "PHASE A1_FCC: model hint ordered_phase differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-23Zha___CrNi-06Hal___FeNi-19Ohn", "conflict": "PARAMETER TC(FCC_A1,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-23Zha___CrNi-06Hal___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(FCC_A1,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-23Zha___CrNi-06Hal___FeNi-19Ohn", "conflict": "PARAMETER TC(A1_FCC,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-23Zha___CrNi-06Hal___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(A1_FCC,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-23Zha___CrNi-06Hal___FeNi-19Ohn", "conflict": "PARAMETER TC(BCC_A2,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-23Zha___CrNi-06Hal___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(BCC_A2,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-23Zha___CrNi-06Hal___FeNi-19Ohn", "conflict": "PARAMETER TC(HCP_A3,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-23Zha___CrNi-06Hal___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(HCP_A3,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-23Zha___CrNi-16Tan___FeNi-00Ans-2SL", "conflict": "PHASE A1_FCC: model hint ordered_phase differs in FeNi-00Ans-2SL.tdb \u2014 first kept"}
+{"combo": "CrFe-23Zha___CrNi-16Tan___FeNi-03Dup-mod", "conflict": "PARAMETER G(A2_BCC,VA:VA;0): differs in FeNi-03Dup-mod.tdb \u2014 first kept"}
+{"combo": "CrFe-23Zha___CrNi-16Tan___FeNi-11Xio", "conflict": "PARAMETER TC(FCC_A1,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-23Zha___CrNi-16Tan___FeNi-11Xio", "conflict": "PARAMETER BMAGN(FCC_A1,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-23Zha___CrNi-16Tan___FeNi-11Xio", "conflict": "PARAMETER TC(BCC_A2,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-23Zha___CrNi-16Tan___FeNi-11Xio", "conflict": "PARAMETER BMAGN(BCC_A2,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-23Zha___CrNi-16Tan___FeNi-10Cac", "conflict": "PARAMETER L(A2_BCC,NI,VA:VA;0): differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-23Zha___CrNi-16Tan___FeNi-10Cac", "conflict": "PARAMETER G(B2_BCC,VA:NI:VA;0): differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-23Zha___CrNi-16Tan___FeNi-10Cac", "conflict": "PARAMETER G(B2_BCC,NI:VA:VA;0): differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-23Zha___CrNi-16Tan___FeNi-10Cac", "conflict": "PARAMETER G(A2_BCC,VA:VA;0): differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-23Zha___CrNi-16Tan___FeNi-23Zha", "conflict": "PHASE A1_FCC: model hint ordered_phase differs in FeNi-23Zha.tdb \u2014 first kept"}
+{"combo": "CrFe-23Zha___CrNi-16Tan___FeNi-95Ans", "conflict": "PHASE A1_FCC: model hint ordered_phase differs in FeNi-95Ans.tdb \u2014 first kept"}
+{"combo": "CrFe-23Zha___CrNi-86Din___FeNi-11Xio", "conflict": "PARAMETER TC(FCC_A1,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-23Zha___CrNi-86Din___FeNi-11Xio", "conflict": "PARAMETER BMAGN(FCC_A1,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-23Zha___CrNi-86Din___FeNi-11Xio", "conflict": "PARAMETER TC(BCC_A2,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-23Zha___CrNi-86Din___FeNi-11Xio", "conflict": "PARAMETER BMAGN(BCC_A2,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-23Zha___CrNi-16Tan___FeNi-19Ohn", "conflict": "PARAMETER TC(FCC_A1,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-23Zha___CrNi-16Tan___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(FCC_A1,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-23Zha___CrNi-16Tan___FeNi-19Ohn", "conflict": "PARAMETER TC(A1_FCC,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-23Zha___CrNi-16Tan___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(A1_FCC,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-23Zha___CrNi-16Tan___FeNi-19Ohn", "conflict": "PARAMETER TC(BCC_A2,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-23Zha___CrNi-16Tan___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(BCC_A2,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-23Zha___CrNi-16Tan___FeNi-19Ohn", "conflict": "PARAMETER TC(HCP_A3,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-23Zha___CrNi-16Tan___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(HCP_A3,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-23Zha___CrNi-86Din___FeNi-19Ohn", "conflict": "PARAMETER TC(FCC_A1,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-23Zha___CrNi-86Din___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(FCC_A1,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-23Zha___CrNi-86Din___FeNi-19Ohn", "conflict": "PARAMETER TC(BCC_A2,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-23Zha___CrNi-86Din___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(BCC_A2,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-23Zha___CrNi-92Lee-LB___FeNi-00Ans-4SL", "conflict": "PHASE A1_FCC: model hint ordered_phase differs in FeNi-00Ans-4SL.tdb \u2014 first kept"}
+{"combo": "CrFe-23Zha___CrNi-92Lee-LB___FeNi-11Xio", "conflict": "PARAMETER TC(FCC_A1,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-23Zha___CrNi-92Lee-LB___FeNi-11Xio", "conflict": "PARAMETER BMAGN(FCC_A1,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-23Zha___CrNi-92Lee-LB___FeNi-11Xio", "conflict": "PARAMETER TC(BCC_A2,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-23Zha___CrNi-92Lee-LB___FeNi-11Xio", "conflict": "PARAMETER BMAGN(BCC_A2,NI:VA;0): differs in FeNi-11Xio.tdb \u2014 first kept"}
+{"combo": "CrFe-23Zha___CrNi-92Lee-LB___FeNi-03Dup-LB", "conflict": "PHASE A1_FCC: model hint ordered_phase differs in FeNi-03Dup-LB.tdb \u2014 first kept"}
+{"combo": "CrFe-23Zha___CrNi-92Lee-LB___FeNi-03Dup-mod", "conflict": "PHASE A1_FCC: model hint ordered_phase differs in FeNi-03Dup-mod.tdb \u2014 first kept"}
+{"combo": "CrFe-23Zha___CrNi-92Lee-LB___FeNi-03Dup-mod", "conflict": "PARAMETER G(A2_BCC,VA:VA;0): differs in FeNi-03Dup-mod.tdb \u2014 first kept"}
+{"combo": "CrFe-23Zha___CrNi-92Lee-LB___FeNi-10Cac", "conflict": "PHASE A1_FCC: model hint ordered_phase differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-23Zha___CrNi-92Lee-LB___FeNi-10Cac", "conflict": "PARAMETER L(A2_BCC,NI,VA:VA;0): differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-23Zha___CrNi-92Lee-LB___FeNi-10Cac", "conflict": "PARAMETER G(B2_BCC,VA:NI:VA;0): differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-23Zha___CrNi-92Lee-LB___FeNi-10Cac", "conflict": "PARAMETER G(B2_BCC,NI:VA:VA;0): differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-23Zha___CrNi-92Lee-LB___FeNi-10Cac", "conflict": "PARAMETER G(A2_BCC,VA:VA;0): differs in FeNi-10Cac.tdb \u2014 first kept"}
+{"combo": "CrFe-23Zha___CrNi-92Lee-LB___FeNi-19Ohn", "conflict": "PHASE A1_FCC: model hint ordered_phase differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-23Zha___CrNi-92Lee-LB___FeNi-19Ohn", "conflict": "PARAMETER TC(FCC_A1,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-23Zha___CrNi-92Lee-LB___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(FCC_A1,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-23Zha___CrNi-92Lee-LB___FeNi-19Ohn", "conflict": "PARAMETER TC(A1_FCC,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-23Zha___CrNi-92Lee-LB___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(A1_FCC,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-23Zha___CrNi-92Lee-LB___FeNi-19Ohn", "conflict": "PARAMETER TC(BCC_A2,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-23Zha___CrNi-92Lee-LB___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(BCC_A2,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-23Zha___CrNi-92Lee-LB___FeNi-19Ohn", "conflict": "PARAMETER TC(HCP_A3,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
+{"combo": "CrFe-23Zha___CrNi-92Lee-LB___FeNi-19Ohn", "conflict": "PARAMETER BMAGN(HCP_A3,NI:VA;0): differs in FeNi-19Ohn.tdb \u2014 first kept"}
