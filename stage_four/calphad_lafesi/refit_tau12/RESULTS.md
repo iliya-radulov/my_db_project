@@ -73,3 +73,39 @@ from LaSi2/La–Si compounds, stable-phase offsets of the Fe–Si phases) that �
 Not tried: adding the missing ternary phases (LaFe2Si2, LaFeSi, LaFeSi2) so the 47 excluded
 equilibria become usable — the data most informative for τ1/τ2 competition — or a different split.
 Run artefacts are in the session scratchpad, not committed.
+
+---
+# Addendum B/C results — fitted ternary compounds, residual analysis (19 Nov 2026)
+
+Rules: `PreReg_Refit_FROZEN_20261119.md` (hashes `PreReg_Refit.sha256`, commit cbd7fc4, before any Addendum-B result).
+Models: M1 prior (new phases at −30 kJ/mol-atom, frozen) · M2 control (new-phase parameters fitted, τ1/τ2 published) · M3 full (new phases + 6 τ constants fitted).
+All values, TDBs, inputs and residual tables: `results_addB/` (`all_parameters.tsv`, `new_phase_parameters.tsv`, `tau_constants.tsv`, `final_epoch_losses.tsv`, `residuals_*.tsv`, `*_optimized.tdb`).
+Helper `make_valid_b.py` was added after the freeze (dummy symbol for held-out evaluation; no rule change).
+
+## Verdict: **"Niitsu data insufficient to move the model"** — the Feng reconstruction stays frozen as best available.
+
+| rule | quantity | result | |
+|---|---|---|---|
+| C1 | L_train(M3) ≤ 0.90·L_train(M1) (data part) | 7.79e3 vs 2.45e4 = 32 % | pass |
+| C2 | L_held(M3) ≤ 1.05·L_held(M1) | 2.45e3 vs 3.03e4 = 8 % | pass |
+| C3 | A3 (τ1 fraction ≥ 0.9), A5 overlap, D > 0 | τ1 = 1.00; window 0.10–0.26 (M2: 0.08–0.24); D 99–2385 J/mol-atom, all > 0 | pass |
+| C4 | \|w\| ≤ 20, \|v\| ≤ 1; ΔG_f(1373 K) ∈ [−80, 0] | ΔG_f −57 … −67 kJ/mol-atom ok, but **\|v\| = 1.96–2.65 for all three new phases** | **fail** |
+| T1 | L_held(M3) ≤ 0.95·L_held(M2) | 2.45e3 vs 2.35e3 = 104 % | **fail** |
+| T2 | within scatter: M3 ≥ M2 on held-out and ≥ M2 + 2 on all 47 | held-out 1 vs 2; all 47: 3 vs 4 | **fail** |
+| T3 | ≥ 2 τ constants move > 50 J/mol | 5 of 6 do (see below) | pass |
+
+Verdict rule: "justified" needs C1–C4 and T1–T3 all → not met (C4, T1, T2 fail).
+
+## The three requested diagnostics
+1. **Training points (30):** loss falls 2.45e4 → 7.8e3 (M1 → M3) but only M3: 2 of 30 reproduced within scatter (set match 4 of 30); M2: 2 (6); M1: 1 (4).
+2. **Held-out points (17, 1373 K):** within scatter M1 1, M2 2, M3 1; phase set matches 2 / 4 / 2. M3 ≈ M2 in loss (104 %), slightly worse in residuals. On all 47: 2 / 4 / 3. (Feng baseline M0 on its 24 evaluable points: 2.)
+3. **Systematic shifts:** by the frozen rule none: M3 τ1 mean ΔSi +1.48 at.% (69 % same sign, below the 75 % threshold); τ2 +0.30. Descriptive (not a rule): in M0–M2 the calculated τ1 Si content runs from **+4.9 at.% (1173 K) to −2.1 at.% (1573 K)** relative to experiment — the temperature dependence of the τ1 boundary is too weak in the model; **M3 leaves it unchanged** (+4.87 at 1173 K, −1.68 at 1573 K). The dominant failure everywhere is the phase set (≤ 10 of 47 sets match), not the τ1/τ2 compositions.
+
+## Fitted values (all recorded in `results_addB/`)
+New phases (M3 / M2): LaFe2Si2 G = ΣGHSER − 151710.8 − 122.63·T (M2: −151502.4 − 125.45·T); LaFeSi −91168.3 − 79.32·T (M2 −91141.8 − 79.65·T); LaFeSi2 −120666.7 − 78.20·T (both runs identical to 10 digits — observation: the optimum was the same irrespective of the τ constants; not interpreted). ΔG_f(1373 K) −64.0 / −66.7 / −57.0 kJ/mol-atom (M3). These are effective numbers, not thermodynamic data.
+τ constants (M3, published → fitted, J/mol): τ1 La:Fe 2300 → 2675.8 (+376); τ1 La:Si 37000 → 36964.2 (−36); τ1 L −242114 → −242120.5 (−6); τ2 La:Fe 6500 → 7096.4 (+596); τ2 La:Si 22500 → 22682.2 (+182); τ2 L −241114 → −240968.5 (+146). T-coefficients not free (constants-only).
+
+## Reading and limits
+- τ1/τ2 refitting adds nothing measurable beyond fitting the competing phases alone (M3 vs M2: held-out loss +4 %, residuals no better). Adding the three phases is what removes most of the loss, but the new-phase T-slopes go beyond the frozen sanity bound, so those energies are not credible as data.
+- The regulariser term is large (1.8e3 of 9.5e3), so the fit is regulariser-limited, not data-limited; one value (100), no sweep, by rule.
+- 17 + 30 equilibria, tie-lines (relative energies), 1173–1573 K, nominal-composition equilibria sensitive to mass-balance-flagged rows, ternary phases stoichiometric, LaSi2 variants / AlB2 phase still excluded (24 equilibria). Thread closed under the frozen rule: reconstructed Feng τ1/τ2 stays.

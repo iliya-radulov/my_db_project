@@ -1,0 +1,7 @@
+model	phase	dconst_J_per_formula	T_coef_J_per_K_per_formula	w_kJ_per_atom	v_(10J/K/atom)	DGf_1373K_kJ_per_atom
+M2_control	LAFE2SI2	-151502.4	-125.4515	-0.3005	-2.5090	-64.75
+M2_control	LAFESI	-91141.8	-79.6525	-0.3806	-2.6551	-66.84
+M2_control	LAFESI2	-120666.7	-78.2000	-0.1667	-1.9550	-57.01
+M3_full	LAFE2SI2	-151710.8	-122.6255	-0.3422	-2.4525	-64.02
+M3_full	LAFESI	-91168.3	-79.3227	-0.3894	-2.6441	-66.70
+M3_full	LAFESI2	-120666.7	-78.2000	-0.1667	-1.9550	-57.01
