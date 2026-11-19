@@ -1,0 +1,8 @@
+general:
+  seed: 42
+  initial_parameter_scale: 0
+optimization:
+  epochs: 1000
+  lr: 1.0e-9   # BASELINE: parameters effectively frozen, only mu relaxes
+  latent_mu_lr: 100        # documented default of the authors' template (omitted in first attempt -> mu lr fell back to 0.1, run discarded)
+  loss_threshold: null
