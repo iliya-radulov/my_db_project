@@ -141,3 +141,21 @@ Sign: the model keeps τ1 stable at lower Si than measured, so the descriptor (s
 
 ## Limitation statement (the "material" shape of the pre-agreed three)
 "The reconstruction does not reproduce the temperature shift of the τ1 single-phase region towards higher Si content (calculated Si-poor boundary 0.085–0.09 at all temperatures vs measured 0.086 → 0.096 → 0.162 at 1173/1373/1573 K), and its τ1 window is 0.02–0.04 too wide. Inside the descriptor window this is material for the stability margin D at 1150–1200 °C (estimated 26–96 % of D, using an interpolated experimental boundary) and borderline at 1050 °C; D at 1150–1200 °C is overestimated at the Si-poor end. D results from 1050 °C are the least affected."
+
+---
+# Addendum E results — is the flat τ1 window a binary-choice effect? (20 Nov 2026)
+
+Plan and rules frozen before the run (`FROZEN_SPEC.md` Addendum E, commit ab33236); data and per-combination table in `results_addD/` (`ens_w*.tsv`, `ens_analysis.txt`); scripts `ensemble_window.py`, `ensemble_analysis.py`. All 20 combinations of the WP4 band computed (0 failures); the M0 consistency check passed.
+
+## Result: **20 of 20 combinations are flat** → by the frozen rule, **the flat τ1 window is not a binary-choice effect** (it comes with the Feng τ parameters as reconstructed)
+- Shift of the Si-poor boundary between 1173 and 1573 K: −0.005 (15 combinations) or 0.000 (5); measured +0.076. No combination reproduces the measured shift.
+- Position and width do depend on the binaries, but only through the **La–Si** file: with LaSi-10Zho the τ1 Si-poor boundary is 0.085–0.090 (width 0.150 at 1373 K); with LaSi-20Xu 0.065–0.070 (width 0.165–0.170). The Fe–La choice changes it by at most 0.005; **the five Fe–Si files give identical windows** at the grid resolution (0.005). Measured at 1373 K: Si-poor boundary 0.096, width 0.133 — the binary choice moves the model *away* from the measured width in both cases (0.150–0.170).
+- So the binary choice shifts the window by up to 0.02 in y (comparable to the −0.011 residual at 1373 K) but cannot produce the missing temperature shift (0.076 at 1573 K).
+- Adding the three fitted ternary compounds (Addendum B, M2/M3) also left the window essentially unchanged (0.08–0.24 → 0.08–0.24, M3 0.10–0.26 at 1373 K, 0.02 grid), so the missing LaFe2Si2/LaFeSi/LaFeSi2 competitors are not the explanation either.
+
+## What this does and does not establish
+- It does **not** show that Feng's published TDB has the flat window: the shared cause is the τ1/τ2 and ternary parameters as transcribed from Table 5 (sign-corrected). The cause could be the published assessment, or a remaining transcription/reconstruction issue in those parameters. The public data cannot separate the two; only the authors' TDB (Data Availability: on request) can.
+- τ3–τ6 are absent from the production TDB (unreconstructable, TAU36_RECONSTRUCTION.md); their possible role at the Si-poor boundary is untested.
+
+## Limitation statement for the descriptor (final form)
+"In our reconstruction of the Feng assessment (merged SGTE binaries; τ3–τ6 not reconstructable), the calculated τ1 single-phase region does not move with temperature (Si-poor boundary y = 0.085–0.09 at 1173–1573 K; measured 0.086, 0.096, 0.162) and is 0.02–0.04 too wide. All 20 binary combinations of the WP4 band give the same flat window (shift −0.005 to 0 against the measured +0.076); the binary choice only moves it by up to 0.02 through the La–Si file, so the flatness is not a binary-choice effect. Because the descriptor compositions lie near the Si-poor boundary, the stability margin D is overestimated there: by a first-order estimate, 26–62 % of D at 1150 °C and 41–96 % at 1200 °C (material) and 8–20 % at 1050 °C (borderline); at 1423/1473 K the experimental boundary is interpolated between measurements at 1373 and 1573 K and the size at 1473 K rests on the single 1573 K range. Whether the flat window belongs to the published assessment or to our reconstruction of it is not decidable from public data. D at 1050 °C is the least affected."
