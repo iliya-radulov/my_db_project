@@ -109,3 +109,35 @@ New phases (M3 / M2): LaFe2Si2 G = ΣGHSER − 151710.8 − 122.63·T (M2: −15
 - τ1/τ2 refitting adds nothing measurable beyond fitting the competing phases alone (M3 vs M2: held-out loss +4 %, residuals no better). Adding the three phases is what removes most of the loss, but the new-phase T-slopes go beyond the frozen sanity bound, so those energies are not credible as data.
 - The regulariser term is large (1.8e3 of 9.5e3), so the fit is regulariser-limited, not data-limited; one value (100), no sweep, by rule.
 - 17 + 30 equilibria, tie-lines (relative energies), 1173–1573 K, nominal-composition equilibria sensitive to mass-balance-flagged rows, ternary phases stoichiometric, LaSi2 variants / AlB2 phase still excluded (24 equilibria). Thread closed under the frozen rule: reconstructed Feng τ1/τ2 stays.
+
+---
+# Addendum D results — τ1 temperature-dependence bias vs the WP4b descriptor (20 Nov 2026)
+
+Plan frozen before the run (`FROZEN_SPEC.md` Addendum D, commit 14449c0). Model M0 = Feng-reconstructed baseline on the merged binaries (nothing fitted). Files: `results_addD/` (M0 TDB, `M0_ranges.tsv`, `M0_D.tsv`, `addD_analysis.txt`, calc log), scripts `tau1_window.py`, `addD_analysis.py`.
+
+## Finding 1 — the calculated τ1 and τ2 windows do not move with temperature
+Calculated τ1 single-phase range (y = Si/(Fe+Si) in La(Fe1−ySiy)13): **0.085–0.090 / 0.235–0.240 at every temperature from 1173 to 1573 K.**
+Measured (Niitsu): 0.086–0.211 (1173 K), 0.096–0.229 (1373 K), 0.162–0.279 (1573 K), i.e. the window shifts to higher Si with temperature
+(stated in Niitsu's abstract). Calc − exp, lower / upper boundary: 1173 K +0.004 / +0.024; 1373 K −0.011 / +0.006; 1573 K −0.077 / −0.039.
+τ2: 0.27–0.43 → 0.275–0.42, measured 0.251–0.398, 0.266–0.402, 0.291–0.376. Two separate model errors:
+**position** (the missing temperature shift: the bias runs from positive at low T to strongly negative at 1573 K) and **width** (calculated τ1 window 0.145–0.155 vs measured 0.117–0.133, 0.02–0.04 too wide, 0.038 at 1573 K).
+Not Si-rich-boundary-only: the Table-7 τ1+τ2 tie-line residuals (+0.4 / −0.4 at.% in 1423/1473 K) describe the **Si-rich** end of τ1, where the calculation is good.
+
+## Finding 2 — descriptor sensitivity: material inside the window (frozen rule)
+The descriptor compositions (y = 0.092–0.154) sit near the **Si-poor** boundary, where the model–experiment offset is the large one.
+The rule applies the per-temperature offset (not a uniform shift); the experimental boundary at 1323/1423/1473 K is linearly **interpolated** between the measured 1173/1373/1573 K ranges.
+| T | exp Si-poor boundary (interp.) | calc | δy | est. ΔD (J/mol-atom) | ΔD/D over x = 1.2 … 2.0 | class |
+|---|---|---|---|---|---|---|
+| 1323 K (1050 °C) | 0.0935 | 0.085 | −0.0085 | −258 | 20, 14, 11, 9, 8 % | borderline (x ≤ 1.6), not material (x ≥ 1.8) |
+| 1423 K (1150 °C) | 0.1125 | 0.085 | −0.0275 | −800 | 62, 44, 35, 30, 26 % | **material** at all x |
+| 1473 K (1200 °C) | 0.1290 | 0.085 | −0.0440 | −1246 | 96, 69, 55, 47, 41 % | **material** at all x |
+Sign: the model keeps τ1 stable at lower Si than measured, so the descriptor (stability margin of τ1 against its competitors) is **overestimated** at the Si-poor end at the high-temperature end of the window.
+
+## Caveats (read with Finding 2)
+- ΔD is a first-order estimate: a composition offset δy converted with the finite-difference slope of D along x (≈ 2.8–3.0 × 10⁴ J/mol-atom per unit y); not a recomputed descriptor.
+- There is **no measurement of the lower boundary between 1373 K and 1573 K**; at 1423/1473 K the "experiment" is a linear interpolation, and the size of the bias at 1473 K rests on the single 1573 K range (0.162). The 1373 K datum alone gives δy = −0.011 (borderline/not material). A direct measurement or a Feng-assessment value at 1423–1473 K would settle it.
+- The bias is that of **our reconstruction** (merged binaries FeLa-23Su/LaSi-10Zho/FeSi-17Cui); whether Feng's own TDB has the same flat window is not testable with the public data. The 20-binary-combination band of WP4 could be repeated for the window to see how much of it is binary choice.
+- The M3 refit left the window unchanged; the refit does not address this bias.
+
+## Limitation statement (the "material" shape of the pre-agreed three)
+"The reconstruction does not reproduce the temperature shift of the τ1 single-phase region towards higher Si content (calculated Si-poor boundary 0.085–0.09 at all temperatures vs measured 0.086 → 0.096 → 0.162 at 1173/1373/1573 K), and its τ1 window is 0.02–0.04 too wide. Inside the descriptor window this is material for the stability margin D at 1150–1200 °C (estimated 26–96 % of D, using an interpolated experimental boundary) and borderline at 1050 °C; D at 1150–1200 °C is overestimated at the Si-poor end. D results from 1050 °C are the least affected."

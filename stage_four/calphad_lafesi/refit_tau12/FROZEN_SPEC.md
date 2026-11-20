@@ -104,3 +104,18 @@ Fixed **before** any residual was computed. For every usable Niitsu equilibrium 
 Decision rule: further refit effort is justified only if the fitted model reproduces ≥ 10 percentage points more of the
 points within scatter than its baseline **and** passes Addendum B's C1–C4. Otherwise: freeze the reconstructed Feng
 description as "best available given the public data".
+
+---
+## Addendum D (20 Nov 2026) — does the τ1 temperature-dependence bias matter for the WP4b descriptor?
+Question raised after Addendum B/C: the residual analysis found calc − exp ΔSi(τ1) = +4.9 at.% at 1173 K and −2.1 at.% at 1573 K.
+**Disclosure (seen before this plan):** the Addendum-C residual tables, including for the Feng baseline M0 the τ1/τ2 rows of
+Niitsu Table 7 (1273/1423/1473/1523 K: ΔSi(τ1) +1.9/+0.4/−0.4/−0.9, ΔSi(τ2) +1.5/+0.3/−0.1/−0.5 at.%) and Niitsu's stated
+single-phase ranges (τ1: x = 0.086–0.211 at 1173 K, 0.096–0.229 at 1373 K, 0.162–0.279 at 1573 K; τ2 0.251–0.398, 0.266–0.402,
+0.291–0.376). The new calculation below has not been run.
+**Model:** M0 = the Feng-reconstructed baseline that the WP4b descriptor uses (`results_addD/M0_feng_baseline_eq.tdb`), nothing fitted.
+**Calculation:** for T = 1173, 1273, 1323, 1373, 1423, 1473, 1523, 1573 K along La(Fe1−ySiy)13 (La = 1/14), y = 0…0.45 step 0.005: the
+τ1-single-phase range (τ1 fraction ≥ 0.98) and τ2 range; compare with Niitsu's ranges (measured at 1173, 1373, 1573 K; between those
+temperatures the experimental boundary is linearly interpolated, labelled interpolation). Boundary bias δy = calc − exp, lower and upper boundary.
+**Descriptor sensitivity:** D(x,T) (the WP4b definition, x = 1.2…2.0 Si per La(Fe13−xSix), 1323/1423/1473 K, M0). dD/dy by finite difference
+of D along x (y = x/13), then estimated ΔD = (dD/dy) · δy_lower-boundary (the Si-poor edge is the nearest one to the descriptor compositions y = 0.092–0.154).
+**Rule:** the bias is called *material for the descriptor* at a point if |ΔD| > 0.25·D there, *not material* if ≤ 0.10·D, otherwise *borderline*. Applied per temperature, reported either way. Estimates, not recomputed descriptors.
