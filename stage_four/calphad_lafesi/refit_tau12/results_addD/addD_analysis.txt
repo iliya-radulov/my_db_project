@@ -1,0 +1,15 @@
+== calculated vs measured single-phase ranges (y = Si/(Fe+Si)); measured only at 1173/1373/1573 K
+T_K phase | calc lo-hi (width) | exp lo-hi (width) | d_lo  d_hi  d_width
+1173 TAU1 | 0.090-0.235 (0.145) | 0.086-0.211 (0.125) | +0.004 +0.024 +0.020
+1173 TAU2 | 0.270-0.430 (0.160) | 0.251-0.398 (0.147) | +0.019 +0.032 +0.013
+1373 TAU1 | 0.085-0.235 (0.150) | 0.096-0.229 (0.133) | -0.011 +0.006 +0.017
+1373 TAU2 | 0.270-0.425 (0.155) | 0.266-0.402 (0.136) | +0.004 +0.023 +0.019
+1573 TAU1 | 0.085-0.240 (0.155) | 0.162-0.279 (0.117) | -0.077 -0.039 +0.038
+1573 TAU2 | 0.275-0.420 (0.145) | 0.291-0.376 (0.085) | -0.016 +0.044 +0.060
+calc tau1 lower/upper boundary vs T: 1173K 0.090/0.235, 1273K 0.090/0.235, 1323K 0.085/0.235, 1373K 0.085/0.235, 1423K 0.085/0.235, 1473K 0.085/0.240, 1523K 0.085/0.240, 1573K 0.085/0.240
+
+== descriptor sensitivity (per-temperature bias; exp boundary LINEARLY INTERPOLATED between measured temperatures)
+T_K | exp_lo(interp) calc_lo d_lo | dD/dy | per x: dD_est (J/mol-atom), dD/D, class  [material >25 %, borderline 10-25 %, not <=10 %]
+1323 | 0.0935 0.085 -0.0085 | 30324 | x=1.2: -258, 20 %, borderline ; x=1.4: -258, 14 %, borderline ; x=1.6: -258, 11 %, borderline ; x=1.8: -258, 9 %, not material ; x=2.0: -258, 8 %, not material
+1423 | 0.1125 0.085 -0.0275 | 29027 | x=1.2: -800, 62 %, MATERIAL ; x=1.4: -800, 44 %, MATERIAL ; x=1.6: -800, 35 %, MATERIAL ; x=1.8: -800, 30 %, MATERIAL ; x=2.0: -800, 26 %, MATERIAL
+1473 | 0.1290 0.085 -0.0440 | 28281 | x=1.2: -1246, 96 %, MATERIAL ; x=1.4: -1246, 69 %, MATERIAL ; x=1.6: -1246, 55 %, MATERIAL ; x=1.8: -1246, 47 %, MATERIAL ; x=2.0: -1246, 41 %, MATERIAL
