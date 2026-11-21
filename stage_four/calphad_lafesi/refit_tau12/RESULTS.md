@@ -186,3 +186,20 @@ No rule is changed: the frozen Addendum D calculation and materiality rule (scri
 Minimal-offset scenario (measured Si-poor boundary stays at 0.096, δy = −0.011): ΔD ≈ 270 J/mol-atom, **10–24 % of D** at 1150 and 1200 °C, i.e. borderline. The classes are the same as on the Cui-based build; the percentages move by one to three points (previously 26–62 % at 1150 °C, 41–96 % at 1200 °C, 8–20 % at 1050 °C).
 
 **Statement for the paper (replaces the numbers in the "Final limitation statement" above; wording and caveats unchanged):** by a first-order estimate the shift is 8–19 % of D at 1050 °C, 26–60 % at 1150 °C and 41–93 % at 1200 °C (D overestimated at the Si-poor end); in the minimal-offset scenario 10–24 % at 1150 and 1200 °C (borderline). D of the paper build decreases by 14 to 80 J/mol-atom between 1050 and 1200 °C at fixed x (x = 1.2: 1121, 1130, 1135 at 1323, 1423, 1473 K; x = 2.0: 2697, 2648, 2617), so the temperature dependence of D at fixed x is of the order of the 30–50 J/mol-atom quoted in the draft only at intermediate x.
+
+---
+# Errata and clarifications (21 Nov 2026) — found while checking the La–Fe–Si draft; supersede the statements they refer to
+
+1. **τ₁ residual trend.** The statements "in M0–M2 the calculated τ₁ Si content runs from +4.9 at.% (1173 K) to −2.1 at.% (1573 K)" (Addendum B/C) and "M3 leaves it unchanged" were too loose. Mean ΔSi(τ₁) (calc − exp, at.% Si; n in brackets), from `results_addB/residuals_*.tsv`:
+   | model | 1173 K | 1273 K | 1373 K | 1423 K | 1473 K | 1523 K | 1573 K |
+   |---|---|---|---|---|---|---|---|
+   | M0 (Cui-based build) | – | +1.9 (1) | −0.2 (2) | +0.4 (1) | −0.4 (1) | −0.9 (1) | −1.7 (3) |
+   | paper build (12Ohn) | – | +1.9 (1) | −0.1 (2) | +0.4 (1) | −0.4 (1) | −0.9 (1) | −1.7 (3) |
+   | M1 prior (+3 effective phases) | +4.9 (3) | +1.9 (1) | +2.1 (4) | +0.4 (1) | −0.4 (1) | −0.9 (1) | −1.2 (5) |
+   | M2 control | +4.9 (3) | +1.9 (1) | +0.4 (4) | +0.4 (1) | −0.4 (1) | −0.9 (1) | −2.1 (4) |
+   | M3 full fit | +4.9 (3) | +3.0 (1) | +2.5 (2) | +1.8 (1) | +1.1 (1) | +0.6 (1) | −1.7 (4) |
+   The published-parameter reconstruction (M0, paper build) cannot evaluate the three 1173 K τ₁ points (their equilibria contain phases absent from the database), so its trend runs from +1.9 (1273 K) to −1.7 (1573 K); the +4.9 appears only in the models with the three added effective phases (n = 3). M3 does not remove the trend (+4.9 → −1.7) and changes the intermediate values by up to +2 at.%. Each value rests on one to five equilibria.
+2. **Reconstruction residuals depend on the build.** On the 24 equilibria the published-parameter reconstruction can evaluate: Cui-based build (M0) phase set equals the measured set in 6 of 24, within scatter 2 of 24; **paper build (FeLa-23Su + LaSi-10Zho + FeSi-12Ohn): phase set 5 of 24, within scatter 2 of 24** (`results_addB/residuals_paperbuild.tsv`). "Phase set" = the calculated phases (amount > 0.001) equal the measured phases at the nominal composition and temperature; "within scatter" additionally requires |ΔSi| ≤ 2.0 and |ΔLa| ≤ 1.0 at.% for the solution/τ phases.
+3. **Counts for variant 3.** Within scatter on all 47 equilibria: prior baseline M1 2, control M2 4, full fit M3 3 (held-out 17: 1, 2, 1). "3 against 4" is full fit against control. The "2–4" range in the earlier summary mixed the frozen prior baseline (2) with the fitted models (3 and 4).
+4. **Units of the C4 bound.** |v| ≤ 1 means a T-coefficient of at most 10 J/(mol-atom·K) (v is in units of 10 J/(mol-atom·K)); the fitted T-coefficients of the three new phases are 19.6–26.4 J/(mol-atom·K) in the full fit (|v| = 1.96–2.64; control up to 26.6). For the τ₁/τ₂ corrections of variant 1 the bound was |v| ≤ 10 J/(mol·K) and |w| ≤ 20 kJ/mol.
+5. **"τ₁ fell to 21 %" (variant 1).** At La(Fe₁₁.₅Si₁.₅), 1373 K the equilibrium of variant 1 was fcc 0.63 + LaSi₂ 0.155 + τ₁ 0.214 in phase amount per mole of atoms; the baseline was single-phase τ₁ (1.00).
