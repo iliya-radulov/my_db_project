@@ -16,6 +16,11 @@ ternary merge.
 
   python build_merged_tdb.py FeLa-23Su LaSi-10Zho FeSi-17Cui [out.tdb]
 """
+raise SystemExit(
+    "DEPRECATED (21 Nov 2026): this builder drops the pure-element end-member terms of the solution phases and gives wrong "
+    "driving forces (+84.7 kJ/mol-atom instead of 1.76-5.56). Use ../build_merged_tdb_fixed.py (needs SGTE_BINARY_DIR). "
+    "See tdb_build/RESULTS_MERGED.md.")
+
 import os
 import sys
 import copy
