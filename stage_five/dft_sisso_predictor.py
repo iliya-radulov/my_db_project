@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """
 stage_five/dft_sisso_predictor.py
 
@@ -17,9 +18,9 @@ from __future__ import annotations
 import argparse
 import json
 import os
-import sys
 from pathlib import Path
 
+from pymatgen.analysis.phase_diagram import PhaseDiagram
 from pymatgen.core import Composition
 from pymatgen.entries.computed_entries import GibbsComputedStructureEntry
 
@@ -35,7 +36,6 @@ def _resolve_mp_api_key(explicit_key: str | None = None) -> str:
     env_key = os.environ.get("MP_API_KEY", "").strip()
     if env_key:
         return env_key
-    # Fallback matching Stage 1/2 convention
     fallback = Path(__file__).resolve().parents[2] / "back_up" / "API" / "MP_API_KEY.txt"
     if fallback.exists():
         return fallback.read_text(encoding="utf-8").strip()
@@ -51,10 +51,7 @@ def predict_sisso_formation_gibbs(
     """
     Query Materials Project for `formula` (and its chemical system's elemental
     references), compute Bartel SISSO finite-T formation Gibbs energies (kJ/mol-atom)
-    via pymatgen's GibbsComputedStructureEntry.
-
-    Returns a structured dict with per-polymorph curves and stability margins if
-    paired later with CALPHAD thresholds.
+    via pymatgen's GibbsComputedStructureEntry + PhaseDiagram.
     """
     from mp_api.client import MPRester
 
@@ -64,8 +61,6 @@ def predict_sisso_formation_gibbs(
     elements = sorted(str(el) for el in target_comp.elements)
 
     with MPRester(key) as mpr:
-        # Fetch full chemical system entries so GibbsComputedStructureEntry.from_entries()
-        # has all pure-element reference states needed to compute formation energies.
         chemsys_entries = mpr.get_entries_in_chemsys(
             elements,
             additional_criteria={"thermo_types": ["GGA_GGA+U"]},
@@ -80,15 +75,27 @@ def predict_sisso_formation_gibbs(
             "error": f"No Materials Project entries found for chemical system {'-'.join(elements)}",
         }
 
-    # Index target entries (exact reduced composition match, or all ternary entries if requested)
-    candidate_indices = []
-    for idx, entry in enumerate(chemsys_entries):
-        if entry.composition.reduced_composition == target_reduced:
-            candidate_indices.append(idx)
-        elif include_subsystems and len(entry.composition.elements) == len(elements):
-            candidate_indices.append(idx)
+    # Index target entries by entry_id (GibbsComputedStructureEntry.from_entries
+    # may drop entries without structures, so never index by raw list position).
+    candidates: dict[str, dict] = {}
+    for entry in chemsys_entries:
+        is_exact = entry.composition.reduced_composition == target_reduced
+        is_ternary = include_subsystems and len(entry.composition.elements) == len(elements)
+        if is_exact or is_ternary:
+            eid = str(entry.entry_id)
+            e_hull_0k = entry.data.get("e_above_hull") if hasattr(entry, "data") else None
+            candidates[eid] = {
+                "material_id": eid,
+                "formula": entry.composition.reduced_formula,
+                "composition_fractions": {
+                    str(el): round(amt, 6)
+                    for el, amt in entry.composition.fractional_composition.get_el_amt_dict().items()
+                },
+                "e_above_hull_0K_eV_atom": round(float(e_hull_0k), 5) if e_hull_0k is not None else None,
+                "dGf_sisso_kJ_mol_atom": {},
+            }
 
-    if not candidate_indices:
+    if not candidates:
         return {
             "formula": formula,
             "reduced_formula": target_reduced.reduced_formula,
@@ -97,42 +104,30 @@ def predict_sisso_formation_gibbs(
             "note": "Exact formula not present in Materials Project (novel composition).",
         }
 
-    # Pre-initialize candidate records
-    candidates = {}
-    for idx in candidate_indices:
-        raw_entry = chemsys_entries[idx]
-        mp_id = str(raw_entry.entry_id)
-        e_hull_0k = raw_entry.data.get("e_above_hull") if hasattr(raw_entry, "data") else None
-        candidates[idx] = {
-            "material_id": mp_id,
-            "formula": raw_entry.composition.reduced_formula,
-            "composition_fractions": {
-                str(el): round(amt, 6)
-                for el, amt in raw_entry.composition.fractional_composition.get_el_amt_dict().items()
-            },
-            "e_above_hull_0K_eV_atom": round(float(e_hull_0k), 5) if e_hull_0k is not None else None,
-            "dGf_sisso_kJ_mol_atom": {},
-        }
-
-    # Convert the full chemical system once per temperature so elemental references
-    # are consistently computed at every T.
+    # Convert full chemical system once per temperature and evaluate formation Gibbs
+    # energy against the temperature-dependent GibbsComputedStructureEntry hull.
     for T in temperatures:
         T_float = float(T)
         t_key = str(T_float)
         if not (SISSO_T_MIN <= T_float <= SISSO_T_MAX):
-            for idx in candidate_indices:
-                candidates[idx]["dGf_sisso_kJ_mol_atom"][t_key] = None
+            for c in candidates.values():
+                c["dGf_sisso_kJ_mol_atom"][t_key] = None
             continue
 
         gibbs_entries = GibbsComputedStructureEntry.from_entries(chemsys_entries, temp=T_float)
-        for idx in candidate_indices:
-            g_entry = gibbs_entries[idx]
-            dgf_ev_per_atom = float(g_entry.formation_energy_per_atom)
-            candidates[idx]["dGf_sisso_kJ_mol_atom"][t_key] = round(
+        pd_T = PhaseDiagram(gibbs_entries)
+        gibbs_by_id = {str(ge.entry_id): ge for ge in gibbs_entries}
+
+        for eid, c in candidates.items():
+            ge = gibbs_by_id.get(eid)
+            if ge is None:
+                c["dGf_sisso_kJ_mol_atom"][t_key] = None
+                continue
+            dgf_ev_per_atom = float(pd_T.get_form_energy_per_atom(ge))
+            c["dGf_sisso_kJ_mol_atom"][t_key] = round(
                 dgf_ev_per_atom * EV_PER_ATOM_TO_KJ_PER_MOL, 4
             )
 
-    # Sort by lowest 0 K energy above hull (or lowest T_min formation energy)
     sorted_candidates = sorted(
         candidates.values(),
         key=lambda c: (
@@ -169,7 +164,6 @@ def compare_with_calphad_ensemble(sisso_report: dict, ensemble_report: dict) -> 
                 continue
             med = t_stats["median_kJ"]
             margin = round(dgf_sisso - med, 4)
-            # Check against the 5%-95% uncertainty band of the competing binaries
             if dgf_sisso < t_stats["p05_kJ"]:
                 verdict = "stable_across_band"
             elif dgf_sisso <= t_stats["p95_kJ"]:

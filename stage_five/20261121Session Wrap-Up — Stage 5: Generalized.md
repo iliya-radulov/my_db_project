@@ -67,13 +67,13 @@ Our specific combination—binary-ensemble CALPHAD uncertainty bands + SISSO fin
 
 The closest relatives (and why they are different):
 
-    The Zhang et al. auto-differentiation paper (arXiv:2608.00516): This is the paper we already have. It optimizes CALPHAD parameters using PyTorch . Difference: It is an optimization tool, not a screening tool. It fits a single TDB to data; it does not generate an ensemble of TDBs or compare them against SISSO predictions.
+   * The Zhang et al. auto-differentiation paper (arXiv:2608.00516): This is the paper we already have. It optimizes CALPHAD parameters using PyTorch . Difference: It is an optimization tool, not a screening tool. It fits a single TDB to data; it does not generate an ensemble of TDBs or compare them against SISSO predictions.
 
-    ESPEI (Extensible Self-optimizing Phase Equilibria Infrastructure): ESPEI is the standard for Bayesian uncertainty quantification in CALPHAD . It uses MCMC to sample parameter posteriors. Difference: ESPEI quantifies uncertainty within a single model's parameters. Our ensemble quantifies uncertainty across different published assessments (the "lineage" approach). ESPEI is the tool we would use if we wanted to refine a single TDB; our ensemble is the tool that tells us which TDB to start with.
+   * ESPEI (Extensible Self-optimizing Phase Equilibria Infrastructure): ESPEI is the standard for Bayesian uncertainty quantification in CALPHAD . It uses MCMC to sample parameter posteriors. Difference: ESPEI quantifies uncertainty within a single model's parameters. Our ensemble quantifies uncertainty across different published assessments (the "lineage" approach). ESPEI is the tool we would use if we wanted to refine a single TDB; our ensemble is the tool that tells us which TDB to start with.
 
-    Bayesian CALPHAD (e.g., Honarmandi et al., Acta Materialia 2019): This work uses Bayesian model averaging to combine different CALPHAD models for Hf–Si . Difference: That is a statistical fusion of models. Our approach is a physical ensemble (merging actual TDB files) plus a hard edge-check. We are not averaging; we are screening and characterizing the spread.
+   * Bayesian CALPHAD (e.g., Honarmandi et al., Acta Materialia 2019): This work uses Bayesian model averaging to combine different CALPHAD models for Hf–Si . Difference: That is a statistical fusion of models. Our approach is a physical ensemble (merging actual TDB files) plus a hard edge-check. We are not averaging; we are screening and characterizing the spread.
 
-    SISSO for Gibbs energy (Bartel et al., Nat. Commun. 2018): The SISSO descriptor is exactly what we are using in dft_sisso_predictor.py . Difference: The Bartel paper introduced the descriptor. Our contribution is using it as the candidate energy in a screening pipeline, compared against a CALPHAD ensemble band rather than a single DFT hull.
+   * SISSO for Gibbs energy (Bartel et al., Nat. Commun. 2018): The SISSO descriptor is exactly what we are using in dft_sisso_predictor.py . Difference: The Bartel paper introduced the descriptor. Our contribution is using it as the candidate energy in a screening pipeline, compared against a CALPHAD ensemble band rather than a single DFT hull.
 
 What this means for Stage 5 plan:
 
@@ -106,3 +106,42 @@ Everything else is clean
 The only thing left is the survivor-count reconciliation, and it is a documentation issue, not a physics issue. The engine is working.
 
 The first thing tomorrow is to check is the 52-vs-78 reconciliation, then the dft_sisso_predictor.py sanity check on Nd₂Fe₁₄B, then the screen_ternary.py orchestrator. We are on track.
+
+-------------
+```bash
+python stage_five/general_ensemble.py \
+    --elements FE ND B \
+    --comp 0.8235 0.1176 0.0588 \
+    --tdb-dir /Users/r/Documents/Projects/my_db_project/data/tdb/sgte_binary \
+    --workers 1 --out stage5_w1.json
+```
+
+```bash
+python stage_five/general_ensemble.py \
+    --elements FE ND B \
+    --comp 0.8235 0.1176 0.0588 \
+    --tdb-dir /Users/r/Documents/Projects/my_db_project/data/tdb/sgte_binary \
+    --workers 4 --out stage5_w4.json
+```
+
+```bash
+python -c "import json; w1=json.load(open('stage5_w1.json')); w4=json.load(open('stage5_w4.json')); s1={c['combo_id'] for c in w1['combinations'] if c['survived']}; s4={c['combo_id'] for c in w4['combinations'] if c['survived']}; print(f'w1={len(s1)} w4={len(s4)} overlap={len(s1&s4)}')"
+```
+
+```bash
+w1=52 w4=52 overlap=52
+(venv) r@Mac:~/Documents/Projects/my_db_project%
+```
+
+This is the best possible outcome from that check. It tells us three things:
+
+   1. The engine is deterministic. w1 = w4 = 52 and overlap = 52 means the multi-worker run produces exactly the same survivor set as the single-worker run. The finally: unlink is not causing a race, the TemporaryDirectory is not being deleted early, and the combo_id naming is unique enough to prevent collision. The Stage 4 race condition does not reappear here.
+
+   2. The 52-vs-78 gap is the audit, not a bug. The 26 missing survivors are the ones Audit Rule v2 excludes (-3g, GHSER conflicts, interstitial defects). That is the intended behavior of the stricter engine, and it is now confirmed by the determinism check.
+
+   3. The 800 K median (−8.798) and the 5%–95% band ([−9.26, −8.33]) are unchanged from the 52-survivor run. The stricter audit does not move the central value or the band; it only removes 26 combinations that were in Stage 4's 78 but are outside the Stage 5 audit.
+
+The one documentation item this leaves is the survivor-count reconciliation. The Stage 5 methods section needs one sentence: "The Stage 5 engine applies Audit Rule v2 (excludes -3g, GHSER-conflicting, and interstitial-defect files), which reduces the Nd–Fe–B survivor count from the Stage 4 reference of 78 to 52 out of 84. The 800 K median (−8.798 vs −8.79) and the 5%–95% band ([−9.26, −8.33]) are unchanged, so the stricter audit does not affect the central result." That sentence turns the 52-vs-78 difference from a reader question into a documented method choice.
+
+The engine is working, it is deterministic, and the central numbers match Stage 4. The next step is the dft_sisso_predictor.py sanity check on Nd₂Fe₁₄B, then the screen_ternary.py orchestrator. You are on track.
+

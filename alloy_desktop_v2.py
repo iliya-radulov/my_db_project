@@ -215,6 +215,8 @@ class AlloyLabApp(ctk.CTk):
         
         self.calc_btn = ctk.CTkButton(btn_frame, text="🧪 Calculate & Preview", command=self.run_calculation, width=200)
         self.calc_btn.pack(side="left", padx=10)
+        self.stage5_btn = ctk.CTkButton(btn_frame, text="🔬 CALPHAD + SISSO Screen", command=self.run_stage5_screen, width=210)
+        self.stage5_btn.pack(side="left", padx=10)
         
         self.submit_btn = ctk.CTkButton(btn_frame, text="💾 Submit to Database", command=self.submit_to_db, width=200, state="disabled")
         self.submit_btn.pack(side="left", padx=10)
@@ -787,6 +789,46 @@ class AlloyLabApp(ctk.CTk):
                 return None
         return selected
     
+    def run_stage5_screen(self):
+        formula = self.formula_entry.get().strip()
+        if not formula:
+            messagebox.showwarning("Warning", "Please enter a ternary formula (e.g. Nd2Fe14B)")
+            return
+
+        sample_code = None
+        if hasattr(self, "sample_id_entry"):
+            val = self.sample_id_entry.get().strip()
+            sample_code = val or None
+
+        self.stage5_btn.configure(state="disabled")
+        self.status_label.configure(text=f"Stage 5 screening {formula} (checking DB cache / running ensemble)...")
+        self.result_text.insert("end", f"\nRunning Stage 5 CALPHAD Binary-Ensemble + Bartel SISSO screen for {formula}...\n")
+
+        from stage_five.desktop_screening_hook import run_screening_async
+
+        def _done(summary_txt: str):
+            def _ui():
+                self.result_text.insert("end", "\n" + summary_txt + "\n")
+                self.result_text.see("end")
+                self.status_label.configure(text=f"Stage 5 screening complete for {formula}")
+                self.stage5_btn.configure(state="normal")
+            self.after(0, _ui)
+
+        def _err(err_msg: str):
+            def _ui():
+                self.result_text.insert("end", "\n" + err_msg + "\n")
+                self.result_text.see("end")
+                self.status_label.configure(text="Stage 5 screening failed")
+                self.stage5_btn.configure(state="normal")
+            self.after(0, _ui)
+
+        run_screening_async(
+            formula=formula,
+            sample_code=sample_code,
+            on_complete=_done,
+            on_error=_err,
+        )
+
     def run_calculation(self):
         self.result_text.delete(1.0, "end")
         self.status_label.configure(text="Calculating...")
