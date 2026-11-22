@@ -149,8 +149,9 @@ def run_screening_async(
     on_error: Callable[[str], None] | None = None,
     sample_code: str | None = None,
     tdb_dir: Path | None = None,
-    workers: int = 4,
+    workers: int | None = None,
     force_recompute: bool = False,
+    on_progress: Callable[[int, int], None] | None = None,
 ) -> None:
     """
     Background worker for alloy_desktop_v2.py:
@@ -166,7 +167,8 @@ def run_screening_async(
                     return
 
             tdb_path = tdb_dir or Path(os.environ.get("SGTE_BINARY_DIR", REPO_ROOT / "data" / "tdb" / "sgte_binary"))
-            bundle = screen_ternary(formula=formula, tdb_dir=tdb_path, workers=workers)
+            n_workers = workers or min(20, max(4, (os.cpu_count() or 4) - 4))
+            bundle = screen_ternary(formula=formula, tdb_dir=tdb_path, workers=n_workers, progress_callback=on_progress)
             ens = bundle["ensemble"]
             g = ens["gates"]
             run_id = save_screening_to_db(

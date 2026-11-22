@@ -185,6 +185,7 @@ def screen_ternary(
     suppress_phases: list[str] | None = None,
     workers: int = 4,
     include_subsystems: bool = False,
+    progress_callback=None,
 ) -> dict:
     elements, fractions, comp = parse_ternary_formula(formula)
     temps = [float(t) for t in (temperatures or DEFAULT_TEMPS)]
@@ -196,6 +197,7 @@ def screen_ternary(
         tdb_dir=tdb_dir,
         suppress_phases=suppress_phases,
         workers=workers,
+        progress_callback=progress_callback,
     )
 
     sisso_report = predict_sisso_formation_gibbs(

@@ -327,6 +327,7 @@ def evaluate_gates(
     pair_names: list[str],
     min_survival_frac: float = 0.25,
     min_lineages_per_edge: int = 2,
+    progress_callback=None,
 ) -> dict:
     n_total = len(results)
     survivors = [r for r in results if r["survived"]]
@@ -357,6 +358,7 @@ def run_binary_ensemble(
     workers: int = 1,
     min_survival_frac: float = 0.25,
     min_lineages_per_edge: int = 2,
+    progress_callback=None,
 ) -> dict:
     elements = [e.upper() for e in elements]
     if len(elements) != 3 or len(fractions) != 3:
@@ -384,17 +386,29 @@ def run_binary_ensemble(
         cid = "___".join(p.stem for p in prod_paths)
         combos.append((cid, list(prod_paths)))
         
+    total_combos = len(combos)
+    if progress_callback:
+        progress_callback(0, total_combos)
     with tempfile.TemporaryDirectory(prefix="calphad_ens_") as tmpdir:
         if workers <= 1:
             _init_worker(refs, elements, x_map, temps, suppress, tmpdir)
-            results = [_evaluate_combo(c) for c in combos]
+            results = []
+            for idx, c in enumerate(combos, 1):
+                results.append(_evaluate_combo(c))
+                if progress_callback:
+                    progress_callback(idx, total_combos)
         else:
             with Pool(
                 processes=workers,
                 initializer=_init_worker,
                 initargs=(refs, elements, x_map, temps, suppress, tmpdir),
             ) as pool:
-                results = pool.map(_evaluate_combo, combos)
+                results = []
+                for idx, res in enumerate(pool.imap_unordered(_evaluate_combo, combos), 1):
+                    results.append(res)
+                    if progress_callback:
+                        progress_callback(idx, total_combos)
+            results.sort(key=lambda r: r["combo_id"])
                 
     gate_report = evaluate_gates(
         results,

@@ -822,11 +822,17 @@ class AlloyLabApp(ctk.CTk):
                 self.stage5_btn.configure(state="normal")
             self.after(0, _ui)
 
+        def _prog(done: int, total: int):
+            self.after(0, lambda: self.status_label.configure(
+                text=f"Stage 5 screening {formula}: {done}/{total} binary combos evaluated..."
+            ))
+
         run_screening_async(
             formula=formula,
             sample_code=sample_code,
             on_complete=_done,
             on_error=_err,
+            on_progress=_prog,
         )
 
     def run_calculation(self):
