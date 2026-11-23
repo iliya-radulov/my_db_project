@@ -95,6 +95,20 @@
 
 ---
 
+## 7a. Update: Stage 5 merged into "Calculate & Preview" (23 Nov, later)
+
+Why: the preview already queries Materials Project, OQMD and Alexandria (literature check) with the same key; the Stage 5 button was a second, separate step. Now one press gives both.
+
+- **Flow:** `Calculate & Preview` runs mass calculation, screening and literature check as before; at its end Stage 5 starts **in the background** for the *final atomic composition* of the preview (unit and pre-alloy mode already resolved), and its result appears below the literature section of the same window. Checkbox "Also run with Calculate & Preview (ternary)" (default on) switches it off; the 🔬 button stays for a manual run and for "Force recompute".
+- **Ternary only.** Stage 5 needs three elements; for other compositions the preview says so and nothing runs.
+- **A bug that the merge removes:** the old 🔬 button passed the raw text of the formula field to Stage 5, ignoring the at% / wt% selector and the pre-alloy mode (wt% numbers would have been screened as atomic amounts). The button now uses the preview's composition; without a matching preview it only accepts a plain atomic formula and otherwise asks for a preview first.
+- **Safeguards:** one Stage 5 run at a time (a second preview while one runs does not start another; a result that arrives after the user previewed a different composition is not shown in the new preview); a first run of a new system takes minutes (Al–Fe–Mn took over an hour on 3 workers), repeated previews are served from the database cache; the progress is shown in the status line.
+- **One Materials Project key:** the SISSO step now looks for the key where the literature search already does (`MP_API_KEY`, then `../../back_up/API/MP_API_KEY.txt` relative to the working directory, then the old location).
+- **A failing Materials Project step no longer throws the CALPHAD result away.** Missing key, network or package: the ensemble result is kept and stored with `match_type = sisso_unavailable`; the preview shows the band and the reason; fix the cause and use "Force recompute" to add the SISSO part.
+- **Tested:** the extracted GUI methods with fake widgets (11 tests: final composition instead of typed text, ternary-only, running guard, stale result, wt% / pre-alloy handling, invalid site group); the save / cache path with `sisso_unavailable` on a real PostgreSQL 16 (throwaway). **Not tested:** the actual Tk window (no display session with the app's dependencies here); a real Materials Project query.
+
+---
+
 ## 8. File inventory (`stage_five/`)
 
 - `general_ensemble.py` — engine (`audit_binary_candidates` with merge priority, `run_binary_ensemble`, `evaluate_gates`, `compute_spec_sha256`)
@@ -105,5 +119,5 @@
 - `methods_table.py` — table from saved reports
 - `009_calphad_dft_screening.sql`, `010_prototype_provenance.sql` — migrations
 - `results/` — three ensemble reports, `SHA256SUMS`, `methods_table_800K.md/.tsv`, `README.md`
-- `tests/` — `test_stage5.py`, `test_prototype.py`, `test_hook_options.py`, `conftest.py`
+- `tests/` — `test_stage5.py`, `test_prototype.py`, `test_hook_options.py`, `test_gui_flow.py`, `conftest.py`
 - `20261121Session Wrap-Up — Stage 5: Generalized.md` — earlier note with errata; `20261123Session Wrap-Up — Stage 5: Corrected and Extended.md` — this note

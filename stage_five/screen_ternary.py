@@ -31,7 +31,7 @@ from dft_sisso_predictor import (
     predict_sisso_formation_gibbs,
     prototype_filter_from_args,
 )
-from prototype_match import PrototypeFilter, provenance_label
+from prototype_match import SISSO_UNAVAILABLE, PrototypeFilter, provenance_label
 from general_ensemble import DEFAULT_TEMPS, run_binary_ensemble
 
 
@@ -174,11 +174,15 @@ def save_screening_to_db(
                         t_stats["p05_kJ"], t_stats["p95_kJ"], json.dumps(t_stats["eta2_by_edge"]),
                         t_stats["dominant_competing_assemblage"],
                     ]
+                    unavailable = sisso_report.get("match_type") == SISSO_UNAVAILABLE
+                    kind = SISSO_UNAVAILABLE if unavailable else "no_dft_entry"
                     cols = common + ", mp_id, verdict"
-                    marks = "%s, %s, %s, %s, %s, %s, %s, %s::jsonb, %s, 'NO_MP_ENTRY', 'no_dft_entry'"
+                    marks = "%s, %s, %s, %s, %s, %s, %s, %s::jsonb, %s, 'NO_MP_ENTRY', %s"
+                    values.append(kind)
                     if has_proto:
                         cols += ", match_type, comparable"
-                        marks += ", 'no_dft_entry', FALSE"
+                        marks += ", %s, FALSE"
+                        values.append(kind)
                     cur.execute(f"INSERT INTO calphad_dft_comparison ({cols}) VALUES ({marks});", values)
         return run_id
     finally:
@@ -210,13 +214,19 @@ def screen_ternary(
         progress_callback=progress_callback,
     )
 
-    sisso_report = predict_sisso_formation_gibbs(
-        formula=formula,           # as given: a reduced formula would mangle decimal compositions
-        temperatures=temps,
-        include_subsystems=include_subsystems,
-        nearest_prototype=prototype_filter is not None,
-        prototype_filter=prototype_filter,
-    )
+    try:
+        sisso_report = predict_sisso_formation_gibbs(
+            formula=formula,           # as given: a reduced formula would mangle decimal compositions
+            temperatures=temps,
+            include_subsystems=include_subsystems,
+            nearest_prototype=prototype_filter is not None,
+            prototype_filter=prototype_filter,
+        )
+    except Exception as exc:   # missing key / package / network: keep the CALPHAD result, never lose it
+        sisso_report = {
+            "formula": formula, "candidates": [], "match_type": SISSO_UNAVAILABLE,
+            "error": f"{type(exc).__name__}: {exc}",
+        }
 
     comparison_rows = compare_with_calphad_ensemble(
         sisso_report, ensemble_report, sisso_uncertainty_kJ=sisso_uncertainty_kJ
@@ -276,7 +286,11 @@ def main():
         print()
         print("\n".join(format_comparison_table(bundle["comparison"])))
     else:
-        print("\n[no_dft_entry] No Materials Project entry at the target composition or within the prototype filter. Competing binary threshold band:")
+        if bundle["sisso"].get("match_type") == SISSO_UNAVAILABLE:
+            print(f"\n[{SISSO_UNAVAILABLE}] Materials Project / SISSO step failed: {bundle['sisso'].get('error')}")
+            print("Competing binary threshold band (CALPHAD part is complete):")
+        else:
+            print("\n[no_dft_entry] No Materials Project entry at the target composition or within the prototype filter. Competing binary threshold band:")
         print(f"{'T (K)':>7} | {'Median':>8} | {'[5%, 95%] Band':>17} | Competing Assemblage")
         print("-" * 70)
         for t_str, s in ens["threshold_distribution"].items():

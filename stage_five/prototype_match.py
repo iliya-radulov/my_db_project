@@ -45,6 +45,7 @@ EXACT_MATCH = "exact_match"
 NEAREST_PROTOTYPE = "nearest_prototype"
 LISTED_OTHER_TERNARY = "listed_other_ternary"   # include_subsystems: listed, never compared
 NO_DFT_ENTRY = "no_dft_entry"
+SISSO_UNAVAILABLE = "sisso_unavailable"   # the Materials Project / SISSO step could not run (key, network, package)
 
 E_HULL_TIE_EV = 0.01      # eV/atom: ranking treats smaller hull differences as ties
 
@@ -146,6 +147,8 @@ def provenance_label(row: dict) -> str:
     """'mp-123 (LaFe13, nearest_prototype Δx=0.152)'; exact: 'mp-1 (Nd2Fe14B, exact_match)'."""
     mt = row.get("match_type") or EXACT_MATCH
     mid = row.get("material_id", "")
+    if mt == SISSO_UNAVAILABLE:
+        return SISSO_UNAVAILABLE
     if mt == NO_DFT_ENTRY or mid == "NO_MP_ENTRY":
         return "no_dft_entry"
     formula = row.get("prototype_formula") or row.get("formula") or ""

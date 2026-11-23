@@ -42,16 +42,35 @@ SISSO_T_MIN = 300.0
 SISSO_T_MAX = 2000.0
 
 
+def mp_key_file_candidates() -> list[Path]:
+    """Where a Materials Project key file is looked for, in order.
+
+    1. ../../back_up/API/MP_API_KEY.txt relative to the working directory: the location the desktop app's
+       literature search (stage_two.alloy.alloy_entry_full_v2.get_api_key) already uses, so that one key
+       serves the literature check and the SISSO step;
+    2. back_up/API/MP_API_KEY.txt two folders above the repository (relative to this file, as before).
+    """
+    return [
+        Path("../../back_up/API") / "MP_API_KEY.txt",
+        Path(__file__).resolve().parents[2] / "back_up" / "API" / "MP_API_KEY.txt",
+    ]
+
+
 def _resolve_mp_api_key(explicit_key: str | None = None) -> str:
     if explicit_key:
         return explicit_key.strip()
     env_key = os.environ.get("MP_API_KEY", "").strip()
     if env_key:
         return env_key
-    fallback = Path(__file__).resolve().parents[2] / "back_up" / "API" / "MP_API_KEY.txt"
-    if fallback.exists():
-        return fallback.read_text(encoding="utf-8").strip()
-    raise RuntimeError("MP_API_KEY not found in environment or fallback file.")
+    for fallback in mp_key_file_candidates():
+        if fallback.exists():
+            key = fallback.read_text(encoding="utf-8").strip()
+            if key:
+                return key
+    raise RuntimeError(
+        "MP_API_KEY not found: set the MP_API_KEY environment variable or put the key in "
+        + " or ".join(str(c) for c in mp_key_file_candidates())
+    )
 
 
 def _spacegroup(entry) -> str | None:
