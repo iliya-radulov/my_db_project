@@ -24,7 +24,14 @@ from general_ensemble import (
     DEFAULT_MIN_SURVIVAL_FRAC,
     compute_spec_sha256 as _engine_spec_sha256,
 )
-from screen_ternary import _connect_db, parse_ternary_formula, save_screening_to_db, screen_ternary
+from dft_sisso_predictor import format_comparison_table
+from screen_ternary import (
+    _connect_db,
+    _has_prototype_columns,
+    parse_ternary_formula,
+    save_screening_to_db,
+    screen_ternary,
+)
 
 log = logging.getLogger(__name__)
 
@@ -71,8 +78,17 @@ def fetch_cached_screening(
                 return None
 
             run_id, db_formula, sys_name, n_tot, n_surv, gate_passed, gate_summary, created_at = run
+            has_proto = _has_prototype_columns(cur)
+            extra = ", match_type, prototype_formula, delta_x, comparable" if has_proto else ""
             cur.execute(
-                """
+                f"""
+                SELECT temperature_k, threshold_median_kj, threshold_p05_kj, threshold_p95_kj,
+                       competing_assemblage, mp_id, candidate_formula, dgf_sisso_kj,
+                       stability_margin_kj, verdict{extra}
+                FROM calphad_dft_comparison
+                WHERE run_id = %s
+                ORDER BY comparable DESC NULLS LAST, delta_x NULLS FIRST, mp_id, temperature_k;
+                """ if has_proto else """
                 SELECT temperature_k, threshold_median_kj, threshold_p05_kj, threshold_p95_kj,
                        competing_assemblage, mp_id, candidate_formula, dgf_sisso_kj,
                        stability_margin_kj, verdict
@@ -84,7 +100,7 @@ def fetch_cached_screening(
             )
             rows = []
             for r in cur.fetchall():
-                rows.append({
+                row = {
                     "T_K": r[0],
                     "threshold_median_kJ": r[1],
                     "threshold_p05_kJ": r[2],
@@ -95,7 +111,11 @@ def fetch_cached_screening(
                     "dGf_sisso_kJ": r[7],
                     "stability_margin_kJ": r[8],
                     "verdict": r[9],
-                })
+                }
+                if has_proto:
+                    row.update({"match_type": r[10], "prototype_formula": r[11], "delta_x": r[12],
+                                "comparable": r[13]})
+                rows.append(row)
 
             return {
                 "cached": True,
@@ -133,7 +153,7 @@ def format_screening_summary(result: dict) -> str:
         return "\n".join(lines)
 
     if rows[0]["material_id"] == "NO_MP_ENTRY":
-        lines.append("Novel stoichiometry (no exact MP entry). Competing binary threshold band:")
+        lines.append("[no_dft_entry] No MP entry at the target composition or within the prototype filter. Competing binary threshold band:")
         lines.append(f"{'T (K)':>7} | {'Median':>8} | {'[5%, 95%] Band':>17} | Competing Assemblage")
         lines.append("-" * 68)
         for r in rows:
@@ -142,14 +162,7 @@ def format_screening_summary(result: dict) -> str:
                 f"[{r['threshold_p05_kJ']:>+6.2f}, {r['threshold_p95_kJ']:>+6.2f}] | {r['competing_assemblage']}"
             )
     else:
-        lines.append(f"{'MP ID':<15} | {'T (K)':>6} | {'ΔG_SISSO':>9} | {'ΔG* Med':>8} | {'[5%, 95%] Band':>17} | {'Margin':>8} | Verdict")
-        lines.append("-" * 98)
-        for r in rows:
-            lines.append(
-                f"{r['material_id']:<15} | {r['T_K']:>6.0f} | {r['dGf_sisso_kJ']:>+9.3f} | "
-                f"{r['threshold_median_kJ']:>+8.3f} | [{r['threshold_p05_kJ']:>+6.2f}, {r['threshold_p95_kJ']:>+6.2f}] | "
-                f"{r['stability_margin_kJ']:>+8.3f} | {r['verdict']}"
-            )
+        lines.extend(format_comparison_table(rows))
     return "\n".join(lines)
 
 
