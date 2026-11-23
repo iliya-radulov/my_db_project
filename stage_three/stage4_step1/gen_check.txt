@@ -1,0 +1,45 @@
+======================================================================
+FeNd-16Che -> /home/iliya-radulov/Documents/github/active/my_db_project/data/tdb/sgte_binary/FeNd-16Che.tdb
+   GHSERFE lower T limit: 298.15
+   GHSERND lower T limit: 298.15
+======================================================================
+FeNd-16Wan -> /home/iliya-radulov/Documents/github/active/my_db_project/data/tdb/sgte_binary/FeNd-16Wan.tdb
+   GHSERFE lower T limit: 298.15
+   GHSERND lower T limit: 298.15
+======================================================================
+FeNd-95Hal-LB -> /home/iliya-radulov/Documents/github/active/my_db_project/data/tdb/sgte_binary/FeNd-95Hal-LB.tdb
+   GHSERFE lower T limit: 298.15
+   GHSERND lower T limit: 298.15
+======================================================================
+FeB-20Tak -> /home/iliya-radulov/Documents/github/active/my_db_project/data/tdb/sgte_binary/FeB-20Tak.tdb
+   GHSERFE lower T limit: 298.15
+======================================================================
+FeB-08Yos -> /home/iliya-radulov/Documents/github/active/my_db_project/data/tdb/sgte_binary/FeB-08Yos.tdb
+   GHSERFE lower T limit: 298.15
+======================================================================
+FeB-01Pal -> /home/iliya-radulov/Documents/github/active/my_db_project/data/tdb/sgte_binary/FeB-01Pal.tdb
+   GHSERFE lower T limit: 298.15
+======================================================================
+FeB-19Wit -> /home/iliya-radulov/Documents/github/active/my_db_project/data/tdb/sgte_binary/FeB-19Wit.tdb
+   GHSERFE lower T limit: 298.15
+======================================================================
+FeB-02Rom -> /home/iliya-radulov/Documents/github/active/my_db_project/data/tdb/sgte_binary/FeB-02Rom.tdb
+   GHSERFE lower T limit: 298.15
+======================================================================
+FeB-91Pan -> /home/iliya-radulov/Documents/github/active/my_db_project/data/tdb/sgte_binary/FeB-91Pan.tdb
+   GHSERFE lower T limit: 298.15
+======================================================================
+FeB-94Hal-LB -> /home/iliya-radulov/Documents/github/active/my_db_project/data/tdb/sgte_binary/FeB-94Hal-LB.tdb
+   GHSERFE lower T limit: 298.15
+======================================================================
+NdB-16Zho-corrected -> /home/iliya-radulov/Documents/github/active/my_db_project/data/tdb/sgte_binary/NdB-16Zho-corrected.tdb
+   GHSERND lower T limit: 298.15
+======================================================================
+NdB-98Che -> /home/iliya-radulov/Documents/github/active/my_db_project/data/tdb/sgte_binary/NdB-98Che.tdb
+   GHSERND lower T limit: 298.15
+======================================================================
+NdB-95Hal-LB -> /home/iliya-radulov/Documents/github/active/my_db_project/data/tdb/sgte_binary/NdB-95Hal-LB.tdb
+   GHSERND lower T limit: 298.15
+======================================================================
+NdB-19Che -> /home/iliya-radulov/Documents/github/active/my_db_project/data/tdb/sgte_binary/NdB-19Che.tdb
+   GHSERND lower T limit: 298.15
