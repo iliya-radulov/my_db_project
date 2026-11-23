@@ -53,7 +53,51 @@ EDGE_TOL_J = 1.0
 MAX_UNVERIFIED = 2
 DEFAULT_TEMPS = [800.0, 1000.0, 1100.0, 1200.0, 1300.0, 1375.0, 1450.0, 1600.0]
 
+# Gate defaults. These are Stage-5 engineering defaults, NOT the numbers pre-registered in the
+# Stage 4 pilots (Cr-Fe-Ni: >= 60 of 288 = 20.8 %, per-class coverage). Register the values you
+# use before running a study; they are part of the spec hash and are written to the report.
+DEFAULT_MIN_SURVIVAL_FRAC = 0.25
+DEFAULT_MIN_LINEAGES_PER_EDGE = 2
+
+# A threshold G(competing) - G(SER mixture) above this is physically impossible when the
+# reference phases are in the database (no equilibrium lies above the mechanical mixture of the
+# pure elements). It is FLAGGED per combination, not used as a survival criterion.
+BOUND_TOL_KJ = 0.05
+
+# Bump when a rule or a default changes the results; it is part of the spec hash (cache key).
+ENGINE_RULES_VERSION = "stage5-engine/edge-rule-v2/fix1-2026-11-23"
+
 _NUM_RE = re.compile(r"[-+]?\d+\.?\d*(?:[eE][-+]?\d+)?")
+
+
+def compute_spec_sha256(
+    elements: list[str],
+    fractions: list[float],
+    temperatures: list[float] | None = None,
+    suppress: list[str] | None = None,
+    min_survival_frac: float = DEFAULT_MIN_SURVIVAL_FRAC,
+    min_lineages_per_edge: int = DEFAULT_MIN_LINEAGES_PER_EDGE,
+) -> str:
+    """Hash of everything that defines a screening run (also the cache key of the desktop hook).
+
+    `elements` is in merge-priority order (see audit_binary_candidates): the order is part of the
+    spec because the first file wins on conflicting parameters. Mole fractions are normalised and
+    rounded to 12 decimals so that float noise cannot change the hash. The TDB collection itself is
+    NOT hashed here (the report carries `tdb_collection_sha256` separately).
+    """
+    els = [e.upper() for e in elements]
+    total = float(sum(fractions))
+    x_map = {el: round(float(f) / total, 12) for el, f in zip(els, fractions)}
+    payload = json.dumps({
+        "engine_rules_version": ENGINE_RULES_VERSION,
+        "elements": els,
+        "x_map": x_map,
+        "temps": [float(t) for t in (temperatures or DEFAULT_TEMPS)],
+        "suppress": sorted(s.upper() for s in (suppress or [])),
+        "min_survival_frac": float(min_survival_frac),
+        "min_lineages_per_edge": int(min_lineages_per_edge),
+    }, sort_keys=True)
+    return hashlib.sha256(payload.encode()).hexdigest()
 
 
 # ── 1. Pre-merge Audit & Lineage Extraction ────────────────────────────────────
@@ -150,6 +194,20 @@ def audit_binary_candidates(elements: list[str], tdb_dir: Path) -> tuple[dict[st
                         filtered.append(p)
                 valid_by_pair[pair_label] = filtered
 
+    # MERGE PRIORITY. merge_databases() keeps the FIRST file's definition when two files define the
+    # same parameter differently (e.g. G(FCC_A1,ND:VA) in NdB-19Che vs FeNd-16Che), so the survivor
+    # set depends on the order of the three edges. The order is therefore explicit and follows the
+    # order of `elements`: (e1-e2), (e1-e3), (e2-e3). For `FE ND B` this is Fe-Nd, Fe-B, Nd-B, the
+    # order of the Stage 4 Nd-Fe-B reference run (78 of 84 survivors); the previous alphabetical
+    # order (B-Fe, B-Nd, Fe-Nd) gave 52 of 84 on the same data.
+    priority = [
+        "-".join(sorted((elements[i], elements[j]))) for i, j in ((0, 1), (0, 2), (1, 2))
+    ]
+    missing = [p for p in priority if p not in valid_by_pair]
+    if missing:
+        raise RuntimeError(f"No binary files found for edge(s) {missing} of system {elements}")
+    valid_by_pair = {p: valid_by_pair[p] for p in priority}
+
     return valid_by_pair, audit_log
 
 
@@ -171,8 +229,14 @@ def _eq_point(db: Database, comps: list[str], phases: list[str], cond: dict) -> 
         pass
     return None
 
-def solve_with_fallback(db: Database, comps: list[str], cond: dict) -> tuple[tuple[str, ...] | None, float | None, str]:
-    phases = sorted(db.phases.keys())
+def solve_with_fallback(
+    db: Database, comps: list[str], cond: dict, phases: list[str] | None = None
+) -> tuple[tuple[str, ...] | None, float | None, str]:
+    """Equilibrium with leave-one-phase-out fallback.
+
+    `phases` restricts the phase set (used to suppress phases); None = all phases of `db`.
+    """
+    phases = sorted(db.phases.keys()) if phases is None else sorted(phases)
     direct = _eq_point(db, comps, phases, cond)
     if direct is not None:
         return direct[0], direct[1], "direct"
@@ -240,14 +304,22 @@ def _evaluate_combo(args) -> dict:
         "failure_reason": None,
         "thresholds_kJ": {},
         "assemblages": {},
+        "merge_priority": [p.name for p in paths],   # first file wins on conflicting parameters
+        "merge_conflicts": [],                        # messages of tdb_merge (what the first file overrode)
+        "n_merge_conflicts": 0,
+        "suppressed_phases": [],                      # requested suppressions that exist in this merge
+        "suppress_absent": [],                        # requested suppressions NOT present in this merge
+        "bound_violations": [],                       # thresholds above BOUND_TOL_KJ (flag only)
         "runtime_s": 0.0,
     }
-    
+
     tmp_tdb = Path(_W_TMPDIR) / f"merged_{combo_id}.tdb"
-    
+
     try:
         conflicts = []
         db_m = merge_databases(paths, report=lambda msg: conflicts.append(msg.strip()))
+        out["merge_conflicts"] = [c for c in conflicts if not c.startswith("merged ")][:20]
+        out["n_merge_conflicts"] = sum(1 for c in conflicts if not c.startswith("merged "))
         db_m.to_file(str(tmp_tdb), fmt="tdb", if_exists="overwrite", if_incompatible="ignore")
         db = Database(str(tmp_tdb))
     except Exception as e:
@@ -282,20 +354,29 @@ def _evaluate_combo(args) -> dict:
     # Threshold Calculation
     try:
         ser_names = {el: ser_function(db, el) for el in _W_ELS}
-        phases = [ph for ph in sorted(db.phases.keys()) if ph not in _W_SUPPRESS]
+        suppress = {s.upper() for s in _W_SUPPRESS}
+        out["suppressed_phases"] = sorted(ph for ph in db.phases if ph.upper() in suppress)
+        out["suppress_absent"] = sorted(suppress - {ph.upper() for ph in db.phases})
+        # The suppressed phases are really removed from the competing-phase calculation
+        # (before the fix this list was built and then never passed to the solver).
+        phases = [ph for ph in sorted(db.phases.keys()) if ph.upper() not in suppress]
         comps = [e for e in _W_ELS + ["VA"] if e in db.elements]
         el1, el2 = _W_ELS[0], _W_ELS[1]
 
         for T in _W_TEMPS:
             cond = {v.X(el1): _W_XMAP[el1], v.X(el2): _W_XMAP[el2], v.T: float(T), v.P: 101325, v.N: 1}
-            ps, g_comp, st = solve_with_fallback(db, comps, cond)
-            
+            ps, g_comp, st = solve_with_fallback(db, comps, cond, phases=phases)
+
             if g_comp is None or not math.isfinite(g_comp):
                 raise ValueError(f"Non-finite G_comp at T={T} K (status={st})")
-                
+
             g_ser = g_ser_at(db, ser_names, T, _W_XMAP)
             thr_kj = (g_comp - g_ser) / 1000.0
-            
+            if thr_kj > BOUND_TOL_KJ and not suppress:
+                # Physical bound: with the reference phases present the equilibrium cannot lie above
+                # the pure-element mixture. (Not checked when phases are suppressed on purpose.)
+                out["bound_violations"].append({"T": float(T), "threshold_kJ": round(thr_kj, 4)})
+
             out["thresholds_kJ"][str(T)] = round(thr_kj, 4)
             out["assemblages"][str(T)] = list(ps) if ps else []
             
@@ -325,10 +406,13 @@ def _eta2(vals: np.ndarray, groups: list[str]) -> float:
 def evaluate_gates(
     results: list[dict],
     pair_names: list[str],
-    min_survival_frac: float = 0.25,
-    min_lineages_per_edge: int = 2,
+    min_survival_frac: float = DEFAULT_MIN_SURVIVAL_FRAC,
+    min_lineages_per_edge: int = DEFAULT_MIN_LINEAGES_PER_EDGE,
     progress_callback=None,
 ) -> dict:
+    """G1: survivors >= ceil(min_survival_frac * total). G2: every edge keeps >= min_lineages_per_edge
+    distinct lineages among the survivors. The defaults are Stage-5 engineering defaults (not the
+    pre-registered Stage 4 numbers); the values used are returned under "parameters"."""
     n_total = len(results)
     survivors = [r for r in results if r["survived"]]
     n_surv = len(survivors)
@@ -341,6 +425,11 @@ def evaluate_gates(
     g2_pass = all(len(lins) >= min_lineages_per_edge for lins in lineages_by_edge.values())
     return {
         "gate_passed": bool(g1_pass and g2_pass),
+        "parameters": {
+            "min_survival_frac": min_survival_frac,
+            "min_lineages_per_edge": min_lineages_per_edge,
+            "preregistered": False,   # engineering defaults; register your own before a study
+        },
         "G1_survival": {"survived": n_surv, "total": n_total, "min_required": g1_min, "pass": g1_pass},
         "G2_lineage_coverage": {
             "surviving_lineages_per_edge": lineages_by_edge,
@@ -356,10 +445,13 @@ def run_binary_ensemble(
     tdb_dir: Path | None = None,
     suppress_phases: list[str] | None = None,
     workers: int = 1,
-    min_survival_frac: float = 0.25,
-    min_lineages_per_edge: int = 2,
+    min_survival_frac: float = DEFAULT_MIN_SURVIVAL_FRAC,
+    min_lineages_per_edge: int = DEFAULT_MIN_LINEAGES_PER_EDGE,
     progress_callback=None,
 ) -> dict:
+    """`elements` are in merge-priority order: the edges are merged (e1-e2), (e1-e3), (e2-e3) and
+    the first file wins on conflicting parameters, so the order can change which combinations
+    survive. The order is recorded in the report (`edge_priority`) and is part of the spec hash."""
     elements = [e.upper() for e in elements]
     if len(elements) != 3 or len(fractions) != 3:
         raise ValueError("Exactly 3 elements and 3 mole fractions are required.")
@@ -369,7 +461,7 @@ def run_binary_ensemble(
     norm_x = [f / total_x for f in fractions]
     x_map = dict(zip(elements, norm_x))
     temps = [float(t) for t in (temperatures or DEFAULT_TEMPS)]
-    suppress = list(suppress_phases or [])
+    suppress = sorted({str(x).upper() for x in (suppress_phases or [])})
     tdb_root = Path(tdb_dir or os.environ.get("SGTE_BINARY_DIR", ""))
     if not tdb_root.is_dir():
         raise FileNotFoundError(f"SGTE_BINARY_DIR invalid or unset: {tdb_root!r}")
@@ -449,20 +541,36 @@ def run_binary_ensemble(
             "dominant_competing_assemblage": top_asm,
         }
         
-    spec_payload = json.dumps({
-        "elements": elements, 
-        "x_map": x_map, 
-        "temps": temps, 
-        "suppress": suppress
-    }, sort_keys=True)
-    
+    spec_sha = compute_spec_sha256(
+        elements, [x_map[e] for e in elements], temps, suppress, min_survival_frac, min_lineages_per_edge
+    )
+    fails = [r for r in results if not r["survived"]]
+    failure_summary = {
+        "by_stage": dict(defaultdict(int, {k: sum(1 for r in fails if r["failure_stage"] == k)
+                                           for k in {r["failure_stage"] for r in fails}})),
+        "by_file": {
+            p.name: {"failed": sum(1 for r in fails if p.name in r["files"]),
+                     "total": sum(1 for r in results if p.name in r["files"])}
+            for p in unique_files
+        },
+    }
+    collection = hashlib.sha256()
+    for p in unique_files:
+        collection.update(p.name.encode() + b"\0" + hashlib.sha256(p.read_bytes()).digest())
+
     return {
-        "system": "-".join(elements),
+        "system": "-".join(sorted(elements)),          # canonical (alphabetical) name
+        "edge_priority": pair_names,                    # merge order: first file wins on conflicts
+        "elements_priority_order": elements,
         "target_composition": {k: round(v, 6) for k, v in x_map.items()},
         "timestamp_utc": datetime.now(timezone.utc).isoformat(),
         "pycalphad_version": pycalphad.__version__,
-        "spec_sha256": hashlib.sha256(spec_payload.encode()).hexdigest(),
+        "engine_rules_version": ENGINE_RULES_VERSION,
+        "spec_sha256": spec_sha,
+        "tdb_collection_sha256": collection.hexdigest(),   # accepted binary files (not part of spec_sha256)
         "gates": gate_report,
+        "failure_summary": failure_summary,
+        "n_bound_violations": sum(1 for r in results if r["bound_violations"]),
         "threshold_distribution": summary_by_T,
         "audit_log": audit_log,
         "combinations": results,
@@ -470,12 +578,18 @@ def run_binary_ensemble(
 
 def main():
     ap = argparse.ArgumentParser(description="Generalized Binary-Ensemble CALPHAD Screening Engine")
-    ap.add_argument("--elements", nargs=3, required=True, help="Three element symbols, e.g. FE ND B")
+    ap.add_argument("--elements", nargs=3, required=True,
+                    help="Three element symbols in MERGE-PRIORITY order, e.g. FE ND B: the edges are merged "
+                         "Fe-Nd, Fe-B, Nd-B and the first file wins on conflicting parameters")
     ap.add_argument("--comp", nargs=3, type=float, required=True, help="Three mole fractions (or stoichiometry)")
     ap.add_argument("--temps", nargs="+", type=float, default=DEFAULT_TEMPS)
     ap.add_argument("--suppress", nargs="*", default=[], help="Optional phases to suppress")
     ap.add_argument("--workers", type=int, default=1)
     ap.add_argument("--tdb-dir", type=Path, default=None)
+    ap.add_argument("--min-survival-frac", type=float, default=DEFAULT_MIN_SURVIVAL_FRAC,
+                    help="G1: required fraction of surviving combinations (engineering default, not pre-registered)")
+    ap.add_argument("--min-lineages", type=int, default=DEFAULT_MIN_LINEAGES_PER_EDGE,
+                    help="G2: required surviving lineages per edge (engineering default, not pre-registered)")
     ap.add_argument("--out", type=Path, default=None, help="Optional JSON output path")
     args = ap.parse_args()
     
@@ -486,10 +600,20 @@ def main():
         tdb_dir=args.tdb_dir,
         suppress_phases=args.suppress,
         workers=args.workers,
+        min_survival_frac=args.min_survival_frac,
+        min_lineages_per_edge=args.min_lineages,
     )
     
     g = report["gates"]
     print(f"\n=== Binary Ensemble: {report['system']} ===")
+    print(f"Merge priority (first file wins): {' > '.join(report['edge_priority'])}")
+    fs = report["failure_summary"]
+    if fs["by_stage"]:
+        print(f"Non-survivors by stage: {fs['by_stage']}")
+        worst = sorted(((v["failed"], k, v["total"]) for k, v in fs["by_file"].items() if v["failed"]), reverse=True)[:5]
+        print("Files in most failed combinations: " + ", ".join(f"{k} ({n}/{t})" for n, k, t in worst))
+    if report["n_bound_violations"]:
+        print(f"WARNING: {report['n_bound_violations']} combination(s) have a threshold above the physical bound")
     print(f"G1 Survival : {g['G1_survival']['survived']}/{g['G1_survival']['total']} (pass={g['G1_survival']['pass']})")
     print(f"G2 Lineages : {g['G2_lineage_coverage']['surviving_lineages_per_edge']} (pass={g['G2_lineage_coverage']['pass']})")
     print(f"GATE VERDICT: {'PASS' if g['gate_passed'] else 'FAIL (stop rule triggered)'}\n")

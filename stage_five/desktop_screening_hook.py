@@ -7,8 +7,7 @@ CALPHAD Binary-Ensemble + Bartel SISSO screening into alloy_desktop_v2.py.
 """
 from __future__ import annotations
 
-import hashlib
-import json
+import logging
 import os
 import sys
 import threading
@@ -20,27 +19,38 @@ for p in (REPO_ROOT, REPO_ROOT / "stage_five"):
     if str(p) not in sys.path:
         sys.path.insert(0, str(p))
 
-from general_ensemble import DEFAULT_TEMPS
+from general_ensemble import (
+    DEFAULT_MIN_LINEAGES_PER_EDGE,
+    DEFAULT_MIN_SURVIVAL_FRAC,
+    compute_spec_sha256 as _engine_spec_sha256,
+)
 from screen_ternary import _connect_db, parse_ternary_formula, save_screening_to_db, screen_ternary
 
+log = logging.getLogger(__name__)
 
-def compute_spec_sha256(formula: str, temperatures: list[float] | None = None, suppress: list[str] | None = None) -> str:
+
+def compute_spec_sha256(
+    formula: str,
+    temperatures: list[float] | None = None,
+    suppress: list[str] | None = None,
+    min_survival_frac: float = DEFAULT_MIN_SURVIVAL_FRAC,
+    min_lineages_per_edge: int = DEFAULT_MIN_LINEAGES_PER_EDGE,
+) -> str:
+    """Cache key. Uses the engine's own function (same normalisation, rounding, rules version and
+    gate parameters), so the key cannot drift from the hash the engine stores with a run. The TDB
+    collection is not part of the key: after the binary files change, force a recompute."""
     elements, fractions, _ = parse_ternary_formula(formula)
-    x_map = dict(zip(elements, fractions))
-    temps = [float(t) for t in (temperatures or DEFAULT_TEMPS)]
-    payload = json.dumps(
-        {"elements": elements, "x_map": x_map, "temps": temps, "suppress": list(suppress or [])},
-        sort_keys=True,
-    )
-    return hashlib.sha256(payload.encode()).hexdigest()
+    return _engine_spec_sha256(elements, fractions, temperatures, suppress, min_survival_frac, min_lineages_per_edge)
 
 
-def fetch_cached_screening(formula: str, temperatures: list[float] | None = None) -> dict | None:
+def fetch_cached_screening(
+    formula: str, temperatures: list[float] | None = None, suppress: list[str] | None = None
+) -> dict | None:
     """
     Check alloy_lab.calphad_ensemble_runs for an existing run matching `formula`
     (by spec_sha256). Returns formatted dict if cached, else None.
     """
-    sha = compute_spec_sha256(formula, temperatures)
+    sha = compute_spec_sha256(formula, temperatures, suppress)
     conn = _connect_db()
     try:
         with conn.cursor() as cur:
@@ -152,23 +162,38 @@ def run_screening_async(
     workers: int | None = None,
     force_recompute: bool = False,
     on_progress: Callable[[int, int], None] | None = None,
+    schedule: Callable[[Callable[[], None]], None] | None = None,
 ) -> None:
     """
     Background worker for alloy_desktop_v2.py:
       1. Returns cached PostgreSQL result immediately if available (unless force_recompute=True).
       2. Otherwise runs screen_ternary() + save_screening_to_db() in a daemon thread.
+
+    The callbacks are called from the worker thread. Tkinter widgets must only be touched from the
+    main thread, so pass `schedule=lambda fn: root.after(0, fn)` and every callback is delivered
+    through it. With schedule=None the callbacks run directly in the worker thread (only safe for
+    thread-agnostic callbacks, e.g. a queue.put).
     """
+    def _post(fn, *args) -> None:
+        if fn is None:
+            return
+        if schedule is None:
+            fn(*args)
+        else:
+            schedule(lambda: fn(*args))
+
     def _worker():
         try:
             if not force_recompute:
                 cached = fetch_cached_screening(formula)
                 if cached is not None:
-                    on_complete(format_screening_summary(cached))
+                    _post(on_complete, format_screening_summary(cached))
                     return
 
             tdb_path = tdb_dir or Path(os.environ.get("SGTE_BINARY_DIR", REPO_ROOT / "data" / "tdb" / "sgte_binary"))
             n_workers = workers or min(20, max(4, (os.cpu_count() or 4) - 4))
-            bundle = screen_ternary(formula=formula, tdb_dir=tdb_path, workers=n_workers, progress_callback=on_progress)
+            progress = (lambda done, total: _post(on_progress, done, total)) if on_progress else None
+            bundle = screen_ternary(formula=formula, tdb_dir=tdb_path, workers=n_workers, progress_callback=progress)
             ens = bundle["ensemble"]
             g = ens["gates"]
             run_id = save_screening_to_db(
@@ -199,9 +224,9 @@ def run_screening_async(
                     if s
                 ],
             }
-            on_complete(format_screening_summary(fresh))
+            _post(on_complete, format_screening_summary(fresh))
         except Exception as exc:
-            if on_error:
-                on_error(f"Stage 5 screening error: {type(exc).__name__}: {exc}")
+            log.exception("Stage 5 screening failed for %s", formula)   # never swallow silently
+            _post(on_error, f"Stage 5 screening error: {type(exc).__name__}: {exc}")
 
     threading.Thread(target=_worker, daemon=True).start()

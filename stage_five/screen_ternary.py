@@ -56,7 +56,11 @@ def parse_ternary_formula(formula: str) -> tuple[list[str], list[float], Composi
     frac_dict = comp.fractional_composition.get_el_amt_dict()
     if len(frac_dict) != 3:
         raise ValueError(f"Expected a ternary composition (3 elements), got {len(frac_dict)}: {list(frac_dict.keys())}")
-    items = sorted((str(el).upper(), float(amt)) for el, amt in frac_dict.items())
+    # Merge-priority order: the element with the largest amount first (ties alphabetical). The
+    # engine merges the edges (e1-e2), (e1-e3), (e2-e3) and the first file wins on conflicting
+    # parameters. For Nd2Fe14B this gives FE, ND, B, the order of the Stage 4 reference run
+    # (78 of 84 survivors); alphabetical order (B, FE, ND) gives 52 of 84 on the same data.
+    items = sorted(((str(el).upper(), float(amt)) for el, amt in frac_dict.items()), key=lambda kv: (-kv[1], kv[0]))
     elements = [k for k, _ in items]
     fractions = [v for _, v in items]
     return elements, fractions, comp
@@ -186,6 +190,7 @@ def screen_ternary(
     workers: int = 4,
     include_subsystems: bool = False,
     progress_callback=None,
+    sisso_uncertainty_kJ: float = 0.0,
 ) -> dict:
     elements, fractions, comp = parse_ternary_formula(formula)
     temps = [float(t) for t in (temperatures or DEFAULT_TEMPS)]
@@ -206,7 +211,9 @@ def screen_ternary(
         include_subsystems=include_subsystems,
     )
 
-    comparison_rows = compare_with_calphad_ensemble(sisso_report, ensemble_report)
+    comparison_rows = compare_with_calphad_ensemble(
+        sisso_report, ensemble_report, sisso_uncertainty_kJ=sisso_uncertainty_kJ
+    )
 
     return {
         "input_formula": formula,
@@ -224,7 +231,11 @@ def main():
     ap.add_argument("--suppress", nargs="*", default=[])
     ap.add_argument("--workers", type=int, default=4)
     ap.add_argument("--tdb-dir", type=Path, default=None)
-    ap.add_argument("--include-subsystems", action="store_true")
+    ap.add_argument("--include-subsystems", action="store_true",
+                    help="also list other ternary phases of the system (not compared)")
+    ap.add_argument("--sisso-uncertainty-kj", type=float, default=0.0,
+                    help="SISSO model error in kJ/mol-atom used to widen the verdict (default 0 = none; "
+                         "the CALPHAD band alone is far narrower than a typical SISSO error)")
     ap.add_argument("--save-db", action="store_true", help="Persist results to alloy_lab PostgreSQL")
     ap.add_argument("--sample-code", default=None, help="Optional sample_id string in alloy_lab.samples")
     ap.add_argument("--out", type=Path, default=None, help="Optional combined JSON output path")
@@ -237,6 +248,7 @@ def main():
         suppress_phases=args.suppress,
         workers=args.workers,
         include_subsystems=args.include_subsystems,
+        sisso_uncertainty_kJ=args.sisso_uncertainty_kj,
     )
 
     ens = bundle["ensemble"]
@@ -249,6 +261,8 @@ def main():
     if not g["gate_passed"]:
         print("Stop rule triggered: competing binary ensemble failed pre-registered gates.")
     elif bundle["comparison"]:
+        if args.sisso_uncertainty_kj == 0.0:
+            print("NOTE: verdicts contain no SISSO model error (--sisso-uncertainty-kj 0).")
         print(f"\n{'MP ID':<15} | {'T (K)':>6} | {'ΔG_SISSO':>9} | {'ΔG* Med':>8} | {'[5%, 95%] Band':>17} | {'Margin':>8} | Verdict")
         print("-" * 102)
         for r in bundle["comparison"]:
