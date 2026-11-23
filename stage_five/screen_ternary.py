@@ -58,13 +58,23 @@ def _connect_db():
     )
 
 
-def _has_prototype_columns(cur) -> bool:
-    """True when migration 010 (match_type etc.) has been applied to alloy_lab.calphad_dft_comparison."""
+def _has_column(cur, table: str, column: str) -> bool:
     cur.execute(
         "SELECT 1 FROM information_schema.columns WHERE table_schema = 'alloy_lab' "
-        "AND table_name = 'calphad_dft_comparison' AND column_name = 'match_type';"
+        "AND table_name = %s AND column_name = %s;",
+        (table, column),
     )
     return cur.fetchone() is not None
+
+
+def _has_prototype_columns(cur) -> bool:
+    """True when migration 010 (match_type etc.) has been applied to alloy_lab.calphad_dft_comparison."""
+    return _has_column(cur, "calphad_dft_comparison", "match_type")
+
+
+def _has_run_filter_column(cur) -> bool:
+    """True when migration 010 added calphad_ensemble_runs.prototype_filter (part of the cache key)."""
+    return _has_column(cur, "calphad_ensemble_runs", "prototype_filter")
 
 
 def parse_ternary_formula(formula: str) -> tuple[list[str], list[float], Composition]:
@@ -88,6 +98,7 @@ def save_screening_to_db(
     sisso_report: dict,
     comparison_rows: list[dict],
     sample_code: str | None = None,
+    prototype_filter: dict | None = None,
 ) -> int:
     """Insert ensemble run + temperature-by-candidate comparison rows into PostgreSQL."""
     conn = _connect_db()
@@ -104,30 +115,20 @@ def save_screening_to_db(
             g = ensemble_report["gates"]
             excluded = [x for x in ensemble_report.get("audit_log", []) if x["status"] == "excluded"]
 
-            cur.execute(
-                """
-                INSERT INTO calphad_ensemble_runs (
-                    sample_id, formula, system_name, target_composition,
-                    n_total_combos, n_survivors, gate_passed, gate_summary,
-                    audit_summary, spec_sha256, pycalphad_version
-                )
-                VALUES (%s, %s, %s, %s::jsonb, %s, %s, %s, %s::jsonb, %s::jsonb, %s, %s)
-                RETURNING id;
-                """,
-                (
-                    sample_id,
-                    formula,
-                    ensemble_report["system"],
-                    json.dumps(ensemble_report["target_composition"]),
-                    g["G1_survival"]["total"],
-                    g["G1_survival"]["survived"],
-                    g["gate_passed"],
-                    json.dumps(g),
-                    json.dumps(excluded),
-                    ensemble_report["spec_sha256"],
-                    ensemble_report.get("pycalphad_version"),
-                ),
-            )
+            run_cols = ("sample_id, formula, system_name, target_composition, n_total_combos, n_survivors, "
+                        "gate_passed, gate_summary, audit_summary, spec_sha256, pycalphad_version")
+            run_marks = "%s, %s, %s, %s::jsonb, %s, %s, %s, %s::jsonb, %s::jsonb, %s, %s"
+            run_vals = [
+                sample_id, formula, ensemble_report["system"], json.dumps(ensemble_report["target_composition"]),
+                g["G1_survival"]["total"], g["G1_survival"]["survived"], g["gate_passed"], json.dumps(g),
+                json.dumps(excluded), ensemble_report["spec_sha256"], ensemble_report.get("pycalphad_version"),
+            ]
+            if _has_run_filter_column(cur):
+                # the prototype options decide which SISSO rows are stored, so they are part of the cache key
+                run_cols += ", prototype_filter"
+                run_marks += ", %s::jsonb"
+                run_vals.append(json.dumps(prototype_filter) if prototype_filter is not None else None)
+            cur.execute(f"INSERT INTO calphad_ensemble_runs ({run_cols}) VALUES ({run_marks}) RETURNING id;", run_vals)
             run_id = cur.fetchone()[0]
 
             ehull_by_mp = {
@@ -248,6 +249,7 @@ def main():
     ap.add_argument("--out", type=Path, default=None, help="Optional combined JSON output path")
     args = ap.parse_args()
 
+    flt = prototype_filter_from_args(args)
     bundle = screen_ternary(
         formula=args.formula,
         temperatures=args.temps,
@@ -256,7 +258,7 @@ def main():
         workers=args.workers,
         include_subsystems=args.include_subsystems,
         sisso_uncertainty_kJ=args.sisso_uncertainty_kj,
-        prototype_filter=prototype_filter_from_args(args),
+        prototype_filter=flt,
     )
 
     ens = bundle["ensemble"]
@@ -287,6 +289,7 @@ def main():
             sisso_report=bundle["sisso"],
             comparison_rows=bundle["comparison"],
             sample_code=args.sample_code,
+            prototype_filter=flt.as_dict() if flt else None,
         )
         print(f"\nSaved to PostgreSQL (alloy_lab.calphad_ensemble_runs.id = {run_id})")
     if args.out:

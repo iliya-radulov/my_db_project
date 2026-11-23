@@ -9,6 +9,9 @@ ALTER TABLE calphad_dft_comparison ADD COLUMN IF NOT EXISTS prototype_formula TE
 ALTER TABLE calphad_dft_comparison ADD COLUMN IF NOT EXISTS delta_x REAL;             -- composition distance to the target (atomic fractions; site-group metric if used)
 ALTER TABLE calphad_dft_comparison ADD COLUMN IF NOT EXISTS comparable BOOLEAN;       -- TRUE only for exact_match: a stability verdict is meaningful
 
+-- the prototype options of a run are part of its cache key (NULL = fallback off / exact matches only)
+ALTER TABLE calphad_ensemble_runs ADD COLUMN IF NOT EXISTS prototype_filter JSONB;
+
 -- rows written before this migration were exact matches or "no entry" rows
 UPDATE calphad_dft_comparison SET match_type = 'no_dft_entry', comparable = FALSE
  WHERE match_type IS NULL AND mp_id = 'NO_MP_ENTRY';
