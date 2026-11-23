@@ -24,7 +24,14 @@ for p in (REPO_ROOT, REPO_ROOT / "stage_five"):
     if str(p) not in sys.path:
         sys.path.insert(0, str(p))
 
-from dft_sisso_predictor import compare_with_calphad_ensemble, predict_sisso_formation_gibbs
+from dft_sisso_predictor import (
+    add_prototype_arguments,
+    compare_with_calphad_ensemble,
+    format_comparison_table,
+    predict_sisso_formation_gibbs,
+    prototype_filter_from_args,
+)
+from prototype_match import PrototypeFilter, provenance_label
 from general_ensemble import DEFAULT_TEMPS, run_binary_ensemble
 
 
@@ -51,6 +58,25 @@ def _connect_db():
     )
 
 
+def _has_column(cur, table: str, column: str) -> bool:
+    cur.execute(
+        "SELECT 1 FROM information_schema.columns WHERE table_schema = 'alloy_lab' "
+        "AND table_name = %s AND column_name = %s;",
+        (table, column),
+    )
+    return cur.fetchone() is not None
+
+
+def _has_prototype_columns(cur) -> bool:
+    """True when migration 010 (match_type etc.) has been applied to alloy_lab.calphad_dft_comparison."""
+    return _has_column(cur, "calphad_dft_comparison", "match_type")
+
+
+def _has_run_filter_column(cur) -> bool:
+    """True when migration 010 added calphad_ensemble_runs.prototype_filter (part of the cache key)."""
+    return _has_column(cur, "calphad_ensemble_runs", "prototype_filter")
+
+
 def parse_ternary_formula(formula: str) -> tuple[list[str], list[float], Composition]:
     comp = Composition(formula)
     frac_dict = comp.fractional_composition.get_el_amt_dict()
@@ -72,6 +98,7 @@ def save_screening_to_db(
     sisso_report: dict,
     comparison_rows: list[dict],
     sample_code: str | None = None,
+    prototype_filter: dict | None = None,
 ) -> int:
     """Insert ensemble run + temperature-by-candidate comparison rows into PostgreSQL."""
     conn = _connect_db()
@@ -88,30 +115,20 @@ def save_screening_to_db(
             g = ensemble_report["gates"]
             excluded = [x for x in ensemble_report.get("audit_log", []) if x["status"] == "excluded"]
 
-            cur.execute(
-                """
-                INSERT INTO calphad_ensemble_runs (
-                    sample_id, formula, system_name, target_composition,
-                    n_total_combos, n_survivors, gate_passed, gate_summary,
-                    audit_summary, spec_sha256, pycalphad_version
-                )
-                VALUES (%s, %s, %s, %s::jsonb, %s, %s, %s, %s::jsonb, %s::jsonb, %s, %s)
-                RETURNING id;
-                """,
-                (
-                    sample_id,
-                    formula,
-                    ensemble_report["system"],
-                    json.dumps(ensemble_report["target_composition"]),
-                    g["G1_survival"]["total"],
-                    g["G1_survival"]["survived"],
-                    g["gate_passed"],
-                    json.dumps(g),
-                    json.dumps(excluded),
-                    ensemble_report["spec_sha256"],
-                    ensemble_report.get("pycalphad_version"),
-                ),
-            )
+            run_cols = ("sample_id, formula, system_name, target_composition, n_total_combos, n_survivors, "
+                        "gate_passed, gate_summary, audit_summary, spec_sha256, pycalphad_version")
+            run_marks = "%s, %s, %s, %s::jsonb, %s, %s, %s, %s::jsonb, %s::jsonb, %s, %s"
+            run_vals = [
+                sample_id, formula, ensemble_report["system"], json.dumps(ensemble_report["target_composition"]),
+                g["G1_survival"]["total"], g["G1_survival"]["survived"], g["gate_passed"], json.dumps(g),
+                json.dumps(excluded), ensemble_report["spec_sha256"], ensemble_report.get("pycalphad_version"),
+            ]
+            if _has_run_filter_column(cur):
+                # the prototype options decide which SISSO rows are stored, so they are part of the cache key
+                run_cols += ", prototype_filter"
+                run_marks += ", %s::jsonb"
+                run_vals.append(json.dumps(prototype_filter) if prototype_filter is not None else None)
+            cur.execute(f"INSERT INTO calphad_ensemble_runs ({run_cols}) VALUES ({run_marks}) RETURNING id;", run_vals)
             run_id = cur.fetchone()[0]
 
             ehull_by_mp = {
@@ -119,64 +136,50 @@ def save_screening_to_db(
                 for c in sisso_report.get("candidates", [])
             }
 
+            has_proto = _has_prototype_columns(cur)
+            if not has_proto and any(r.get("match_type", "exact_match") != "exact_match" for r in comparison_rows):
+                raise RuntimeError(
+                    "Nearest-prototype rows need migration 010_prototype_provenance.sql "
+                    "(columns match_type, prototype_formula, delta_x, comparable); apply it first."
+                )
+
+            common = (
+                "run_id, temperature_k, threshold_median_kj, threshold_q25_kj, threshold_q75_kj, "
+                "threshold_p05_kj, threshold_p95_kj, eta2_by_edge, competing_assemblage"
+            )
             if comparison_rows:
                 for r in comparison_rows:
                     t_stats = ensemble_report["threshold_distribution"][str(r["T_K"])]
-                    cur.execute(
-                        """
-                        INSERT INTO calphad_dft_comparison (
-                            run_id, temperature_k,
-                            threshold_median_kj, threshold_q25_kj, threshold_q75_kj,
-                            threshold_p05_kj, threshold_p95_kj, eta2_by_edge, competing_assemblage,
-                            mp_id, candidate_formula, e_above_hull_0k_ev,
-                            dgf_sisso_kj, stability_margin_kj, verdict
-                        )
-                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s::jsonb, %s, %s, %s, %s, %s, %s, %s);
-                        """,
-                        (
-                            run_id,
-                            r["T_K"],
-                            r["threshold_median_kJ"],
-                            t_stats["q25_kJ"],
-                            t_stats["q75_kJ"],
-                            r["threshold_p05_kJ"],
-                            r["threshold_p95_kJ"],
-                            json.dumps(t_stats["eta2_by_edge"]),
-                            r["competing_assemblage"],
-                            r["material_id"],
-                            r["formula"],
-                            ehull_by_mp.get(r["material_id"]),
-                            r["dGf_sisso_kJ"],
-                            r["stability_margin_kJ"],
-                            r["verdict"],
-                        ),
-                    )
+                    values = [
+                        run_id, r["T_K"], r["threshold_median_kJ"], t_stats["q25_kJ"], t_stats["q75_kJ"],
+                        r["threshold_p05_kJ"], r["threshold_p95_kJ"], json.dumps(t_stats["eta2_by_edge"]),
+                        r["competing_assemblage"],
+                        r["material_id"], r["formula"], ehull_by_mp.get(r["material_id"]),
+                        r["dGf_sisso_kJ"], r["stability_margin_kJ"], r["verdict"],
+                    ]
+                    cols = common + ", mp_id, candidate_formula, e_above_hull_0k_ev, dgf_sisso_kj, stability_margin_kj, verdict"
+                    marks = "%s, %s, %s, %s, %s, %s, %s, %s::jsonb, %s, %s, %s, %s, %s, %s, %s"
+                    if has_proto:
+                        cols += ", match_type, prototype_formula, delta_x, comparable"
+                        marks += ", %s, %s, %s, %s"
+                        values += [r.get("match_type", "exact_match"), r.get("prototype_formula", r["formula"]),
+                                   r.get("delta_x"), r.get("comparable", True)]
+                    cur.execute(f"INSERT INTO calphad_dft_comparison ({cols}) VALUES ({marks});", values)
             elif g["gate_passed"]:
                 for t_str, t_stats in ensemble_report["threshold_distribution"].items():
                     if not t_stats:
                         continue
-                    cur.execute(
-                        """
-                        INSERT INTO calphad_dft_comparison (
-                            run_id, temperature_k,
-                            threshold_median_kj, threshold_q25_kj, threshold_q75_kj,
-                            threshold_p05_kj, threshold_p95_kj, eta2_by_edge, competing_assemblage,
-                            mp_id, verdict
-                        )
-                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s::jsonb, %s, 'NO_MP_ENTRY', 'no_dft_entry');
-                        """,
-                        (
-                            run_id,
-                            float(t_str),
-                            t_stats["median_kJ"],
-                            t_stats["q25_kJ"],
-                            t_stats["q75_kJ"],
-                            t_stats["p05_kJ"],
-                            t_stats["p95_kJ"],
-                            json.dumps(t_stats["eta2_by_edge"]),
-                            t_stats["dominant_competing_assemblage"],
-                        ),
-                    )
+                    values = [
+                        run_id, float(t_str), t_stats["median_kJ"], t_stats["q25_kJ"], t_stats["q75_kJ"],
+                        t_stats["p05_kJ"], t_stats["p95_kJ"], json.dumps(t_stats["eta2_by_edge"]),
+                        t_stats["dominant_competing_assemblage"],
+                    ]
+                    cols = common + ", mp_id, verdict"
+                    marks = "%s, %s, %s, %s, %s, %s, %s, %s::jsonb, %s, 'NO_MP_ENTRY', 'no_dft_entry'"
+                    if has_proto:
+                        cols += ", match_type, comparable"
+                        marks += ", 'no_dft_entry', FALSE"
+                    cur.execute(f"INSERT INTO calphad_dft_comparison ({cols}) VALUES ({marks});", values)
         return run_id
     finally:
         conn.close()
@@ -191,7 +194,9 @@ def screen_ternary(
     include_subsystems: bool = False,
     progress_callback=None,
     sisso_uncertainty_kJ: float = 0.0,
+    prototype_filter: PrototypeFilter | None = PrototypeFilter(),
 ) -> dict:
+    """prototype_filter=None disables the nearest-prototype fallback (exact matches only)."""
     elements, fractions, comp = parse_ternary_formula(formula)
     temps = [float(t) for t in (temperatures or DEFAULT_TEMPS)]
 
@@ -206,9 +211,11 @@ def screen_ternary(
     )
 
     sisso_report = predict_sisso_formation_gibbs(
-        formula=comp.reduced_formula,
+        formula=formula,           # as given: a reduced formula would mangle decimal compositions
         temperatures=temps,
         include_subsystems=include_subsystems,
+        nearest_prototype=prototype_filter is not None,
+        prototype_filter=prototype_filter,
     )
 
     comparison_rows = compare_with_calphad_ensemble(
@@ -233,6 +240,7 @@ def main():
     ap.add_argument("--tdb-dir", type=Path, default=None)
     ap.add_argument("--include-subsystems", action="store_true",
                     help="also list other ternary phases of the system (not compared)")
+    add_prototype_arguments(ap)
     ap.add_argument("--sisso-uncertainty-kj", type=float, default=0.0,
                     help="SISSO model error in kJ/mol-atom used to widen the verdict (default 0 = none; "
                          "the CALPHAD band alone is far narrower than a typical SISSO error)")
@@ -241,6 +249,7 @@ def main():
     ap.add_argument("--out", type=Path, default=None, help="Optional combined JSON output path")
     args = ap.parse_args()
 
+    flt = prototype_filter_from_args(args)
     bundle = screen_ternary(
         formula=args.formula,
         temperatures=args.temps,
@@ -249,6 +258,7 @@ def main():
         workers=args.workers,
         include_subsystems=args.include_subsystems,
         sisso_uncertainty_kJ=args.sisso_uncertainty_kj,
+        prototype_filter=flt,
     )
 
     ens = bundle["ensemble"]
@@ -263,16 +273,10 @@ def main():
     elif bundle["comparison"]:
         if args.sisso_uncertainty_kj == 0.0:
             print("NOTE: verdicts contain no SISSO model error (--sisso-uncertainty-kj 0).")
-        print(f"\n{'MP ID':<15} | {'T (K)':>6} | {'ΔG_SISSO':>9} | {'ΔG* Med':>8} | {'[5%, 95%] Band':>17} | {'Margin':>8} | Verdict")
-        print("-" * 102)
-        for r in bundle["comparison"]:
-            print(
-                f"{r['material_id']:<15} | {r['T_K']:>6.0f} | {r['dGf_sisso_kJ']:>+9.3f} | "
-                f"{r['threshold_median_kJ']:>+8.3f} | [{r['threshold_p05_kJ']:>+6.2f}, {r['threshold_p95_kJ']:>+6.2f}] | "
-                f"{r['stability_margin_kJ']:>+8.3f} | {r['verdict']}"
-            )
+        print()
+        print("\n".join(format_comparison_table(bundle["comparison"])))
     else:
-        print("\nNo exact MP polymorph found (novel stoichiometry). Competing binary threshold band:")
+        print("\n[no_dft_entry] No Materials Project entry at the target composition or within the prototype filter. Competing binary threshold band:")
         print(f"{'T (K)':>7} | {'Median':>8} | {'[5%, 95%] Band':>17} | Competing Assemblage")
         print("-" * 70)
         for t_str, s in ens["threshold_distribution"].items():
@@ -285,6 +289,7 @@ def main():
             sisso_report=bundle["sisso"],
             comparison_rows=bundle["comparison"],
             sample_code=args.sample_code,
+            prototype_filter=flt.as_dict() if flt else None,
         )
         print(f"\nSaved to PostgreSQL (alloy_lab.calphad_ensemble_runs.id = {run_id})")
     if args.out:

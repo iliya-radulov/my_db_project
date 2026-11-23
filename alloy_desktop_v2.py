@@ -228,8 +228,26 @@ class AlloyLabApp(ctk.CTk):
         ).pack(side="left", padx=20)
         
         # Literature controls
+        # Stage 5 options (CALPHAD + SISSO screen)
+        s5_frame = ctk.CTkFrame(frame)
+        s5_frame.grid(row=10, column=0, columnspan=3, padx=10, pady=(0, 5), sticky="ew")
+        ctk.CTkLabel(s5_frame, text="Stage 5:", font=ctk.CTkFont(size=13, weight="bold")).pack(side="left", padx=(10, 5))
+        self.stage5_proto_var = ctk.BooleanVar(value=True)
+        ctk.CTkCheckBox(
+            s5_frame, text="Nearest-prototype fallback", variable=self.stage5_proto_var
+        ).pack(side="left", padx=8)
+        ctk.CTkLabel(s5_frame, text="Site groups (opt-in):", font=ctk.CTkFont(size=13)).pack(side="left", padx=(15, 5))
+        self.stage5_site_groups_entry = ctk.CTkEntry(s5_frame, width=130, placeholder_text="e.g. FE,SI")
+        self.stage5_site_groups_entry.pack(side="left", padx=5)
+        ctk.CTkLabel(
+            s5_frame, text="(elements sharing one site; empty = plain composition distance)",
+            font=ctk.CTkFont(size=11), text_color="gray60"
+        ).pack(side="left", padx=5)
+        self.stage5_force_var = ctk.BooleanVar(value=False)
+        ctk.CTkCheckBox(s5_frame, text="Force recompute", variable=self.stage5_force_var).pack(side="left", padx=15)
+
         lit_frame = ctk.CTkFrame(frame)
-        lit_frame.grid(row=10, column=0, columnspan=3, padx=10, pady=(0, 5), sticky="ew")
+        lit_frame.grid(row=11, column=0, columnspan=3, padx=10, pady=(0, 5), sticky="ew")
         
         ctk.CTkLabel(lit_frame, text="Literature DB:", font=ctk.CTkFont(size=13)).pack(side="left", padx=(10, 5))
         
@@ -252,9 +270,9 @@ class AlloyLabApp(ctk.CTk):
         self.lit_cutoff_label.pack(side="left", padx=10)
         
         self.result_text = scrolledtext.ScrolledText(frame, height=15, width=80, bg="#1e1e1e", fg="#ffffff", font=("Courier", 10))
-        self.result_text.grid(row=11, column=0, columnspan=3, padx=10, pady=10, sticky="nsew")
+        self.result_text.grid(row=12, column=0, columnspan=3, padx=10, pady=10, sticky="nsew")
         
-        frame.grid_rowconfigure(11, weight=1)
+        frame.grid_rowconfigure(12, weight=1)
         frame.grid_columnconfigure(1, weight=1)
         self.update_lit_cutoff_label()
     
@@ -800,9 +818,20 @@ class AlloyLabApp(ctk.CTk):
             val = self.sample_id_entry.get().strip()
             sample_code = val or None
 
+        from stage_five.desktop_screening_hook import prototype_options, describe_prototype_filter
+        try:
+            proto_filter = prototype_options(
+                fallback=bool(self.stage5_proto_var.get()),
+                site_groups_text=self.stage5_site_groups_entry.get(),
+            )
+        except ValueError as exc:
+            messagebox.showwarning("Warning", str(exc))
+            return
+
         self.stage5_btn.configure(state="disabled")
         self.status_label.configure(text=f"Stage 5 screening {formula} (checking DB cache / running ensemble)...")
         self.result_text.insert("end", f"\nRunning Stage 5 CALPHAD Binary-Ensemble + Bartel SISSO screen for {formula}...\n")
+        self.result_text.insert("end", f"Nearest-prototype fallback: {describe_prototype_filter(proto_filter)}\n")
 
         from stage_five.desktop_screening_hook import run_screening_async
 
@@ -833,6 +862,8 @@ class AlloyLabApp(ctk.CTk):
             on_complete=_done,
             on_error=_err,
             on_progress=_prog,
+            prototype_filter=proto_filter,
+            force_recompute=bool(self.stage5_force_var.get()),
         )
 
     def run_calculation(self):
