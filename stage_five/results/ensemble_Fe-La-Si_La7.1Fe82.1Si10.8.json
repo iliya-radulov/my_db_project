@@ -1,0 +1,1598 @@
+{
+  "system": "FE-LA-SI",
+  "edge_priority": [
+    "FE-SI",
+    "FE-LA",
+    "LA-SI"
+  ],
+  "elements_priority_order": [
+    "FE",
+    "SI",
+    "LA"
+  ],
+  "target_composition": {
+    "FE": 0.821,
+    "SI": 0.108,
+    "LA": 0.071
+  },
+  "timestamp_utc": "2026-11-23T18:53:45.237423+00:00",
+  "pycalphad_version": "0.11.2",
+  "engine_rules_version": "stage5-engine/edge-rule-v2/fix1-2026-11-23",
+  "spec_sha256": "f69a41acac841fd5ab798ea469f1d666266bc870f34aa2e045d207ee9e15e669",
+  "tdb_collection_sha256": "262b28f17c5ad7185d8099d439fdcb540409c604670e2e79a11610d1bb4ac886",
+  "gates": {
+    "gate_passed": true,
+    "parameters": {
+      "min_survival_frac": 0.25,
+      "min_lineages_per_edge": 2,
+      "preregistered": false
+    },
+    "G1_survival": {
+      "survived": 16,
+      "total": 20,
+      "min_required": 5,
+      "pass": true
+    },
+    "G2_lineage_coverage": {
+      "surviving_lineages_per_edge": {
+        "FE-SI": [
+          "Cui17",
+          "Ohn12",
+          "Wit23",
+          "Yua14"
+        ],
+        "FE-LA": [
+          "Pov09",
+          "Su23"
+        ],
+        "LA-SI": [
+          "Xu20",
+          "Zho10"
+        ]
+      },
+      "min_required": 2,
+      "pass": true
+    }
+  },
+  "failure_summary": {
+    "by_stage": {
+      "edge_check": 4
+    },
+    "by_file": {
+      "FeLa-09Pov.tdb": {
+        "failed": 2,
+        "total": 10
+      },
+      "FeLa-23Su.tdb": {
+        "failed": 2,
+        "total": 10
+      },
+      "FeSi-12Ohn.tdb": {
+        "failed": 0,
+        "total": 4
+      },
+      "FeSi-14Yua.tdb": {
+        "failed": 0,
+        "total": 4
+      },
+      "FeSi-17Cui.tdb": {
+        "failed": 0,
+        "total": 4
+      },
+      "FeSi-23Wit.tdb": {
+        "failed": 0,
+        "total": 4
+      },
+      "FeSi-91Lac-LB.tdb": {
+        "failed": 4,
+        "total": 4
+      },
+      "LaSi-10Zho.tdb": {
+        "failed": 2,
+        "total": 10
+      },
+      "LaSi-20Xu.tdb": {
+        "failed": 2,
+        "total": 10
+      }
+    }
+  },
+  "n_bound_violations": 0,
+  "threshold_distribution": {
+    "800.0": {
+      "n": 16,
+      "median_kJ": -17.7812,
+      "q25_kJ": -18.4815,
+      "q75_kJ": -16.6619,
+      "iqr_kJ": 1.8196,
+      "p05_kJ": -18.9984,
+      "p95_kJ": -16.4721,
+      "min_kJ": -18.9984,
+      "max_kJ": -16.4721,
+      "eta2_by_edge": {
+        "FE-SI": 0.0716,
+        "FE-LA": 0.0,
+        "LA-SI": 0.9281
+      },
+      "dominant_competing_assemblage": "BCC_A2+LA5SI4"
+    },
+    "1000.0": {
+      "n": 16,
+      "median_kJ": -17.2108,
+      "q25_kJ": -18.1473,
+      "q75_kJ": -15.868,
+      "iqr_kJ": 2.2793,
+      "p05_kJ": -18.6187,
+      "p95_kJ": -15.724,
+      "min_kJ": -18.6188,
+      "max_kJ": -15.7227,
+      "eta2_by_edge": {
+        "FE-SI": 0.0387,
+        "FE-LA": 0.0,
+        "LA-SI": 0.9611
+      },
+      "dominant_competing_assemblage": "BCC_A2+LA5SI4"
+    },
+    "1100.0": {
+      "n": 16,
+      "median_kJ": -17.1685,
+      "q25_kJ": -18.2178,
+      "q75_kJ": -15.7067,
+      "iqr_kJ": 2.5111,
+      "p05_kJ": -18.6702,
+      "p95_kJ": -15.5921,
+      "min_kJ": -18.6706,
+      "max_kJ": -15.5874,
+      "eta2_by_edge": {
+        "FE-SI": 0.0292,
+        "FE-LA": 0.0,
+        "LA-SI": 0.9707
+      },
+      "dominant_competing_assemblage": "BCC_A2+LA3SI2_D5A"
+    },
+    "1200.0": {
+      "n": 16,
+      "median_kJ": -17.2059,
+      "q25_kJ": -18.365,
+      "q75_kJ": -15.6197,
+      "iqr_kJ": 2.7453,
+      "p05_kJ": -18.8,
+      "p95_kJ": -15.5392,
+      "min_kJ": -18.8006,
+      "max_kJ": -15.526,
+      "eta2_by_edge": {
+        "FE-SI": 0.0222,
+        "FE-LA": 0.0,
+        "LA-SI": 0.9777
+      },
+      "dominant_competing_assemblage": "BCC_A2+LA3SI2_D5A"
+    },
+    "1300.0": {
+      "n": 16,
+      "median_kJ": -17.2904,
+      "q25_kJ": -18.5516,
+      "q75_kJ": -15.5759,
+      "iqr_kJ": 2.9757,
+      "p05_kJ": -18.9695,
+      "p95_kJ": -15.5271,
+      "min_kJ": -18.97,
+      "max_kJ": -15.5046,
+      "eta2_by_edge": {
+        "FE-SI": 0.0173,
+        "FE-LA": 0.0001,
+        "LA-SI": 0.9825
+      },
+      "dominant_competing_assemblage": "BCC_A2+LA5SI4"
+    },
+    "1375.0": {
+      "n": 16,
+      "median_kJ": -17.3786,
+      "q25_kJ": -18.708,
+      "q75_kJ": -15.5898,
+      "iqr_kJ": 3.1182,
+      "p05_kJ": -19.1147,
+      "p95_kJ": -15.5212,
+      "min_kJ": -19.1166,
+      "max_kJ": -15.5058,
+      "eta2_by_edge": {
+        "FE-SI": 0.0147,
+        "FE-LA": 0.0001,
+        "LA-SI": 0.985
+      },
+      "dominant_competing_assemblage": "BCC_A2+LA5SI4"
+    },
+    "1450.0": {
+      "n": 16,
+      "median_kJ": -17.5524,
+      "q25_kJ": -18.876,
+      "q75_kJ": -15.7772,
+      "iqr_kJ": 3.0989,
+      "p05_kJ": -19.2686,
+      "p95_kJ": -15.664,
+      "min_kJ": -19.2714,
+      "max_kJ": -15.6168,
+      "eta2_by_edge": {
+        "FE-SI": 0.015,
+        "FE-LA": 0.0,
+        "LA-SI": 0.9845
+      },
+      "dominant_competing_assemblage": "BCC_A2+LA5SI4"
+    },
+    "1600.0": {
+      "n": 16,
+      "median_kJ": -18.1241,
+      "q25_kJ": -19.235,
+      "q75_kJ": -16.6057,
+      "iqr_kJ": 2.6293,
+      "p05_kJ": -19.5953,
+      "p95_kJ": -16.4032,
+      "min_kJ": -19.601,
+      "max_kJ": -16.265,
+      "eta2_by_edge": {
+        "FE-SI": 0.0168,
+        "FE-LA": 0.0012,
+        "LA-SI": 0.9798
+      },
+      "dominant_competing_assemblage": "BCC_A2+LA5SI4"
+    }
+  },
+  "audit_log": [
+    {
+      "file": "FeLa-23Su.tdb",
+      "pair": "FE-LA",
+      "status": "accepted",
+      "lineage": "Su23"
+    },
+    {
+      "file": "FeLa-09Pov.tdb",
+      "pair": "FE-LA",
+      "status": "accepted",
+      "lineage": "Pov09"
+    },
+    {
+      "file": "FeSi-23Wit.tdb",
+      "pair": "FE-SI",
+      "status": "accepted",
+      "lineage": "Wit23"
+    },
+    {
+      "file": "FeSi-17Cui.tdb",
+      "pair": "FE-SI",
+      "status": "accepted",
+      "lineage": "Cui17"
+    },
+    {
+      "file": "FeSi-14Yua.tdb",
+      "pair": "FE-SI",
+      "status": "accepted",
+      "lineage": "Yua14"
+    },
+    {
+      "file": "FeSi-12Ohn.tdb",
+      "pair": "FE-SI",
+      "status": "accepted",
+      "lineage": "Ohn12"
+    },
+    {
+      "file": "FeSi-91Lac-LB.tdb",
+      "pair": "FE-SI",
+      "status": "accepted",
+      "lineage": "Lac91"
+    },
+    {
+      "file": "LaSi-20Xu.tdb",
+      "pair": "LA-SI",
+      "status": "accepted",
+      "lineage": "Xu20"
+    },
+    {
+      "file": "LaSi-10Zho.tdb",
+      "pair": "LA-SI",
+      "status": "accepted",
+      "lineage": "Zho10"
+    }
+  ],
+  "combinations": [
+    {
+      "combo_id": "FeSi-12Ohn___FeLa-09Pov___LaSi-10Zho",
+      "files": [
+        "FeSi-12Ohn.tdb",
+        "FeLa-09Pov.tdb",
+        "LaSi-10Zho.tdb"
+      ],
+      "lineages": [
+        "Ohn12",
+        "Pov09",
+        "Zho10"
+      ],
+      "survived": true,
+      "failure_stage": null,
+      "failure_reason": null,
+      "thresholds_kJ": {
+        "800.0": -18.9984,
+        "1000.0": -18.6187,
+        "1100.0": -18.6701,
+        "1200.0": -18.7998,
+        "1300.0": -18.97,
+        "1375.0": -19.114,
+        "1450.0": -19.2676,
+        "1600.0": -19.5934
+      },
+      "assemblages": {
+        "800.0": [
+          "BCC_A2",
+          "LA5SI4"
+        ],
+        "1000.0": [
+          "BCC_A2",
+          "LA5SI4"
+        ],
+        "1100.0": [
+          "A2_BCC",
+          "LA5SI4"
+        ],
+        "1200.0": [
+          "BCC_A2",
+          "LA5SI4"
+        ],
+        "1300.0": [
+          "BCC_A2",
+          "LA5SI4"
+        ],
+        "1375.0": [
+          "BCC_A2",
+          "LA5SI4"
+        ],
+        "1450.0": [
+          "BCC_A2",
+          "LA5SI4"
+        ],
+        "1600.0": [
+          "BCC_A2",
+          "LA5SI4"
+        ]
+      },
+      "merge_priority": [
+        "FeSi-12Ohn.tdb",
+        "FeLa-09Pov.tdb",
+        "LaSi-10Zho.tdb"
+      ],
+      "merge_conflicts": [
+        "PHASE DHCP: site ratios (1.0,) in LaSi-10Zho.tdb differ from (1.0, 0.5) in FeLa-09Pov.tdb \u2014 phase from LaSi-10Zho.tdb ignored"
+      ],
+      "n_merge_conflicts": 1,
+      "suppressed_phases": [],
+      "suppress_absent": [],
+      "bound_violations": [],
+      "runtime_s": 37.27
+    },
+    {
+      "combo_id": "FeSi-12Ohn___FeLa-09Pov___LaSi-20Xu",
+      "files": [
+        "FeSi-12Ohn.tdb",
+        "FeLa-09Pov.tdb",
+        "LaSi-20Xu.tdb"
+      ],
+      "lineages": [
+        "Ohn12",
+        "Pov09",
+        "Xu20"
+      ],
+      "survived": true,
+      "failure_stage": null,
+      "failure_reason": null,
+      "thresholds_kJ": {
+        "800.0": -17.1908,
+        "1000.0": -16.357,
+        "1100.0": -16.1797,
+        "1200.0": -16.0765,
+        "1300.0": -16.0175,
+        "1375.0": -15.9979,
+        "1450.0": -16.1995,
+        "1600.0": -17.0269
+      },
+      "assemblages": {
+        "800.0": [
+          "BCC_A2",
+          "LA3SI2_D5A"
+        ],
+        "1000.0": [
+          "BCC_A2",
+          "LA3SI2_D5A"
+        ],
+        "1100.0": [
+          "BCC_A2",
+          "LA3SI2_D5A"
+        ],
+        "1200.0": [
+          "BCC_A2",
+          "LA3SI2_D5A"
+        ],
+        "1300.0": [
+          "BCC_A2",
+          "LA3SI2_D5A",
+          "LA5SI3_D8L"
+        ],
+        "1375.0": [
+          "BCC_A2",
+          "LA5SI3_D8L",
+          "LIQUID"
+        ],
+        "1450.0": [
+          "BCC_A2",
+          "LIQUID"
+        ],
+        "1600.0": [
+          "BCC_A2",
+          "LIQUID"
+        ]
+      },
+      "merge_priority": [
+        "FeSi-12Ohn.tdb",
+        "FeLa-09Pov.tdb",
+        "LaSi-20Xu.tdb"
+      ],
+      "merge_conflicts": [
+        "PHASE DHCP: site ratios (1.0,) in LaSi-20Xu.tdb differ from (1.0, 0.5) in FeLa-09Pov.tdb \u2014 phase from LaSi-20Xu.tdb ignored"
+      ],
+      "n_merge_conflicts": 1,
+      "suppressed_phases": [],
+      "suppress_absent": [],
+      "bound_violations": [],
+      "runtime_s": 36.88
+    },
+    {
+      "combo_id": "FeSi-12Ohn___FeLa-23Su___LaSi-10Zho",
+      "files": [
+        "FeSi-12Ohn.tdb",
+        "FeLa-23Su.tdb",
+        "LaSi-10Zho.tdb"
+      ],
+      "lineages": [
+        "Ohn12",
+        "Su23",
+        "Zho10"
+      ],
+      "survived": true,
+      "failure_stage": null,
+      "failure_reason": null,
+      "thresholds_kJ": {
+        "800.0": -18.9984,
+        "1000.0": -18.6188,
+        "1100.0": -18.6706,
+        "1200.0": -18.8006,
+        "1300.0": -18.9694,
+        "1375.0": -19.1166,
+        "1450.0": -19.2714,
+        "1600.0": -19.601
+      },
+      "assemblages": {
+        "800.0": [
+          "BCC_A2",
+          "LA5SI4"
+        ],
+        "1000.0": [
+          "BCC_A2",
+          "LA5SI4"
+        ],
+        "1100.0": [
+          "BCC_A2",
+          "LA5SI4"
+        ],
+        "1200.0": [
+          "BCC_A2",
+          "LA5SI4"
+        ],
+        "1300.0": [
+          "A2_BCC",
+          "LA5SI4"
+        ],
+        "1375.0": [
+          "BCC_A2",
+          "LA5SI4"
+        ],
+        "1450.0": [
+          "BCC_A2",
+          "LA5SI4"
+        ],
+        "1600.0": [
+          "BCC_A2",
+          "LA5SI4"
+        ]
+      },
+      "merge_priority": [
+        "FeSi-12Ohn.tdb",
+        "FeLa-23Su.tdb",
+        "LaSi-10Zho.tdb"
+      ],
+      "merge_conflicts": [
+        "PHASE DHCP: site ratios (1.0,) in LaSi-10Zho.tdb differ from (1.0, 0.5) in FeLa-23Su.tdb \u2014 phase from LaSi-10Zho.tdb ignored"
+      ],
+      "n_merge_conflicts": 1,
+      "suppressed_phases": [],
+      "suppress_absent": [],
+      "bound_violations": [],
+      "runtime_s": 37.61
+    },
+    {
+      "combo_id": "FeSi-12Ohn___FeLa-23Su___LaSi-20Xu",
+      "files": [
+        "FeSi-12Ohn.tdb",
+        "FeLa-23Su.tdb",
+        "LaSi-20Xu.tdb"
+      ],
+      "lineages": [
+        "Ohn12",
+        "Su23",
+        "Xu20"
+      ],
+      "survived": true,
+      "failure_stage": null,
+      "failure_reason": null,
+      "thresholds_kJ": {
+        "800.0": -17.1909,
+        "1000.0": -16.3596,
+        "1100.0": -16.1885,
+        "1200.0": -16.0988,
+        "1300.0": -16.0626,
+        "1375.0": -16.0686,
+        "1450.0": -16.2366,
+        "1600.0": -16.8277
+      },
+      "assemblages": {
+        "800.0": [
+          "BCC_A2",
+          "LA3SI2_D5A"
+        ],
+        "1000.0": [
+          "BCC_A2",
+          "LA3SI2_D5A"
+        ],
+        "1100.0": [
+          "BCC_A2",
+          "LA3SI2_D5A"
+        ],
+        "1200.0": [
+          "BCC_A2",
+          "LA3SI2_D5A"
+        ],
+        "1300.0": [
+          "BCC_A2",
+          "LA3SI2_D5A",
+          "LA5SI3_D8L"
+        ],
+        "1375.0": [
+          "BCC_A2",
+          "LA5SI3_D8L",
+          "LIQUID"
+        ],
+        "1450.0": [
+          "BCC_A2",
+          "LIQUID"
+        ],
+        "1600.0": [
+          "BCC_A2",
+          "LIQUID"
+        ]
+      },
+      "merge_priority": [
+        "FeSi-12Ohn.tdb",
+        "FeLa-23Su.tdb",
+        "LaSi-20Xu.tdb"
+      ],
+      "merge_conflicts": [
+        "PHASE DHCP: site ratios (1.0,) in LaSi-20Xu.tdb differ from (1.0, 0.5) in FeLa-23Su.tdb \u2014 phase from LaSi-20Xu.tdb ignored"
+      ],
+      "n_merge_conflicts": 1,
+      "suppressed_phases": [],
+      "suppress_absent": [],
+      "bound_violations": [],
+      "runtime_s": 36.83
+    },
+    {
+      "combo_id": "FeSi-14Yua___FeLa-09Pov___LaSi-10Zho",
+      "files": [
+        "FeSi-14Yua.tdb",
+        "FeLa-09Pov.tdb",
+        "LaSi-10Zho.tdb"
+      ],
+      "lineages": [
+        "Yua14",
+        "Pov09",
+        "Zho10"
+      ],
+      "survived": true,
+      "failure_stage": null,
+      "failure_reason": null,
+      "thresholds_kJ": {
+        "800.0": -18.5513,
+        "1000.0": -18.1991,
+        "1100.0": -18.2605,
+        "1200.0": -18.3984,
+        "1300.0": -18.5764,
+        "1375.0": -18.726,
+        "1450.0": -18.8849,
+        "1600.0": -19.2212
+      },
+      "assemblages": {
+        "800.0": [
+          "BCC_A2",
+          "LA5SI4"
+        ],
+        "1000.0": [
+          "BCC_A2",
+          "LA5SI4"
+        ],
+        "1100.0": [
+          "BCC_A2",
+          "LA5SI4"
+        ],
+        "1200.0": [
+          "BCC_A2",
+          "LA5SI4"
+        ],
+        "1300.0": [
+          "BCC_A2",
+          "LA5SI4"
+        ],
+        "1375.0": [
+          "BCC_A2",
+          "LA5SI4"
+        ],
+        "1450.0": [
+          "BCC_A2",
+          "LA5SI4"
+        ],
+        "1600.0": [
+          "BCC_A2",
+          "LA5SI4"
+        ]
+      },
+      "merge_priority": [
+        "FeSi-14Yua.tdb",
+        "FeLa-09Pov.tdb",
+        "LaSi-10Zho.tdb"
+      ],
+      "merge_conflicts": [
+        "PHASE DHCP: site ratios (1.0,) in LaSi-10Zho.tdb differ from (1.0, 0.5) in FeLa-09Pov.tdb \u2014 phase from LaSi-10Zho.tdb ignored"
+      ],
+      "n_merge_conflicts": 1,
+      "suppressed_phases": [],
+      "suppress_absent": [],
+      "bound_violations": [],
+      "runtime_s": 15.43
+    },
+    {
+      "combo_id": "FeSi-14Yua___FeLa-09Pov___LaSi-20Xu",
+      "files": [
+        "FeSi-14Yua.tdb",
+        "FeLa-09Pov.tdb",
+        "LaSi-20Xu.tdb"
+      ],
+      "lineages": [
+        "Yua14",
+        "Pov09",
+        "Xu20"
+      ],
+      "survived": true,
+      "failure_stage": null,
+      "failure_reason": null,
+      "thresholds_kJ": {
+        "800.0": -16.6911,
+        "1000.0": -15.889,
+        "1100.0": -15.7227,
+        "1200.0": -15.6289,
+        "1300.0": -15.5739,
+        "1375.0": -15.5491,
+        "1450.0": -15.6168,
+        "1600.0": -16.4526
+      },
+      "assemblages": {
+        "800.0": [
+          "BCC_A2",
+          "LA3SI2_D5A"
+        ],
+        "1000.0": [
+          "BCC_A2",
+          "LA3SI2_D5A"
+        ],
+        "1100.0": [
+          "BCC_A2",
+          "LA3SI2_D5A"
+        ],
+        "1200.0": [
+          "BCC_A2",
+          "LA3SI2_D5A"
+        ],
+        "1300.0": [
+          "BCC_A2",
+          "LA3SI2_D5A"
+        ],
+        "1375.0": [
+          "BCC_A2",
+          "LA3SI2_D5A"
+        ],
+        "1450.0": [
+          "BCC_A2",
+          "LIQUID"
+        ],
+        "1600.0": [
+          "BCC_A2",
+          "LIQUID"
+        ]
+      },
+      "merge_priority": [
+        "FeSi-14Yua.tdb",
+        "FeLa-09Pov.tdb",
+        "LaSi-20Xu.tdb"
+      ],
+      "merge_conflicts": [
+        "PHASE DHCP: site ratios (1.0,) in LaSi-20Xu.tdb differ from (1.0, 0.5) in FeLa-09Pov.tdb \u2014 phase from LaSi-20Xu.tdb ignored"
+      ],
+      "n_merge_conflicts": 1,
+      "suppressed_phases": [],
+      "suppress_absent": [],
+      "bound_violations": [],
+      "runtime_s": 14.77
+    },
+    {
+      "combo_id": "FeSi-14Yua___FeLa-23Su___LaSi-10Zho",
+      "files": [
+        "FeSi-14Yua.tdb",
+        "FeLa-23Su.tdb",
+        "LaSi-10Zho.tdb"
+      ],
+      "lineages": [
+        "Yua14",
+        "Su23",
+        "Zho10"
+      ],
+      "survived": true,
+      "failure_stage": null,
+      "failure_reason": null,
+      "thresholds_kJ": {
+        "800.0": -18.5513,
+        "1000.0": -18.1992,
+        "1100.0": -18.2607,
+        "1200.0": -18.399,
+        "1300.0": -18.5777,
+        "1375.0": -18.7281,
+        "1450.0": -18.8881,
+        "1600.0": -19.2277
+      },
+      "assemblages": {
+        "800.0": [
+          "BCC_A2",
+          "LA5SI4"
+        ],
+        "1000.0": [
+          "BCC_A2",
+          "LA5SI4"
+        ],
+        "1100.0": [
+          "BCC_A2",
+          "LA5SI4"
+        ],
+        "1200.0": [
+          "BCC_A2",
+          "LA5SI4"
+        ],
+        "1300.0": [
+          "BCC_A2",
+          "LA5SI4"
+        ],
+        "1375.0": [
+          "BCC_A2",
+          "LA5SI4"
+        ],
+        "1450.0": [
+          "BCC_A2",
+          "LA5SI4"
+        ],
+        "1600.0": [
+          "BCC_A2",
+          "LA5SI4"
+        ]
+      },
+      "merge_priority": [
+        "FeSi-14Yua.tdb",
+        "FeLa-23Su.tdb",
+        "LaSi-10Zho.tdb"
+      ],
+      "merge_conflicts": [
+        "PHASE DHCP: site ratios (1.0,) in LaSi-10Zho.tdb differ from (1.0, 0.5) in FeLa-23Su.tdb \u2014 phase from LaSi-10Zho.tdb ignored"
+      ],
+      "n_merge_conflicts": 1,
+      "suppressed_phases": [],
+      "suppress_absent": [],
+      "bound_violations": [],
+      "runtime_s": 15.14
+    },
+    {
+      "combo_id": "FeSi-14Yua___FeLa-23Su___LaSi-20Xu",
+      "files": [
+        "FeSi-14Yua.tdb",
+        "FeLa-23Su.tdb",
+        "LaSi-20Xu.tdb"
+      ],
+      "lineages": [
+        "Yua14",
+        "Su23",
+        "Xu20"
+      ],
+      "survived": true,
+      "failure_stage": null,
+      "failure_reason": null,
+      "thresholds_kJ": {
+        "800.0": -16.6911,
+        "1000.0": -15.8911,
+        "1100.0": -15.7302,
+        "1200.0": -15.6484,
+        "1300.0": -15.617,
+        "1375.0": -15.6211,
+        "1450.0": -15.6797,
+        "1600.0": -16.265
+      },
+      "assemblages": {
+        "800.0": [
+          "BCC_A2",
+          "LA3SI2_D5A"
+        ],
+        "1000.0": [
+          "BCC_A2",
+          "LA3SI2_D5A"
+        ],
+        "1100.0": [
+          "BCC_A2",
+          "LA3SI2_D5A"
+        ],
+        "1200.0": [
+          "BCC_A2",
+          "LA3SI2_D5A"
+        ],
+        "1300.0": [
+          "BCC_A2",
+          "LA3SI2_D5A"
+        ],
+        "1375.0": [
+          "BCC_A2",
+          "LA3SI2_D5A"
+        ],
+        "1450.0": [
+          "BCC_A2",
+          "LA3SI2_D5A",
+          "LIQUID"
+        ],
+        "1600.0": [
+          "BCC_A2",
+          "LIQUID"
+        ]
+      },
+      "merge_priority": [
+        "FeSi-14Yua.tdb",
+        "FeLa-23Su.tdb",
+        "LaSi-20Xu.tdb"
+      ],
+      "merge_conflicts": [
+        "PHASE DHCP: site ratios (1.0,) in LaSi-20Xu.tdb differ from (1.0, 0.5) in FeLa-23Su.tdb \u2014 phase from LaSi-20Xu.tdb ignored"
+      ],
+      "n_merge_conflicts": 1,
+      "suppressed_phases": [],
+      "suppress_absent": [],
+      "bound_violations": [],
+      "runtime_s": 14.73
+    },
+    {
+      "combo_id": "FeSi-17Cui___FeLa-09Pov___LaSi-10Zho",
+      "files": [
+        "FeSi-17Cui.tdb",
+        "FeLa-09Pov.tdb",
+        "LaSi-10Zho.tdb"
+      ],
+      "lineages": [
+        "Cui17",
+        "Pov09",
+        "Zho10"
+      ],
+      "survived": true,
+      "failure_stage": null,
+      "failure_reason": null,
+      "thresholds_kJ": {
+        "800.0": -18.4582,
+        "1000.0": -18.13,
+        "1100.0": -18.2034,
+        "1200.0": -18.3531,
+        "1300.0": -18.5434,
+        "1375.0": -18.702,
+        "1450.0": -18.869,
+        "1600.0": -19.2243
+      },
+      "assemblages": {
+        "800.0": [
+          "BCC_A2",
+          "LA5SI4"
+        ],
+        "1000.0": [
+          "BCC_A2",
+          "LA5SI4"
+        ],
+        "1100.0": [
+          "BCC_A2",
+          "LA5SI4"
+        ],
+        "1200.0": [
+          "A2_BCC",
+          "LA5SI4"
+        ],
+        "1300.0": [
+          "BCC_A2",
+          "LA5SI4"
+        ],
+        "1375.0": [
+          "BCC_A2",
+          "LA5SI4"
+        ],
+        "1450.0": [
+          "A2_BCC",
+          "LA5SI4"
+        ],
+        "1600.0": [
+          "BCC_A2",
+          "LA5SI4"
+        ]
+      },
+      "merge_priority": [
+        "FeSi-17Cui.tdb",
+        "FeLa-09Pov.tdb",
+        "LaSi-10Zho.tdb"
+      ],
+      "merge_conflicts": [
+        "PHASE DHCP: site ratios (1.0,) in LaSi-10Zho.tdb differ from (1.0, 0.5) in FeLa-09Pov.tdb \u2014 phase from LaSi-10Zho.tdb ignored"
+      ],
+      "n_merge_conflicts": 1,
+      "suppressed_phases": [],
+      "suppress_absent": [],
+      "bound_violations": [],
+      "runtime_s": 36.12
+    },
+    {
+      "combo_id": "FeSi-17Cui___FeLa-09Pov___LaSi-20Xu",
+      "files": [
+        "FeSi-17Cui.tdb",
+        "FeLa-09Pov.tdb",
+        "LaSi-20Xu.tdb"
+      ],
+      "lineages": [
+        "Cui17",
+        "Pov09",
+        "Xu20"
+      ],
+      "survived": true,
+      "failure_stage": null,
+      "failure_reason": null,
+      "thresholds_kJ": {
+        "800.0": -16.5741,
+        "1000.0": -15.803,
+        "1100.0": -15.6522,
+        "1200.0": -15.5738,
+        "1300.0": -15.5346,
+        "1375.0": -15.5263,
+        "1450.0": -15.7849,
+        "1600.0": -16.6533
+      },
+      "assemblages": {
+        "800.0": [
+          "BCC_A2",
+          "LA3SI2_D5A"
+        ],
+        "1000.0": [
+          "BCC_A2",
+          "LA3SI2_D5A"
+        ],
+        "1100.0": [
+          "BCC_A2",
+          "LA3SI2_D5A"
+        ],
+        "1200.0": [
+          "BCC_A2",
+          "LA3SI2_D5A"
+        ],
+        "1300.0": [
+          "BCC_A2",
+          "LA3SI2_D5A"
+        ],
+        "1375.0": [
+          "BCC_A2",
+          "LA3SI2_D5A",
+          "LIQUID"
+        ],
+        "1450.0": [
+          "BCC_A2",
+          "LIQUID"
+        ],
+        "1600.0": [
+          "BCC_A2",
+          "LIQUID"
+        ]
+      },
+      "merge_priority": [
+        "FeSi-17Cui.tdb",
+        "FeLa-09Pov.tdb",
+        "LaSi-20Xu.tdb"
+      ],
+      "merge_conflicts": [
+        "PHASE DHCP: site ratios (1.0,) in LaSi-20Xu.tdb differ from (1.0, 0.5) in FeLa-09Pov.tdb \u2014 phase from LaSi-20Xu.tdb ignored"
+      ],
+      "n_merge_conflicts": 1,
+      "suppressed_phases": [],
+      "suppress_absent": [],
+      "bound_violations": [],
+      "runtime_s": 37.59
+    },
+    {
+      "combo_id": "FeSi-17Cui___FeLa-23Su___LaSi-10Zho",
+      "files": [
+        "FeSi-17Cui.tdb",
+        "FeLa-23Su.tdb",
+        "LaSi-10Zho.tdb"
+      ],
+      "lineages": [
+        "Cui17",
+        "Su23",
+        "Zho10"
+      ],
+      "survived": true,
+      "failure_stage": null,
+      "failure_reason": null,
+      "thresholds_kJ": {
+        "800.0": -18.4582,
+        "1000.0": -18.13,
+        "1100.0": -18.2036,
+        "1200.0": -18.3539,
+        "1300.0": -18.5429,
+        "1375.0": -18.7014,
+        "1450.0": -18.8731,
+        "1600.0": -19.2311
+      },
+      "assemblages": {
+        "800.0": [
+          "BCC_A2",
+          "LA5SI4"
+        ],
+        "1000.0": [
+          "BCC_A2",
+          "LA5SI4"
+        ],
+        "1100.0": [
+          "BCC_A2",
+          "LA5SI4"
+        ],
+        "1200.0": [
+          "BCC_A2",
+          "LA5SI4"
+        ],
+        "1300.0": [
+          "A2_BCC",
+          "LA5SI4"
+        ],
+        "1375.0": [
+          "A2_BCC",
+          "LA5SI4"
+        ],
+        "1450.0": [
+          "BCC_A2",
+          "LA5SI4"
+        ],
+        "1600.0": [
+          "BCC_A2",
+          "LA5SI4"
+        ]
+      },
+      "merge_priority": [
+        "FeSi-17Cui.tdb",
+        "FeLa-23Su.tdb",
+        "LaSi-10Zho.tdb"
+      ],
+      "merge_conflicts": [
+        "PHASE DHCP: site ratios (1.0,) in LaSi-10Zho.tdb differ from (1.0, 0.5) in FeLa-23Su.tdb \u2014 phase from LaSi-10Zho.tdb ignored"
+      ],
+      "n_merge_conflicts": 1,
+      "suppressed_phases": [],
+      "suppress_absent": [],
+      "bound_violations": [],
+      "runtime_s": 37.42
+    },
+    {
+      "combo_id": "FeSi-17Cui___FeLa-23Su___LaSi-20Xu",
+      "files": [
+        "FeSi-17Cui.tdb",
+        "FeLa-23Su.tdb",
+        "LaSi-20Xu.tdb"
+      ],
+      "lineages": [
+        "Cui17",
+        "Su23",
+        "Xu20"
+      ],
+      "survived": true,
+      "failure_stage": null,
+      "failure_reason": null,
+      "thresholds_kJ": {
+        "800.0": -16.5741,
+        "1000.0": -15.8049,
+        "1100.0": -15.6589,
+        "1200.0": -15.5922,
+        "1300.0": -15.5766,
+        "1375.0": -15.5941,
+        "1450.0": -15.7848,
+        "1600.0": -16.4492
+      },
+      "assemblages": {
+        "800.0": [
+          "BCC_A2",
+          "LA3SI2_D5A"
+        ],
+        "1000.0": [
+          "BCC_A2",
+          "LA3SI2_D5A"
+        ],
+        "1100.0": [
+          "BCC_A2",
+          "LA3SI2_D5A"
+        ],
+        "1200.0": [
+          "BCC_A2",
+          "LA3SI2_D5A"
+        ],
+        "1300.0": [
+          "BCC_A2",
+          "LA3SI2_D5A"
+        ],
+        "1375.0": [
+          "BCC_A2",
+          "LA3SI2_D5A"
+        ],
+        "1450.0": [
+          "BCC_A2",
+          "LIQUID"
+        ],
+        "1600.0": [
+          "BCC_A2",
+          "LIQUID"
+        ]
+      },
+      "merge_priority": [
+        "FeSi-17Cui.tdb",
+        "FeLa-23Su.tdb",
+        "LaSi-20Xu.tdb"
+      ],
+      "merge_conflicts": [
+        "PHASE DHCP: site ratios (1.0,) in LaSi-20Xu.tdb differ from (1.0, 0.5) in FeLa-23Su.tdb \u2014 phase from LaSi-20Xu.tdb ignored"
+      ],
+      "n_merge_conflicts": 1,
+      "suppressed_phases": [],
+      "suppress_absent": [],
+      "bound_violations": [],
+      "runtime_s": 36.16
+    },
+    {
+      "combo_id": "FeSi-23Wit___FeLa-09Pov___LaSi-10Zho",
+      "files": [
+        "FeSi-23Wit.tdb",
+        "FeLa-09Pov.tdb",
+        "LaSi-10Zho.tdb"
+      ],
+      "lineages": [
+        "Wit23",
+        "Pov09",
+        "Zho10"
+      ],
+      "survived": true,
+      "failure_stage": null,
+      "failure_reason": null,
+      "thresholds_kJ": {
+        "800.0": -18.3716,
+        "1000.0": -18.0619,
+        "1100.0": -18.1485,
+        "1200.0": -18.313,
+        "1300.0": -18.5182,
+        "1375.0": -18.6885,
+        "1450.0": -18.8682,
+        "1600.0": -19.2466
+      },
+      "assemblages": {
+        "800.0": [
+          "BCC_A2",
+          "LA5SI4"
+        ],
+        "1000.0": [
+          "BCC_A2",
+          "LA5SI4"
+        ],
+        "1100.0": [
+          "BCC_A2",
+          "LA5SI4"
+        ],
+        "1200.0": [
+          "BCC_A2",
+          "LA5SI4"
+        ],
+        "1300.0": [
+          "BCC_A2",
+          "LA5SI4"
+        ],
+        "1375.0": [
+          "BCC_A2",
+          "LA5SI4"
+        ],
+        "1450.0": [
+          "BCC_A2",
+          "LA5SI4"
+        ],
+        "1600.0": [
+          "BCC_A2",
+          "LA5SI4"
+        ]
+      },
+      "merge_priority": [
+        "FeSi-23Wit.tdb",
+        "FeLa-09Pov.tdb",
+        "LaSi-10Zho.tdb"
+      ],
+      "merge_conflicts": [
+        "PHASE DHCP: site ratios (1.0,) in LaSi-10Zho.tdb differ from (1.0, 0.5) in FeLa-09Pov.tdb \u2014 phase from LaSi-10Zho.tdb ignored"
+      ],
+      "n_merge_conflicts": 1,
+      "suppressed_phases": [],
+      "suppress_absent": [],
+      "bound_violations": [],
+      "runtime_s": 19.49
+    },
+    {
+      "combo_id": "FeSi-23Wit___FeLa-09Pov___LaSi-20Xu",
+      "files": [
+        "FeSi-23Wit.tdb",
+        "FeLa-09Pov.tdb",
+        "LaSi-20Xu.tdb"
+      ],
+      "lineages": [
+        "Wit23",
+        "Pov09",
+        "Xu20"
+      ],
+      "survived": true,
+      "failure_stage": null,
+      "failure_reason": null,
+      "thresholds_kJ": {
+        "800.0": -16.4721,
+        "1000.0": -15.7227,
+        "1100.0": -15.5874,
+        "1200.0": -15.526,
+        "1300.0": -15.5046,
+        "1375.0": -15.5058,
+        "1450.0": -15.7542,
+        "1600.0": -16.6557
+      },
+      "assemblages": {
+        "800.0": [
+          "BCC_A2",
+          "LA3SI2_D5A",
+          "LA5SI4"
+        ],
+        "1000.0": [
+          "BCC_A2",
+          "LA3SI2_D5A"
+        ],
+        "1100.0": [
+          "BCC_A2",
+          "LA3SI2_D5A"
+        ],
+        "1200.0": [
+          "BCC_A2",
+          "LA3SI2_D5A"
+        ],
+        "1300.0": [
+          "BCC_A2",
+          "LA3SI2_D5A"
+        ],
+        "1375.0": [
+          "BCC_A2",
+          "LA3SI2_D5A",
+          "LIQUID"
+        ],
+        "1450.0": [
+          "BCC_A2",
+          "LIQUID"
+        ],
+        "1600.0": [
+          "BCC_A2",
+          "LIQUID"
+        ]
+      },
+      "merge_priority": [
+        "FeSi-23Wit.tdb",
+        "FeLa-09Pov.tdb",
+        "LaSi-20Xu.tdb"
+      ],
+      "merge_conflicts": [
+        "PHASE DHCP: site ratios (1.0,) in LaSi-20Xu.tdb differ from (1.0, 0.5) in FeLa-09Pov.tdb \u2014 phase from LaSi-20Xu.tdb ignored"
+      ],
+      "n_merge_conflicts": 1,
+      "suppressed_phases": [],
+      "suppress_absent": [],
+      "bound_violations": [],
+      "runtime_s": 18.46
+    },
+    {
+      "combo_id": "FeSi-23Wit___FeLa-23Su___LaSi-10Zho",
+      "files": [
+        "FeSi-23Wit.tdb",
+        "FeLa-23Su.tdb",
+        "LaSi-10Zho.tdb"
+      ],
+      "lineages": [
+        "Wit23",
+        "Su23",
+        "Zho10"
+      ],
+      "survived": true,
+      "failure_stage": null,
+      "failure_reason": null,
+      "thresholds_kJ": {
+        "800.0": -18.3716,
+        "1000.0": -18.0619,
+        "1100.0": -18.1487,
+        "1200.0": -18.3135,
+        "1300.0": -18.5194,
+        "1375.0": -18.6905,
+        "1450.0": -18.8714,
+        "1600.0": -19.2535
+      },
+      "assemblages": {
+        "800.0": [
+          "BCC_A2",
+          "LA5SI4"
+        ],
+        "1000.0": [
+          "BCC_A2",
+          "LA5SI4"
+        ],
+        "1100.0": [
+          "BCC_A2",
+          "LA5SI4"
+        ],
+        "1200.0": [
+          "BCC_A2",
+          "LA5SI4"
+        ],
+        "1300.0": [
+          "BCC_A2",
+          "LA5SI4"
+        ],
+        "1375.0": [
+          "BCC_A2",
+          "LA5SI4"
+        ],
+        "1450.0": [
+          "BCC_A2",
+          "LA5SI4"
+        ],
+        "1600.0": [
+          "BCC_A2",
+          "LA5SI4"
+        ]
+      },
+      "merge_priority": [
+        "FeSi-23Wit.tdb",
+        "FeLa-23Su.tdb",
+        "LaSi-10Zho.tdb"
+      ],
+      "merge_conflicts": [
+        "PHASE DHCP: site ratios (1.0,) in LaSi-10Zho.tdb differ from (1.0, 0.5) in FeLa-23Su.tdb \u2014 phase from LaSi-10Zho.tdb ignored"
+      ],
+      "n_merge_conflicts": 1,
+      "suppressed_phases": [],
+      "suppress_absent": [],
+      "bound_violations": [],
+      "runtime_s": 18.62
+    },
+    {
+      "combo_id": "FeSi-23Wit___FeLa-23Su___LaSi-20Xu",
+      "files": [
+        "FeSi-23Wit.tdb",
+        "FeLa-23Su.tdb",
+        "LaSi-20Xu.tdb"
+      ],
+      "lineages": [
+        "Wit23",
+        "Su23",
+        "Xu20"
+      ],
+      "survived": true,
+      "failure_stage": null,
+      "failure_reason": null,
+      "thresholds_kJ": {
+        "800.0": -16.4721,
+        "1000.0": -15.7244,
+        "1100.0": -15.5937,
+        "1200.0": -15.5436,
+        "1300.0": -15.5455,
+        "1375.0": -15.5768,
+        "1450.0": -15.747,
+        "1600.0": -16.463
+      },
+      "assemblages": {
+        "800.0": [
+          "BCC_A2",
+          "LA3SI2_D5A",
+          "LA5SI4"
+        ],
+        "1000.0": [
+          "BCC_A2",
+          "LA3SI2_D5A"
+        ],
+        "1100.0": [
+          "BCC_A2",
+          "LA3SI2_D5A"
+        ],
+        "1200.0": [
+          "BCC_A2",
+          "LA3SI2_D5A"
+        ],
+        "1300.0": [
+          "BCC_A2",
+          "LA3SI2_D5A"
+        ],
+        "1375.0": [
+          "BCC_A2",
+          "LA3SI2_D5A"
+        ],
+        "1450.0": [
+          "BCC_A2",
+          "LIQUID"
+        ],
+        "1600.0": [
+          "BCC_A2",
+          "LIQUID"
+        ]
+      },
+      "merge_priority": [
+        "FeSi-23Wit.tdb",
+        "FeLa-23Su.tdb",
+        "LaSi-20Xu.tdb"
+      ],
+      "merge_conflicts": [
+        "PHASE DHCP: site ratios (1.0,) in LaSi-20Xu.tdb differ from (1.0, 0.5) in FeLa-23Su.tdb \u2014 phase from LaSi-20Xu.tdb ignored"
+      ],
+      "n_merge_conflicts": 1,
+      "suppressed_phases": [],
+      "suppress_absent": [],
+      "bound_violations": [],
+      "runtime_s": 18.71
+    },
+    {
+      "combo_id": "FeSi-91Lac-LB___FeLa-09Pov___LaSi-10Zho",
+      "files": [
+        "FeSi-91Lac-LB.tdb",
+        "FeLa-09Pov.tdb",
+        "LaSi-10Zho.tdb"
+      ],
+      "lineages": [
+        "Lac91",
+        "Pov09",
+        "Zho10"
+      ],
+      "survived": false,
+      "failure_stage": "edge_check",
+      "failure_reason": "FE-SI (FeSi-91Lac-LB.tdb): 1 mismatches, 0 unverified",
+      "thresholds_kJ": {},
+      "assemblages": {},
+      "merge_priority": [
+        "FeSi-91Lac-LB.tdb",
+        "FeLa-09Pov.tdb",
+        "LaSi-10Zho.tdb"
+      ],
+      "merge_conflicts": [
+        "PHASE DHCP: site ratios (1.0,) in LaSi-10Zho.tdb differ from (1.0, 0.5) in FeLa-09Pov.tdb \u2014 phase from LaSi-10Zho.tdb ignored"
+      ],
+      "n_merge_conflicts": 1,
+      "suppressed_phases": [],
+      "suppress_absent": [],
+      "bound_violations": [],
+      "runtime_s": 2.01
+    },
+    {
+      "combo_id": "FeSi-91Lac-LB___FeLa-09Pov___LaSi-20Xu",
+      "files": [
+        "FeSi-91Lac-LB.tdb",
+        "FeLa-09Pov.tdb",
+        "LaSi-20Xu.tdb"
+      ],
+      "lineages": [
+        "Lac91",
+        "Pov09",
+        "Xu20"
+      ],
+      "survived": false,
+      "failure_stage": "edge_check",
+      "failure_reason": "FE-SI (FeSi-91Lac-LB.tdb): 1 mismatches, 0 unverified",
+      "thresholds_kJ": {},
+      "assemblages": {},
+      "merge_priority": [
+        "FeSi-91Lac-LB.tdb",
+        "FeLa-09Pov.tdb",
+        "LaSi-20Xu.tdb"
+      ],
+      "merge_conflicts": [
+        "PHASE DHCP: site ratios (1.0,) in LaSi-20Xu.tdb differ from (1.0, 0.5) in FeLa-09Pov.tdb \u2014 phase from LaSi-20Xu.tdb ignored"
+      ],
+      "n_merge_conflicts": 1,
+      "suppressed_phases": [],
+      "suppress_absent": [],
+      "bound_violations": [],
+      "runtime_s": 2.02
+    },
+    {
+      "combo_id": "FeSi-91Lac-LB___FeLa-23Su___LaSi-10Zho",
+      "files": [
+        "FeSi-91Lac-LB.tdb",
+        "FeLa-23Su.tdb",
+        "LaSi-10Zho.tdb"
+      ],
+      "lineages": [
+        "Lac91",
+        "Su23",
+        "Zho10"
+      ],
+      "survived": false,
+      "failure_stage": "edge_check",
+      "failure_reason": "FE-SI (FeSi-91Lac-LB.tdb): 1 mismatches, 0 unverified",
+      "thresholds_kJ": {},
+      "assemblages": {},
+      "merge_priority": [
+        "FeSi-91Lac-LB.tdb",
+        "FeLa-23Su.tdb",
+        "LaSi-10Zho.tdb"
+      ],
+      "merge_conflicts": [
+        "PHASE DHCP: site ratios (1.0,) in LaSi-10Zho.tdb differ from (1.0, 0.5) in FeLa-23Su.tdb \u2014 phase from LaSi-10Zho.tdb ignored"
+      ],
+      "n_merge_conflicts": 1,
+      "suppressed_phases": [],
+      "suppress_absent": [],
+      "bound_violations": [],
+      "runtime_s": 1.73
+    },
+    {
+      "combo_id": "FeSi-91Lac-LB___FeLa-23Su___LaSi-20Xu",
+      "files": [
+        "FeSi-91Lac-LB.tdb",
+        "FeLa-23Su.tdb",
+        "LaSi-20Xu.tdb"
+      ],
+      "lineages": [
+        "Lac91",
+        "Su23",
+        "Xu20"
+      ],
+      "survived": false,
+      "failure_stage": "edge_check",
+      "failure_reason": "FE-SI (FeSi-91Lac-LB.tdb): 1 mismatches, 0 unverified",
+      "thresholds_kJ": {},
+      "assemblages": {},
+      "merge_priority": [
+        "FeSi-91Lac-LB.tdb",
+        "FeLa-23Su.tdb",
+        "LaSi-20Xu.tdb"
+      ],
+      "merge_conflicts": [
+        "PHASE DHCP: site ratios (1.0,) in LaSi-20Xu.tdb differ from (1.0, 0.5) in FeLa-23Su.tdb \u2014 phase from LaSi-20Xu.tdb ignored"
+      ],
+      "n_merge_conflicts": 1,
+      "suppressed_phases": [],
+      "suppress_absent": [],
+      "bound_violations": [],
+      "runtime_s": 3.36
+    }
+  ]
+}

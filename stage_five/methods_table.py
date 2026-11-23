@@ -114,6 +114,19 @@ def build_table(systems: list[tuple[str, dict, dict | None]], T: float = 800.0,
         f"- SISSO model error included in the verdict: {sisso_uncertainty_kJ:g} kJ/mol-atom"
         + (" (none: the CALPHAD band alone is far narrower than the SISSO error)." if not sisso_uncertainty_kJ else "."),
     ]
+    notes.append("")
+    notes.append("Per-system provenance (frozen reports): specification hash, hash of the accepted TDB files, engine rules version")
+    for lbl, e, _ in systems:
+        notes.append(f"- {lbl or e.get('system', '')}: spec {str(e.get('spec_sha256', 'n/a'))[:12]}, "
+                     f"TDB collection {str(e.get('tdb_collection_sha256', 'n/a'))[:12]}, "
+                     f"{e.get('engine_rules_version', 'n/a')}")
+    for lbl, e, _ in systems:
+        excluded = sorted(a["file"] for a in e.get("audit_log", []) if a.get("status") == "excluded")
+        always = sorted(f for f, v in e.get("failure_summary", {}).get("by_file", {}).items()
+                        if v["total"] and v["failed"] == v["total"])
+        if excluded or always:
+            notes.append(f"- {lbl or e.get('system', '')}: audit-excluded files: {', '.join(excluded) or 'none'}; "
+                         f"files that fail the edge check in every combination: {', '.join(always) or 'none'}")
     if any("†" in r["Margin kJ/mol-atom"] for r in rows):
         notes.append("- † nearest_prototype: the DFT entry is at a different composition (Δx in the entry label); "
                      "energy and margin are indicative, not a stability verdict.")
