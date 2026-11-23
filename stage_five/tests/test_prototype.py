@@ -190,5 +190,12 @@ def test_methods_table_three_systems():
     assert "nearest_prototype Δx=" in rows[2]["SISSO entry (provenance)"]
     assert rows[2]["Margin kJ/mol-atom"].endswith("†") and "prototype_indicative_only" == rows[2]["Verdict"]
     assert "indicative, not a stability verdict" in md and "preregistered=False" in md
+    e = _ensemble("Fe-La-Si")
+    e["failure_summary"] = {"by_stage": {"edge_check": 4}, "by_file": {"FeSi-91Lac-LB.tdb": {"failed": 4, "total": 4},
+                                                                      "FeSi-17Cui.tdb": {"failed": 0, "total": 4}}}
+    e["audit_log"] = [{"file": "FeMn-19Big-3g.tdb", "status": "excluded"}, {"file": "a.tdb", "status": "accepted"}]
+    e["spec_sha256"], e["tdb_collection_sha256"] = "a" * 64, "b" * 64
+    md2, _ = build_table([("Fe-La-Si", e, None)])
+    assert "FeSi-91Lac-LB.tdb" in md2 and "FeMn-19Big-3g.tdb" in md2 and "spec aaaaaaaaaaaa" in md2
     failed, _ = build_table([("X", _ensemble(passed=False), None)])
     assert "FAIL" in failed

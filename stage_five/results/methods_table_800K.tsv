@@ -1,0 +1,4 @@
+System	Target (atomic fractions)	Merge priority	Survivors	Gates	ΔG_f*(T) median [5%, 95%] kJ/mol-atom	Competing assemblage	SISSO entry (provenance)	ΔG_f^SISSO(T) kJ/mol-atom	Margin kJ/mol-atom	Verdict
+B-Fe-Nd (Nd2Fe14B)	FE 0.824, ND 0.118, B 0.059	FE-ND > B-FE > B-ND	78/84 (93 %)	PASS (G1 ok, G2 ok; lineages/edge 3/7/4)	-8.79 [-9.20, -8.40]	FE17ND2+ND2B5+NDB4_D1E	not run (needs a SISSO report / MP_API_KEY)	—	—	—
+Al-Fe-Mn (Al16Fe5Mn5)	AL 0.615, FE 0.192, MN 0.192	AL-FE > AL-MN > FE-MN	313/594 (53 %)	PASS (G1 ok, G2 ok; lineages/edge 10/8/4)	-25.51 [-26.52, -24.06]	AL5FE2+BCC_A2	not run (needs a SISSO report / MP_API_KEY)	—	—	—
+Fe-La-Si (La7.1Fe82.1Si10.8)	FE 0.821, SI 0.108, LA 0.071	FE-SI > FE-LA > LA-SI	16/20 (80 %)	PASS (G1 ok, G2 ok; lineages/edge 4/2/2)	-17.78 [-19.00, -16.47]	BCC_A2+LA5SI4	not run (needs a SISSO report / MP_API_KEY)	—	—	—
