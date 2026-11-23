@@ -243,6 +243,10 @@ class AlloyLabApp(ctk.CTk):
             s5_frame, text="(elements sharing one site; empty = plain composition distance)",
             font=ctk.CTkFont(size=11), text_color="gray60"
         ).pack(side="left", padx=5)
+        self.stage5_auto_var = ctk.BooleanVar(value=True)
+        ctk.CTkCheckBox(
+            s5_frame, text="Also run with Calculate & Preview (ternary)", variable=self.stage5_auto_var
+        ).pack(side="left", padx=(15, 5))
         self.stage5_force_var = ctk.BooleanVar(value=False)
         ctk.CTkCheckBox(s5_frame, text="Force recompute", variable=self.stage5_force_var).pack(side="left", padx=15)
 
@@ -807,18 +811,40 @@ class AlloyLabApp(ctk.CTk):
                 return None
         return selected
     
-    def run_stage5_screen(self):
-        formula = self.formula_entry.get().strip()
-        if not formula:
-            messagebox.showwarning("Warning", "Please enter a ternary formula (e.g. Nd2Fe14B)")
+    # ------------------------------------------------------------------
+    # Stage 5 (CALPHAD binary ensemble + Materials Project SISSO)
+    # ------------------------------------------------------------------
+    def _preview_key(self):
+        """Everything that defines the composition of a preview (used to detect a stale result)."""
+        def _get(name):
+            widget = getattr(self, name, None)
+            return widget.get().strip() if widget is not None else ""
+        return (self.formula_entry.get().strip(), self.unit_var.get(), _get("excess_entry"),
+                _get("prealloy_formula_entry"), _get("prealloy_mass_entry"), _get("prealloy_atpct_entry"))
+
+    def _show_stage5(self, text, into_preview):
+        """Show Stage 5 text inside the preview (it survives literature re-renders) or, for the stand-alone
+        use of the button without a matching preview, append it to the result window."""
+        if into_preview and getattr(self, "last_calc_output", None):
+            self.stage5_text = text
+            self.render_lit_section()
+        else:
+            self.result_text.insert("end", "\n" + text + "\n")
+        self.result_text.see("end")
+
+    def _start_stage5(self, formula, into_preview):
+        """Run the screening for `formula` in the background; the preview stays usable meanwhile."""
+        if getattr(self, "stage5_running", False):
+            messagebox.showinfo("Stage 5", "A Stage 5 screening is still running; wait until it has finished.")
             return
 
         sample_code = None
         if hasattr(self, "sample_id_entry"):
-            val = self.sample_id_entry.get().strip()
-            sample_code = val or None
+            sample_code = self.sample_id_entry.get().strip() or None
 
-        from stage_five.desktop_screening_hook import prototype_options, describe_prototype_filter
+        from stage_five.desktop_screening_hook import (
+            describe_prototype_filter, prototype_options, run_screening_async,
+        )
         try:
             proto_filter = prototype_options(
                 fallback=bool(self.stage5_proto_var.get()),
@@ -828,27 +854,28 @@ class AlloyLabApp(ctk.CTk):
             messagebox.showwarning("Warning", str(exc))
             return
 
+        self.stage5_running = True
+        key = self.last_preview_key if into_preview else None
         self.stage5_btn.configure(state="disabled")
         self.status_label.configure(text=f"Stage 5 screening {formula} (checking DB cache / running ensemble)...")
-        self.result_text.insert("end", f"\nRunning Stage 5 CALPHAD Binary-Ensemble + Bartel SISSO screen for {formula}...\n")
-        self.result_text.insert("end", f"Nearest-prototype fallback: {describe_prototype_filter(proto_filter)}\n")
+        self._show_stage5(
+            f"Stage 5 CALPHAD + Bartel SISSO screening of {formula} is running in the background "
+            f"(the result appears here when it is done; a first run of a new system can take minutes).\n"
+            f"Nearest-prototype fallback: {describe_prototype_filter(proto_filter)}",
+            into_preview,
+        )
 
-        from stage_five.desktop_screening_hook import run_screening_async
-
-        def _done(summary_txt: str):
+        def _finish(text, status):
             def _ui():
-                self.result_text.insert("end", "\n" + summary_txt + "\n")
-                self.result_text.see("end")
-                self.status_label.configure(text=f"Stage 5 screening complete for {formula}")
+                self.stage5_running = False
                 self.stage5_btn.configure(state="normal")
-            self.after(0, _ui)
-
-        def _err(err_msg: str):
-            def _ui():
-                self.result_text.insert("end", "\n" + err_msg + "\n")
-                self.result_text.see("end")
-                self.status_label.configure(text="Stage 5 screening failed")
-                self.stage5_btn.configure(state="normal")
+                if into_preview and key != getattr(self, "last_preview_key", None):
+                    # the user previewed another composition meanwhile: do not put this result into it
+                    self.status_label.configure(
+                        text="Stage 5 finished for an earlier composition (stored in the database; preview it again to see it)")
+                    return
+                self._show_stage5(text, into_preview)
+                self.status_label.configure(text=status)
             self.after(0, _ui)
 
         def _prog(done: int, total: int):
@@ -859,12 +886,56 @@ class AlloyLabApp(ctk.CTk):
         run_screening_async(
             formula=formula,
             sample_code=sample_code,
-            on_complete=_done,
-            on_error=_err,
+            on_complete=lambda txt: _finish(txt, f"Stage 5 screening complete for {formula}"),
+            on_error=lambda msg: _finish(msg, "Stage 5 screening failed"),
             on_progress=_prog,
             prototype_filter=proto_filter,
             force_recompute=bool(self.stage5_force_var.get()),
         )
+
+    def _auto_stage5(self):
+        """Called at the end of 'Calculate & Preview': Stage 5 for the FINAL atomic composition of the
+        preview (unit and pre-alloy mode already resolved), if the option is on and it is a ternary."""
+        if not self.stage5_auto_var.get():
+            return
+        comp = getattr(self, "last_at_composition", None)
+        if not comp:
+            return
+        from stage_five.desktop_screening_hook import composition_to_formula, stage5_applicable
+        ok, why = stage5_applicable(comp)
+        if not ok:
+            self._show_stage5(f"Stage 5: {why}", True)
+            return
+        if getattr(self, "stage5_running", False):
+            self._show_stage5("Stage 5: a screening of an earlier composition is still running; "
+                              "press the 🔬 button when it has finished.", True)
+            return
+        self._start_stage5(composition_to_formula(comp), into_preview=True)
+
+    def run_stage5_screen(self):
+        formula_text = self.formula_entry.get().strip()
+        if not formula_text:
+            messagebox.showwarning("Warning", "Please enter a ternary formula (e.g. Nd2Fe14B)")
+            return
+
+        from stage_five.desktop_screening_hook import composition_to_formula, stage5_applicable
+        comp = getattr(self, "last_at_composition", None)
+        if comp and self._preview_key() == getattr(self, "last_preview_key", None):
+            ok, why = stage5_applicable(comp)
+            if not ok:
+                messagebox.showwarning("Warning", why)
+                return
+            self._start_stage5(composition_to_formula(comp), into_preview=True)
+            return
+
+        # no preview of this input yet: only a plain atomic formula can be used as typed
+        if self.unit_var.get() != "at%" or self.prealloy_mass_entry.get().strip():
+            messagebox.showwarning(
+                "Warning",
+                "For wt% input or the pre-alloy mode, press 'Calculate & Preview' first: "
+                "Stage 5 then uses the final atomic composition.")
+            return
+        self._start_stage5(formula_text, into_preview=False)
 
     def run_calculation(self):
         self.result_text.delete(1.0, "end")
@@ -1072,9 +1143,16 @@ class AlloyLabApp(ctk.CTk):
                             print(f"{key} lookup failed: {e}")
                             self.lit_results[key] = []
             
+            self.last_at_composition = dict(at_composition)     # final atomic composition (unit / pre-alloy resolved)
+            self.last_preview_key = self._preview_key()
+            self.stage5_text = ""
             self.render_lit_section()
             self.submit_btn.configure(state="normal")
             self.status_label.configure(text="Calculation complete - ready to submit")
+            try:
+                self._auto_stage5()
+            except Exception as stage5_exc:        # never let Stage 5 spoil the preview
+                self._show_stage5(f"Stage 5 could not start: {type(stage5_exc).__name__}: {stage5_exc}", True)
             
         except Exception as e:
             self.result_text.insert("end", f"Error: {str(e)}")
@@ -1102,7 +1180,11 @@ class AlloyLabApp(ctk.CTk):
             lines.append(f"  Tier {c.tier}  {c.formula:<15} {stability:<18} ({known}){dist_str}")
         
         self.result_text.delete(1.0, "end")
-        self.result_text.insert("end", "\n".join(self.last_calc_output + [""] + lines))
+        text = "\n".join(self.last_calc_output + [""] + lines)
+        stage5_text = getattr(self, "stage5_text", "")
+        if stage5_text:
+            text += "\n\n" + stage5_text
+        self.result_text.insert("end", text)
     
     def on_lit_db_change(self):
         db_key = self.lit_db_var.get()

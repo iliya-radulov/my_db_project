@@ -154,3 +154,81 @@ def test_save_stores_the_filter_with_the_run(monkeypatch):
     monkeypatch.setattr(S, "_connect_db", lambda: old)
     S.save_screening_to_db("Nd2Fe14B", _report(), {}, [], prototype_filter=flt)
     assert "prototype_filter" not in old.sql("INSERT INTO calphad_ensemble_runs")[0][0]
+
+
+# ------------------------------------------------------------------ merged flow helpers
+
+def test_composition_to_formula_and_applicability():
+    assert H.composition_to_formula({"Nd": 11.76, "Fe": 82.35, "B": 5.88}) == "Nd11.76Fe82.35B5.88"
+    assert H.composition_to_formula({"Fe": 80.1, "Nd": 15.9, "Co": 4.0, "B": 0}) == "Fe80.1Nd15.9Co4"
+    f = H.composition_to_formula({"La": 7.1, "Fe": 82.1, "Si": 10.8})
+    els, fr, _ = S.parse_ternary_formula(f)
+    assert els == ["FE", "SI", "LA"] and fr == pytest.approx([0.821, 0.108, 0.071])
+    assert H.stage5_applicable({"Fe": 1, "Nd": 1, "B": 1}) == (True, "")
+    ok, why = H.stage5_applicable({"Fe": 1, "Nd": 1})
+    assert not ok and "ternary" in why and "2 elements" in why
+    assert not H.stage5_applicable({"Fe": 1, "Nd": 1, "B": 1, "Co": 1})[0]
+    assert H.stage5_applicable({"Fe": 1, "Nd": 1, "B": 1, "Co": 0})[0]      # zero amounts do not count
+
+
+def test_key_lookup_uses_env_then_the_apps_key_file(monkeypatch, tmp_path):
+    import dft_sisso_predictor as D
+
+    monkeypatch.delenv("MP_API_KEY", raising=False)
+    kd = tmp_path / "work" / "sub"
+    key_dir = tmp_path / "back_up" / "API"
+    kd.mkdir(parents=True)
+    key_dir.mkdir(parents=True)
+    (key_dir / "MP_API_KEY.txt").write_text("  filekey \n")
+    monkeypatch.chdir(kd)                                   # ../../back_up/API/MP_API_KEY.txt, as in the app
+    assert D._resolve_mp_api_key() == "filekey"
+    monkeypatch.setenv("MP_API_KEY", "envkey")
+    assert D._resolve_mp_api_key() == "envkey"
+    assert D._resolve_mp_api_key("explicit") == "explicit"
+    monkeypatch.delenv("MP_API_KEY")
+    (key_dir / "MP_API_KEY.txt").unlink()
+    monkeypatch.setattr(D, "mp_key_file_candidates", lambda: [tmp_path / "nothing.txt"])
+    with pytest.raises(RuntimeError, match="MP_API_KEY not found"):
+        D._resolve_mp_api_key()
+
+
+def _ensemble_for_screen():
+    return {"system": "B-FE-ND", "target_composition": {"FE": 0.8, "ND": 0.12, "B": 0.06}, "spec_sha256": "abc",
+            "pycalphad_version": "0", "audit_log": [], "edge_priority": ["FE-ND", "B-FE", "B-ND"],
+            "gates": {"gate_passed": True, "parameters": {}, "G1_survival": {"total": 84, "survived": 78},
+                      "G2_lineage_coverage": {"pass": True, "surviving_lineages_per_edge": {}}},
+            "threshold_distribution": {"800.0": {"median_kJ": -8.79, "p05_kJ": -9.2, "p95_kJ": -8.4, "q25_kJ": -9.0,
+                                                  "q75_kJ": -8.6, "iqr_kJ": 0.4, "eta2_by_edge": {},
+                                                  "dominant_competing_assemblage": "A+B"}}}
+
+
+def test_a_failing_materials_project_step_keeps_the_calphad_result(monkeypatch):
+    ens = _ensemble_for_screen()
+    monkeypatch.setattr(S, "run_binary_ensemble", lambda **kw: ens)
+
+    def boom(**kw):
+        raise RuntimeError("MP_API_KEY not found")
+
+    monkeypatch.setattr(S, "predict_sisso_formation_gibbs", boom)
+    bundle = S.screen_ternary("Nd2Fe14B", temperatures=[800.0], workers=1)
+    assert bundle["ensemble"] is ens and bundle["comparison"] == []
+    assert bundle["sisso"]["match_type"] == "sisso_unavailable" and "MP_API_KEY" in bundle["sisso"]["error"]
+
+    conn = FakeConn(columns={"prototype_filter", "match_type"})
+    monkeypatch.setattr(S, "_connect_db", lambda: conn)
+    S.save_screening_to_db("Nd2Fe14B", ens, bundle["sisso"], [], prototype_filter=PrototypeFilter().as_dict())
+    sql, params = conn.sql("INSERT INTO calphad_dft_comparison")[0]
+    assert "match_type" in sql and params[-2:] == ["sisso_unavailable", "sisso_unavailable"]
+    assert params[0] == 42                                                         # the run row was saved first
+
+
+def test_unavailable_rows_are_explained_in_the_preview():
+    rows = [{"T_K": 800.0, "threshold_median_kJ": -8.79, "threshold_p05_kJ": -9.2, "threshold_p95_kJ": -8.4,
+             "competing_assemblage": "A+B", "material_id": "NO_MP_ENTRY", "verdict": "sisso_unavailable"}]
+    base = {"run_id": 1, "formula": "X", "system": "A-B-C", "gate_passed": True, "n_survivors": 5, "n_total": 6,
+            "rows": rows, "prototype_filter": None, "sisso_error": "RuntimeError: MP_API_KEY not found"}
+    txt = H.format_screening_summary(base)
+    assert "[sisso_unavailable]" in txt and "MP_API_KEY not found" in txt and "Force recompute" in txt
+    assert "-8.790" in txt                                                         # the CALPHAD band is still shown
+    cached = {**base, "sisso_error": None}
+    assert "[sisso_unavailable]" in H.format_screening_summary(cached)

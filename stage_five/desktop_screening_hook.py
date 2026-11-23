@@ -27,7 +27,7 @@ from general_ensemble import (
     compute_spec_sha256 as _engine_spec_sha256,
 )
 from dft_sisso_predictor import format_comparison_table
-from prototype_match import PrototypeFilter
+from prototype_match import SISSO_UNAVAILABLE, PrototypeFilter
 from screen_ternary import (
     _connect_db,
     _has_prototype_columns,
@@ -65,6 +65,22 @@ def parse_site_groups(text: str | None) -> tuple[tuple[str, ...], ...]:
     if len(flat) != len(set(flat)):
         raise ValueError("An element may belong to one site group only")
     return tuple(groups)
+
+
+def composition_to_formula(at_composition: dict[str, float]) -> str:
+    """{'Nd': 11.76, 'Fe': 82.35, 'B': 5.88} -> 'Nd11.76Fe82.35B5.88' (amounts are relative; the screening
+    normalises them). Used to hand the FINAL atomic composition of the preview (unit and pre-alloy
+    already resolved) to Stage 5, instead of the raw text of the formula field."""
+    parts = [f"{el}{format(float(v), '.10g')}" for el, v in at_composition.items() if float(v) > 0]
+    return "".join(parts)
+
+
+def stage5_applicable(at_composition: dict[str, float]) -> tuple[bool, str]:
+    """Stage 5 (binary ensemble of the three edges + SISSO) is defined for ternary compositions."""
+    n = sum(1 for v in at_composition.values() if float(v) > 0)
+    if n == 3:
+        return True, ""
+    return False, f"Stage 5 screening needs a ternary composition (this one has {n} elements)."
 
 
 def prototype_options(fallback: bool = True, site_groups_text: str | None = "") -> PrototypeFilter | None:
@@ -222,7 +238,19 @@ def format_screening_summary(result: dict) -> str:
         lines.append("No comparison rows recorded.")
         return "\n".join(lines)
 
-    if rows[0]["material_id"] == "NO_MP_ENTRY":
+    if rows[0]["material_id"] == "NO_MP_ENTRY" and rows[0].get("verdict") == SISSO_UNAVAILABLE:
+        reason = f": {result['sisso_error']}" if result.get("sisso_error") else ""
+        lines.append(f"[{SISSO_UNAVAILABLE}] The Materials Project / SISSO step did not run{reason}")
+        lines.append("Competing binary threshold band (the CALPHAD part is complete; fix the key / network and "
+                     "use 'Force recompute' to add the SISSO part):")
+        lines.append(f"{'T (K)':>7} | {'Median':>8} | {'[5%, 95%] Band':>17} | Competing Assemblage")
+        lines.append("-" * 68)
+        for r in rows:
+            lines.append(
+                f"{r['T_K']:>7.0f} | {r['threshold_median_kJ']:>+8.3f} | "
+                f"[{r['threshold_p05_kJ']:>+6.2f}, {r['threshold_p95_kJ']:>+6.2f}] | {r['competing_assemblage']}"
+            )
+    elif rows[0]["material_id"] == "NO_MP_ENTRY":
         lines.append("[no_dft_entry] No MP entry at the target composition or within the prototype filter. Competing binary threshold band:")
         lines.append(f"{'T (K)':>7} | {'Median':>8} | {'[5%, 95%] Band':>17} | Competing Assemblage")
         lines.append("-" * 68)
@@ -302,6 +330,7 @@ def run_screening_async(
                 "n_survivors": g["G1_survival"]["survived"],
                 "gate_passed": g["gate_passed"],
                 "prototype_filter": flt.as_dict() if flt else None,
+                "sisso_error": bundle["sisso"].get("error") if bundle["sisso"].get("match_type") == SISSO_UNAVAILABLE else None,
                 "rows": bundle["comparison"] or [
                     {
                         "T_K": float(t_str),
@@ -310,6 +339,7 @@ def run_screening_async(
                         "threshold_p95_kJ": s["p95_kJ"],
                         "competing_assemblage": s["dominant_competing_assemblage"],
                         "material_id": "NO_MP_ENTRY",
+                        "verdict": SISSO_UNAVAILABLE if bundle["sisso"].get("match_type") == SISSO_UNAVAILABLE else "no_dft_entry",
                     }
                     for t_str, s in ens["threshold_distribution"].items()
                     if s
