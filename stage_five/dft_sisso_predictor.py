@@ -75,17 +75,35 @@ def predict_sisso_formation_gibbs(
             "error": f"No Materials Project entries found for chemical system {'-'.join(elements)}",
         }
 
-    # Index target entries by entry_id (GibbsComputedStructureEntry.from_entries
-    # may drop entries without structures, so never index by raw list position).
+    # T = 0 K hull, built once: used for e_above_hull and (via from_pd) for every temperature.
+    # e_above_hull is computed here and not read from entry.data: mp-api only attaches such
+    # properties through `property_data`, under a different key, so entry.data["e_above_hull"] is
+    # normally absent.
+    pd0 = PhaseDiagram(chemsys_entries)
+
+    def _e_hull(entry):
+        try:
+            return float(pd0.get_e_above_hull(entry, allow_negative=True))
+        except Exception:
+            data = getattr(entry, "data", None) or {}
+            val = data.get("e_above_hull", data.get("energy_above_hull"))
+            return float(val) if val is not None else None
+
+    # Index target entries by entry_id (GibbsComputedStructureEntry.from_pd may drop entries
+    # without structures, so never index by raw list position).
     candidates: dict[str, dict] = {}
     for entry in chemsys_entries:
         is_exact = entry.composition.reduced_composition == target_reduced
+        # include_subsystems: also LIST the other ternary phases of the system. They are not
+        # comparable with the CALPHAD threshold, which is computed at the target composition
+        # only, so compare_with_calphad_ensemble() skips them (matches_target_composition=False).
         is_ternary = include_subsystems and len(entry.composition.elements) == len(elements)
         if is_exact or is_ternary:
             eid = str(entry.entry_id)
-            e_hull_0k = entry.data.get("e_above_hull") if hasattr(entry, "data") else None
+            e_hull_0k = _e_hull(entry)
             candidates[eid] = {
                 "material_id": eid,
+                "matches_target_composition": bool(is_exact),
                 "formula": entry.composition.reduced_formula,
                 "composition_fractions": {
                     str(el): round(amt, 6)
@@ -114,7 +132,7 @@ def predict_sisso_formation_gibbs(
                 c["dGf_sisso_kJ_mol_atom"][t_key] = None
             continue
 
-        gibbs_entries = GibbsComputedStructureEntry.from_entries(chemsys_entries, temp=T_float)
+        gibbs_entries = GibbsComputedStructureEntry.from_pd(pd0, temp=T_float)
         pd_T = PhaseDiagram(gibbs_entries)
         gibbs_by_id = {str(ge.entry_id): ge for ge in gibbs_entries}
 
@@ -146,30 +164,45 @@ def predict_sisso_formation_gibbs(
     }
 
 
-def compare_with_calphad_ensemble(sisso_report: dict, ensemble_report: dict) -> list[dict]:
+def compare_with_calphad_ensemble(
+    sisso_report: dict, ensemble_report: dict, sisso_uncertainty_kJ: float = 0.0
+) -> list[dict]:
     """
     Combine Bartel SISSO ΔG_f(T) with the CALPHAD binary-ensemble threshold ΔG_f*(T).
     Negative margin (ΔG_f_SISSO - ΔG_f*_median < 0) indicates the candidate phase is
     thermodynamically stable against the competing binary assemblage.
+
+    Only candidates of the TARGET composition are compared: the threshold is computed at the
+    target composition, so other stoichiometries (include_subsystems) are skipped.
+
+    `sisso_uncertainty_kJ` (kJ/mol-atom, default 0.0) widens the verdict: "stable" needs
+    ΔG_f + u < p05, "metastable" needs ΔG_f - u > p95, anything else is "borderline". With the
+    default 0.0 the verdict contains NO model error, and the CALPHAD band (about 1 kJ/mol-atom
+    wide for Nd-Fe-B at 800 K) is much narrower than the error of a SISSO estimate, so
+    "borderline" will rarely be reported. Set the value from the validation error of the
+    descriptor (Bartel et al. 2018) before reading the verdicts.
     """
     if not ensemble_report.get("gates", {}).get("gate_passed"):
         return []
 
+    u = abs(float(sisso_uncertainty_kJ))
     rows = []
     dist_by_T = ensemble_report.get("threshold_distribution", {})
     for cand in sisso_report.get("candidates", []):
+        if not cand.get("matches_target_composition", True):
+            continue
         for t_key, dgf_sisso in cand["dGf_sisso_kJ_mol_atom"].items():
             t_stats = dist_by_T.get(t_key)
             if dgf_sisso is None or t_stats is None:
                 continue
             med = t_stats["median_kJ"]
             margin = round(dgf_sisso - med, 4)
-            if dgf_sisso < t_stats["p05_kJ"]:
+            if dgf_sisso + u < t_stats["p05_kJ"]:
                 verdict = "stable_across_band"
-            elif dgf_sisso <= t_stats["p95_kJ"]:
-                verdict = "borderline_within_band"
-            else:
+            elif dgf_sisso - u > t_stats["p95_kJ"]:
                 verdict = "metastable_above_band"
+            else:
+                verdict = "borderline_within_band"
 
             rows.append({
                 "material_id": cand["material_id"],
@@ -180,6 +213,7 @@ def compare_with_calphad_ensemble(sisso_report: dict, ensemble_report: dict) -> 
                 "threshold_p05_kJ": t_stats["p05_kJ"],
                 "threshold_p95_kJ": t_stats["p95_kJ"],
                 "stability_margin_kJ": margin,
+                "sisso_uncertainty_kJ": u,
                 "verdict": verdict,
                 "competing_assemblage": t_stats["dominant_competing_assemblage"],
             })
@@ -190,7 +224,7 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--formula", required=True, help="Target formula, e.g. Nd2Fe14B")
     ap.add_argument("--temps", nargs="+", type=float, default=[800.0, 1000.0, 1200.0, 1300.0, 1375.0, 1450.0])
-    ap.add_argument("--include-subsystems", action="store_true", help="Also score other ternary phases in MP")
+    ap.add_argument("--include-subsystems", action="store_true", help="Also LIST other ternary phases of the system (not compared with the CALPHAD threshold, which is at the target composition only)")
     ap.add_argument("--out", type=Path, default=None, help="Optional JSON output path")
     args = ap.parse_args()
 
