@@ -16,6 +16,19 @@ APP = ROOT / "alloy_desktop_v2.py"
 NAMES = ["_preview_key", "_show_stage5", "_start_stage5", "_auto_stage5", "run_stage5_screen", "_link_stage5_to_sample"]
 
 
+class Tabs:
+    """Stands for the Preview / Stage 5 tab view."""
+    def __init__(self):
+        self.current, self.history = "Preview", []
+
+    def set(self, name):
+        self.current = name
+        self.history.append(name)
+
+    def get(self):
+        return self.current
+
+
 class Var:
     def __init__(self, v):
         self.v = v
@@ -96,7 +109,8 @@ def app(monkeypatch):
     a.stage5_btn, a.status_label, a.result_text = Widget(), Widget(), TextBox()
     a.last_calc_output = ["PREVIEW"]
     a.rendered = []
-    a.render_lit_section = lambda: a.rendered.append(a.stage5_text)
+    a._set_stage5_view = lambda text: a.rendered.append(text)       # the Stage 5 tab
+    a.result_tabs = Tabs()
     a.after = lambda ms, fn: fn()
     a.msg = msg
     a.calls = []
@@ -182,7 +196,9 @@ def test_button_without_preview_uses_a_plain_atomic_formula_as_typed(app):
     app.run_stage5_screen()
     assert app.calls and app.calls[0]["formula"] == "Nd2Fe14B"
     assert app.calls[0]["force_recompute"] is False
-    assert app.result_text.parts                                      # legacy: text appended, not in the preview
+    assert not app.result_text.parts                                  # the preview is untouched
+    assert app.rendered and "running in the background" in app.rendered[-1]
+    assert app.result_tabs.current == "Stage 5"                       # the button without a preview shows its tab at once
 
 
 def test_button_with_matching_preview_uses_the_preview_composition(app):
@@ -257,3 +273,12 @@ def test_link_failure_is_reported_not_raised(app, monkeypatch):
     app._auto_stage5()
     app.calls[0]["on_run_id"](5)
     assert "not linked" in app._link_stage5_to_sample("S-1")
+
+
+def test_stage5_tab_comes_to_the_front_only_when_the_result_arrives(app):
+    _preview(app, {"Fe": 82.35, "Nd": 11.76, "B": 5.88})
+    app._auto_stage5()
+    assert app.result_tabs.current == "Preview"                       # the user keeps reading the preview meanwhile
+    app.calls[0]["on_complete"]("RESULT TABLE")
+    assert app.result_tabs.current == "Stage 5" and app.rendered[-1] == "RESULT TABLE"
+    assert not app.result_text.parts                                  # nothing is appended to the preview

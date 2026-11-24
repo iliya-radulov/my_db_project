@@ -321,30 +321,53 @@ class AlloyLabApp(ctk.CTk):
                         command=self.on_result_wrap_toggle, width=90).pack(side="left", padx=5)
         ctk.CTkButton(toolbar, text="Copy all", width=80, command=self.copy_results).pack(side="right", padx=5)
 
-        self.result_text = scrolledtext.ScrolledText(results_pane, wrap="none", bg="#1e1e1e", fg="#ffffff", font=("Courier", 10))
-        self.result_text.grid(row=1, column=0, padx=5, pady=5, sticky="nsew")
-        self.result_hscroll = tk.Scrollbar(results_pane, orient="horizontal", command=self.result_text.xview)
-        self.result_text.configure(xscrollcommand=self.result_hscroll.set)
-        self.result_hscroll.grid(row=2, column=0, padx=5, pady=(0, 5), sticky="ew")
+        self.result_tabs = ctk.CTkTabview(results_pane, height=200)
+        self.result_tabs.grid(row=1, column=0, padx=5, pady=(0, 5), sticky="nsew")
+        preview_tab = self.result_tabs.add("Preview")
+        stage5_tab = self.result_tabs.add("Stage 5")
+        self.result_text, self.result_hscroll = self._make_result_box(preview_tab)
+        self.stage5_view, self.stage5_hscroll = self._make_result_box(stage5_tab)
+        self.stage5_view.insert("end", "Stage 5 (CALPHAD binary ensemble + SISSO) results appear here.")
 
         frame.grid_columnconfigure(1, weight=1)
         self.update_lit_cutoff_label()
     
+    def _make_result_box(self, parent):
+        """Monospace text with vertical scrollbar and a horizontal one (wide tables), filling `parent`."""
+        parent.grid_rowconfigure(0, weight=1)
+        parent.grid_columnconfigure(0, weight=1)
+        box = scrolledtext.ScrolledText(parent, wrap="none", bg="#1e1e1e", fg="#ffffff", font=("Courier", 10))
+        box.grid(row=0, column=0, sticky="nsew")
+        hscroll = tk.Scrollbar(parent, orient="horizontal", command=box.xview)
+        box.configure(xscrollcommand=hscroll.set)
+        hscroll.grid(row=1, column=0, sticky="ew")
+        return box, hscroll
+
     def on_result_wrap_toggle(self):
-        """Wrap long lines (prose) or keep them intact with a horizontal scrollbar (tables)."""
+        """Wrap long lines (prose) or keep them intact with a horizontal scrollbar (tables); both tabs."""
         wrap = bool(self.result_wrap_var.get())
-        self.result_text.configure(wrap="word" if wrap else "none")
-        if wrap:
-            self.result_hscroll.grid_remove()
-        else:
-            self.result_hscroll.grid()
+        for box, hscroll in ((self.result_text, self.result_hscroll), (self.stage5_view, self.stage5_hscroll)):
+            box.configure(wrap="word" if wrap else "none")
+            if wrap:
+                hscroll.grid_remove()
+            else:
+                hscroll.grid()
+
+    def _visible_result_box(self):
+        return self.stage5_view if self.result_tabs.get() == "Stage 5" else self.result_text
 
     def copy_results(self):
+        """Copy the text of the tab that is shown."""
         try:
             self.clipboard_clear()
-            self.clipboard_append(self.result_text.get("1.0", "end-1c"))
+            self.clipboard_append(self._visible_result_box().get("1.0", "end-1c"))
         except Exception:
             pass
+
+    def _set_stage5_view(self, text):
+        self.stage5_view.delete("1.0", "end")
+        self.stage5_view.insert("end", text)
+        self.stage5_view.see("1.0")
 
     # ============================================
     # Tab 2: Import Files
@@ -894,15 +917,12 @@ class AlloyLabApp(ctk.CTk):
         return (self.formula_entry.get().strip(), self.unit_var.get(), _get("excess_entry"),
                 _get("prealloy_formula_entry"), _get("prealloy_mass_entry"), _get("prealloy_atpct_entry"))
 
-    def _show_stage5(self, text, into_preview):
-        """Show Stage 5 text inside the preview (it survives literature re-renders) or, for the stand-alone
-        use of the button without a matching preview, append it to the result window."""
-        if into_preview and getattr(self, "last_calc_output", None):
-            self.stage5_text = text
-            self.render_lit_section()
-        else:
-            self.result_text.insert("end", "\n" + text + "\n")
-        self.result_text.see("end")
+    def _show_stage5(self, text, into_preview, focus=False):
+        """Show Stage 5 text in its own tab (the preview stays untouched). `focus` brings the tab forward."""
+        self.stage5_text = text
+        self._set_stage5_view(text)
+        if focus:
+            self.result_tabs.set("Stage 5")
 
     def _start_stage5(self, formula, into_preview):
         """Run the screening for `formula` in the background; the preview stays usable meanwhile."""
@@ -947,7 +967,7 @@ class AlloyLabApp(ctk.CTk):
                     self.status_label.configure(
                         text="Stage 5 finished for an earlier composition (stored in the database; preview it again to see it)")
                     return
-                self._show_stage5(text, into_preview)
+                self._show_stage5(text, into_preview, focus=True)
                 self.status_label.configure(text=status)
             self.after(0, _ui)
 
@@ -1038,6 +1058,7 @@ class AlloyLabApp(ctk.CTk):
                 "For wt% input or the pre-alloy mode, press 'Calculate & Preview' first: "
                 "Stage 5 then uses the final atomic composition.")
             return
+        self.result_tabs.set("Stage 5")
         self._start_stage5(formula_text, into_preview=False)
 
     def run_calculation(self):
@@ -1249,6 +1270,8 @@ class AlloyLabApp(ctk.CTk):
             self.last_at_composition = dict(at_composition)     # final atomic composition (unit / pre-alloy resolved)
             self.last_preview_key = self._preview_key()
             self.stage5_text = ""
+            self._set_stage5_view("Stage 5 (CALPHAD binary ensemble + SISSO) results appear here.")
+            self.result_tabs.set("Preview")
             self.render_lit_section()
             self.submit_btn.configure(state="normal")
             self.status_label.configure(text="Calculation complete - ready to submit")
@@ -1284,9 +1307,6 @@ class AlloyLabApp(ctk.CTk):
         
         self.result_text.delete(1.0, "end")
         text = "\n".join(self.last_calc_output + [""] + lines)
-        stage5_text = getattr(self, "stage5_text", "")
-        if stage5_text:
-            text += "\n\n" + stage5_text
         self.result_text.insert("end", text)
     
     def on_lit_db_change(self):
