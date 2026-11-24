@@ -1,4 +1,4 @@
-# Stage 5 frozen ensemble reports and methods table (23 Nov 2026)
+# Stage 5 frozen ensemble reports and methods table (23 Nov 2026, contract 1.0 on 24 Nov 2026)
 
 The three CALPHAD binary-ensemble reports behind `methods_table_800K.md` / `.tsv`. They are
 frozen: the table is generated from these files only, and `SHA256SUMS` fixes their content.
@@ -9,9 +9,11 @@ frozen: the table is generated from these files only, and `SHA256SUMS` fixes the
 | `ensemble_Al-Fe-Mn_Al16Fe5Mn5.json` | Al16Fe5Mn5 (0.6154, 0.1923, 0.1923) | AL-FE > AL-MN > FE-MN | 313 / 594 | −25.51 [−26.52, −24.06] |
 | `ensemble_Fe-La-Si_La7.1Fe82.1Si10.8.json` | La7.1Fe82.1Si10.8 | FE-SI > FE-LA > LA-SI | 16 / 20 | −17.78 [−19.00, −16.47] |
 
-**Code:** `stage_five/general_ensemble.py` as of commit `1fe56e9` (master after PR #28; the engine file is
-unchanged since). pycalphad 0.11.2. Binary files: the SGTE binary collection (`SGTE_BINARY_DIR`); the hash of the
-accepted files is stored in each report (`tdb_collection_sha256`), the specification hash in `spec_sha256`,
+**Code:** frozen at contract version 1.0 (release tag `v5.0-stage5`, see `../CONTRACT.md`). The reports were
+produced on 23 Nov 2026 by `stage_five/general_ensemble.py` with pycalphad 0.11.2; the engine's threshold step was
+later factored into a function (no change of rules: `engine_rules_version` is unchanged) and the reports are
+reproduced by the current code (below). Binary files: the SGTE binary collection (`SGTE_BINARY_DIR`); the hash of
+the accepted files is stored in each report (`tdb_collection_sha256`), the specification hash in `spec_sha256`,
 the rules version in `engine_rules_version`.
 
 **Commands** (from the repository root, `SGTE_BINARY_DIR` set, 3 workers):
@@ -40,3 +42,23 @@ python stage_five/methods_table.py --system "B-Fe-Nd (Nd2Fe14B)=ensemble_B-Fe-Nd
 - The SISSO columns of the table say "not run": no Materials Project key was available. They are filled from a SISSO
   report with `methods_table.py --system "LABEL=ensemble.json,sisso.json"`; nearest-prototype rows are marked †
   (indicative, not a stability verdict).
+
+## Reproduction check (24 Nov 2026)
+@@REPRO@@
+
+## Adding the SISSO overlay to the table
+The SISSO columns say "not run" because no Materials Project key was available for these files. On a machine with
+`MP_API_KEY` and `SGTE_BINARY_DIR` set, a screening bundle (ensemble, SISSO report, comparison rows with the
+composition-matched check, stability windows) is exported with, for example,
+
+```bash
+python stage_five/screen_ternary.py --formula La7.1Fe82.1Si10.8 --site-group FE,SI --workers 4 \
+    --out stage_five/results/screen_Fe-La-Si_La7.1Fe82.1Si10.8_sitegroup_FE-SI.json
+python stage_five/methods_table.py \
+    --system "Fe-La-Si (La7.1Fe82.1Si10.8)=ensemble_Fe-La-Si_La7.1Fe82.1Si10.8.json,screen_Fe-La-Si_La7.1Fe82.1Si10.8_sitegroup_FE-SI.json" \
+    --temp 800 --out methods_table_800K.md --tsv methods_table_800K.tsv
+```
+
+(the screening re-runs the ensemble, so the bundle's own ensemble can differ from the frozen one only if the code or
+the TDB collection changed; compare `spec_sha256` and `tdb_collection_sha256`). Rows of nearest prototypes are marked
+† (indicative) and ‡ (margin and class at the prototype's own composition). Add the new file to `SHA256SUMS`.
