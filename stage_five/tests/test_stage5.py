@@ -284,3 +284,15 @@ def test_methods_table_uses_the_matched_rows_of_a_bundle():
     # without rows the old three-tuple form still works
     md2, _ = M.build_table([("demo", ens, None)], 800.0)
     assert "not run" in md2
+
+
+def test_methods_table_says_sisso_unavailable_when_the_step_failed():
+    pytest.importorskip("pymatgen")
+    import methods_table as M
+    ens = _ensemble()
+    ens.update(system="A-B-C", target_composition={"LA": 0.1, "FE": 0.9}, spec_sha256="x" * 64)
+    ens["gates"].update({"G1_survival": {"survived": 8, "total": 10, "pass": True, "min_required": 3},
+                         "G2_lineage_coverage": {"pass": True, "surviving_lineages_per_edge": {"a": ["x"], "b": ["y"]}}})
+    failed = {"formula": "X", "candidates": [], "match_type": "sisso_unavailable", "error": "RuntimeError: MP_API_KEY not found"}
+    _, rows = M.build_table([("demo", ens, failed)], 800.0)
+    assert rows[0]["SISSO entry (provenance)"].startswith("sisso_unavailable (RuntimeError: MP_API_KEY")
