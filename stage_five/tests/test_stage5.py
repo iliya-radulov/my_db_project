@@ -247,3 +247,21 @@ def test_rethreshold_at_the_target_composition_reproduces_the_frozen_band():
     assert m["n_ok"] == m["n_in"] == rep["gates"]["G1_survival"]["survived"]
     for k in ("median_kJ", "p05_kJ", "p95_kJ"):
         assert got[k] == pytest.approx(ref[k], abs=2e-4)
+
+
+def test_table_shows_matched_values_and_both_distances():
+    pytest.importorskip("pymatgen")
+    from dft_sisso_predictor import compare_with_calphad_ensemble as cmp, format_comparison_table
+    sis = _proto_sisso()
+    sis["candidates"][0].update(delta_x=0.001, delta_x_euclid=0.178)
+    r = cmp(sis, _ensemble(), matched=_matched())[0]
+    txt = "\n".join(format_comparison_table([r]))
+    assert "Δx=0.001 (grouped), Euclid 0.178" in txt
+    assert "-0.400" in txt and "-17" not in txt.split("Composition-matched")[0].split("\n")[2]   # matched margin, not target band
+    assert "not the experimental target composition" in txt
+    # cached row (only threshold_composition kept) still shows both distances
+    cached = {k: v for k, v in r.items() if k != "delta_x_euclid"}
+    assert "Euclid 0.178" in "\n".join(format_comparison_table([cached]))
+    # exact matches and unmatched prototypes keep the old display
+    plain = cmp(_proto_sisso(), _ensemble())[0]
+    assert "‡" not in "\n".join(format_comparison_table([plain]))

@@ -344,6 +344,7 @@ def compare_with_calphad_ensemble(sisso_report: dict, ensemble_report: dict,
                         "composition": m["composition"], "median_kJ": ms["median_kJ"], "p05_kJ": ms["p05_kJ"],
                         "p95_kJ": ms["p95_kJ"], "n": ms["n"], "n_in": m["n_in"],
                         "margin_kJ": round(dgf_sisso - ms["median_kJ"], 4),
+                        "delta_x_euclid": cand.get("delta_x_euclid"),
                         "verdict": _class_vs_band(dgf_sisso, ms) if reliable else "ensemble_unreliable",
                     }
             rows.append({
@@ -352,6 +353,7 @@ def compare_with_calphad_ensemble(sisso_report: dict, ensemble_report: dict,
                 "match_type": match_type,
                 "prototype_formula": cand.get("prototype_formula", cand["formula"]),
                 "delta_x": cand.get("delta_x"),
+                "delta_x_euclid": cand.get("delta_x_euclid"),
                 "spacegroup": cand.get("spacegroup"),
                 "comparable": match_type == EXACT_MATCH and gate_ok,
                 "T_K": T,
@@ -376,27 +378,44 @@ def _f(v, spec: str) -> str:
     return "n/a" if v is None else format(v, spec)
 
 
+def _display_values(r: dict) -> dict:
+    """Numbers shown in the table. A nearest prototype with a composition-matched check is shown against the
+    band at ITS OWN composition (the target-composition band would be the wrong reference)."""
+    tc = r.get("threshold_composition")
+    if tc:
+        ref = r.get("ref_correction_kJ")
+        return {"med": tc["median_kJ"], "p05": tc["p05_kJ"], "p95": tc["p95_kJ"], "margin": tc["margin_kJ"],
+                "margin_ref": None if ref is None else round(tc["margin_kJ"] + ref, 4),
+                "verdict": f"{r['verdict']} | at prototype: {r.get('verdict_at_prototype')}", "matched": True}
+    return {"med": r.get("threshold_median_kJ"), "p05": r.get("threshold_p05_kJ"), "p95": r.get("threshold_p95_kJ"),
+            "margin": r.get("stability_margin_kJ"), "margin_ref": r.get("margin_ser_kJ"),
+            "verdict": r["verdict"], "matched": False}
+
+
 def format_comparison_table(rows: list[dict]) -> list[str]:
     """Monospace table with provenance in the first column (CLI and desktop preview)."""
-    labels = [provenance_label(r) for r in rows]
+    vals = [_display_values(r) for r in rows]
+    labels = [provenance_label(r) + (" ‡" if v["matched"] else "") for r, v in zip(rows, vals)]
     w = max([len("MP entry (formula, match)")] + [len(x) for x in labels])
-    with_ref = any(r.get("margin_ser_kJ") is not None for r in rows)
+    with_ref = any(v["margin_ref"] is not None for v in vals)
     head = (f"{'MP entry (formula, match)':<{w}} | {'T (K)':>6} | {'ΔG_SISSO':>9} | {'ΔG* Med':>8} | "
             f"{'[5%, 95%] Band':>17} | {'Margin':>8} |" + (f" {'Margin(ref)':>11} |" if with_ref else "") + " Verdict")
     lines = [head, "-" * len(head)]
-    for r, lab in zip(rows, labels):
-        band = ("n/a" if r.get("threshold_p05_kJ") is None
-                else f"[{r['threshold_p05_kJ']:>+6.2f}, {r['threshold_p95_kJ']:>+6.2f}]")
+    for r, lab, v in zip(rows, labels, vals):
+        band = ("n/a" if v["p05"] is None else f"[{v['p05']:>+6.2f}, {v['p95']:>+6.2f}]")
         lines.append(
             f"{lab:<{w}} | {r['T_K']:>6.0f} | {r['dGf_sisso_kJ']:>+9.3f} | "
-            f"{_f(r.get('threshold_median_kJ'), '+8.3f'):>8} | {band:>17} | "
-            f"{_f(r.get('stability_margin_kJ'), '+8.3f'):>8} |"
-            + (f" {_f(r.get('margin_ser_kJ'), '+11.3f'):>11} |" if with_ref else "")
-            + f" {r['verdict']}"
+            f"{_f(v['med'], '+8.3f'):>8} | {band:>17} | "
+            f"{_f(v['margin'], '+8.3f'):>8} |"
+            + (f" {_f(v['margin_ref'], '+11.3f'):>11} |" if with_ref else "")
+            + f" {v['verdict']}"
         )
     if any(r.get("match_type") == NEAREST_PROTOTYPE for r in rows):
         lines.append("nearest_prototype rows: different composition from the target; energy and margin are "
                      "for orientation only, not a stability verdict.")
+    if any(v["matched"] for v in vals):
+        lines.append("‡ band, margin and class refer to the prototype's own composition, not the experimental "
+                     "target composition.")
     matched_rows = [r for r in rows if r.get("threshold_composition")]
     if matched_rows:
         lines.append("")
@@ -407,6 +426,7 @@ def format_comparison_table(rows: list[dict]) -> list[str]:
             lines.append(f"  {r['material_id']} {r['T_K']:>5.0f} K  [{comp}]  band [{tc['p05_kJ']:+.2f}, {tc['p95_kJ']:+.2f}] "
                          f"median {tc['median_kJ']:+.2f}  margin {tc['margin_kJ']:+.2f}  -> {r['verdict_at_prototype']}"
                          f"  (n={tc['n']}/{tc['n_in']})")
+        lines.append("Class and margin refer to the prototype's own composition, not the experimental target composition.")
     if with_ref:
         lines.append("Margin(ref): SISSO put on the SER axis of the CALPHAD side (approximate); the class uses the "
                      "CALPHAD band and the plain margin only.")
