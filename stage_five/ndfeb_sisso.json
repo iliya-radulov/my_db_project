@@ -1,0 +1,53 @@
+{
+  "formula": "Nd2Fe14B",
+  "reduced_formula": "Nd2Fe14B",
+  "elements": [
+    "B",
+    "Fe",
+    "Nd"
+  ],
+  "method": "Bartel_2018_SISSO_pymatgen",
+  "units": "kJ/mol-atom",
+  "candidates": [
+    {
+      "material_id": "mp-5182-GGA",
+      "formula": "Nd2Fe14B",
+      "composition_fractions": {
+        "Nd": 0.117647,
+        "Fe": 0.823529,
+        "B": 0.058824
+      },
+      "e_above_hull_0K_eV_atom": null,
+      "dGf_sisso_kJ_mol_atom": {
+        "800.0": -3.0052,
+        "1000.0": -1.6549,
+        "1100.0": -0.6089,
+        "1200.0": 0.9034,
+        "1300.0": 2.6008,
+        "1375.0": 4.0556,
+        "1450.0": 5.59,
+        "1600.0": 8.905
+      }
+    },
+    {
+      "material_id": "mp-616958-GGA",
+      "formula": "Nd2Fe14B",
+      "composition_fractions": {
+        "Nd": 0.117647,
+        "Fe": 0.823529,
+        "B": 0.058824
+      },
+      "e_above_hull_0K_eV_atom": null,
+      "dGf_sisso_kJ_mol_atom": {
+        "800.0": 20.6054,
+        "1000.0": 21.9251,
+        "1100.0": 22.9558,
+        "1200.0": 24.4528,
+        "1300.0": 26.1348,
+        "1375.0": 27.5782,
+        "1450.0": 29.1012,
+        "1600.0": 32.3932
+      }
+    }
+  ]
+}

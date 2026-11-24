@@ -23,7 +23,7 @@ authors:
     orcid: "https://orcid.org/0000-0001-8943-5083"
   - name: "Claude (Anthropic)"
 
-doi: "10.5281/zenodo.24039719"
+doi: "10.5281/zenodo.23155920"      # concept DOI of the whole series (all versions)
 version: v5.0-stage5
 date-released: "2026-11-24"      # set to the day the release is published
 license: MIT

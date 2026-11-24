@@ -4,6 +4,9 @@ Technical note, contract version 1.0, 24 November 2026
 Iliya A. Radulov, Claude (Anthropic)
 Code: https://github.com/iliya-radulov/my_db_project (`stage_five/`), release tag `v5.0-stage5`.
 Earlier release of the project: Stage 4 Track A, DOI 10.5281/zenodo.24039719.
+This record: DOI to be added after Zenodo has archived the release.
+
+**Abstract.** Stage 5 answers one screening question for a ternary composition: is a candidate phase predicted to be more stable than the best combination of the three binary systems at that composition? The competing side is an ensemble of open binary CALPHAD assessments and carries an assessment-scatter band (median, 5th and 95th percentile), not a single number. The candidate side is a Materials Project 0 K entry with a Bartel SISSO finite-temperature correction, used as a secondary axis only. The survival and lineage gates are engineering defaults, not pre-registered values, and the SISSO side is not validated: on the Nd₂Fe₁₄B benchmark it places an experimentally stable phase above the competing binaries (§5). This note fixes what each stored number means, how labels are assigned and what the tool does not claim, so that results stay interpretable when the tool is extended.
 
 ## 1. Purpose
 
@@ -87,6 +90,8 @@ order (the first file wins on conflicts). In Al–Fe–Mn two third-generation F
 FeMn-89Lee fails the edge check in every combination; in Fe–La–Si FeSi-91Lac-LB fails it in all four of its
 combinations.
 
+Al–Fe–Mn has 594 combinations here (11, 9 and 6 accepted files on the Al–Fe, Al–Mn and Fe–Mn edges, after excluding two third-generation Fe–Mn assessments) against 144 in the Stage 4 paper (78/144, 54 %) because the file selection differs. The Stage 4 paper restricted the set by hand, among other rules to files that carry the sublattice model of the target phase, whereas the Stage 5 audit applies only its general exclusion rules (§2) to a larger file collection, so more files enter and the edge check decides. The survivor counts of the two papers are therefore not comparable.
+
 **Table 2.** La₇.₁Fe₈₂.₁Si₁₀.₈ with the SISSO overlay (nearest prototypes with site group Fe,Si; values at 800 K unless
 stated). Source: the frozen export `results/screen_Fe-La-Si_La7.1Fe82.1Si10.8_sitegroup_FE-SI.json` (SHA-256 in
 `results/SHA256SUMS`), made with `screen_ternary.py --site-group FE,SI`; its ensemble block has the same specification
@@ -105,7 +110,9 @@ competing binaries and move into the band (class `borderline_within_band`) at 13
 these structures at those compositions; it is **not** a verdict on the target composition, which is 0.25–0.35 away. Without the site group the closest entry is LaFe₉
 (ΔG_f^SISSO = +14.5 kJ mol⁻¹ atom⁻¹ at 800 K, band at its composition −1.77, margin +16.3: `metastable_above_band`),
 a high-energy entry that is not a useful stand-in. The margins of 4–6 kJ mol⁻¹ atom⁻¹ are of the size of the usual
-SISSO error and of the band width (about 4 kJ mol⁻¹ atom⁻¹ here), which is why SISSO stays secondary.
+SISSO error and of the band width (about 4 kJ mol⁻¹ atom⁻¹ here), which is why SISSO stays secondary. Earlier displays that compared a prototype with the band at the target composition showed large negative margins (for LaFe₉Si₄ at 800 K −19.9 kJ mol⁻¹ atom⁻¹ against the band at the target composition, against −4.55 at its own composition). These were artifacts of the composition mismatch and no longer occur, because the band is evaluated at the prototype's own composition (§3, decision 1).
+
+**Benchmark.** Nd₂Fe₁₄B is stable experimentally. At 800 K its SISSO value is ΔG_SISSO = −3.0 kJ mol⁻¹ atom⁻¹ against a threshold of −8.8, that is 5.8 kJ mol⁻¹ atom⁻¹ above the competing binaries (class `metastable_above_band`). This run of 23 November is not part of the frozen files.
 
 ## 6. Limitations
 
@@ -162,5 +169,3 @@ version with a changelog entry in `CONTRACT.md`; results are always labelled wit
    innovation, APL Mater. 1, 011002 (2013).
 5. S. P. Ong et al., Python Materials Genomics (pymatgen): a robust, open-source Python library for materials
    analysis, Comput. Mater. Sci. 68, 314 (2013).
-
-(Reference details to be checked against the publishers' records before deposit.)
