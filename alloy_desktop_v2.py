@@ -901,7 +901,7 @@ class AlloyLabApp(ctk.CTk):
         comp = getattr(self, "last_at_composition", None)
         if not comp:
             return
-        from stage_five.desktop_screening_hook import composition_to_formula, stage5_applicable
+        from stage_five.desktop_screening_hook import stage5_applicable, stage5_formula
         ok, why = stage5_applicable(comp)
         if not ok:
             self._show_stage5(f"Stage 5: {why}", True)
@@ -910,7 +910,7 @@ class AlloyLabApp(ctk.CTk):
             self._show_stage5("Stage 5: a screening of an earlier composition is still running; "
                               "press the 🔬 button when it has finished.", True)
             return
-        self._start_stage5(composition_to_formula(comp), into_preview=True)
+        self._start_stage5(stage5_formula(self.formula_entry.get(), comp), into_preview=True)
 
     def run_stage5_screen(self):
         formula_text = self.formula_entry.get().strip()
@@ -918,14 +918,14 @@ class AlloyLabApp(ctk.CTk):
             messagebox.showwarning("Warning", "Please enter a ternary formula (e.g. Nd2Fe14B)")
             return
 
-        from stage_five.desktop_screening_hook import composition_to_formula, stage5_applicable
+        from stage_five.desktop_screening_hook import stage5_applicable, stage5_formula
         comp = getattr(self, "last_at_composition", None)
         if comp and self._preview_key() == getattr(self, "last_preview_key", None):
             ok, why = stage5_applicable(comp)
             if not ok:
                 messagebox.showwarning("Warning", why)
                 return
-            self._start_stage5(composition_to_formula(comp), into_preview=True)
+            self._start_stage5(stage5_formula(self.formula_entry.get(), comp), into_preview=True)
             return
 
         # no preview of this input yet: only a plain atomic formula can be used as typed

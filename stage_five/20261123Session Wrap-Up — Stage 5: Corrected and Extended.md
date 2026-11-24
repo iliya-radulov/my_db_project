@@ -30,7 +30,7 @@
 5. **Cache key.** One function (`compute_spec_sha256`) is shared by engine and hook: normalised and rounded fractions, rules version, gate parameters, suppress list. The prototype options are part of the cache key too (stored in `calphad_ensemble_runs.prototype_filter`).
 6. **`--include-subsystems`** lists other ternary phases but no longer compares them with the threshold, which is at the target composition only. `e_above_hull` is computed from the 0 K hull (the entry-data key was not set by mp-api).
 7. **Gates are engineering defaults, not pre-registered.** G1 ≥ 25 % survival and G2 ≥ 2 lineages per edge are the developer's choices (the Stage 4 pilot used ≥ 60 / 288). They are written to each report (`preregistered: false`).
-8. **The "borderline" verdict does not contain the SISSO model error.** The CALPHAD band is about 1 kJ/mol-atom wide at 800 K; a SISSO estimate is uncertain by several kJ/mol-atom. `sisso_uncertainty_kJ` (default 0 = old behaviour) widens the verdict; the value must come from the validation error of the descriptor (Bartel et al. 2018, not checked here).
+8. **The "borderline" verdict does not contain the SISSO model error.** The CALPHAD band is about 1 kJ/mol-atom wide at 800 K; a SISSO estimate is uncertain by several kJ/mol-atom. *(Superseded 24 Nov: `sisso_uncertainty_kJ` was removed; classes come from the CALPHAD band only, SISSO error is reported, not folded in; see `CONTRACT.md`.)*
 9. **The "Complete & Verified" label is too strong for the Nd₂Fe₁₄B benchmark.** The server run gives ΔG_f^SISSO(800 K) = −3.0 kJ/mol-atom against a CALPHAD threshold of −8.8, i.e. +5.8 kJ/mol-atom *above* the competing binaries: Nd₂Fe₁₄B would be called "metastable_above_band", although it is stable experimentally. "Standard GGA f-electron/magnetic offset" is an untested explanation. Record it as a calibration offset to quantify (the SISSO values themselves come from the server run and were not reproduced here).
 10. **The "Δx ≤ 0.10" fallback plan is superseded** (section 4).
 
@@ -84,7 +84,7 @@
 
 ## 7. Open points
 
-1. Set `sisso_uncertainty_kJ` from the validation error of the Bartel descriptor; quantify the Nd₂Fe₁₄B offset before reading any verdict.
+1. Quantify the Nd₂Fe₁₄B SISSO offset and its temperature slope before reading any verdict (a T-dependent calibration study; see `CONTRACT.md`).
 2. Register the gate numbers (G1, G2) for a study; they are engineering defaults now.
 3. Run the SISSO step (Materials Project key) for the three systems to fill the table; for La7.1Fe82.1Si10.8 check whether LaFe13 / a ternary prototype is found (use `--site-group FE,SI` for the whole series).
 4. The edge order can change the survivor count: report it with the result; an order-sensitivity run (all three orders) is possible but costs minutes per order.

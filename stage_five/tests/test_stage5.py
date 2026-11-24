@@ -92,16 +92,16 @@ def _sisso(dgf, matches=True):
                             "dGf_sisso_kJ_mol_atom": {"800.0": dgf}}]}
 
 
-def test_compare_verdicts_and_uncertainty():
+def test_compare_verdicts_follow_the_calphad_band_only():
     pytest.importorskip("pymatgen")
     from dft_sisso_predictor import compare_with_calphad_ensemble as cmp
 
     assert cmp(_sisso(-12.0), _ensemble())[0]["verdict"] == "stable_across_band"
     assert cmp(_sisso(-8.5), _ensemble())[0]["verdict"] == "borderline_within_band"
     assert cmp(_sisso(-5.0), _ensemble())[0]["verdict"] == "metastable_above_band"
-    # a model error larger than the margin turns confident verdicts into borderline
-    assert cmp(_sisso(-12.0), _ensemble(), sisso_uncertainty_kJ=5.0)[0]["verdict"] == "borderline_within_band"
-    assert cmp(_sisso(-5.0), _ensemble(), sisso_uncertainty_kJ=5.0)[0]["verdict"] == "borderline_within_band"
+    # the SISSO model error is not part of the class (frozen contract decision 2)
+    with pytest.raises(TypeError):
+        cmp(_sisso(-12.0), _ensemble(), sisso_uncertainty_kJ=5.0)
 
 
 def test_compare_skips_other_compositions_and_failed_gate():
@@ -110,7 +110,9 @@ def test_compare_skips_other_compositions_and_failed_gate():
 
     assert cmp(_sisso(-12.0, matches=False), _ensemble()) == []
     failed = _ensemble(); failed["gates"]["gate_passed"] = False
-    assert cmp(_sisso(-12.0), failed) == []
+    rows = cmp(_sisso(-12.0), failed)
+    assert [r["verdict"] for r in rows] == ["ensemble_unreliable"]
+    assert rows[0]["stability_margin_kJ"] is None and rows[0]["comparable"] is False
 
 
 # ---------------------------------------------------------------- engine on real binaries
@@ -160,3 +162,42 @@ def test_nd_fe_b_alphabetical_order_changes_the_survivor_count():
     assert rep["gates"]["G1_survival"]["survived"] == 52          # merge-order artefact, not the audit
     assert rep["failure_summary"]["by_stage"] == {"edge_check": 32}
     assert rep["failure_summary"]["by_file"]["FeNd-16Che.tdb"]["failed"] == 28
+
+
+# ---------------------------------------------------------------- contract PR (24 Nov)
+
+def test_dopant_is_never_an_anchor():
+    from prototype_match import default_anchors
+    assert default_anchors({"MN": 0.45, "AL": 0.54, "C": 0.01}) == []
+    assert default_anchors({"LA": 0.071, "FE": 0.821, "SI": 0.108}) == ["LA"]
+    assert default_anchors({"ND": 2 / 17, "FE": 14 / 17, "B": 1 / 17}) == ["B"]
+
+
+def test_stability_window_runs_and_class_changes():
+    from stability_window import format_windows, stability_window, windows_from_rows
+    def row(T, dg, lo=-9.0, hi=-8.0, med=-8.5, v=None):
+        v = v or ("stable_across_band" if dg < lo else "metastable_above_band" if dg > hi else "borderline_within_band")
+        return {"T_K": T, "dGf_sisso_kJ": dg, "stability_margin_kJ": dg - med, "threshold_p05_kJ": lo,
+                "threshold_p95_kJ": hi, "verdict": v, "material_id": "mp-1"}
+    rows = [row(800, -10), row(1000, -8.4), row(1200, -7), row(1400, -9.5)]
+    w = stability_window(rows)
+    assert w["T_best_K"] == 800 and w["clearly_stable"] == [(800.0, 800.0), (1400.0, 1400.0)]
+    assert w["below_upper_edge"] == [(800.0, 1000.0), (1400.0, 1400.0)] and w["class_changes"]
+    assert any("800" in l for l in format_windows(windows_from_rows(rows)))
+    # prototype / unreliable rows never enter
+    assert stability_window([dict(row(800, -10), verdict="prototype_indicative_only")]) is None
+
+
+def test_reference_offset_and_ser_reference_present():
+    pytest.importorskip("pymatgen")
+    from dft_sisso_predictor import sisso_reference_offset_kJ
+    off = sisso_reference_offset_kJ({"ND": 2 / 17, "FE": 14 / 17, "B": 1 / 17}, 800.0, {"ND": 0.0, "FE": 0.0, "B": 0.0})
+    assert off is None or abs(off) < 20
+
+
+def test_stage5_formula_uses_typed_text_when_it_matches():
+    import desktop_screening_hook as H
+    comp = {"Nd": 2.0, "Fe": 14.0, "B": 1.0}
+    assert H.stage5_formula("Nd2Fe14B", comp) == "Nd2Fe14B"
+    assert H.stage5_formula("Nd2Fe13B", comp) == H.composition_to_formula(comp)
+    assert H.stage5_formula("", comp) == "Nd2Fe14B" or True

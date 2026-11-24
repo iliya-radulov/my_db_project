@@ -277,6 +277,23 @@ def g_ser_at(db: Database, ser_names: dict[str, str], T_K: float, x_map: dict[st
     return total
 
 
+def ser_reference_kJ(elements: list[str], files: list[Path], temps: list[float]) -> dict[str, dict[str, float]]:
+    """GHSER_i(T) in kJ/mol of every element, read once from the first accepted file that defines it
+    (the audit has shown the definitions are identical across the accepted files). Stored in the report so
+    that the SISSO side can be put on the SER axis (see dft_sisso_predictor.sisso_reference_offset_kJ)."""
+    out: dict[str, dict[str, float]] = {}
+    for el in elements:
+        for p in files:
+            try:
+                db = Database(str(p))
+                name = ser_function(db, el)
+            except Exception:
+                continue
+            out[el] = {str(float(T)): round(float(db.symbols[name].subs({v.T: float(T)})) / 1000.0, 6) for T in temps}
+            break
+    return out
+
+
 # ── 3. Parallel Worker for One Combination ─────────────────────────────────────
 
 _W_REFS = {}
@@ -570,6 +587,7 @@ def run_binary_ensemble(
         "tdb_collection_sha256": collection.hexdigest(),   # accepted binary files (not part of spec_sha256)
         "gates": gate_report,
         "failure_summary": failure_summary,
+        "ser_reference_kJ": ser_reference_kJ(elements, unique_files, temps),
         "n_bound_violations": sum(1 for r in results if r["bound_violations"]),
         "threshold_distribution": summary_by_T,
         "audit_log": audit_log,

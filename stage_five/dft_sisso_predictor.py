@@ -20,6 +20,8 @@ import json
 import os
 from pathlib import Path
 
+import numpy as np
+
 from pymatgen.analysis.phase_diagram import PhaseDiagram
 from pymatgen.core import Composition
 from pymatgen.entries.computed_entries import GibbsComputedStructureEntry
@@ -231,54 +233,95 @@ def predict_sisso_formation_gibbs(
     return sisso_report_from_entries(formula, chemsys_entries, temperatures, include_subsystems, flt)
 
 
-def compare_with_calphad_ensemble(
-    sisso_report: dict, ensemble_report: dict, sisso_uncertainty_kJ: float = 0.0
-) -> list[dict]:
+def _g_elems() -> dict | None:
+    """pymatgen's table of elemental Gibbs-energy terms G_ELEMS[T][element] (eV/atom), or None."""
+    for mod in ("pymatgen.analysis.compatibility.computed_entries", "pymatgen.entries.computed_entries"):
+        try:
+            return getattr(__import__(mod, fromlist=["G_ELEMS"]), "G_ELEMS")
+        except Exception:
+            continue
+    return None
+
+
+def sisso_reference_offset_kJ(
+    fractions: dict[str, float], T: float, ser_kJ: dict[str, dict[str, float]] | None
+) -> float | None:
+    """Reference-axis correction in kJ/mol-atom: sum_i x_i * (g_els_i(T) - GHSER_i(T)).
+
+    The SISSO formation energy is taken against the elemental terms of pymatgen's table g_els, the CALPHAD
+    threshold against the SGTE unaries GHSER. Adding this term to dG_f^SISSO puts it on the SER axis of
+    the CALPHAD side. For Nd, B the two tables agree; for Fe they differ by about -1.9 kJ/mol at 800 K and
+    -0.15 kJ/mol at 1600 K (Nd2Fe14B: -1.6 and -0.45 kJ/mol-atom). Approximate; None if either side is missing.
     """
-    Combine Bartel SISSO ΔG_f(T) with the CALPHAD binary-ensemble threshold ΔG_f*(T).
+    g = _g_elems()
+    if not g or not ser_kJ:
+        return None
+    temps = sorted(float(t) for t in g)
+    if not (temps[0] <= T <= temps[-1]):
+        return None
+    total = 0.0
+    for el, x in fractions.items():
+        el_u = el.upper()
+        ser = (ser_kJ.get(el_u) or {}).get(str(float(T)))
+        key = el_u[0] + el_u[1:].lower()
+        try:
+            vals = [g[str(int(t))][key] for t in temps]
+        except KeyError:
+            return None
+        if ser is None:
+            return None
+        g_els_kJ = float(np.interp(T, temps, vals)) * EV_PER_ATOM_TO_KJ_PER_MOL
+        total += x * (g_els_kJ - ser)
+    return round(total, 4)
 
-    exact_match         a stability verdict: margin = ΔG_f(SISSO) - median(ΔG_f*) < 0 means the
-                        candidate is favoured over the competing binary assemblage.
-    nearest_prototype   NOT at the target composition, so no stability verdict: the row carries
-                        verdict "prototype_indicative_only", comparable=False, the prototype
-                        formula and the composition distance. The margin is given for orientation
-                        only (the threshold is at the target composition, the energy is not).
-    listed_other_ternary (include_subsystems) is skipped.
 
-    `sisso_uncertainty_kJ` (kJ/mol-atom, default 0.0) widens the verdict of exact matches:
-    "stable" needs ΔG_f + u < p05, "metastable" needs ΔG_f - u > p95, anything else is
-    "borderline". With the default 0.0 the verdict contains NO model error, and the CALPHAD band
-    (about 1 kJ/mol-atom wide for Nd-Fe-B at 800 K) is much narrower than the error of a SISSO
-    estimate, so "borderline" will rarely be reported. Set the value from the validation error of
-    the descriptor (Bartel et al. 2018) before reading the verdicts.
+def compare_with_calphad_ensemble(sisso_report: dict, ensemble_report: dict) -> list[dict]:
     """
-    if not ensemble_report.get("gates", {}).get("gate_passed"):
-        return []
+    Combine Bartel SISSO ΔG_f(T) with the CALPHAD binary-ensemble threshold ΔG_f*(T) (contract of 24 Nov 2026).
 
-    u = abs(float(sisso_uncertainty_kJ))
-    rows = []
+    The CLASS of an exact match comes from the CALPHAD band only:
+        ΔG_f^SISSO < p05  -> stable_across_band      ΔG_f^SISSO > p95 -> metastable_above_band
+        otherwise         -> borderline_within_band
+    (comparison with the percentile edges, not with a half-width). The SISSO margin, the SISSO error and the
+    reference-axis correction are secondary, approximate fields: the SISSO error is usually larger than the
+    ensemble band (Nd2Fe14B: margin +5.8 to +17.7 kJ/mol-atom against a half-width of 0.4 to 1.0), so it is not
+    folded into the class.
+
+    ensemble_unreliable   the ensemble failed its gates: the band is shown if present, no margin, no class.
+    nearest_prototype     not at the target composition: verdict "prototype_indicative_only", comparable=False
+                          (the composition-matched check is a separate step).
+    listed_other_ternary  (include_subsystems) is skipped.
+    """
+    gate_ok = bool(ensemble_report.get("gates", {}).get("gate_passed"))
     dist_by_T = ensemble_report.get("threshold_distribution", {})
+    ser = ensemble_report.get("ser_reference_kJ")
+    rows = []
     for cand in sisso_report.get("candidates", []):
         match_type = cand.get("match_type") or (
             EXACT_MATCH if cand.get("matches_target_composition", True) else LISTED_OTHER_TERNARY
         )
         if match_type not in (EXACT_MATCH, NEAREST_PROTOTYPE):
             continue
+        fractions = {str(k).upper(): float(v) for k, v in (cand.get("composition_fractions") or {}).items()}
         for t_key, dgf_sisso in cand["dGf_sisso_kJ_mol_atom"].items():
             t_stats = dist_by_T.get(t_key)
-            if dgf_sisso is None or t_stats is None:
+            if dgf_sisso is None or (gate_ok and t_stats is None):
                 continue
-            med = t_stats["median_kJ"]
-            margin = round(dgf_sisso - med, 4)
-            if match_type == NEAREST_PROTOTYPE:
-                verdict = "prototype_indicative_only"
-            elif dgf_sisso + u < t_stats["p05_kJ"]:
-                verdict = "stable_across_band"
-            elif dgf_sisso - u > t_stats["p95_kJ"]:
-                verdict = "metastable_above_band"
+            T = float(t_key)
+            ref = sisso_reference_offset_kJ(fractions, T, ser) if fractions else None
+            med = t_stats["median_kJ"] if t_stats else None
+            if not gate_ok:
+                verdict, margin = "ensemble_unreliable", None
             else:
-                verdict = "borderline_within_band"
-
+                margin = round(dgf_sisso - med, 4)
+                if match_type == NEAREST_PROTOTYPE:
+                    verdict = "prototype_indicative_only"
+                elif dgf_sisso < t_stats["p05_kJ"]:
+                    verdict = "stable_across_band"
+                elif dgf_sisso > t_stats["p95_kJ"]:
+                    verdict = "metastable_above_band"
+                else:
+                    verdict = "borderline_within_band"
             rows.append({
                 "material_id": cand["material_id"],
                 "formula": cand["formula"],
@@ -286,38 +329,53 @@ def compare_with_calphad_ensemble(
                 "prototype_formula": cand.get("prototype_formula", cand["formula"]),
                 "delta_x": cand.get("delta_x"),
                 "spacegroup": cand.get("spacegroup"),
-                "comparable": match_type == EXACT_MATCH,
-                "T_K": float(t_key),
+                "comparable": match_type == EXACT_MATCH and gate_ok,
+                "T_K": T,
                 "dGf_sisso_kJ": dgf_sisso,
                 "threshold_median_kJ": med,
-                "threshold_p05_kJ": t_stats["p05_kJ"],
-                "threshold_p95_kJ": t_stats["p95_kJ"],
+                "threshold_p05_kJ": t_stats["p05_kJ"] if t_stats else None,
+                "threshold_p95_kJ": t_stats["p95_kJ"] if t_stats else None,
                 "stability_margin_kJ": margin,
-                "sisso_uncertainty_kJ": u,
+                # secondary, approximate: SISSO put on the SER axis of the CALPHAD side
+                "ref_correction_kJ": ref,
+                "dGf_sisso_ser_kJ": None if ref is None else round(dgf_sisso + ref, 4),
+                "margin_ser_kJ": None if (ref is None or margin is None) else round(margin + ref, 4),
                 "verdict": verdict,
-                "competing_assemblage": t_stats["dominant_competing_assemblage"],
+                "competing_assemblage": t_stats["dominant_competing_assemblage"] if t_stats else None,
             })
     return rows
+
+
+def _f(v, spec: str) -> str:
+    return "n/a" if v is None else format(v, spec)
 
 
 def format_comparison_table(rows: list[dict]) -> list[str]:
     """Monospace table with provenance in the first column (CLI and desktop preview)."""
     labels = [provenance_label(r) for r in rows]
     w = max([len("MP entry (formula, match)")] + [len(x) for x in labels])
-    lines = [
-        f"{'MP entry (formula, match)':<{w}} | {'T (K)':>6} | {'ΔG_SISSO':>9} | {'ΔG* Med':>8} | "
-        f"{'[5%, 95%] Band':>17} | {'Margin':>8} | Verdict",
-        "-" * (w + 80),
-    ]
+    with_ref = any(r.get("margin_ser_kJ") is not None for r in rows)
+    head = (f"{'MP entry (formula, match)':<{w}} | {'T (K)':>6} | {'ΔG_SISSO':>9} | {'ΔG* Med':>8} | "
+            f"{'[5%, 95%] Band':>17} | {'Margin':>8} |" + (f" {'Margin(ref)':>11} |" if with_ref else "") + " Verdict")
+    lines = [head, "-" * len(head)]
     for r, lab in zip(rows, labels):
+        band = ("n/a" if r.get("threshold_p05_kJ") is None
+                else f"[{r['threshold_p05_kJ']:>+6.2f}, {r['threshold_p95_kJ']:>+6.2f}]")
         lines.append(
             f"{lab:<{w}} | {r['T_K']:>6.0f} | {r['dGf_sisso_kJ']:>+9.3f} | "
-            f"{r['threshold_median_kJ']:>+8.3f} | [{r['threshold_p05_kJ']:>+6.2f}, {r['threshold_p95_kJ']:>+6.2f}] | "
-            f"{r['stability_margin_kJ']:>+8.3f} | {r['verdict']}"
+            f"{_f(r.get('threshold_median_kJ'), '+8.3f'):>8} | {band:>17} | "
+            f"{_f(r.get('stability_margin_kJ'), '+8.3f'):>8} |"
+            + (f" {_f(r.get('margin_ser_kJ'), '+11.3f'):>11} |" if with_ref else "")
+            + f" {r['verdict']}"
         )
     if any(r.get("match_type") == NEAREST_PROTOTYPE for r in rows):
         lines.append("nearest_prototype rows: different composition from the target; energy and margin are "
                      "for orientation only, not a stability verdict.")
+    if with_ref:
+        lines.append("Margin(ref): SISSO put on the SER axis of the CALPHAD side (approximate); the class uses the "
+                     "CALPHAD band and the plain margin only.")
+    if any(r["verdict"] == "ensemble_unreliable" for r in rows):
+        lines.append("ensemble_unreliable: the binary ensemble failed its gates; the band, if shown, must not be interpreted.")
     return lines
 
 

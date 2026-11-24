@@ -71,6 +71,8 @@ class FakeCursor:
         return None
 
     def fetchall(self):
+        if "information_schema" in self.last:
+            return [(c,) for c in sorted(self.conn.columns)]
         return []
 
 
@@ -214,11 +216,11 @@ def test_a_failing_materials_project_step_keeps_the_calphad_result(monkeypatch):
     assert bundle["ensemble"] is ens and bundle["comparison"] == []
     assert bundle["sisso"]["match_type"] == "sisso_unavailable" and "MP_API_KEY" in bundle["sisso"]["error"]
 
-    conn = FakeConn(columns={"prototype_filter", "match_type"})
+    conn = FakeConn(columns={"prototype_filter", "match_type", "verdict", "comparable", "mp_id", "run_id"})
     monkeypatch.setattr(S, "_connect_db", lambda: conn)
     S.save_screening_to_db("Nd2Fe14B", ens, bundle["sisso"], [], prototype_filter=PrototypeFilter().as_dict())
     sql, params = conn.sql("INSERT INTO calphad_dft_comparison")[0]
-    assert "match_type" in sql and params[-2:] == ["sisso_unavailable", "sisso_unavailable"]
+    assert "match_type" in sql and params.count("sisso_unavailable") == 2 and "NO_MP_ENTRY" in params
     assert params[0] == 42                                                         # the run row was saved first
 
 

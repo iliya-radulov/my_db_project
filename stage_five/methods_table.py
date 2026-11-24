@@ -50,8 +50,7 @@ def _sisso(d: dict | None) -> dict | None:
     return d["sisso"] if "sisso" in d and "candidates" not in d else d
 
 
-def system_row(label: str, ensemble: dict, sisso: dict | None = None, T: float = 800.0,
-               sisso_uncertainty_kJ: float = 0.0) -> dict:
+def system_row(label: str, ensemble: dict, sisso: dict | None = None, T: float = 800.0) -> dict:
     t_key = str(float(T))
     g = ensemble["gates"]
     stats = ensemble["threshold_distribution"].get(t_key)
@@ -72,7 +71,7 @@ def system_row(label: str, ensemble: dict, sisso: dict | None = None, T: float =
             f"{stats['median_kJ']:+.2f} [{stats['p05_kJ']:+.2f}, {stats['p95_kJ']:+.2f}]" if stats else "n/a"),
         "Competing assemblage": stats["dominant_competing_assemblage"] if stats else "n/a",
     }
-    rows = compare_with_calphad_ensemble(sisso, ensemble, sisso_uncertainty_kJ) if sisso else []
+    rows = compare_with_calphad_ensemble(sisso, ensemble) if sisso else []
     rows_T = [r for r in rows if str(float(r["T_K"])) == t_key]
     if sisso is None:
         row.update({"SISSO entry (provenance)": "not run (needs a SISSO report / MP_API_KEY)",
@@ -89,15 +88,14 @@ def system_row(label: str, ensemble: dict, sisso: dict | None = None, T: float =
         row.update({
             "SISSO entry (provenance)": provenance_label(top) + (f", {top['spacegroup']}" if top.get("spacegroup") else "") + extra,
             "ΔG_f^SISSO(T) kJ/mol-atom": f"{top['dGf_sisso_kJ']:+.2f}",
-            "Margin kJ/mol-atom": f"{top['stability_margin_kJ']:+.2f}{mark}",
+            "Margin kJ/mol-atom": ("—" if top["stability_margin_kJ"] is None else f"{top['stability_margin_kJ']:+.2f}{mark}"),
             "Verdict": top["verdict"],
         })
     return row
 
 
-def build_table(systems: list[tuple[str, dict, dict | None]], T: float = 800.0,
-                sisso_uncertainty_kJ: float = 0.0) -> tuple[str, list[dict]]:
-    rows = [system_row(lbl, e, s, T, sisso_uncertainty_kJ) for lbl, e, s in systems]
+def build_table(systems: list[tuple[str, dict, dict | None]], T: float = 800.0) -> tuple[str, list[dict]]:
+    rows = [system_row(lbl, e, s, T) for lbl, e, s in systems]
     md = [f"Stage 5 screening at {T:.0f} K. ΔG in kJ/mol-atom relative to SER.", "",
           "| " + " | ".join(COLUMNS) + " |", "|" + "|".join("---" for _ in COLUMNS) + "|"]
     for r in rows:
@@ -111,8 +109,9 @@ def build_table(systems: list[tuple[str, dict, dict | None]], T: float = 800.0,
         "survivor count; the order is part of the specification.",
         "- Gate parameters are Stage-5 engineering defaults unless registered otherwise "
         f"(preregistered={any(e['gates'].get('parameters', {}).get('preregistered') for _, e, _ in systems)}).",
-        f"- SISSO model error included in the verdict: {sisso_uncertainty_kJ:g} kJ/mol-atom"
-        + (" (none: the CALPHAD band alone is far narrower than the SISSO error)." if not sisso_uncertainty_kJ else "."),
+        "- Classes (stable_across_band / borderline_within_band / metastable_above_band) come from the CALPHAD band "
+        "only: ΔG_f^SISSO against the 5th and 95th percentile edges. The SISSO error is not part of the class; "
+        "it is usually larger than the band (SISSO slope of about +15 J/(mol-atom·K) for Nd2Fe14B).",
     ]
     notes.append("")
     notes.append("Per-system provenance (frozen reports): specification hash, hash of the accepted TDB files, engine rules version")
@@ -137,7 +136,6 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--system", action="append", required=True, metavar="LABEL=ensemble.json[,sisso.json]")
     ap.add_argument("--temp", type=float, default=800.0)
-    ap.add_argument("--sisso-uncertainty-kj", type=float, default=0.0)
     ap.add_argument("--out", type=Path, default=None, help="Markdown output")
     ap.add_argument("--tsv", type=Path, default=None, help="Tab-separated output")
     args = ap.parse_args()
@@ -147,7 +145,7 @@ def main() -> None:
         label, _, files = spec.partition("=")
         parts = [p for p in files.split(",") if p]
         systems.append((label, _ens(_load_json(parts[0])), _sisso(_load_json(parts[1])) if len(parts) > 1 else None))
-    md, rows = build_table(systems, args.temp, args.sisso_uncertainty_kj)
+    md, rows = build_table(systems, args.temp)
     print(md)
     if args.out:
         args.out.write_text(md, encoding="utf-8")
