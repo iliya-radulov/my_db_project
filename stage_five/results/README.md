@@ -44,7 +44,15 @@ python stage_five/methods_table.py --system "B-Fe-Nd (Nd2Fe14B)=ensemble_B-Fe-Nd
   (indicative, not a stability verdict).
 
 ## Reproduction check (24 Nov 2026)
-@@REPRO@@
+The current code was run again on the three systems (same elements in the same merge order, same compositions, `SGTE_BINARY_DIR` = the collection of the reports, four workers) and compared with the files here:
+
+| report | survivors | same survivors per combination | spec hash | TDB collection hash | largest band difference | largest per-combination difference | run time |
+|---|---|---|---|---|---|---|---|
+| Fe–La–Si | 16/20 | yes | equal | equal | < 1e-5 kJ/mol-atom | < 1e-5 | 159 s |
+| Nd–Fe–B | 78/84 | yes | equal | equal | < 1e-5 | < 1e-5 | 228 s |
+| Al–Fe–Mn | 313/594 | yes | equal | equal | < 1e-5 | < 1e-5 | 4125 s |
+
+Band = median, 5 %, 95 %, minimum and maximum at every temperature. The comparison script is a few lines around `run_binary_ensemble` and `json.load`; any difference in survivors or hashes would mean the code or the collection changed and the contract version has to be revisited.
 
 ## Adding the SISSO overlay to the table
 The SISSO columns say "not run" because no Materials Project key was available for these files. On a machine with
