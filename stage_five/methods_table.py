@@ -25,7 +25,7 @@ import argparse
 import json
 from pathlib import Path
 
-from dft_sisso_predictor import compare_with_calphad_ensemble
+from dft_sisso_predictor import _display_values, compare_with_calphad_ensemble
 from prototype_match import provenance_label
 
 COLUMNS = [
@@ -50,7 +50,8 @@ def _sisso(d: dict | None) -> dict | None:
     return d["sisso"] if "sisso" in d and "candidates" not in d else d
 
 
-def system_row(label: str, ensemble: dict, sisso: dict | None = None, T: float = 800.0) -> dict:
+def system_row(label: str, ensemble: dict, sisso: dict | None = None, T: float = 800.0,
+               comparison: list[dict] | None = None) -> dict:
     t_key = str(float(T))
     g = ensemble["gates"]
     stats = ensemble["threshold_distribution"].get(t_key)
@@ -71,7 +72,8 @@ def system_row(label: str, ensemble: dict, sisso: dict | None = None, T: float =
             f"{stats['median_kJ']:+.2f} [{stats['p05_kJ']:+.2f}, {stats['p95_kJ']:+.2f}]" if stats else "n/a"),
         "Competing assemblage": stats["dominant_competing_assemblage"] if stats else "n/a",
     }
-    rows = compare_with_calphad_ensemble(sisso, ensemble) if sisso else []
+    # rows saved with a screening bundle already contain the composition-matched check of nearest prototypes
+    rows = comparison if comparison is not None else (compare_with_calphad_ensemble(sisso, ensemble) if sisso else [])
     rows_T = [r for r in rows if str(float(r["T_K"])) == t_key]
     if sisso is None:
         row.update({"SISSO entry (provenance)": "not run (needs a SISSO report / MP_API_KEY)",
@@ -85,17 +87,22 @@ def system_row(label: str, ensemble: dict, sisso: dict | None = None, T: float =
         top = rows_T[0]
         extra = f" (+{len(rows_T) - 1} more)" if len(rows_T) > 1 else ""
         mark = "†" if not top["comparable"] else ""
+        shown = _display_values(top)            # a prototype with a matched check is shown against its own band
+        if shown["matched"]:
+            mark = "†‡"
         row.update({
             "SISSO entry (provenance)": provenance_label(top) + (f", {top['spacegroup']}" if top.get("spacegroup") else "") + extra,
             "ΔG_f^SISSO(T) kJ/mol-atom": f"{top['dGf_sisso_kJ']:+.2f}",
-            "Margin kJ/mol-atom": ("—" if top["stability_margin_kJ"] is None else f"{top['stability_margin_kJ']:+.2f}{mark}"),
-            "Verdict": top["verdict"],
+            "Margin kJ/mol-atom": ("—" if shown["margin"] is None else f"{shown['margin']:+.2f}{mark}"),
+            "Verdict": shown["verdict"],
         })
     return row
 
 
-def build_table(systems: list[tuple[str, dict, dict | None]], T: float = 800.0) -> tuple[str, list[dict]]:
-    rows = [system_row(lbl, e, s, T) for lbl, e, s in systems]
+def build_table(systems: list[tuple], T: float = 800.0) -> tuple[str, list[dict]]:
+    """systems: (label, ensemble, sisso) or (label, ensemble, sisso, comparison_rows)."""
+    systems = [tuple(x) + (None,) * (4 - len(x)) for x in systems]
+    rows = [system_row(lbl, e, s, T, c) for lbl, e, s, c in systems]
     md = [f"Stage 5 screening at {T:.0f} K. ΔG in kJ/mol-atom relative to SER.", "",
           "| " + " | ".join(COLUMNS) + " |", "|" + "|".join("---" for _ in COLUMNS) + "|"]
     for r in rows:
@@ -108,18 +115,18 @@ def build_table(systems: list[tuple[str, dict, dict | None]], T: float = 800.0) 
         "- Merge priority: the first file wins on conflicting parameters, so the edge order can change the "
         "survivor count; the order is part of the specification.",
         "- Gate parameters are Stage-5 engineering defaults unless registered otherwise "
-        f"(preregistered={any(e['gates'].get('parameters', {}).get('preregistered') for _, e, _ in systems)}).",
+        f"(preregistered={any(e['gates'].get('parameters', {}).get('preregistered') for _, e, _, _ in systems)}).",
         "- Classes (stable_across_band / borderline_within_band / metastable_above_band) come from the CALPHAD band "
         "only: ΔG_f^SISSO against the 5th and 95th percentile edges. The SISSO error is not part of the class; "
         "it is usually larger than the band (SISSO slope of about +15 J/(mol-atom·K) for Nd2Fe14B).",
     ]
     notes.append("")
     notes.append("Per-system provenance (frozen reports): specification hash, hash of the accepted TDB files, engine rules version")
-    for lbl, e, _ in systems:
+    for lbl, e, _, _ in systems:
         notes.append(f"- {lbl or e.get('system', '')}: spec {str(e.get('spec_sha256', 'n/a'))[:12]}, "
                      f"TDB collection {str(e.get('tdb_collection_sha256', 'n/a'))[:12]}, "
                      f"{e.get('engine_rules_version', 'n/a')}")
-    for lbl, e, _ in systems:
+    for lbl, e, _, _ in systems:
         excluded = sorted(a["file"] for a in e.get("audit_log", []) if a.get("status") == "excluded")
         always = sorted(f for f, v in e.get("failure_summary", {}).get("by_file", {}).items()
                         if v["total"] and v["failed"] == v["total"])
@@ -128,7 +135,8 @@ def build_table(systems: list[tuple[str, dict, dict | None]], T: float = 800.0) 
                          f"files that fail the edge check in every combination: {', '.join(always) or 'none'}")
     if any("†" in r["Margin kJ/mol-atom"] for r in rows):
         notes.append("- † nearest_prototype: the DFT entry is at a different composition (Δx in the entry label); "
-                     "energy and margin are indicative, not a stability verdict.")
+                     "energy and margin are indicative, not a stability verdict. ‡ margin and class at the "
+                     "prototype's own composition (composition-matched check), not at the target.")
     return "\n".join(md + notes) + "\n", rows
 
 
@@ -144,7 +152,10 @@ def main() -> None:
     for spec in args.system:
         label, _, files = spec.partition("=")
         parts = [p for p in files.split(",") if p]
-        systems.append((label, _ens(_load_json(parts[0])), _sisso(_load_json(parts[1])) if len(parts) > 1 else None))
+        second = _load_json(parts[1]) if len(parts) > 1 else None
+        # a screen_ternary.py --out bundle carries the comparison rows (with the composition-matched check)
+        systems.append((label, _ens(_load_json(parts[0])), _sisso(second),
+                        second.get("comparison") if second and "comparison" in second else None))
     md, rows = build_table(systems, args.temp)
     print(md)
     if args.out:

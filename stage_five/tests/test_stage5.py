@@ -265,3 +265,22 @@ def test_table_shows_matched_values_and_both_distances():
     # exact matches and unmatched prototypes keep the old display
     plain = cmp(_proto_sisso(), _ensemble())[0]
     assert "‡" not in "\n".join(format_comparison_table([plain]))
+
+
+def test_methods_table_uses_the_matched_rows_of_a_bundle():
+    pytest.importorskip("pymatgen")
+    import methods_table as M
+    from dft_sisso_predictor import compare_with_calphad_ensemble as cmp
+    sis = _proto_sisso()
+    sis["candidates"][0].update(delta_x=0.001, delta_x_euclid=0.178)
+    ens = _ensemble()
+    ens.update(system="A-B-C", target_composition={"LA": 0.1, "FE": 0.9}, spec_sha256="x" * 64)
+    ens["gates"].update({"G1_survival": {"survived": 8, "total": 10, "pass": True, "min_required": 3},
+                         "G2_lineage_coverage": {"pass": True, "surviving_lineages_per_edge": {"a": ["x"], "b": ["y"]}}})
+    rows = cmp(sis, ens, matched=_matched())
+    md, table = M.build_table([("demo", ens, sis, rows)], 800.0)
+    assert "-0.40†‡" in table[0]["Margin kJ/mol-atom"] + ""  or "†‡" in table[0]["Margin kJ/mol-atom"]
+    assert "at prototype: borderline_within_band" in table[0]["Verdict"] and "Euclid 0.178" in md
+    # without rows the old three-tuple form still works
+    md2, _ = M.build_table([("demo", ens, None)], 800.0)
+    assert "not run" in md2

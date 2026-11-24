@@ -10,7 +10,7 @@ Notes
 - ΔG_f*: distribution over the surviving combinations of the open binary assessments (competing-assemblage energy at the target composition, binaries only, no ternary phase).
 - Merge priority: the first file wins on conflicting parameters, so the edge order can change the survivor count; the order is part of the specification.
 - Gate parameters are Stage-5 engineering defaults unless registered otherwise (preregistered=False).
-- SISSO model error included in the verdict: 0 kJ/mol-atom (none: the CALPHAD band alone is far narrower than the SISSO error).
+- Classes (stable_across_band / borderline_within_band / metastable_above_band) come from the CALPHAD band only: ΔG_f^SISSO against the 5th and 95th percentile edges. The SISSO error is not part of the class; it is usually larger than the band (SISSO slope of about +15 J/(mol-atom·K) for Nd2Fe14B).
 
 Per-system provenance (frozen reports): specification hash, hash of the accepted TDB files, engine rules version
 - B-Fe-Nd (Nd2Fe14B): spec 316cc2dbc860, TDB collection 0fd3094fd0f3, stage5-engine/edge-rule-v2/fix1-2026-11-23

@@ -1,7 +1,10 @@
-# Stage 5 screening contract (frozen 2026-11-24)
+# Stage 5 screening contract, version 1.0 (frozen 2026-11-24)
 
 The meaning of the numbers that `general_ensemble.py` (CALPHAD side) and `dft_sisso_predictor.py`
 (DFT + SISSO side) exchange. The decisions below were taken on 24 Nov 2026; code and database follow them.
+This file is the reference for the technical note (`TECHNICAL_NOTE.md`) and for the methods text
+(`METHODS_TEXT.md`). Anything that changes the meaning of a stored number is a new contract version
+(see "Change control").
 
 ## Quantities
 * ΔG_f*(T): competing-binary threshold, kJ/mol-atom, relative to the SER (GHSER) references of the binary TDBs.
@@ -43,6 +46,47 @@ The meaning of the numbers that `general_ensemble.py` (CALPHAD side) and `dft_si
 5. Numbers for the temperature grid and band widths in the methods text are corrected later, from the frozen
    reports in `results/`.
 
+## Verdict labels (the exact meaning of every value of `verdict`)
+
+| label | row type | meaning | margin | `comparable` |
+|---|---|---|---|---|
+| `stable_across_band` | exact match, gates passed | ΔG_f^SISSO < p05 of the CALPHAD band at the target composition | stored | TRUE |
+| `borderline_within_band` | exact match, gates passed | p05 ≤ ΔG_f^SISSO ≤ p95; difference smaller than the assessment scatter, inconclusive | stored | TRUE |
+| `metastable_above_band` | exact match, gates passed | ΔG_f^SISSO > p95: above the competing binaries | stored | TRUE |
+| `prototype_indicative_only` | nearest prototype | the entry is at another composition; no stability verdict at the target. Read `verdict_at_prototype` | at the target band, for orientation only | FALSE |
+| `ensemble_unreliable` | any row | the ensemble failed G1 or G2; the band may be shown, no class and no margin | NULL | FALSE |
+| `sisso_unavailable` | one row per temperature, `mp_id = NO_MP_ENTRY` | the Materials Project / SISSO step could not run (key, network, package); the CALPHAD band is complete | none | FALSE |
+| `no_dft_entry` | one row per temperature, `mp_id = NO_MP_ENTRY` | no entry at the target composition and none within the prototype filter | none | FALSE |
+
+A run whose gates failed and that has no DFT entry has no comparison rows at all; its run row carries
+`gate_passed = FALSE`.
+
+`verdict_at_prototype` (nearest-prototype rows only, with the matched check): `stable_across_band`,
+`borderline_within_band`, `metastable_above_band` against the band at the prototype's own composition, or
+`ensemble_unreliable` if fewer than 25 % of the surviving combinations can be evaluated there. It describes the
+structure type at that composition, not the target.
+
+## Exact versus prototype rows
+* `exact_match`: distance ≤ 5·10⁻⁴ in atomic fractions (absorbs rounded at.% input). Gets a class.
+* `nearest_prototype`: passes the anchor guard (minority element present, within 0.03; dopants < 3 at.% are never
+  anchors) and the composition distance ≤ 0.16, optionally with elements that share a site grouped (opt-in
+  `--site-group FE,SI`). Never gets a class at the target; its energy is compared with the band re-evaluated at the
+  prototype's own composition. Ranking: exact before nearest, then 0 K hull energy (0.01 eV/atom ties), then
+  lowest-temperature ΔG_f^SISSO, then Δx; at most 3 prototypes are kept.
+* `listed_other_ternary` (option `include_subsystems`) is listed and never compared or stored.
+
+## Display rules (CLI, desktop preview, Stage 5 tab)
+* Provenance label: `mp-1 (Nd2Fe14B, exact_match)`; `mp-2 (LaFe13, nearest_prototype Δx=0.152)`. With site groups,
+  when the grouped distance and the Euclidean distance differ by more than 0.005, both are shown:
+  `Δx=0.001 (grouped), Euclid 0.252`. The grouped Δx only says that the site-group totals agree; the Euclidean
+  distance says how far the Fe:Si split is from the target (LaFe9Si4 is 0.252 from La7.1Fe82.1Si10.8).
+* `‡` marks a nearest-prototype row whose median, band, margin and class are those of the prototype's own
+  composition; a footnote says so. Without the matched check the target-composition values are shown with the
+  note "for orientation only". In the methods table `†` marks an indicative margin.
+* `Margin(ref)` is the approximate reference-axis value; it never decides a class.
+* Stored values are not changed by display rules: `threshold_*` hold the band at the target composition;
+  the matched band, margin, composition and the Euclidean distance are in `threshold_composition` (JSONB).
+
 ## Stability window (`stability_window.py`)
 Per exact-match candidate on the temperature grid: temperature of the most negative margin; runs where
 ΔG_f^SISSO ≤ p95 and where ΔG_f^SISSO < p05; whether and where the class changes. Rows of nearest prototypes
@@ -61,3 +105,24 @@ that exact preview; if Stage 5 is still running, the link is made when it finish
 many-to-many because a cached run is reused for every sample with the same composition and options; the view
 `v_stage5_sample_runs` lists run, system, gates and survivors per sample code, and Quick Lookup shows them. Without
 012 the old single column is used and a run that already belongs to another sample is not re-linked.
+
+## Frozen artefacts (contract version 1.0)
+
+| item | value |
+|---|---|
+| engine rules version | `stage5-engine/edge-rule-v2/fix1-2026-11-23` (`ENGINE_RULES_VERSION`) |
+| ensemble reports | `results/ensemble_*.json`, hashes in `results/SHA256SUMS`; produced with pycalphad 0.11.2 |
+| three-system table | `results/methods_table_800K.md` / `.tsv` (regenerated from the reports above) |
+| migrations | 009 tables; 010 prototype provenance and `prototype_filter`; 011 secondary fields and view `v_stage5_screening`; 012 run-sample links and view `v_stage5_sample_runs` |
+| reproduction | the three reports are reproduced by the current engine (survivors per combination, bands; see `results/README.md`) |
+| release tag | `v5.0-stage5` (proposed; the tag, not this file, identifies the archived code) |
+
+## Change control
+Version 1.0 fixes the definitions above. A change to a label, a class rule, the gate defaults, the merge-order rule,
+the prototype filter or the units is a new contract version with a changelog entry here, and old results stay
+labelled with the version they were produced under (`engine_rules_version`, `spec_sha256`). Additive display
+changes do not need a new version. Planned and explicitly not part of 1.0: the T-dependent SISSO calibration study
+and any promotion of nearest-prototype rows to verdicts.
+
+### Changelog
+* 1.0 (2026-11-24): first frozen version.

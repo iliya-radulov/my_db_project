@@ -6,14 +6,17 @@
 cff-version: 1.2.0
 message: "If you use this software or its data, please cite it as below."
 type: software
-title: "An ensemble of open binary CALPHAD assessments quantifies the uncertainty of the Nd2Fe14B feasibility threshold and surfaces inconsistencies invisible to single-assessment users"
+title: "Alloy Lab Database, Stage 5: a CALPHAD binary-ensemble screening threshold with an optional DFT + SISSO overlay (contract 1.0)"
 abstract: >
-    Code, per-combination results and diagnostic scripts for an ensemble of
-    84 combinations of open binary CALPHAD assessments (3 Fe-Nd x 7 Fe-B x
-    4 Nd-B) of the Nd-Fe-B system. Seventy-eight combinations pass a strict
-    merge-then-edge-check protocol; for these the feasibility threshold of
-    Nd2Fe14B is computed at eight temperatures between 800 and 1600 K and
-    compared with two full ternary assessments.
+    Code, frozen per-combination reports and technical note for the Stage 5
+    screening of ternary compositions. An ensemble of open binary CALPHAD
+    assessments gives the competing-binary formation-energy threshold with an
+    assessment-scatter band (Nd-Fe-B, Al-Fe-Mn and Fe-La-Si reports are
+    included); an optional Materials Project + Bartel SISSO overlay compares a
+    candidate phase or nearest prototype with that band. The meaning of every
+    number, the label set and the limitations are fixed in the contract
+    (stage_five/CONTRACT.md). Earlier release of the project: Stage 4 Track A,
+    an ensemble study of the Nd2Fe14B feasibility threshold.
 authors:
   - given-names: "Iliya Angelov"
     family-names: "Radulov"
@@ -21,8 +24,8 @@ authors:
   - name: "Claude (Anthropic)"
 
 doi: "10.5281/zenodo.24039719"
-version: v4.1-stage4_trackA
-date-released: "2026-11-07"
+version: v5.0-stage5
+date-released: "2026-11-24"      # set to the day the release is published
 license: MIT
 
 repository-code: "https://github.com/iliya-radulov/my_db_project"
@@ -31,6 +34,9 @@ url: "https://iliya-radulov.github.io/projects/active/alloy-lab-database/alloy_d
 keywords:
   - CALPHAD
   - Nd2Fe14B
+  - SISSO
+  - Materials Project
+  - screening
   - uncertainty
   - feasibility threshold
   - thermodynamic assessments
