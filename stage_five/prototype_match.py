@@ -169,5 +169,12 @@ def provenance_label(row: dict) -> str:
     formula = row.get("prototype_formula") or row.get("formula") or ""
     if mt == NEAREST_PROTOTYPE:
         dx = row.get("delta_x")
-        return f"{mid} ({formula}, {mt} Δx={dx:.3f})" if dx is not None else f"{mid} ({formula}, {mt})"
+        if dx is None:
+            return f"{mid} ({formula}, {mt})"
+        eu = row.get("delta_x_euclid")
+        if eu is None:
+            eu = (row.get("threshold_composition") or {}).get("delta_x_euclid")
+        if eu is not None and abs(eu - dx) > 0.005:       # site groups: the grouped distance hides the real one
+            return f"{mid} ({formula}, {mt} Δx={dx:.3f} (grouped), Euclid {eu:.3f})"
+        return f"{mid} ({formula}, {mt} Δx={dx:.3f})"
     return f"{mid} ({formula}, {mt})"
