@@ -1,0 +1,2636 @@
+{
+  "input_formula": "La7.1Fe82.1Si10.8",
+  "reduced_formula": "La7.1Fe82.1Si10.8",
+  "ensemble": {
+    "system": "FE-LA-SI",
+    "edge_priority": [
+      "FE-SI",
+      "FE-LA",
+      "LA-SI"
+    ],
+    "elements_priority_order": [
+      "FE",
+      "SI",
+      "LA"
+    ],
+    "target_composition": {
+      "FE": 0.821,
+      "SI": 0.108,
+      "LA": 0.071
+    },
+    "timestamp_utc": "2026-11-24T11:54:59.986739+00:00",
+    "pycalphad_version": "0.11.2",
+    "engine_rules_version": "stage5-engine/edge-rule-v2/fix1-2026-11-23",
+    "spec_sha256": "f69a41acac841fd5ab798ea469f1d666266bc870f34aa2e045d207ee9e15e669",
+    "tdb_collection_sha256": "262b28f17c5ad7185d8099d439fdcb540409c604670e2e79a11610d1bb4ac886",
+    "gates": {
+      "gate_passed": true,
+      "parameters": {
+        "min_survival_frac": 0.25,
+        "min_lineages_per_edge": 2,
+        "preregistered": false
+      },
+      "G1_survival": {
+        "survived": 16,
+        "total": 20,
+        "min_required": 5,
+        "pass": true
+      },
+      "G2_lineage_coverage": {
+        "surviving_lineages_per_edge": {
+          "FE-SI": [
+            "Cui17",
+            "Ohn12",
+            "Wit23",
+            "Yua14"
+          ],
+          "FE-LA": [
+            "Pov09",
+            "Su23"
+          ],
+          "LA-SI": [
+            "Xu20",
+            "Zho10"
+          ]
+        },
+        "min_required": 2,
+        "pass": true
+      }
+    },
+    "failure_summary": {
+      "by_stage": {
+        "edge_check": 4
+      },
+      "by_file": {
+        "FeLa-09Pov.tdb": {
+          "failed": 2,
+          "total": 10
+        },
+        "FeLa-23Su.tdb": {
+          "failed": 2,
+          "total": 10
+        },
+        "FeSi-12Ohn.tdb": {
+          "failed": 0,
+          "total": 4
+        },
+        "FeSi-14Yua.tdb": {
+          "failed": 0,
+          "total": 4
+        },
+        "FeSi-17Cui.tdb": {
+          "failed": 0,
+          "total": 4
+        },
+        "FeSi-23Wit.tdb": {
+          "failed": 0,
+          "total": 4
+        },
+        "FeSi-91Lac-LB.tdb": {
+          "failed": 4,
+          "total": 4
+        },
+        "LaSi-10Zho.tdb": {
+          "failed": 2,
+          "total": 10
+        },
+        "LaSi-20Xu.tdb": {
+          "failed": 2,
+          "total": 10
+        }
+      }
+    },
+    "ser_reference_kJ": {
+      "FE": {
+        "800.0": -27.962157,
+        "1000.0": -41.450418,
+        "1100.0": -48.695405,
+        "1200.0": -56.245121,
+        "1300.0": -64.082309,
+        "1375.0": -70.140001,
+        "1450.0": -76.345807,
+        "1600.0": -89.183105
+      },
+      "SI": {
+        "800.0": -21.47549,
+        "1000.0": -30.381703,
+        "1100.0": -35.242288,
+        "1200.0": -40.346538,
+        "1300.0": -45.677727,
+        "1375.0": -49.816415,
+        "1450.0": -54.069471,
+        "1600.0": -62.900275
+      },
+      "LA": {
+        "800.0": -53.434899,
+        "1000.0": -70.980236,
+        "1100.0": -80.225213,
+        "1200.0": -89.75445,
+        "1300.0": -99.549362,
+        "1375.0": -107.060092,
+        "1450.0": -114.705007,
+        "1600.0": -130.37525
+      }
+    },
+    "n_bound_violations": 0,
+    "threshold_distribution": {
+      "800.0": {
+        "n": 16,
+        "median_kJ": -17.7812,
+        "q25_kJ": -18.4815,
+        "q75_kJ": -16.6619,
+        "iqr_kJ": 1.8196,
+        "p05_kJ": -18.9984,
+        "p95_kJ": -16.4721,
+        "min_kJ": -18.9984,
+        "max_kJ": -16.4721,
+        "eta2_by_edge": {
+          "FE-SI": 0.0716,
+          "FE-LA": 0.0,
+          "LA-SI": 0.9281
+        },
+        "dominant_competing_assemblage": "BCC_A2+LA5SI4"
+      },
+      "1000.0": {
+        "n": 16,
+        "median_kJ": -17.2108,
+        "q25_kJ": -18.1473,
+        "q75_kJ": -15.868,
+        "iqr_kJ": 2.2793,
+        "p05_kJ": -18.6187,
+        "p95_kJ": -15.724,
+        "min_kJ": -18.6188,
+        "max_kJ": -15.7227,
+        "eta2_by_edge": {
+          "FE-SI": 0.0387,
+          "FE-LA": 0.0,
+          "LA-SI": 0.9611
+        },
+        "dominant_competing_assemblage": "BCC_A2+LA5SI4"
+      },
+      "1100.0": {
+        "n": 16,
+        "median_kJ": -17.1685,
+        "q25_kJ": -18.2178,
+        "q75_kJ": -15.7067,
+        "iqr_kJ": 2.5111,
+        "p05_kJ": -18.6702,
+        "p95_kJ": -15.5921,
+        "min_kJ": -18.6706,
+        "max_kJ": -15.5874,
+        "eta2_by_edge": {
+          "FE-SI": 0.0292,
+          "FE-LA": 0.0,
+          "LA-SI": 0.9707
+        },
+        "dominant_competing_assemblage": "BCC_A2+LA3SI2_D5A"
+      },
+      "1200.0": {
+        "n": 16,
+        "median_kJ": -17.2059,
+        "q25_kJ": -18.365,
+        "q75_kJ": -15.6197,
+        "iqr_kJ": 2.7453,
+        "p05_kJ": -18.8,
+        "p95_kJ": -15.5392,
+        "min_kJ": -18.8006,
+        "max_kJ": -15.526,
+        "eta2_by_edge": {
+          "FE-SI": 0.0222,
+          "FE-LA": 0.0,
+          "LA-SI": 0.9777
+        },
+        "dominant_competing_assemblage": "BCC_A2+LA3SI2_D5A"
+      },
+      "1300.0": {
+        "n": 16,
+        "median_kJ": -17.2904,
+        "q25_kJ": -18.5516,
+        "q75_kJ": -15.5759,
+        "iqr_kJ": 2.9757,
+        "p05_kJ": -18.9695,
+        "p95_kJ": -15.5271,
+        "min_kJ": -18.97,
+        "max_kJ": -15.5046,
+        "eta2_by_edge": {
+          "FE-SI": 0.0173,
+          "FE-LA": 0.0001,
+          "LA-SI": 0.9825
+        },
+        "dominant_competing_assemblage": "BCC_A2+LA5SI4"
+      },
+      "1375.0": {
+        "n": 16,
+        "median_kJ": -17.3786,
+        "q25_kJ": -18.708,
+        "q75_kJ": -15.5898,
+        "iqr_kJ": 3.1182,
+        "p05_kJ": -19.1147,
+        "p95_kJ": -15.5212,
+        "min_kJ": -19.1166,
+        "max_kJ": -15.5058,
+        "eta2_by_edge": {
+          "FE-SI": 0.0147,
+          "FE-LA": 0.0001,
+          "LA-SI": 0.985
+        },
+        "dominant_competing_assemblage": "BCC_A2+LA5SI4"
+      },
+      "1450.0": {
+        "n": 16,
+        "median_kJ": -17.5524,
+        "q25_kJ": -18.876,
+        "q75_kJ": -15.7772,
+        "iqr_kJ": 3.0989,
+        "p05_kJ": -19.2686,
+        "p95_kJ": -15.664,
+        "min_kJ": -19.2714,
+        "max_kJ": -15.6168,
+        "eta2_by_edge": {
+          "FE-SI": 0.015,
+          "FE-LA": 0.0,
+          "LA-SI": 0.9845
+        },
+        "dominant_competing_assemblage": "BCC_A2+LA5SI4"
+      },
+      "1600.0": {
+        "n": 16,
+        "median_kJ": -18.1241,
+        "q25_kJ": -19.235,
+        "q75_kJ": -16.6057,
+        "iqr_kJ": 2.6293,
+        "p05_kJ": -19.5953,
+        "p95_kJ": -16.4032,
+        "min_kJ": -19.601,
+        "max_kJ": -16.265,
+        "eta2_by_edge": {
+          "FE-SI": 0.0168,
+          "FE-LA": 0.0012,
+          "LA-SI": 0.9798
+        },
+        "dominant_competing_assemblage": "BCC_A2+LA5SI4"
+      }
+    },
+    "audit_log": [
+      {
+        "file": "FeLa-23Su.tdb",
+        "pair": "FE-LA",
+        "status": "accepted",
+        "lineage": "Su23"
+      },
+      {
+        "file": "FeLa-09Pov.tdb",
+        "pair": "FE-LA",
+        "status": "accepted",
+        "lineage": "Pov09"
+      },
+      {
+        "file": "FeSi-23Wit.tdb",
+        "pair": "FE-SI",
+        "status": "accepted",
+        "lineage": "Wit23"
+      },
+      {
+        "file": "FeSi-17Cui.tdb",
+        "pair": "FE-SI",
+        "status": "accepted",
+        "lineage": "Cui17"
+      },
+      {
+        "file": "FeSi-14Yua.tdb",
+        "pair": "FE-SI",
+        "status": "accepted",
+        "lineage": "Yua14"
+      },
+      {
+        "file": "FeSi-12Ohn.tdb",
+        "pair": "FE-SI",
+        "status": "accepted",
+        "lineage": "Ohn12"
+      },
+      {
+        "file": "FeSi-91Lac-LB.tdb",
+        "pair": "FE-SI",
+        "status": "accepted",
+        "lineage": "Lac91"
+      },
+      {
+        "file": "LaSi-20Xu.tdb",
+        "pair": "LA-SI",
+        "status": "accepted",
+        "lineage": "Xu20"
+      },
+      {
+        "file": "LaSi-10Zho.tdb",
+        "pair": "LA-SI",
+        "status": "accepted",
+        "lineage": "Zho10"
+      }
+    ],
+    "combinations": [
+      {
+        "combo_id": "FeSi-12Ohn___FeLa-09Pov___LaSi-10Zho",
+        "files": [
+          "FeSi-12Ohn.tdb",
+          "FeLa-09Pov.tdb",
+          "LaSi-10Zho.tdb"
+        ],
+        "lineages": [
+          "Ohn12",
+          "Pov09",
+          "Zho10"
+        ],
+        "survived": true,
+        "failure_stage": null,
+        "failure_reason": null,
+        "thresholds_kJ": {
+          "800.0": -18.9984,
+          "1000.0": -18.6187,
+          "1100.0": -18.6701,
+          "1200.0": -18.7998,
+          "1300.0": -18.97,
+          "1375.0": -19.114,
+          "1450.0": -19.2676,
+          "1600.0": -19.5934
+        },
+        "assemblages": {
+          "800.0": [
+            "BCC_A2",
+            "LA5SI4"
+          ],
+          "1000.0": [
+            "BCC_A2",
+            "LA5SI4"
+          ],
+          "1100.0": [
+            "A2_BCC",
+            "LA5SI4"
+          ],
+          "1200.0": [
+            "BCC_A2",
+            "LA5SI4"
+          ],
+          "1300.0": [
+            "BCC_A2",
+            "LA5SI4"
+          ],
+          "1375.0": [
+            "BCC_A2",
+            "LA5SI4"
+          ],
+          "1450.0": [
+            "BCC_A2",
+            "LA5SI4"
+          ],
+          "1600.0": [
+            "BCC_A2",
+            "LA5SI4"
+          ]
+        },
+        "merge_priority": [
+          "FeSi-12Ohn.tdb",
+          "FeLa-09Pov.tdb",
+          "LaSi-10Zho.tdb"
+        ],
+        "merge_conflicts": [
+          "PHASE DHCP: site ratios (1.0,) in LaSi-10Zho.tdb differ from (1.0, 0.5) in FeLa-09Pov.tdb \u2014 phase from LaSi-10Zho.tdb ignored"
+        ],
+        "n_merge_conflicts": 1,
+        "suppressed_phases": [],
+        "suppress_absent": [],
+        "bound_violations": [],
+        "runtime_s": 15.56
+      },
+      {
+        "combo_id": "FeSi-12Ohn___FeLa-09Pov___LaSi-20Xu",
+        "files": [
+          "FeSi-12Ohn.tdb",
+          "FeLa-09Pov.tdb",
+          "LaSi-20Xu.tdb"
+        ],
+        "lineages": [
+          "Ohn12",
+          "Pov09",
+          "Xu20"
+        ],
+        "survived": true,
+        "failure_stage": null,
+        "failure_reason": null,
+        "thresholds_kJ": {
+          "800.0": -17.1908,
+          "1000.0": -16.357,
+          "1100.0": -16.1797,
+          "1200.0": -16.0765,
+          "1300.0": -16.0175,
+          "1375.0": -15.9979,
+          "1450.0": -16.1995,
+          "1600.0": -17.0269
+        },
+        "assemblages": {
+          "800.0": [
+            "BCC_A2",
+            "LA3SI2_D5A"
+          ],
+          "1000.0": [
+            "BCC_A2",
+            "LA3SI2_D5A"
+          ],
+          "1100.0": [
+            "BCC_A2",
+            "LA3SI2_D5A"
+          ],
+          "1200.0": [
+            "BCC_A2",
+            "LA3SI2_D5A"
+          ],
+          "1300.0": [
+            "BCC_A2",
+            "LA3SI2_D5A",
+            "LA5SI3_D8L"
+          ],
+          "1375.0": [
+            "BCC_A2",
+            "LA5SI3_D8L",
+            "LIQUID"
+          ],
+          "1450.0": [
+            "BCC_A2",
+            "LIQUID"
+          ],
+          "1600.0": [
+            "BCC_A2",
+            "LIQUID"
+          ]
+        },
+        "merge_priority": [
+          "FeSi-12Ohn.tdb",
+          "FeLa-09Pov.tdb",
+          "LaSi-20Xu.tdb"
+        ],
+        "merge_conflicts": [
+          "PHASE DHCP: site ratios (1.0,) in LaSi-20Xu.tdb differ from (1.0, 0.5) in FeLa-09Pov.tdb \u2014 phase from LaSi-20Xu.tdb ignored"
+        ],
+        "n_merge_conflicts": 1,
+        "suppressed_phases": [],
+        "suppress_absent": [],
+        "bound_violations": [],
+        "runtime_s": 15.4
+      },
+      {
+        "combo_id": "FeSi-12Ohn___FeLa-23Su___LaSi-10Zho",
+        "files": [
+          "FeSi-12Ohn.tdb",
+          "FeLa-23Su.tdb",
+          "LaSi-10Zho.tdb"
+        ],
+        "lineages": [
+          "Ohn12",
+          "Su23",
+          "Zho10"
+        ],
+        "survived": true,
+        "failure_stage": null,
+        "failure_reason": null,
+        "thresholds_kJ": {
+          "800.0": -18.9984,
+          "1000.0": -18.6188,
+          "1100.0": -18.6706,
+          "1200.0": -18.8006,
+          "1300.0": -18.9694,
+          "1375.0": -19.1166,
+          "1450.0": -19.2714,
+          "1600.0": -19.601
+        },
+        "assemblages": {
+          "800.0": [
+            "BCC_A2",
+            "LA5SI4"
+          ],
+          "1000.0": [
+            "BCC_A2",
+            "LA5SI4"
+          ],
+          "1100.0": [
+            "BCC_A2",
+            "LA5SI4"
+          ],
+          "1200.0": [
+            "BCC_A2",
+            "LA5SI4"
+          ],
+          "1300.0": [
+            "A2_BCC",
+            "LA5SI4"
+          ],
+          "1375.0": [
+            "BCC_A2",
+            "LA5SI4"
+          ],
+          "1450.0": [
+            "BCC_A2",
+            "LA5SI4"
+          ],
+          "1600.0": [
+            "BCC_A2",
+            "LA5SI4"
+          ]
+        },
+        "merge_priority": [
+          "FeSi-12Ohn.tdb",
+          "FeLa-23Su.tdb",
+          "LaSi-10Zho.tdb"
+        ],
+        "merge_conflicts": [
+          "PHASE DHCP: site ratios (1.0,) in LaSi-10Zho.tdb differ from (1.0, 0.5) in FeLa-23Su.tdb \u2014 phase from LaSi-10Zho.tdb ignored"
+        ],
+        "n_merge_conflicts": 1,
+        "suppressed_phases": [],
+        "suppress_absent": [],
+        "bound_violations": [],
+        "runtime_s": 15.38
+      },
+      {
+        "combo_id": "FeSi-12Ohn___FeLa-23Su___LaSi-20Xu",
+        "files": [
+          "FeSi-12Ohn.tdb",
+          "FeLa-23Su.tdb",
+          "LaSi-20Xu.tdb"
+        ],
+        "lineages": [
+          "Ohn12",
+          "Su23",
+          "Xu20"
+        ],
+        "survived": true,
+        "failure_stage": null,
+        "failure_reason": null,
+        "thresholds_kJ": {
+          "800.0": -17.1909,
+          "1000.0": -16.3596,
+          "1100.0": -16.1885,
+          "1200.0": -16.0988,
+          "1300.0": -16.0626,
+          "1375.0": -16.0686,
+          "1450.0": -16.2366,
+          "1600.0": -16.8277
+        },
+        "assemblages": {
+          "800.0": [
+            "BCC_A2",
+            "LA3SI2_D5A"
+          ],
+          "1000.0": [
+            "BCC_A2",
+            "LA3SI2_D5A"
+          ],
+          "1100.0": [
+            "BCC_A2",
+            "LA3SI2_D5A"
+          ],
+          "1200.0": [
+            "BCC_A2",
+            "LA3SI2_D5A"
+          ],
+          "1300.0": [
+            "BCC_A2",
+            "LA3SI2_D5A",
+            "LA5SI3_D8L"
+          ],
+          "1375.0": [
+            "BCC_A2",
+            "LA5SI3_D8L",
+            "LIQUID"
+          ],
+          "1450.0": [
+            "BCC_A2",
+            "LIQUID"
+          ],
+          "1600.0": [
+            "BCC_A2",
+            "LIQUID"
+          ]
+        },
+        "merge_priority": [
+          "FeSi-12Ohn.tdb",
+          "FeLa-23Su.tdb",
+          "LaSi-20Xu.tdb"
+        ],
+        "merge_conflicts": [
+          "PHASE DHCP: site ratios (1.0,) in LaSi-20Xu.tdb differ from (1.0, 0.5) in FeLa-23Su.tdb \u2014 phase from LaSi-20Xu.tdb ignored"
+        ],
+        "n_merge_conflicts": 1,
+        "suppressed_phases": [],
+        "suppress_absent": [],
+        "bound_violations": [],
+        "runtime_s": 15.35
+      },
+      {
+        "combo_id": "FeSi-14Yua___FeLa-09Pov___LaSi-10Zho",
+        "files": [
+          "FeSi-14Yua.tdb",
+          "FeLa-09Pov.tdb",
+          "LaSi-10Zho.tdb"
+        ],
+        "lineages": [
+          "Yua14",
+          "Pov09",
+          "Zho10"
+        ],
+        "survived": true,
+        "failure_stage": null,
+        "failure_reason": null,
+        "thresholds_kJ": {
+          "800.0": -18.5513,
+          "1000.0": -18.1991,
+          "1100.0": -18.2605,
+          "1200.0": -18.3984,
+          "1300.0": -18.5764,
+          "1375.0": -18.726,
+          "1450.0": -18.8849,
+          "1600.0": -19.2212
+        },
+        "assemblages": {
+          "800.0": [
+            "BCC_A2",
+            "LA5SI4"
+          ],
+          "1000.0": [
+            "BCC_A2",
+            "LA5SI4"
+          ],
+          "1100.0": [
+            "BCC_A2",
+            "LA5SI4"
+          ],
+          "1200.0": [
+            "BCC_A2",
+            "LA5SI4"
+          ],
+          "1300.0": [
+            "BCC_A2",
+            "LA5SI4"
+          ],
+          "1375.0": [
+            "BCC_A2",
+            "LA5SI4"
+          ],
+          "1450.0": [
+            "BCC_A2",
+            "LA5SI4"
+          ],
+          "1600.0": [
+            "BCC_A2",
+            "LA5SI4"
+          ]
+        },
+        "merge_priority": [
+          "FeSi-14Yua.tdb",
+          "FeLa-09Pov.tdb",
+          "LaSi-10Zho.tdb"
+        ],
+        "merge_conflicts": [
+          "PHASE DHCP: site ratios (1.0,) in LaSi-10Zho.tdb differ from (1.0, 0.5) in FeLa-09Pov.tdb \u2014 phase from LaSi-10Zho.tdb ignored"
+        ],
+        "n_merge_conflicts": 1,
+        "suppressed_phases": [],
+        "suppress_absent": [],
+        "bound_violations": [],
+        "runtime_s": 6.31
+      },
+      {
+        "combo_id": "FeSi-14Yua___FeLa-09Pov___LaSi-20Xu",
+        "files": [
+          "FeSi-14Yua.tdb",
+          "FeLa-09Pov.tdb",
+          "LaSi-20Xu.tdb"
+        ],
+        "lineages": [
+          "Yua14",
+          "Pov09",
+          "Xu20"
+        ],
+        "survived": true,
+        "failure_stage": null,
+        "failure_reason": null,
+        "thresholds_kJ": {
+          "800.0": -16.6911,
+          "1000.0": -15.889,
+          "1100.0": -15.7227,
+          "1200.0": -15.6289,
+          "1300.0": -15.5739,
+          "1375.0": -15.5491,
+          "1450.0": -15.6168,
+          "1600.0": -16.4526
+        },
+        "assemblages": {
+          "800.0": [
+            "BCC_A2",
+            "LA3SI2_D5A"
+          ],
+          "1000.0": [
+            "BCC_A2",
+            "LA3SI2_D5A"
+          ],
+          "1100.0": [
+            "BCC_A2",
+            "LA3SI2_D5A"
+          ],
+          "1200.0": [
+            "BCC_A2",
+            "LA3SI2_D5A"
+          ],
+          "1300.0": [
+            "BCC_A2",
+            "LA3SI2_D5A"
+          ],
+          "1375.0": [
+            "BCC_A2",
+            "LA3SI2_D5A"
+          ],
+          "1450.0": [
+            "BCC_A2",
+            "LIQUID"
+          ],
+          "1600.0": [
+            "BCC_A2",
+            "LIQUID"
+          ]
+        },
+        "merge_priority": [
+          "FeSi-14Yua.tdb",
+          "FeLa-09Pov.tdb",
+          "LaSi-20Xu.tdb"
+        ],
+        "merge_conflicts": [
+          "PHASE DHCP: site ratios (1.0,) in LaSi-20Xu.tdb differ from (1.0, 0.5) in FeLa-09Pov.tdb \u2014 phase from LaSi-20Xu.tdb ignored"
+        ],
+        "n_merge_conflicts": 1,
+        "suppressed_phases": [],
+        "suppress_absent": [],
+        "bound_violations": [],
+        "runtime_s": 6.22
+      },
+      {
+        "combo_id": "FeSi-14Yua___FeLa-23Su___LaSi-10Zho",
+        "files": [
+          "FeSi-14Yua.tdb",
+          "FeLa-23Su.tdb",
+          "LaSi-10Zho.tdb"
+        ],
+        "lineages": [
+          "Yua14",
+          "Su23",
+          "Zho10"
+        ],
+        "survived": true,
+        "failure_stage": null,
+        "failure_reason": null,
+        "thresholds_kJ": {
+          "800.0": -18.5513,
+          "1000.0": -18.1992,
+          "1100.0": -18.2607,
+          "1200.0": -18.399,
+          "1300.0": -18.5777,
+          "1375.0": -18.7281,
+          "1450.0": -18.8881,
+          "1600.0": -19.2277
+        },
+        "assemblages": {
+          "800.0": [
+            "BCC_A2",
+            "LA5SI4"
+          ],
+          "1000.0": [
+            "BCC_A2",
+            "LA5SI4"
+          ],
+          "1100.0": [
+            "BCC_A2",
+            "LA5SI4"
+          ],
+          "1200.0": [
+            "BCC_A2",
+            "LA5SI4"
+          ],
+          "1300.0": [
+            "BCC_A2",
+            "LA5SI4"
+          ],
+          "1375.0": [
+            "BCC_A2",
+            "LA5SI4"
+          ],
+          "1450.0": [
+            "BCC_A2",
+            "LA5SI4"
+          ],
+          "1600.0": [
+            "BCC_A2",
+            "LA5SI4"
+          ]
+        },
+        "merge_priority": [
+          "FeSi-14Yua.tdb",
+          "FeLa-23Su.tdb",
+          "LaSi-10Zho.tdb"
+        ],
+        "merge_conflicts": [
+          "PHASE DHCP: site ratios (1.0,) in LaSi-10Zho.tdb differ from (1.0, 0.5) in FeLa-23Su.tdb \u2014 phase from LaSi-10Zho.tdb ignored"
+        ],
+        "n_merge_conflicts": 1,
+        "suppressed_phases": [],
+        "suppress_absent": [],
+        "bound_violations": [],
+        "runtime_s": 6.25
+      },
+      {
+        "combo_id": "FeSi-14Yua___FeLa-23Su___LaSi-20Xu",
+        "files": [
+          "FeSi-14Yua.tdb",
+          "FeLa-23Su.tdb",
+          "LaSi-20Xu.tdb"
+        ],
+        "lineages": [
+          "Yua14",
+          "Su23",
+          "Xu20"
+        ],
+        "survived": true,
+        "failure_stage": null,
+        "failure_reason": null,
+        "thresholds_kJ": {
+          "800.0": -16.6911,
+          "1000.0": -15.8911,
+          "1100.0": -15.7302,
+          "1200.0": -15.6484,
+          "1300.0": -15.617,
+          "1375.0": -15.6211,
+          "1450.0": -15.6797,
+          "1600.0": -16.265
+        },
+        "assemblages": {
+          "800.0": [
+            "BCC_A2",
+            "LA3SI2_D5A"
+          ],
+          "1000.0": [
+            "BCC_A2",
+            "LA3SI2_D5A"
+          ],
+          "1100.0": [
+            "BCC_A2",
+            "LA3SI2_D5A"
+          ],
+          "1200.0": [
+            "BCC_A2",
+            "LA3SI2_D5A"
+          ],
+          "1300.0": [
+            "BCC_A2",
+            "LA3SI2_D5A"
+          ],
+          "1375.0": [
+            "BCC_A2",
+            "LA3SI2_D5A"
+          ],
+          "1450.0": [
+            "BCC_A2",
+            "LA3SI2_D5A",
+            "LIQUID"
+          ],
+          "1600.0": [
+            "BCC_A2",
+            "LIQUID"
+          ]
+        },
+        "merge_priority": [
+          "FeSi-14Yua.tdb",
+          "FeLa-23Su.tdb",
+          "LaSi-20Xu.tdb"
+        ],
+        "merge_conflicts": [
+          "PHASE DHCP: site ratios (1.0,) in LaSi-20Xu.tdb differ from (1.0, 0.5) in FeLa-23Su.tdb \u2014 phase from LaSi-20Xu.tdb ignored"
+        ],
+        "n_merge_conflicts": 1,
+        "suppressed_phases": [],
+        "suppress_absent": [],
+        "bound_violations": [],
+        "runtime_s": 6.21
+      },
+      {
+        "combo_id": "FeSi-17Cui___FeLa-09Pov___LaSi-10Zho",
+        "files": [
+          "FeSi-17Cui.tdb",
+          "FeLa-09Pov.tdb",
+          "LaSi-10Zho.tdb"
+        ],
+        "lineages": [
+          "Cui17",
+          "Pov09",
+          "Zho10"
+        ],
+        "survived": true,
+        "failure_stage": null,
+        "failure_reason": null,
+        "thresholds_kJ": {
+          "800.0": -18.4582,
+          "1000.0": -18.13,
+          "1100.0": -18.2034,
+          "1200.0": -18.3531,
+          "1300.0": -18.5434,
+          "1375.0": -18.702,
+          "1450.0": -18.869,
+          "1600.0": -19.2243
+        },
+        "assemblages": {
+          "800.0": [
+            "BCC_A2",
+            "LA5SI4"
+          ],
+          "1000.0": [
+            "BCC_A2",
+            "LA5SI4"
+          ],
+          "1100.0": [
+            "BCC_A2",
+            "LA5SI4"
+          ],
+          "1200.0": [
+            "A2_BCC",
+            "LA5SI4"
+          ],
+          "1300.0": [
+            "BCC_A2",
+            "LA5SI4"
+          ],
+          "1375.0": [
+            "BCC_A2",
+            "LA5SI4"
+          ],
+          "1450.0": [
+            "A2_BCC",
+            "LA5SI4"
+          ],
+          "1600.0": [
+            "BCC_A2",
+            "LA5SI4"
+          ]
+        },
+        "merge_priority": [
+          "FeSi-17Cui.tdb",
+          "FeLa-09Pov.tdb",
+          "LaSi-10Zho.tdb"
+        ],
+        "merge_conflicts": [
+          "PHASE DHCP: site ratios (1.0,) in LaSi-10Zho.tdb differ from (1.0, 0.5) in FeLa-09Pov.tdb \u2014 phase from LaSi-10Zho.tdb ignored"
+        ],
+        "n_merge_conflicts": 1,
+        "suppressed_phases": [],
+        "suppress_absent": [],
+        "bound_violations": [],
+        "runtime_s": 15.51
+      },
+      {
+        "combo_id": "FeSi-17Cui___FeLa-09Pov___LaSi-20Xu",
+        "files": [
+          "FeSi-17Cui.tdb",
+          "FeLa-09Pov.tdb",
+          "LaSi-20Xu.tdb"
+        ],
+        "lineages": [
+          "Cui17",
+          "Pov09",
+          "Xu20"
+        ],
+        "survived": true,
+        "failure_stage": null,
+        "failure_reason": null,
+        "thresholds_kJ": {
+          "800.0": -16.5741,
+          "1000.0": -15.803,
+          "1100.0": -15.6522,
+          "1200.0": -15.5738,
+          "1300.0": -15.5346,
+          "1375.0": -15.5263,
+          "1450.0": -15.7849,
+          "1600.0": -16.6533
+        },
+        "assemblages": {
+          "800.0": [
+            "BCC_A2",
+            "LA3SI2_D5A"
+          ],
+          "1000.0": [
+            "BCC_A2",
+            "LA3SI2_D5A"
+          ],
+          "1100.0": [
+            "BCC_A2",
+            "LA3SI2_D5A"
+          ],
+          "1200.0": [
+            "BCC_A2",
+            "LA3SI2_D5A"
+          ],
+          "1300.0": [
+            "BCC_A2",
+            "LA3SI2_D5A"
+          ],
+          "1375.0": [
+            "BCC_A2",
+            "LA3SI2_D5A",
+            "LIQUID"
+          ],
+          "1450.0": [
+            "BCC_A2",
+            "LIQUID"
+          ],
+          "1600.0": [
+            "BCC_A2",
+            "LIQUID"
+          ]
+        },
+        "merge_priority": [
+          "FeSi-17Cui.tdb",
+          "FeLa-09Pov.tdb",
+          "LaSi-20Xu.tdb"
+        ],
+        "merge_conflicts": [
+          "PHASE DHCP: site ratios (1.0,) in LaSi-20Xu.tdb differ from (1.0, 0.5) in FeLa-09Pov.tdb \u2014 phase from LaSi-20Xu.tdb ignored"
+        ],
+        "n_merge_conflicts": 1,
+        "suppressed_phases": [],
+        "suppress_absent": [],
+        "bound_violations": [],
+        "runtime_s": 15.42
+      },
+      {
+        "combo_id": "FeSi-17Cui___FeLa-23Su___LaSi-10Zho",
+        "files": [
+          "FeSi-17Cui.tdb",
+          "FeLa-23Su.tdb",
+          "LaSi-10Zho.tdb"
+        ],
+        "lineages": [
+          "Cui17",
+          "Su23",
+          "Zho10"
+        ],
+        "survived": true,
+        "failure_stage": null,
+        "failure_reason": null,
+        "thresholds_kJ": {
+          "800.0": -18.4582,
+          "1000.0": -18.13,
+          "1100.0": -18.2036,
+          "1200.0": -18.3539,
+          "1300.0": -18.5429,
+          "1375.0": -18.7014,
+          "1450.0": -18.8731,
+          "1600.0": -19.2311
+        },
+        "assemblages": {
+          "800.0": [
+            "BCC_A2",
+            "LA5SI4"
+          ],
+          "1000.0": [
+            "BCC_A2",
+            "LA5SI4"
+          ],
+          "1100.0": [
+            "BCC_A2",
+            "LA5SI4"
+          ],
+          "1200.0": [
+            "BCC_A2",
+            "LA5SI4"
+          ],
+          "1300.0": [
+            "A2_BCC",
+            "LA5SI4"
+          ],
+          "1375.0": [
+            "A2_BCC",
+            "LA5SI4"
+          ],
+          "1450.0": [
+            "BCC_A2",
+            "LA5SI4"
+          ],
+          "1600.0": [
+            "BCC_A2",
+            "LA5SI4"
+          ]
+        },
+        "merge_priority": [
+          "FeSi-17Cui.tdb",
+          "FeLa-23Su.tdb",
+          "LaSi-10Zho.tdb"
+        ],
+        "merge_conflicts": [
+          "PHASE DHCP: site ratios (1.0,) in LaSi-10Zho.tdb differ from (1.0, 0.5) in FeLa-23Su.tdb \u2014 phase from LaSi-10Zho.tdb ignored"
+        ],
+        "n_merge_conflicts": 1,
+        "suppressed_phases": [],
+        "suppress_absent": [],
+        "bound_violations": [],
+        "runtime_s": 15.63
+      },
+      {
+        "combo_id": "FeSi-17Cui___FeLa-23Su___LaSi-20Xu",
+        "files": [
+          "FeSi-17Cui.tdb",
+          "FeLa-23Su.tdb",
+          "LaSi-20Xu.tdb"
+        ],
+        "lineages": [
+          "Cui17",
+          "Su23",
+          "Xu20"
+        ],
+        "survived": true,
+        "failure_stage": null,
+        "failure_reason": null,
+        "thresholds_kJ": {
+          "800.0": -16.5741,
+          "1000.0": -15.8049,
+          "1100.0": -15.6589,
+          "1200.0": -15.5922,
+          "1300.0": -15.5766,
+          "1375.0": -15.5941,
+          "1450.0": -15.7848,
+          "1600.0": -16.4492
+        },
+        "assemblages": {
+          "800.0": [
+            "BCC_A2",
+            "LA3SI2_D5A"
+          ],
+          "1000.0": [
+            "BCC_A2",
+            "LA3SI2_D5A"
+          ],
+          "1100.0": [
+            "BCC_A2",
+            "LA3SI2_D5A"
+          ],
+          "1200.0": [
+            "BCC_A2",
+            "LA3SI2_D5A"
+          ],
+          "1300.0": [
+            "BCC_A2",
+            "LA3SI2_D5A"
+          ],
+          "1375.0": [
+            "BCC_A2",
+            "LA3SI2_D5A"
+          ],
+          "1450.0": [
+            "BCC_A2",
+            "LIQUID"
+          ],
+          "1600.0": [
+            "BCC_A2",
+            "LIQUID"
+          ]
+        },
+        "merge_priority": [
+          "FeSi-17Cui.tdb",
+          "FeLa-23Su.tdb",
+          "LaSi-20Xu.tdb"
+        ],
+        "merge_conflicts": [
+          "PHASE DHCP: site ratios (1.0,) in LaSi-20Xu.tdb differ from (1.0, 0.5) in FeLa-23Su.tdb \u2014 phase from LaSi-20Xu.tdb ignored"
+        ],
+        "n_merge_conflicts": 1,
+        "suppressed_phases": [],
+        "suppress_absent": [],
+        "bound_violations": [],
+        "runtime_s": 15.49
+      },
+      {
+        "combo_id": "FeSi-23Wit___FeLa-09Pov___LaSi-10Zho",
+        "files": [
+          "FeSi-23Wit.tdb",
+          "FeLa-09Pov.tdb",
+          "LaSi-10Zho.tdb"
+        ],
+        "lineages": [
+          "Wit23",
+          "Pov09",
+          "Zho10"
+        ],
+        "survived": true,
+        "failure_stage": null,
+        "failure_reason": null,
+        "thresholds_kJ": {
+          "800.0": -18.3716,
+          "1000.0": -18.0619,
+          "1100.0": -18.1485,
+          "1200.0": -18.313,
+          "1300.0": -18.5182,
+          "1375.0": -18.6885,
+          "1450.0": -18.8682,
+          "1600.0": -19.2466
+        },
+        "assemblages": {
+          "800.0": [
+            "BCC_A2",
+            "LA5SI4"
+          ],
+          "1000.0": [
+            "BCC_A2",
+            "LA5SI4"
+          ],
+          "1100.0": [
+            "BCC_A2",
+            "LA5SI4"
+          ],
+          "1200.0": [
+            "BCC_A2",
+            "LA5SI4"
+          ],
+          "1300.0": [
+            "BCC_A2",
+            "LA5SI4"
+          ],
+          "1375.0": [
+            "BCC_A2",
+            "LA5SI4"
+          ],
+          "1450.0": [
+            "BCC_A2",
+            "LA5SI4"
+          ],
+          "1600.0": [
+            "BCC_A2",
+            "LA5SI4"
+          ]
+        },
+        "merge_priority": [
+          "FeSi-23Wit.tdb",
+          "FeLa-09Pov.tdb",
+          "LaSi-10Zho.tdb"
+        ],
+        "merge_conflicts": [
+          "PHASE DHCP: site ratios (1.0,) in LaSi-10Zho.tdb differ from (1.0, 0.5) in FeLa-09Pov.tdb \u2014 phase from LaSi-10Zho.tdb ignored"
+        ],
+        "n_merge_conflicts": 1,
+        "suppressed_phases": [],
+        "suppress_absent": [],
+        "bound_violations": [],
+        "runtime_s": 7.92
+      },
+      {
+        "combo_id": "FeSi-23Wit___FeLa-09Pov___LaSi-20Xu",
+        "files": [
+          "FeSi-23Wit.tdb",
+          "FeLa-09Pov.tdb",
+          "LaSi-20Xu.tdb"
+        ],
+        "lineages": [
+          "Wit23",
+          "Pov09",
+          "Xu20"
+        ],
+        "survived": true,
+        "failure_stage": null,
+        "failure_reason": null,
+        "thresholds_kJ": {
+          "800.0": -16.4721,
+          "1000.0": -15.7227,
+          "1100.0": -15.5874,
+          "1200.0": -15.526,
+          "1300.0": -15.5046,
+          "1375.0": -15.5058,
+          "1450.0": -15.7542,
+          "1600.0": -16.6557
+        },
+        "assemblages": {
+          "800.0": [
+            "BCC_A2",
+            "LA3SI2_D5A",
+            "LA5SI4"
+          ],
+          "1000.0": [
+            "BCC_A2",
+            "LA3SI2_D5A"
+          ],
+          "1100.0": [
+            "BCC_A2",
+            "LA3SI2_D5A"
+          ],
+          "1200.0": [
+            "BCC_A2",
+            "LA3SI2_D5A"
+          ],
+          "1300.0": [
+            "BCC_A2",
+            "LA3SI2_D5A"
+          ],
+          "1375.0": [
+            "BCC_A2",
+            "LA3SI2_D5A",
+            "LIQUID"
+          ],
+          "1450.0": [
+            "BCC_A2",
+            "LIQUID"
+          ],
+          "1600.0": [
+            "BCC_A2",
+            "LIQUID"
+          ]
+        },
+        "merge_priority": [
+          "FeSi-23Wit.tdb",
+          "FeLa-09Pov.tdb",
+          "LaSi-20Xu.tdb"
+        ],
+        "merge_conflicts": [
+          "PHASE DHCP: site ratios (1.0,) in LaSi-20Xu.tdb differ from (1.0, 0.5) in FeLa-09Pov.tdb \u2014 phase from LaSi-20Xu.tdb ignored"
+        ],
+        "n_merge_conflicts": 1,
+        "suppressed_phases": [],
+        "suppress_absent": [],
+        "bound_violations": [],
+        "runtime_s": 7.87
+      },
+      {
+        "combo_id": "FeSi-23Wit___FeLa-23Su___LaSi-10Zho",
+        "files": [
+          "FeSi-23Wit.tdb",
+          "FeLa-23Su.tdb",
+          "LaSi-10Zho.tdb"
+        ],
+        "lineages": [
+          "Wit23",
+          "Su23",
+          "Zho10"
+        ],
+        "survived": true,
+        "failure_stage": null,
+        "failure_reason": null,
+        "thresholds_kJ": {
+          "800.0": -18.3716,
+          "1000.0": -18.0619,
+          "1100.0": -18.1487,
+          "1200.0": -18.3135,
+          "1300.0": -18.5194,
+          "1375.0": -18.6905,
+          "1450.0": -18.8714,
+          "1600.0": -19.2535
+        },
+        "assemblages": {
+          "800.0": [
+            "BCC_A2",
+            "LA5SI4"
+          ],
+          "1000.0": [
+            "BCC_A2",
+            "LA5SI4"
+          ],
+          "1100.0": [
+            "BCC_A2",
+            "LA5SI4"
+          ],
+          "1200.0": [
+            "BCC_A2",
+            "LA5SI4"
+          ],
+          "1300.0": [
+            "BCC_A2",
+            "LA5SI4"
+          ],
+          "1375.0": [
+            "BCC_A2",
+            "LA5SI4"
+          ],
+          "1450.0": [
+            "BCC_A2",
+            "LA5SI4"
+          ],
+          "1600.0": [
+            "BCC_A2",
+            "LA5SI4"
+          ]
+        },
+        "merge_priority": [
+          "FeSi-23Wit.tdb",
+          "FeLa-23Su.tdb",
+          "LaSi-10Zho.tdb"
+        ],
+        "merge_conflicts": [
+          "PHASE DHCP: site ratios (1.0,) in LaSi-10Zho.tdb differ from (1.0, 0.5) in FeLa-23Su.tdb \u2014 phase from LaSi-10Zho.tdb ignored"
+        ],
+        "n_merge_conflicts": 1,
+        "suppressed_phases": [],
+        "suppress_absent": [],
+        "bound_violations": [],
+        "runtime_s": 7.98
+      },
+      {
+        "combo_id": "FeSi-23Wit___FeLa-23Su___LaSi-20Xu",
+        "files": [
+          "FeSi-23Wit.tdb",
+          "FeLa-23Su.tdb",
+          "LaSi-20Xu.tdb"
+        ],
+        "lineages": [
+          "Wit23",
+          "Su23",
+          "Xu20"
+        ],
+        "survived": true,
+        "failure_stage": null,
+        "failure_reason": null,
+        "thresholds_kJ": {
+          "800.0": -16.4721,
+          "1000.0": -15.7244,
+          "1100.0": -15.5937,
+          "1200.0": -15.5436,
+          "1300.0": -15.5455,
+          "1375.0": -15.5768,
+          "1450.0": -15.747,
+          "1600.0": -16.463
+        },
+        "assemblages": {
+          "800.0": [
+            "BCC_A2",
+            "LA3SI2_D5A",
+            "LA5SI4"
+          ],
+          "1000.0": [
+            "BCC_A2",
+            "LA3SI2_D5A"
+          ],
+          "1100.0": [
+            "BCC_A2",
+            "LA3SI2_D5A"
+          ],
+          "1200.0": [
+            "BCC_A2",
+            "LA3SI2_D5A"
+          ],
+          "1300.0": [
+            "BCC_A2",
+            "LA3SI2_D5A"
+          ],
+          "1375.0": [
+            "BCC_A2",
+            "LA3SI2_D5A"
+          ],
+          "1450.0": [
+            "BCC_A2",
+            "LIQUID"
+          ],
+          "1600.0": [
+            "BCC_A2",
+            "LIQUID"
+          ]
+        },
+        "merge_priority": [
+          "FeSi-23Wit.tdb",
+          "FeLa-23Su.tdb",
+          "LaSi-20Xu.tdb"
+        ],
+        "merge_conflicts": [
+          "PHASE DHCP: site ratios (1.0,) in LaSi-20Xu.tdb differ from (1.0, 0.5) in FeLa-23Su.tdb \u2014 phase from LaSi-20Xu.tdb ignored"
+        ],
+        "n_merge_conflicts": 1,
+        "suppressed_phases": [],
+        "suppress_absent": [],
+        "bound_violations": [],
+        "runtime_s": 7.92
+      },
+      {
+        "combo_id": "FeSi-91Lac-LB___FeLa-09Pov___LaSi-10Zho",
+        "files": [
+          "FeSi-91Lac-LB.tdb",
+          "FeLa-09Pov.tdb",
+          "LaSi-10Zho.tdb"
+        ],
+        "lineages": [
+          "Lac91",
+          "Pov09",
+          "Zho10"
+        ],
+        "survived": false,
+        "failure_stage": "edge_check",
+        "failure_reason": "FE-SI (FeSi-91Lac-LB.tdb): 1 mismatches, 0 unverified",
+        "thresholds_kJ": {},
+        "assemblages": {},
+        "merge_priority": [
+          "FeSi-91Lac-LB.tdb",
+          "FeLa-09Pov.tdb",
+          "LaSi-10Zho.tdb"
+        ],
+        "merge_conflicts": [
+          "PHASE DHCP: site ratios (1.0,) in LaSi-10Zho.tdb differ from (1.0, 0.5) in FeLa-09Pov.tdb \u2014 phase from LaSi-10Zho.tdb ignored"
+        ],
+        "n_merge_conflicts": 1,
+        "suppressed_phases": [],
+        "suppress_absent": [],
+        "bound_violations": [],
+        "runtime_s": 1.32
+      },
+      {
+        "combo_id": "FeSi-91Lac-LB___FeLa-09Pov___LaSi-20Xu",
+        "files": [
+          "FeSi-91Lac-LB.tdb",
+          "FeLa-09Pov.tdb",
+          "LaSi-20Xu.tdb"
+        ],
+        "lineages": [
+          "Lac91",
+          "Pov09",
+          "Xu20"
+        ],
+        "survived": false,
+        "failure_stage": "edge_check",
+        "failure_reason": "FE-SI (FeSi-91Lac-LB.tdb): 1 mismatches, 0 unverified",
+        "thresholds_kJ": {},
+        "assemblages": {},
+        "merge_priority": [
+          "FeSi-91Lac-LB.tdb",
+          "FeLa-09Pov.tdb",
+          "LaSi-20Xu.tdb"
+        ],
+        "merge_conflicts": [
+          "PHASE DHCP: site ratios (1.0,) in LaSi-20Xu.tdb differ from (1.0, 0.5) in FeLa-09Pov.tdb \u2014 phase from LaSi-20Xu.tdb ignored"
+        ],
+        "n_merge_conflicts": 1,
+        "suppressed_phases": [],
+        "suppress_absent": [],
+        "bound_violations": [],
+        "runtime_s": 1.35
+      },
+      {
+        "combo_id": "FeSi-91Lac-LB___FeLa-23Su___LaSi-10Zho",
+        "files": [
+          "FeSi-91Lac-LB.tdb",
+          "FeLa-23Su.tdb",
+          "LaSi-10Zho.tdb"
+        ],
+        "lineages": [
+          "Lac91",
+          "Su23",
+          "Zho10"
+        ],
+        "survived": false,
+        "failure_stage": "edge_check",
+        "failure_reason": "FE-SI (FeSi-91Lac-LB.tdb): 1 mismatches, 0 unverified",
+        "thresholds_kJ": {},
+        "assemblages": {},
+        "merge_priority": [
+          "FeSi-91Lac-LB.tdb",
+          "FeLa-23Su.tdb",
+          "LaSi-10Zho.tdb"
+        ],
+        "merge_conflicts": [
+          "PHASE DHCP: site ratios (1.0,) in LaSi-10Zho.tdb differ from (1.0, 0.5) in FeLa-23Su.tdb \u2014 phase from LaSi-10Zho.tdb ignored"
+        ],
+        "n_merge_conflicts": 1,
+        "suppressed_phases": [],
+        "suppress_absent": [],
+        "bound_violations": [],
+        "runtime_s": 1.35
+      },
+      {
+        "combo_id": "FeSi-91Lac-LB___FeLa-23Su___LaSi-20Xu",
+        "files": [
+          "FeSi-91Lac-LB.tdb",
+          "FeLa-23Su.tdb",
+          "LaSi-20Xu.tdb"
+        ],
+        "lineages": [
+          "Lac91",
+          "Su23",
+          "Xu20"
+        ],
+        "survived": false,
+        "failure_stage": "edge_check",
+        "failure_reason": "FE-SI (FeSi-91Lac-LB.tdb): 1 mismatches, 0 unverified",
+        "thresholds_kJ": {},
+        "assemblages": {},
+        "merge_priority": [
+          "FeSi-91Lac-LB.tdb",
+          "FeLa-23Su.tdb",
+          "LaSi-20Xu.tdb"
+        ],
+        "merge_conflicts": [
+          "PHASE DHCP: site ratios (1.0,) in LaSi-20Xu.tdb differ from (1.0, 0.5) in FeLa-23Su.tdb \u2014 phase from LaSi-20Xu.tdb ignored"
+        ],
+        "n_merge_conflicts": 1,
+        "suppressed_phases": [],
+        "suppress_absent": [],
+        "bound_violations": [],
+        "runtime_s": 1.36
+      }
+    ]
+  },
+  "sisso": {
+    "formula": "La7.1Fe82.1Si10.8",
+    "reduced_formula": "La7.1Fe82.1Si10.8",
+    "elements": [
+      "Fe",
+      "La",
+      "Si"
+    ],
+    "prototype_filter": {
+      "max_dx": 0.16,
+      "anchor_tol": 0.03,
+      "anchors": null,
+      "site_groups": [
+        [
+          "FE",
+          "SI"
+        ]
+      ],
+      "max_prototypes": 3,
+      "exact_tol": 0.0005,
+      "dopant_max": 0.03,
+      "anchor_max": 0.25
+    },
+    "method": "Bartel_2018_SISSO_pymatgen",
+    "units": "kJ/mol-atom",
+    "match_type": "nearest_prototype",
+    "fallback_used": true,
+    "candidates": [
+      {
+        "material_id": "mp-662529-GGA",
+        "formula": "LaFe9Si4",
+        "prototype_formula": "LaFe9Si4",
+        "match_type": "nearest_prototype",
+        "delta_x": 0.000606,
+        "delta_x_euclid": 0.25163,
+        "anchor_delta": 0.000429,
+        "matches_target_composition": false,
+        "composition_fractions": {
+          "La": 0.071429,
+          "Fe": 0.642857,
+          "Si": 0.285714
+        },
+        "e_above_hull_0K_eV_atom": 0.0189,
+        "dGf_sisso_kJ_mol_atom": {
+          "800.0": -37.6817,
+          "1000.0": -37.8846,
+          "1100.0": -37.6824,
+          "1200.0": -37.1054,
+          "1300.0": -36.3397,
+          "1375.0": -35.6448,
+          "1450.0": -34.8824,
+          "1600.0": -33.1459
+        },
+        "spacegroup": "I4/mcm"
+      },
+      {
+        "material_id": "mp-1211378-GGA",
+        "formula": "LaFe8Si5",
+        "prototype_formula": "LaFe8Si5",
+        "match_type": "nearest_prototype",
+        "delta_x": 0.000606,
+        "delta_x_euclid": 0.352645,
+        "anchor_delta": 0.000429,
+        "matches_target_composition": false,
+        "composition_fractions": {
+          "La": 0.071429,
+          "Fe": 0.571429,
+          "Si": 0.357143
+        },
+        "e_above_hull_0K_eV_atom": 0.03616,
+        "dGf_sisso_kJ_mol_atom": {
+          "800.0": -41.9219,
+          "1000.0": -42.2853,
+          "1100.0": -42.1826,
+          "1200.0": -41.7334,
+          "1300.0": -41.0996,
+          "1375.0": -40.5067,
+          "1450.0": -39.8482,
+          "1600.0": -38.3254
+        },
+        "spacegroup": "I4/mcm"
+      },
+      {
+        "material_id": "mp-1223067-GGA",
+        "formula": "LaFe8Si5",
+        "prototype_formula": "LaFe8Si5",
+        "match_type": "nearest_prototype",
+        "delta_x": 0.000606,
+        "delta_x_euclid": 0.352645,
+        "anchor_delta": 0.000429,
+        "matches_target_composition": false,
+        "composition_fractions": {
+          "La": 0.071429,
+          "Fe": 0.571429,
+          "Si": 0.357143
+        },
+        "e_above_hull_0K_eV_atom": 0.04462,
+        "dGf_sisso_kJ_mol_atom": {
+          "800.0": -41.0392,
+          "1000.0": -41.3859,
+          "1100.0": -41.2748,
+          "1200.0": -40.8173,
+          "1300.0": -40.1752,
+          "1375.0": -39.576,
+          "1450.0": -38.9112,
+          "1600.0": -37.3759
+        },
+        "spacegroup": "C2/m"
+      }
+    ]
+  },
+  "comparison": [
+    {
+      "material_id": "mp-662529-GGA",
+      "formula": "LaFe9Si4",
+      "match_type": "nearest_prototype",
+      "prototype_formula": "LaFe9Si4",
+      "delta_x": 0.000606,
+      "delta_x_euclid": 0.25163,
+      "spacegroup": "I4/mcm",
+      "comparable": false,
+      "T_K": 800.0,
+      "dGf_sisso_kJ": -37.6817,
+      "threshold_median_kJ": -17.7812,
+      "threshold_p05_kJ": -18.9984,
+      "threshold_p95_kJ": -16.4721,
+      "stability_margin_kJ": -19.9005,
+      "ref_correction_kJ": -1.2638,
+      "dGf_sisso_ser_kJ": -38.9455,
+      "margin_ser_kJ": -21.1643,
+      "verdict": "prototype_indicative_only",
+      "threshold_composition": {
+        "composition": {
+          "FE": 0.642857,
+          "SI": 0.285714,
+          "LA": 0.071429
+        },
+        "median_kJ": -33.1337,
+        "p05_kJ": -35.0577,
+        "p95_kJ": -31.2098,
+        "n": 16,
+        "n_in": 16,
+        "margin_kJ": -4.548,
+        "delta_x_euclid": 0.25163,
+        "verdict": "stable_across_band"
+      },
+      "verdict_at_prototype": "stable_across_band",
+      "competing_assemblage": "BCC_A2+LA5SI4"
+    },
+    {
+      "material_id": "mp-662529-GGA",
+      "formula": "LaFe9Si4",
+      "match_type": "nearest_prototype",
+      "prototype_formula": "LaFe9Si4",
+      "delta_x": 0.000606,
+      "delta_x_euclid": 0.25163,
+      "spacegroup": "I4/mcm",
+      "comparable": false,
+      "T_K": 1000.0,
+      "dGf_sisso_kJ": -37.8846,
+      "threshold_median_kJ": -17.2108,
+      "threshold_p05_kJ": -18.6187,
+      "threshold_p95_kJ": -15.724,
+      "stability_margin_kJ": -20.6738,
+      "ref_correction_kJ": -0.5562,
+      "dGf_sisso_ser_kJ": -38.4408,
+      "margin_ser_kJ": -21.23,
+      "verdict": "prototype_indicative_only",
+      "threshold_composition": {
+        "composition": {
+          "FE": 0.642857,
+          "SI": 0.285714,
+          "LA": 0.071429
+        },
+        "median_kJ": -33.1463,
+        "p05_kJ": -35.1361,
+        "p95_kJ": -31.1566,
+        "n": 16,
+        "n_in": 16,
+        "margin_kJ": -4.7383,
+        "delta_x_euclid": 0.25163,
+        "verdict": "stable_across_band"
+      },
+      "verdict_at_prototype": "stable_across_band",
+      "competing_assemblage": "BCC_A2+LA5SI4"
+    },
+    {
+      "material_id": "mp-662529-GGA",
+      "formula": "LaFe9Si4",
+      "match_type": "nearest_prototype",
+      "prototype_formula": "LaFe9Si4",
+      "delta_x": 0.000606,
+      "delta_x_euclid": 0.25163,
+      "spacegroup": "I4/mcm",
+      "comparable": false,
+      "T_K": 1100.0,
+      "dGf_sisso_kJ": -37.6824,
+      "threshold_median_kJ": -17.1685,
+      "threshold_p05_kJ": -18.6702,
+      "threshold_p95_kJ": -15.5921,
+      "stability_margin_kJ": -20.5139,
+      "ref_correction_kJ": -0.3178,
+      "dGf_sisso_ser_kJ": -38.0002,
+      "margin_ser_kJ": -20.8317,
+      "verdict": "prototype_indicative_only",
+      "threshold_composition": {
+        "composition": {
+          "FE": 0.642857,
+          "SI": 0.285714,
+          "LA": 0.071429
+        },
+        "median_kJ": -33.2159,
+        "p05_kJ": -35.2738,
+        "p95_kJ": -31.1579,
+        "n": 16,
+        "n_in": 16,
+        "margin_kJ": -4.4665,
+        "delta_x_euclid": 0.25163,
+        "verdict": "stable_across_band"
+      },
+      "verdict_at_prototype": "stable_across_band",
+      "competing_assemblage": "BCC_A2+LA3SI2_D5A"
+    },
+    {
+      "material_id": "mp-662529-GGA",
+      "formula": "LaFe9Si4",
+      "match_type": "nearest_prototype",
+      "prototype_formula": "LaFe9Si4",
+      "delta_x": 0.000606,
+      "delta_x_euclid": 0.25163,
+      "spacegroup": "I4/mcm",
+      "comparable": false,
+      "T_K": 1200.0,
+      "dGf_sisso_kJ": -37.1054,
+      "threshold_median_kJ": -17.2059,
+      "threshold_p05_kJ": -18.8,
+      "threshold_p95_kJ": -15.5392,
+      "stability_margin_kJ": -19.8995,
+      "ref_correction_kJ": -0.3133,
+      "dGf_sisso_ser_kJ": -37.4187,
+      "margin_ser_kJ": -20.2128,
+      "verdict": "prototype_indicative_only",
+      "threshold_composition": {
+        "composition": {
+          "FE": 0.642857,
+          "SI": 0.285714,
+          "LA": 0.071429
+        },
+        "median_kJ": -33.2643,
+        "p05_kJ": -35.4423,
+        "p95_kJ": -31.0863,
+        "n": 16,
+        "n_in": 16,
+        "margin_kJ": -3.8411,
+        "delta_x_euclid": 0.25163,
+        "verdict": "stable_across_band"
+      },
+      "verdict_at_prototype": "stable_across_band",
+      "competing_assemblage": "BCC_A2+LA3SI2_D5A"
+    },
+    {
+      "material_id": "mp-662529-GGA",
+      "formula": "LaFe9Si4",
+      "match_type": "nearest_prototype",
+      "prototype_formula": "LaFe9Si4",
+      "delta_x": 0.000606,
+      "delta_x_euclid": 0.25163,
+      "spacegroup": "I4/mcm",
+      "comparable": false,
+      "T_K": 1300.0,
+      "dGf_sisso_kJ": -36.3397,
+      "threshold_median_kJ": -17.2904,
+      "threshold_p05_kJ": -18.9695,
+      "threshold_p95_kJ": -15.5271,
+      "stability_margin_kJ": -19.0493,
+      "ref_correction_kJ": -0.3506,
+      "dGf_sisso_ser_kJ": -36.6903,
+      "margin_ser_kJ": -19.3999,
+      "verdict": "prototype_indicative_only",
+      "threshold_composition": {
+        "composition": {
+          "FE": 0.642857,
+          "SI": 0.285714,
+          "LA": 0.071429
+        },
+        "median_kJ": -33.3352,
+        "p05_kJ": -35.634,
+        "p95_kJ": -31.0364,
+        "n": 16,
+        "n_in": 16,
+        "margin_kJ": -3.0045,
+        "delta_x_euclid": 0.25163,
+        "verdict": "stable_across_band"
+      },
+      "verdict_at_prototype": "stable_across_band",
+      "competing_assemblage": "BCC_A2+LA5SI4"
+    },
+    {
+      "material_id": "mp-662529-GGA",
+      "formula": "LaFe9Si4",
+      "match_type": "nearest_prototype",
+      "prototype_formula": "LaFe9Si4",
+      "delta_x": 0.000606,
+      "delta_x_euclid": 0.25163,
+      "spacegroup": "I4/mcm",
+      "comparable": false,
+      "T_K": 1375.0,
+      "dGf_sisso_kJ": -35.6448,
+      "threshold_median_kJ": -17.3786,
+      "threshold_p05_kJ": -19.1147,
+      "threshold_p95_kJ": -15.5212,
+      "stability_margin_kJ": -18.2662,
+      "ref_correction_kJ": -0.4007,
+      "dGf_sisso_ser_kJ": -36.0455,
+      "margin_ser_kJ": -18.6669,
+      "verdict": "prototype_indicative_only",
+      "threshold_composition": {
+        "composition": {
+          "FE": 0.642857,
+          "SI": 0.285714,
+          "LA": 0.071429
+        },
+        "median_kJ": -33.4013,
+        "p05_kJ": -35.791,
+        "p95_kJ": -31.0116,
+        "n": 16,
+        "n_in": 16,
+        "margin_kJ": -2.2435,
+        "delta_x_euclid": 0.25163,
+        "verdict": "borderline_within_band"
+      },
+      "verdict_at_prototype": "borderline_within_band",
+      "competing_assemblage": "BCC_A2+LA5SI4"
+    },
+    {
+      "material_id": "mp-662529-GGA",
+      "formula": "LaFe9Si4",
+      "match_type": "nearest_prototype",
+      "prototype_formula": "LaFe9Si4",
+      "delta_x": 0.000606,
+      "delta_x_euclid": 0.25163,
+      "spacegroup": "I4/mcm",
+      "comparable": false,
+      "T_K": 1450.0,
+      "dGf_sisso_kJ": -34.8824,
+      "threshold_median_kJ": -17.5524,
+      "threshold_p05_kJ": -19.2686,
+      "threshold_p95_kJ": -15.664,
+      "stability_margin_kJ": -17.33,
+      "ref_correction_kJ": -0.4328,
+      "dGf_sisso_ser_kJ": -35.3152,
+      "margin_ser_kJ": -17.7628,
+      "verdict": "prototype_indicative_only",
+      "threshold_composition": {
+        "composition": {
+          "FE": 0.642857,
+          "SI": 0.285714,
+          "LA": 0.071429
+        },
+        "median_kJ": -33.4779,
+        "p05_kJ": -35.9588,
+        "p95_kJ": -30.9971,
+        "n": 16,
+        "n_in": 16,
+        "margin_kJ": -1.4045,
+        "delta_x_euclid": 0.25163,
+        "verdict": "borderline_within_band"
+      },
+      "verdict_at_prototype": "borderline_within_band",
+      "competing_assemblage": "BCC_A2+LA5SI4"
+    },
+    {
+      "material_id": "mp-662529-GGA",
+      "formula": "LaFe9Si4",
+      "match_type": "nearest_prototype",
+      "prototype_formula": "LaFe9Si4",
+      "delta_x": 0.000606,
+      "delta_x_euclid": 0.25163,
+      "spacegroup": "I4/mcm",
+      "comparable": false,
+      "T_K": 1600.0,
+      "dGf_sisso_kJ": -33.1459,
+      "threshold_median_kJ": -18.1241,
+      "threshold_p05_kJ": -19.5953,
+      "threshold_p95_kJ": -16.4032,
+      "stability_margin_kJ": -15.0218,
+      "ref_correction_kJ": -0.451,
+      "dGf_sisso_ser_kJ": -33.5969,
+      "margin_ser_kJ": -15.4728,
+      "verdict": "prototype_indicative_only",
+      "threshold_composition": {
+        "composition": {
+          "FE": 0.642857,
+          "SI": 0.285714,
+          "LA": 0.071429
+        },
+        "median_kJ": -34.9793,
+        "p05_kJ": -37.2411,
+        "p95_kJ": -32.3663,
+        "n": 16,
+        "n_in": 16,
+        "margin_kJ": 1.8334,
+        "delta_x_euclid": 0.25163,
+        "verdict": "borderline_within_band"
+      },
+      "verdict_at_prototype": "borderline_within_band",
+      "competing_assemblage": "BCC_A2+LA5SI4"
+    },
+    {
+      "material_id": "mp-1211378-GGA",
+      "formula": "LaFe8Si5",
+      "match_type": "nearest_prototype",
+      "prototype_formula": "LaFe8Si5",
+      "delta_x": 0.000606,
+      "delta_x_euclid": 0.352645,
+      "spacegroup": "I4/mcm",
+      "comparable": false,
+      "T_K": 800.0,
+      "dGf_sisso_kJ": -41.9219,
+      "threshold_median_kJ": -17.7812,
+      "threshold_p05_kJ": -18.9984,
+      "threshold_p95_kJ": -16.4721,
+      "stability_margin_kJ": -24.1407,
+      "ref_correction_kJ": -1.1254,
+      "dGf_sisso_ser_kJ": -43.0473,
+      "margin_ser_kJ": -25.2661,
+      "verdict": "prototype_indicative_only",
+      "threshold_composition": {
+        "composition": {
+          "FE": 0.571428,
+          "SI": 0.357143,
+          "LA": 0.071429
+        },
+        "median_kJ": -36.3811,
+        "p05_kJ": -38.4966,
+        "p95_kJ": -34.2656,
+        "n": 16,
+        "n_in": 16,
+        "margin_kJ": -5.5408,
+        "delta_x_euclid": 0.352645,
+        "verdict": "stable_across_band"
+      },
+      "verdict_at_prototype": "stable_across_band",
+      "competing_assemblage": "BCC_A2+LA5SI4"
+    },
+    {
+      "material_id": "mp-1211378-GGA",
+      "formula": "LaFe8Si5",
+      "match_type": "nearest_prototype",
+      "prototype_formula": "LaFe8Si5",
+      "delta_x": 0.000606,
+      "delta_x_euclid": 0.352645,
+      "spacegroup": "I4/mcm",
+      "comparable": false,
+      "T_K": 1000.0,
+      "dGf_sisso_kJ": -42.2853,
+      "threshold_median_kJ": -17.2108,
+      "threshold_p05_kJ": -18.6187,
+      "threshold_p95_kJ": -15.724,
+      "stability_margin_kJ": -25.0745,
+      "ref_correction_kJ": -0.498,
+      "dGf_sisso_ser_kJ": -42.7833,
+      "margin_ser_kJ": -25.5725,
+      "verdict": "prototype_indicative_only",
+      "threshold_composition": {
+        "composition": {
+          "FE": 0.571428,
+          "SI": 0.357143,
+          "LA": 0.071429
+        },
+        "median_kJ": -36.3244,
+        "p05_kJ": -38.6716,
+        "p95_kJ": -33.9771,
+        "n": 16,
+        "n_in": 16,
+        "margin_kJ": -5.9609,
+        "delta_x_euclid": 0.352645,
+        "verdict": "stable_across_band"
+      },
+      "verdict_at_prototype": "stable_across_band",
+      "competing_assemblage": "BCC_A2+LA5SI4"
+    },
+    {
+      "material_id": "mp-1211378-GGA",
+      "formula": "LaFe8Si5",
+      "match_type": "nearest_prototype",
+      "prototype_formula": "LaFe8Si5",
+      "delta_x": 0.000606,
+      "delta_x_euclid": 0.352645,
+      "spacegroup": "I4/mcm",
+      "comparable": false,
+      "T_K": 1100.0,
+      "dGf_sisso_kJ": -42.1826,
+      "threshold_median_kJ": -17.1685,
+      "threshold_p05_kJ": -18.6702,
+      "threshold_p95_kJ": -15.5921,
+      "stability_margin_kJ": -25.0141,
+      "ref_correction_kJ": -0.2872,
+      "dGf_sisso_ser_kJ": -42.4698,
+      "margin_ser_kJ": -25.3013,
+      "verdict": "prototype_indicative_only",
+      "threshold_composition": {
+        "composition": {
+          "FE": 0.571428,
+          "SI": 0.357143,
+          "LA": 0.071429
+        },
+        "median_kJ": -36.3389,
+        "p05_kJ": -38.7965,
+        "p95_kJ": -33.9209,
+        "n": 16,
+        "n_in": 16,
+        "margin_kJ": -5.8437,
+        "delta_x_euclid": 0.352645,
+        "verdict": "stable_across_band"
+      },
+      "verdict_at_prototype": "stable_across_band",
+      "competing_assemblage": "BCC_A2+LA3SI2_D5A"
+    },
+    {
+      "material_id": "mp-1211378-GGA",
+      "formula": "LaFe8Si5",
+      "match_type": "nearest_prototype",
+      "prototype_formula": "LaFe8Si5",
+      "delta_x": 0.000606,
+      "delta_x_euclid": 0.352645,
+      "spacegroup": "I4/mcm",
+      "comparable": false,
+      "T_K": 1200.0,
+      "dGf_sisso_kJ": -41.7334,
+      "threshold_median_kJ": -17.2059,
+      "threshold_p05_kJ": -18.8,
+      "threshold_p95_kJ": -15.5392,
+      "stability_margin_kJ": -24.5275,
+      "ref_correction_kJ": -0.2863,
+      "dGf_sisso_ser_kJ": -42.0197,
+      "margin_ser_kJ": -24.8138,
+      "verdict": "prototype_indicative_only",
+      "threshold_composition": {
+        "composition": {
+          "FE": 0.571428,
+          "SI": 0.357143,
+          "LA": 0.071429
+        },
+        "median_kJ": -36.4612,
+        "p05_kJ": -38.9374,
+        "p95_kJ": -33.9202,
+        "n": 16,
+        "n_in": 16,
+        "margin_kJ": -5.2722,
+        "delta_x_euclid": 0.352645,
+        "verdict": "stable_across_band"
+      },
+      "verdict_at_prototype": "stable_across_band",
+      "competing_assemblage": "BCC_A2+LA3SI2_D5A"
+    },
+    {
+      "material_id": "mp-1211378-GGA",
+      "formula": "LaFe8Si5",
+      "match_type": "nearest_prototype",
+      "prototype_formula": "LaFe8Si5",
+      "delta_x": 0.000606,
+      "delta_x_euclid": 0.352645,
+      "spacegroup": "I4/mcm",
+      "comparable": false,
+      "T_K": 1300.0,
+      "dGf_sisso_kJ": -41.0996,
+      "threshold_median_kJ": -17.2904,
+      "threshold_p05_kJ": -18.9695,
+      "threshold_p95_kJ": -15.5271,
+      "stability_margin_kJ": -23.8092,
+      "ref_correction_kJ": -0.3275,
+      "dGf_sisso_ser_kJ": -41.4271,
+      "margin_ser_kJ": -24.1367,
+      "verdict": "prototype_indicative_only",
+      "threshold_composition": {
+        "composition": {
+          "FE": 0.571428,
+          "SI": 0.357143,
+          "LA": 0.071429
+        },
+        "median_kJ": -36.6261,
+        "p05_kJ": -39.1141,
+        "p95_kJ": -33.9365,
+        "n": 16,
+        "n_in": 16,
+        "margin_kJ": -4.4735,
+        "delta_x_euclid": 0.352645,
+        "verdict": "stable_across_band"
+      },
+      "verdict_at_prototype": "stable_across_band",
+      "competing_assemblage": "BCC_A2+LA5SI4"
+    },
+    {
+      "material_id": "mp-1211378-GGA",
+      "formula": "LaFe8Si5",
+      "match_type": "nearest_prototype",
+      "prototype_formula": "LaFe8Si5",
+      "delta_x": 0.000606,
+      "delta_x_euclid": 0.352645,
+      "spacegroup": "I4/mcm",
+      "comparable": false,
+      "T_K": 1375.0,
+      "dGf_sisso_kJ": -40.5067,
+      "threshold_median_kJ": -17.3786,
+      "threshold_p05_kJ": -19.1147,
+      "threshold_p95_kJ": -15.5212,
+      "stability_margin_kJ": -23.1281,
+      "ref_correction_kJ": -0.3802,
+      "dGf_sisso_ser_kJ": -40.8869,
+      "margin_ser_kJ": -23.5083,
+      "verdict": "prototype_indicative_only",
+      "threshold_composition": {
+        "composition": {
+          "FE": 0.571428,
+          "SI": 0.357143,
+          "LA": 0.071429
+        },
+        "median_kJ": -36.7711,
+        "p05_kJ": -39.3229,
+        "p95_kJ": -33.9633,
+        "n": 16,
+        "n_in": 16,
+        "margin_kJ": -3.7356,
+        "delta_x_euclid": 0.352645,
+        "verdict": "stable_across_band"
+      },
+      "verdict_at_prototype": "stable_across_band",
+      "competing_assemblage": "BCC_A2+LA5SI4"
+    },
+    {
+      "material_id": "mp-1211378-GGA",
+      "formula": "LaFe8Si5",
+      "match_type": "nearest_prototype",
+      "prototype_formula": "LaFe8Si5",
+      "delta_x": 0.000606,
+      "delta_x_euclid": 0.352645,
+      "spacegroup": "I4/mcm",
+      "comparable": false,
+      "T_K": 1450.0,
+      "dGf_sisso_kJ": -39.8482,
+      "threshold_median_kJ": -17.5524,
+      "threshold_p05_kJ": -19.2686,
+      "threshold_p95_kJ": -15.664,
+      "stability_margin_kJ": -22.2958,
+      "ref_correction_kJ": -0.4155,
+      "dGf_sisso_ser_kJ": -40.2637,
+      "margin_ser_kJ": -22.7113,
+      "verdict": "prototype_indicative_only",
+      "threshold_composition": {
+        "composition": {
+          "FE": 0.571428,
+          "SI": 0.357143,
+          "LA": 0.071429
+        },
+        "median_kJ": -36.9451,
+        "p05_kJ": -39.6024,
+        "p95_kJ": -34.0303,
+        "n": 16,
+        "n_in": 16,
+        "margin_kJ": -2.9031,
+        "delta_x_euclid": 0.352645,
+        "verdict": "stable_across_band"
+      },
+      "verdict_at_prototype": "stable_across_band",
+      "competing_assemblage": "BCC_A2+LA5SI4"
+    },
+    {
+      "material_id": "mp-1211378-GGA",
+      "formula": "LaFe8Si5",
+      "match_type": "nearest_prototype",
+      "prototype_formula": "LaFe8Si5",
+      "delta_x": 0.000606,
+      "delta_x_euclid": 0.352645,
+      "spacegroup": "I4/mcm",
+      "comparable": false,
+      "T_K": 1600.0,
+      "dGf_sisso_kJ": -38.3254,
+      "threshold_median_kJ": -18.1241,
+      "threshold_p05_kJ": -19.5953,
+      "threshold_p95_kJ": -16.4032,
+      "stability_margin_kJ": -20.2013,
+      "ref_correction_kJ": -0.4412,
+      "dGf_sisso_ser_kJ": -38.7666,
+      "margin_ser_kJ": -20.6425,
+      "verdict": "prototype_indicative_only",
+      "threshold_composition": {
+        "composition": {
+          "FE": 0.571428,
+          "SI": 0.357143,
+          "LA": 0.071429
+        },
+        "median_kJ": -38.9753,
+        "p05_kJ": -41.5096,
+        "p95_kJ": -35.8498,
+        "n": 16,
+        "n_in": 16,
+        "margin_kJ": 0.6499,
+        "delta_x_euclid": 0.352645,
+        "verdict": "borderline_within_band"
+      },
+      "verdict_at_prototype": "borderline_within_band",
+      "competing_assemblage": "BCC_A2+LA5SI4"
+    },
+    {
+      "material_id": "mp-1223067-GGA",
+      "formula": "LaFe8Si5",
+      "match_type": "nearest_prototype",
+      "prototype_formula": "LaFe8Si5",
+      "delta_x": 0.000606,
+      "delta_x_euclid": 0.352645,
+      "spacegroup": "C2/m",
+      "comparable": false,
+      "T_K": 800.0,
+      "dGf_sisso_kJ": -41.0392,
+      "threshold_median_kJ": -17.7812,
+      "threshold_p05_kJ": -18.9984,
+      "threshold_p95_kJ": -16.4721,
+      "stability_margin_kJ": -23.258,
+      "ref_correction_kJ": -1.1254,
+      "dGf_sisso_ser_kJ": -42.1646,
+      "margin_ser_kJ": -24.3834,
+      "verdict": "prototype_indicative_only",
+      "threshold_composition": {
+        "composition": {
+          "FE": 0.571428,
+          "SI": 0.357143,
+          "LA": 0.071429
+        },
+        "median_kJ": -36.3811,
+        "p05_kJ": -38.4966,
+        "p95_kJ": -34.2656,
+        "n": 16,
+        "n_in": 16,
+        "margin_kJ": -4.6581,
+        "delta_x_euclid": 0.352645,
+        "verdict": "stable_across_band"
+      },
+      "verdict_at_prototype": "stable_across_band",
+      "competing_assemblage": "BCC_A2+LA5SI4"
+    },
+    {
+      "material_id": "mp-1223067-GGA",
+      "formula": "LaFe8Si5",
+      "match_type": "nearest_prototype",
+      "prototype_formula": "LaFe8Si5",
+      "delta_x": 0.000606,
+      "delta_x_euclid": 0.352645,
+      "spacegroup": "C2/m",
+      "comparable": false,
+      "T_K": 1000.0,
+      "dGf_sisso_kJ": -41.3859,
+      "threshold_median_kJ": -17.2108,
+      "threshold_p05_kJ": -18.6187,
+      "threshold_p95_kJ": -15.724,
+      "stability_margin_kJ": -24.1751,
+      "ref_correction_kJ": -0.498,
+      "dGf_sisso_ser_kJ": -41.8839,
+      "margin_ser_kJ": -24.6731,
+      "verdict": "prototype_indicative_only",
+      "threshold_composition": {
+        "composition": {
+          "FE": 0.571428,
+          "SI": 0.357143,
+          "LA": 0.071429
+        },
+        "median_kJ": -36.3244,
+        "p05_kJ": -38.6716,
+        "p95_kJ": -33.9771,
+        "n": 16,
+        "n_in": 16,
+        "margin_kJ": -5.0615,
+        "delta_x_euclid": 0.352645,
+        "verdict": "stable_across_band"
+      },
+      "verdict_at_prototype": "stable_across_band",
+      "competing_assemblage": "BCC_A2+LA5SI4"
+    },
+    {
+      "material_id": "mp-1223067-GGA",
+      "formula": "LaFe8Si5",
+      "match_type": "nearest_prototype",
+      "prototype_formula": "LaFe8Si5",
+      "delta_x": 0.000606,
+      "delta_x_euclid": 0.352645,
+      "spacegroup": "C2/m",
+      "comparable": false,
+      "T_K": 1100.0,
+      "dGf_sisso_kJ": -41.2748,
+      "threshold_median_kJ": -17.1685,
+      "threshold_p05_kJ": -18.6702,
+      "threshold_p95_kJ": -15.5921,
+      "stability_margin_kJ": -24.1063,
+      "ref_correction_kJ": -0.2872,
+      "dGf_sisso_ser_kJ": -41.562,
+      "margin_ser_kJ": -24.3935,
+      "verdict": "prototype_indicative_only",
+      "threshold_composition": {
+        "composition": {
+          "FE": 0.571428,
+          "SI": 0.357143,
+          "LA": 0.071429
+        },
+        "median_kJ": -36.3389,
+        "p05_kJ": -38.7965,
+        "p95_kJ": -33.9209,
+        "n": 16,
+        "n_in": 16,
+        "margin_kJ": -4.9359,
+        "delta_x_euclid": 0.352645,
+        "verdict": "stable_across_band"
+      },
+      "verdict_at_prototype": "stable_across_band",
+      "competing_assemblage": "BCC_A2+LA3SI2_D5A"
+    },
+    {
+      "material_id": "mp-1223067-GGA",
+      "formula": "LaFe8Si5",
+      "match_type": "nearest_prototype",
+      "prototype_formula": "LaFe8Si5",
+      "delta_x": 0.000606,
+      "delta_x_euclid": 0.352645,
+      "spacegroup": "C2/m",
+      "comparable": false,
+      "T_K": 1200.0,
+      "dGf_sisso_kJ": -40.8173,
+      "threshold_median_kJ": -17.2059,
+      "threshold_p05_kJ": -18.8,
+      "threshold_p95_kJ": -15.5392,
+      "stability_margin_kJ": -23.6114,
+      "ref_correction_kJ": -0.2863,
+      "dGf_sisso_ser_kJ": -41.1036,
+      "margin_ser_kJ": -23.8977,
+      "verdict": "prototype_indicative_only",
+      "threshold_composition": {
+        "composition": {
+          "FE": 0.571428,
+          "SI": 0.357143,
+          "LA": 0.071429
+        },
+        "median_kJ": -36.4612,
+        "p05_kJ": -38.9374,
+        "p95_kJ": -33.9202,
+        "n": 16,
+        "n_in": 16,
+        "margin_kJ": -4.3561,
+        "delta_x_euclid": 0.352645,
+        "verdict": "stable_across_band"
+      },
+      "verdict_at_prototype": "stable_across_band",
+      "competing_assemblage": "BCC_A2+LA3SI2_D5A"
+    },
+    {
+      "material_id": "mp-1223067-GGA",
+      "formula": "LaFe8Si5",
+      "match_type": "nearest_prototype",
+      "prototype_formula": "LaFe8Si5",
+      "delta_x": 0.000606,
+      "delta_x_euclid": 0.352645,
+      "spacegroup": "C2/m",
+      "comparable": false,
+      "T_K": 1300.0,
+      "dGf_sisso_kJ": -40.1752,
+      "threshold_median_kJ": -17.2904,
+      "threshold_p05_kJ": -18.9695,
+      "threshold_p95_kJ": -15.5271,
+      "stability_margin_kJ": -22.8848,
+      "ref_correction_kJ": -0.3275,
+      "dGf_sisso_ser_kJ": -40.5027,
+      "margin_ser_kJ": -23.2123,
+      "verdict": "prototype_indicative_only",
+      "threshold_composition": {
+        "composition": {
+          "FE": 0.571428,
+          "SI": 0.357143,
+          "LA": 0.071429
+        },
+        "median_kJ": -36.6261,
+        "p05_kJ": -39.1141,
+        "p95_kJ": -33.9365,
+        "n": 16,
+        "n_in": 16,
+        "margin_kJ": -3.5491,
+        "delta_x_euclid": 0.352645,
+        "verdict": "stable_across_band"
+      },
+      "verdict_at_prototype": "stable_across_band",
+      "competing_assemblage": "BCC_A2+LA5SI4"
+    },
+    {
+      "material_id": "mp-1223067-GGA",
+      "formula": "LaFe8Si5",
+      "match_type": "nearest_prototype",
+      "prototype_formula": "LaFe8Si5",
+      "delta_x": 0.000606,
+      "delta_x_euclid": 0.352645,
+      "spacegroup": "C2/m",
+      "comparable": false,
+      "T_K": 1375.0,
+      "dGf_sisso_kJ": -39.576,
+      "threshold_median_kJ": -17.3786,
+      "threshold_p05_kJ": -19.1147,
+      "threshold_p95_kJ": -15.5212,
+      "stability_margin_kJ": -22.1974,
+      "ref_correction_kJ": -0.3802,
+      "dGf_sisso_ser_kJ": -39.9562,
+      "margin_ser_kJ": -22.5776,
+      "verdict": "prototype_indicative_only",
+      "threshold_composition": {
+        "composition": {
+          "FE": 0.571428,
+          "SI": 0.357143,
+          "LA": 0.071429
+        },
+        "median_kJ": -36.7711,
+        "p05_kJ": -39.3229,
+        "p95_kJ": -33.9633,
+        "n": 16,
+        "n_in": 16,
+        "margin_kJ": -2.8049,
+        "delta_x_euclid": 0.352645,
+        "verdict": "stable_across_band"
+      },
+      "verdict_at_prototype": "stable_across_band",
+      "competing_assemblage": "BCC_A2+LA5SI4"
+    },
+    {
+      "material_id": "mp-1223067-GGA",
+      "formula": "LaFe8Si5",
+      "match_type": "nearest_prototype",
+      "prototype_formula": "LaFe8Si5",
+      "delta_x": 0.000606,
+      "delta_x_euclid": 0.352645,
+      "spacegroup": "C2/m",
+      "comparable": false,
+      "T_K": 1450.0,
+      "dGf_sisso_kJ": -38.9112,
+      "threshold_median_kJ": -17.5524,
+      "threshold_p05_kJ": -19.2686,
+      "threshold_p95_kJ": -15.664,
+      "stability_margin_kJ": -21.3588,
+      "ref_correction_kJ": -0.4155,
+      "dGf_sisso_ser_kJ": -39.3267,
+      "margin_ser_kJ": -21.7743,
+      "verdict": "prototype_indicative_only",
+      "threshold_composition": {
+        "composition": {
+          "FE": 0.571428,
+          "SI": 0.357143,
+          "LA": 0.071429
+        },
+        "median_kJ": -36.9451,
+        "p05_kJ": -39.6024,
+        "p95_kJ": -34.0303,
+        "n": 16,
+        "n_in": 16,
+        "margin_kJ": -1.9661,
+        "delta_x_euclid": 0.352645,
+        "verdict": "borderline_within_band"
+      },
+      "verdict_at_prototype": "borderline_within_band",
+      "competing_assemblage": "BCC_A2+LA5SI4"
+    },
+    {
+      "material_id": "mp-1223067-GGA",
+      "formula": "LaFe8Si5",
+      "match_type": "nearest_prototype",
+      "prototype_formula": "LaFe8Si5",
+      "delta_x": 0.000606,
+      "delta_x_euclid": 0.352645,
+      "spacegroup": "C2/m",
+      "comparable": false,
+      "T_K": 1600.0,
+      "dGf_sisso_kJ": -37.3759,
+      "threshold_median_kJ": -18.1241,
+      "threshold_p05_kJ": -19.5953,
+      "threshold_p95_kJ": -16.4032,
+      "stability_margin_kJ": -19.2518,
+      "ref_correction_kJ": -0.4412,
+      "dGf_sisso_ser_kJ": -37.8171,
+      "margin_ser_kJ": -19.693,
+      "verdict": "prototype_indicative_only",
+      "threshold_composition": {
+        "composition": {
+          "FE": 0.571428,
+          "SI": 0.357143,
+          "LA": 0.071429
+        },
+        "median_kJ": -38.9753,
+        "p05_kJ": -41.5096,
+        "p95_kJ": -35.8498,
+        "n": 16,
+        "n_in": 16,
+        "margin_kJ": 1.5994,
+        "delta_x_euclid": 0.352645,
+        "verdict": "borderline_within_band"
+      },
+      "verdict_at_prototype": "borderline_within_band",
+      "competing_assemblage": "BCC_A2+LA5SI4"
+    }
+  ],
+  "windows": {}
+}
