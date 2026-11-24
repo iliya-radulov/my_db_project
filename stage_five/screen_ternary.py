@@ -12,6 +12,7 @@ Unified Stage 5 Screening Orchestrator:
 from __future__ import annotations
 
 import argparse
+import logging
 import json
 import os
 import sys
@@ -33,7 +34,9 @@ from dft_sisso_predictor import (
 )
 from prototype_match import SISSO_UNAVAILABLE, PrototypeFilter, provenance_label
 from stability_window import format_windows, windows_from_rows
-from general_ensemble import DEFAULT_TEMPS, run_binary_ensemble
+
+log = logging.getLogger(__name__)
+from general_ensemble import DEFAULT_TEMPS, rethreshold_at_composition, run_binary_ensemble
 
 
 def _connect_db():
@@ -212,8 +215,11 @@ def screen_ternary(
     include_subsystems: bool = False,
     progress_callback=None,
     prototype_filter: PrototypeFilter | None = PrototypeFilter(),
+    matched_threshold: bool = True,
 ) -> dict:
-    """prototype_filter=None disables the nearest-prototype fallback (exact matches only)."""
+    """prototype_filter=None disables the nearest-prototype fallback (exact matches only).
+    matched_threshold: for every nearest prototype the threshold band is also evaluated at the prototype's own
+    composition (surviving combinations only, no new edge check); a failure there never loses the result."""
     elements, fractions, comp = parse_ternary_formula(formula)
     temps = [float(t) for t in (temperatures or DEFAULT_TEMPS)]
 
@@ -241,7 +247,19 @@ def screen_ternary(
             "error": f"{type(exc).__name__}: {exc}",
         }
 
-    comparison_rows = compare_with_calphad_ensemble(sisso_report, ensemble_report)
+    matched = {}
+    if matched_threshold and ensemble_report["gates"]["gate_passed"]:
+        for cand in sisso_report.get("candidates", []):
+            if cand.get("match_type") != "nearest_prototype" or not cand.get("composition_fractions"):
+                continue
+            try:
+                matched[cand["material_id"]] = rethreshold_at_composition(
+                    ensemble_report, {str(k).upper(): v for k, v in cand["composition_fractions"].items()},
+                    tdb_dir=tdb_dir, suppress_phases=suppress_phases, workers=workers)
+            except Exception as exc:    # keep the target-composition result
+                log.warning("composition-matched threshold failed for %s: %s", cand["material_id"], exc)
+
+    comparison_rows = compare_with_calphad_ensemble(sisso_report, ensemble_report, matched=matched)
 
     return {
         "input_formula": formula,
@@ -263,6 +281,8 @@ def main():
     ap.add_argument("--include-subsystems", action="store_true",
                     help="also list other ternary phases of the system (not compared)")
     add_prototype_arguments(ap)
+    ap.add_argument("--no-matched-threshold", action="store_true",
+                    help="skip the threshold re-evaluation at the composition of nearest prototypes")
     ap.add_argument("--save-db", action="store_true", help="Persist results to alloy_lab PostgreSQL")
     ap.add_argument("--sample-code", default=None, help="Optional sample_id string in alloy_lab.samples")
     ap.add_argument("--out", type=Path, default=None, help="Optional combined JSON output path")
@@ -277,6 +297,7 @@ def main():
         workers=args.workers,
         include_subsystems=args.include_subsystems,
         prototype_filter=flt,
+        matched_threshold=not args.no_matched_threshold,
     )
 
     ens = bundle["ensemble"]

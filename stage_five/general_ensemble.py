@@ -309,6 +309,34 @@ def _init_worker(refs, elements, x_map, temps, suppress, tmpdir):
         refs, elements, x_map, temps, suppress, tmpdir
     )
 
+def _threshold_block(db: Database, elements: list[str], x_map: dict[str, float],
+                     temps: list[float], suppress_phases: list[str]) -> dict:
+    """Threshold ΔG*(T) = G_comp - Σ x_i GHSER_i (kJ/mol-atom) of one merged database at composition `x_map`
+    (suppressed phases really removed). Shared by the ensemble and by the composition-matched re-evaluation."""
+    out = {"thresholds_kJ": {}, "assemblages": {}, "bound_violations": []}
+    ser_names = {el: ser_function(db, el) for el in elements}
+    suppress = {s.upper() for s in suppress_phases}
+    out["suppressed_phases"] = sorted(ph for ph in db.phases if ph.upper() in suppress)
+    out["suppress_absent"] = sorted(suppress - {ph.upper() for ph in db.phases})
+    phases = [ph for ph in sorted(db.phases.keys()) if ph.upper() not in suppress]
+    comps = [e for e in elements + ["VA"] if e in db.elements]
+    el1, el2 = elements[0], elements[1]
+    for T in temps:
+        cond = {v.X(el1): x_map[el1], v.X(el2): x_map[el2], v.T: float(T), v.P: 101325, v.N: 1}
+        ps, g_comp, st = solve_with_fallback(db, comps, cond, phases=phases)
+        if g_comp is None or not math.isfinite(g_comp):
+            raise ValueError(f"Non-finite G_comp at T={T} K (status={st})")
+        g_ser = g_ser_at(db, ser_names, T, x_map)
+        thr_kj = (g_comp - g_ser) / 1000.0
+        if thr_kj > BOUND_TOL_KJ and not suppress:
+            # Physical bound: with the reference phases present the equilibrium cannot lie above
+            # the pure-element mixture. (Not checked when phases are suppressed on purpose.)
+            out["bound_violations"].append({"T": float(T), "threshold_kJ": round(thr_kj, 4)})
+        out["thresholds_kJ"][str(T)] = round(thr_kj, 4)
+        out["assemblages"][str(T)] = list(ps) if ps else []
+    return out
+
+
 def _evaluate_combo(args) -> dict:
     combo_id, paths = args
     t0 = time.time()
@@ -370,33 +398,8 @@ def _evaluate_combo(args) -> dict:
 
     # Threshold Calculation
     try:
-        ser_names = {el: ser_function(db, el) for el in _W_ELS}
-        suppress = {s.upper() for s in _W_SUPPRESS}
-        out["suppressed_phases"] = sorted(ph for ph in db.phases if ph.upper() in suppress)
-        out["suppress_absent"] = sorted(suppress - {ph.upper() for ph in db.phases})
-        # The suppressed phases are really removed from the competing-phase calculation
-        # (before the fix this list was built and then never passed to the solver).
-        phases = [ph for ph in sorted(db.phases.keys()) if ph.upper() not in suppress]
-        comps = [e for e in _W_ELS + ["VA"] if e in db.elements]
-        el1, el2 = _W_ELS[0], _W_ELS[1]
-
-        for T in _W_TEMPS:
-            cond = {v.X(el1): _W_XMAP[el1], v.X(el2): _W_XMAP[el2], v.T: float(T), v.P: 101325, v.N: 1}
-            ps, g_comp, st = solve_with_fallback(db, comps, cond, phases=phases)
-
-            if g_comp is None or not math.isfinite(g_comp):
-                raise ValueError(f"Non-finite G_comp at T={T} K (status={st})")
-
-            g_ser = g_ser_at(db, ser_names, T, _W_XMAP)
-            thr_kj = (g_comp - g_ser) / 1000.0
-            if thr_kj > BOUND_TOL_KJ and not suppress:
-                # Physical bound: with the reference phases present the equilibrium cannot lie above
-                # the pure-element mixture. (Not checked when phases are suppressed on purpose.)
-                out["bound_violations"].append({"T": float(T), "threshold_kJ": round(thr_kj, 4)})
-
-            out["thresholds_kJ"][str(T)] = round(thr_kj, 4)
-            out["assemblages"][str(T)] = list(ps) if ps else []
-            
+        blk = _threshold_block(db, _W_ELS, _W_XMAP, _W_TEMPS, _W_SUPPRESS)
+        out.update(blk)
     except Exception as e:
         out["failure_stage"] = "threshold"
         out["failure_reason"] = f"{type(e).__name__}: {e}"[:250]
@@ -406,6 +409,92 @@ def _evaluate_combo(args) -> dict:
     out["survived"] = True
     out["runtime_s"] = round(time.time() - t0, 2)
     return out
+
+
+# ── 3b. Composition-matched re-evaluation (prototype step) ─────────────────────
+
+MIN_X_FLOOR = 1e-6      # an element absent from the prototype is kept at this fraction (renormalised)
+
+
+def _rethreshold_combo(args) -> dict:
+    """Merge the files of one SURVIVING combination and evaluate the threshold at the composition in the
+    worker globals. No edge check: it does not depend on composition."""
+    combo_id, paths = args
+    out = {"combo_id": combo_id, "ok": False, "thresholds_kJ": {}, "assemblages": {}, "reason": None}
+    tmp_tdb = Path(_W_TMPDIR) / f"matched_{combo_id}.tdb"
+    try:
+        db_m = merge_databases(paths, report=lambda msg: None)
+        db_m.to_file(str(tmp_tdb), fmt="tdb", if_exists="overwrite", if_incompatible="ignore")
+        db = Database(str(tmp_tdb))
+        blk = _threshold_block(db, _W_ELS, _W_XMAP, _W_TEMPS, _W_SUPPRESS)
+        out.update(ok=True, thresholds_kJ=blk["thresholds_kJ"], assemblages=blk["assemblages"])
+    except Exception as e:
+        out["reason"] = f"{type(e).__name__}: {e}"[:200]
+    finally:
+        tmp_tdb.unlink(missing_ok=True)
+    return out
+
+
+def summarize_thresholds(vals, assemblages: list[str]) -> dict:
+    arr = np.asarray(vals, dtype=float)
+    counts = defaultdict(int)
+    for a in assemblages:
+        counts[a] += 1
+    return {
+        "n": int(len(arr)),
+        "median_kJ": round(float(np.median(arr)), 4),
+        "p05_kJ": round(float(np.percentile(arr, 5)), 4),
+        "p95_kJ": round(float(np.percentile(arr, 95)), 4),
+        "min_kJ": round(float(arr.min()), 4),
+        "max_kJ": round(float(arr.max()), 4),
+        "dominant_competing_assemblage": max(counts.items(), key=lambda kv: kv[1])[0] if counts else None,
+    }
+
+
+def rethreshold_at_composition(
+    ensemble_report: dict,
+    fractions: dict[str, float],
+    tdb_dir: Path | None = None,
+    temperatures: list[float] | None = None,
+    suppress_phases: list[str] | None = None,
+    workers: int = 1,
+) -> dict:
+    """Threshold band at ANOTHER composition (a nearest prototype), reusing the surviving combinations
+    of `ensemble_report`. Returns {"composition", "n_in", "n_ok", "threshold_distribution": {T: stats}};
+    the distribution of a temperature is None if no combination could be evaluated."""
+    elements = [e.upper() for e in ensemble_report["elements_priority_order"]]
+    raw = {e: max(float(fractions.get(e, 0.0)), MIN_X_FLOOR) for e in elements}
+    tot = sum(raw.values())
+    x_map = {e: v / tot for e, v in raw.items()}
+    temps = [float(t) for t in (temperatures or [float(t) for t in ensemble_report["threshold_distribution"]])]
+    suppress = sorted({str(x).upper() for x in (suppress_phases or [])})
+    tdb_root = Path(tdb_dir or os.environ.get("SGTE_BINARY_DIR", ""))
+    if not tdb_root.is_dir():
+        raise FileNotFoundError(f"SGTE_BINARY_DIR invalid or unset: {tdb_root!r}")
+    valid_by_pair, _ = audit_binary_candidates(elements, tdb_root)
+    by_name = {p.name: p for lst in valid_by_pair.values() for p in lst}
+    todo = []
+    for r in ensemble_report["combinations"]:
+        if r["survived"]:
+            todo.append((r["combo_id"], [by_name[n] for n in r["files"]]))
+    with tempfile.TemporaryDirectory(prefix="calphad_matched_") as tmpdir:
+        if workers <= 1:
+            _init_worker({}, elements, x_map, temps, suppress, tmpdir)
+            results = [_rethreshold_combo(c) for c in todo]
+        else:
+            with Pool(processes=workers, initializer=_init_worker,
+                      initargs=({}, elements, x_map, temps, suppress, tmpdir)) as pool:
+                results = sorted(pool.imap_unordered(_rethreshold_combo, todo), key=lambda r: r["combo_id"])
+    ok = [r for r in results if r["ok"]]
+    dist = {}
+    for T in temps:
+        t_key = str(T)
+        vals = [r["thresholds_kJ"][t_key] for r in ok if t_key in r["thresholds_kJ"]]
+        dist[t_key] = (summarize_thresholds(vals, ["+".join(r["assemblages"][t_key]) for r in ok
+                                                   if t_key in r["assemblages"]]) if vals else None)
+    return {"composition": {e: round(v, 6) for e, v in x_map.items()}, "n_in": len(todo), "n_ok": len(ok),
+            "failures": sorted({r["reason"] for r in results if not r["ok"]})[:5],
+            "threshold_distribution": dist}
 
 
 # ── 4. Gates & Statistical Summary ─────────────────────────────────────────────
