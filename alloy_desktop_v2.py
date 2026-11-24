@@ -5,6 +5,7 @@ Tabs: New Entry | Import Files | Data Viewer | Quick Lookup | Summary
 """
 
 import customtkinter as ctk
+import tkinter as tk
 from tkinter import messagebox, scrolledtext, filedialog
 import sys
 import io
@@ -73,7 +74,8 @@ class AlloyLabApp(ctk.CTk):
         super().__init__()
         
         self.title("🧪 Alloy Lab Database")
-        self.geometry("1100x850")
+        # wide enough for the result tables next to the input column, but never larger than the screen
+        self.geometry(f"{min(1500, max(1100, self.winfo_screenwidth() - 80))}x{min(900, max(700, self.winfo_screenheight() - 100))}")
 
         # Cached literature-check results
         self.lit_results = {'materials_project': [], 'oqmd': [], 'alexandria': []}
@@ -149,29 +151,41 @@ class AlloyLabApp(ctk.CTk):
     # ============================================
     
     def setup_new_entry_tab(self):
-        frame = self.tab_new
+        # Inputs on the left (scrollable, so a small window still reaches every field), results on the
+        # right with the full height of the tab; the divider can be dragged.
+        self.new_entry_paned = tk.PanedWindow(
+            self.tab_new, orient="horizontal", sashwidth=8, sashrelief="flat", bd=0,
+            bg="#2b2b2b", opaqueresize=True,
+        )
+        self.new_entry_paned.pack(fill="both", expand=True)
+        inputs_pane = ctk.CTkFrame(self.new_entry_paned, fg_color="transparent")   # a scrollable frame cannot be a pane itself
+        frame = ctk.CTkScrollableFrame(inputs_pane, width=560)
+        frame.pack(fill="both", expand=True)
+        results_pane = ctk.CTkFrame(self.new_entry_paned)
+        self.new_entry_paned.add(inputs_pane, minsize=400, width=620, stretch="never")
+        self.new_entry_paned.add(results_pane, minsize=320, stretch="always")
         
         # Formula input
-        ctk.CTkLabel(frame, text="Alloy Formula:", font=ctk.CTkFont(size=14)).grid(row=0, column=0, padx=10, pady=10, sticky="w")
+        ctk.CTkLabel(frame, text="Alloy Formula:", font=ctk.CTkFont(size=14)).grid(row=0, column=0, padx=10, pady=4, sticky="w")
         self.formula_entry = ctk.CTkEntry(frame, width=300, placeholder_text="e.g., Fe65Nd30Co5")
-        self.formula_entry.grid(row=0, column=1, padx=10, pady=10, sticky="w")
+        self.formula_entry.grid(row=0, column=1, padx=10, pady=4, sticky="w")
         self.formula_entry.bind("<KeyRelease>", self.validate_formula)
         
         self.validation_label = ctk.CTkLabel(frame, text="", font=ctk.CTkFont(size=12))
         self.validation_label.grid(row=1, column=1, padx=10, pady=0, sticky="w")
         
-        ctk.CTkLabel(frame, text="Unit:", font=ctk.CTkFont(size=14)).grid(row=2, column=0, padx=10, pady=10, sticky="w")
+        ctk.CTkLabel(frame, text="Unit:", font=ctk.CTkFont(size=14)).grid(row=2, column=0, padx=10, pady=4, sticky="w")
         self.unit_var = ctk.StringVar(value="at%")
         self.unit_menu = ctk.CTkOptionMenu(frame, values=["at%", "wt%"], variable=self.unit_var)
-        self.unit_menu.grid(row=2, column=1, padx=10, pady=10, sticky="w")
+        self.unit_menu.grid(row=2, column=1, padx=10, pady=4, sticky="w")
         
-        ctk.CTkLabel(frame, text="Target Mass (g):", font=ctk.CTkFont(size=14)).grid(row=3, column=0, padx=10, pady=10, sticky="w")
+        ctk.CTkLabel(frame, text="Target Mass (g):", font=ctk.CTkFont(size=14)).grid(row=3, column=0, padx=10, pady=4, sticky="w")
         self.mass_entry = ctk.CTkEntry(frame, width=100, placeholder_text="10.0")
-        self.mass_entry.grid(row=3, column=1, padx=10, pady=10, sticky="w")
+        self.mass_entry.grid(row=3, column=1, padx=10, pady=4, sticky="w")
         self.mass_entry.insert(0, "10.0")
         
         # Material class
-        ctk.CTkLabel(frame, text="Material Class:", font=ctk.CTkFont(size=14)).grid(row=4, column=0, padx=10, pady=10, sticky="w")
+        ctk.CTkLabel(frame, text="Material Class:", font=ctk.CTkFont(size=14)).grid(row=4, column=0, padx=10, pady=4, sticky="w")
         
         self.class_var = ctk.StringVar(value="")
         self.class_menu = ctk.CTkOptionMenu(
@@ -180,7 +194,7 @@ class AlloyLabApp(ctk.CTk):
             variable=self.class_var,
             command=self.on_class_change
         )
-        self.class_menu.grid(row=4, column=1, padx=10, pady=10, sticky="w")
+        self.class_menu.grid(row=4, column=1, padx=10, pady=4, sticky="w")
         
         self.custom_class_entry = ctk.CTkEntry(frame, width=200, placeholder_text="Enter custom class name")
         self.custom_class_entry.grid(row=5, column=1, padx=10, pady=5, sticky="w")
@@ -188,9 +202,9 @@ class AlloyLabApp(ctk.CTk):
         
         self.load_material_classes()
         
-        ctk.CTkLabel(frame, text="Excess (e.g., Nd:3):", font=ctk.CTkFont(size=14)).grid(row=6, column=0, padx=10, pady=10, sticky="w")
+        ctk.CTkLabel(frame, text="Excess (e.g., Nd:3):", font=ctk.CTkFont(size=14)).grid(row=6, column=0, padx=10, pady=4, sticky="w")
         self.excess_entry = ctk.CTkEntry(frame, width=200, placeholder_text="e.g., Nd:3, Co:2")
-        self.excess_entry.grid(row=6, column=1, padx=10, pady=10, sticky="w")
+        self.excess_entry.grid(row=6, column=1, padx=10, pady=4, sticky="w")
 
         # Fixed-mass pre-alloy mode -- optional. If "Pre-alloy mass" below
         # is filled in, the "Alloy Formula" field above is reinterpreted as
@@ -206,102 +220,132 @@ class AlloyLabApp(ctk.CTk):
             font=ctk.CTkFont(size=12, weight="bold")
         ).grid(row=0, column=0, columnspan=4, padx=10, pady=(8, 4), sticky="w")
 
-        ctk.CTkLabel(prealloy_box, text="Pre-alloy formula:", font=ctk.CTkFont(size=13)).grid(row=1, column=0, padx=10, pady=6, sticky="w")
+        ctk.CTkLabel(prealloy_box, text="Pre-alloy formula:", font=ctk.CTkFont(size=13)).grid(row=1, column=0, padx=10, pady=4, sticky="w")
         self.prealloy_formula_entry = ctk.CTkEntry(prealloy_box, width=140, placeholder_text="e.g., Fe2P1")
-        self.prealloy_formula_entry.grid(row=1, column=1, padx=5, pady=6, sticky="w")
+        self.prealloy_formula_entry.grid(row=1, column=1, padx=5, pady=4, sticky="w")
 
-        ctk.CTkLabel(prealloy_box, text="Pre-alloy mass (g):", font=ctk.CTkFont(size=13)).grid(row=1, column=2, padx=10, pady=6, sticky="w")
-        self.prealloy_mass_entry = ctk.CTkEntry(prealloy_box, width=100, placeholder_text="e.g., 13")
-        self.prealloy_mass_entry.grid(row=1, column=3, padx=5, pady=6, sticky="w")
+        ctk.CTkLabel(prealloy_box, text="Pre-alloy mass (g):", font=ctk.CTkFont(size=13)).grid(row=2, column=0, padx=10, pady=4, sticky="w")
+        self.prealloy_mass_entry = ctk.CTkEntry(prealloy_box, width=140, placeholder_text="e.g., 13")
+        self.prealloy_mass_entry.grid(row=2, column=1, padx=5, pady=4, sticky="w")
 
-        ctk.CTkLabel(prealloy_box, text="Pre-alloy at% of final:", font=ctk.CTkFont(size=13)).grid(row=2, column=0, padx=10, pady=(0, 8), sticky="w")
+        ctk.CTkLabel(prealloy_box, text="Pre-alloy at% of final:", font=ctk.CTkFont(size=13)).grid(row=3, column=0, padx=10, pady=4, sticky="w")
         self.prealloy_atpct_entry = ctk.CTkEntry(prealloy_box, width=140, placeholder_text="e.g., 85")
-        self.prealloy_atpct_entry.grid(row=2, column=1, padx=5, pady=(0, 8), sticky="w")
+        self.prealloy_atpct_entry.grid(row=3, column=1, padx=5, pady=4, sticky="w")
 
         ctk.CTkLabel(
             prealloy_box,
             text="When set: 'Alloy Formula' above = raw elements to add (at%, e.g. Co5Si10)",
-            font=ctk.CTkFont(size=11), text_color="gray60"
-        ).grid(row=2, column=2, columnspan=2, padx=10, pady=(0, 8), sticky="w")
+            font=ctk.CTkFont(size=11), text_color="gray60", wraplength=460, justify="left"
+        ).grid(row=4, column=0, columnspan=4, padx=10, pady=(0, 8), sticky="w")
         
-        ctk.CTkLabel(frame, text="Sample ID:", font=ctk.CTkFont(size=14)).grid(row=8, column=0, padx=10, pady=10, sticky="w")
+        ctk.CTkLabel(frame, text="Sample ID:", font=ctk.CTkFont(size=14)).grid(row=8, column=0, padx=10, pady=4, sticky="w")
         self.sample_id_entry = ctk.CTkEntry(frame, width=300, placeholder_text="Auto-generated")
-        self.sample_id_entry.grid(row=8, column=1, padx=10, pady=10, sticky="w")
+        self.sample_id_entry.grid(row=8, column=1, padx=10, pady=4, sticky="w")
         self.auto_generate_id()
         
         self.auto_id_btn = ctk.CTkButton(frame, text="🔄 Auto-generate ID", command=self.auto_generate_id, width=150)
-        self.auto_id_btn.grid(row=8, column=2, padx=10, pady=10)
+        self.auto_id_btn.grid(row=8, column=2, padx=10, pady=4)
         
         btn_frame = ctk.CTkFrame(frame)
-        btn_frame.grid(row=9, column=0, columnspan=3, pady=20)
-        
+        btn_frame.grid(row=9, column=0, columnspan=3, padx=10, pady=(15, 10), sticky="w")
+
         self.calc_btn = ctk.CTkButton(btn_frame, text="🧪 Calculate & Preview", command=self.run_calculation, width=200)
-        self.calc_btn.pack(side="left", padx=10)
+        self.calc_btn.grid(row=0, column=0, padx=8, pady=(8, 4))
         self.stage5_btn = ctk.CTkButton(btn_frame, text="🔬 CALPHAD + SISSO Screen", command=self.run_stage5_screen, width=210)
-        self.stage5_btn.pack(side="left", padx=10)
-        
+        self.stage5_btn.grid(row=0, column=1, padx=8, pady=(8, 4))
+
         self.submit_btn = ctk.CTkButton(btn_frame, text="💾 Submit to Database", command=self.submit_to_db, width=200, state="disabled")
-        self.submit_btn.pack(side="left", padx=10)
+        self.submit_btn.grid(row=1, column=0, padx=8, pady=4)
 
         self.skip_search_var = ctk.BooleanVar(value=False)
         ctk.CTkCheckBox(
             btn_frame, text="Skip literature search (screening + mass calc only)",
             variable=self.skip_search_var
-        ).pack(side="left", padx=20)
-        
-        # Literature controls
+        ).grid(row=2, column=0, columnspan=2, padx=12, pady=(4, 8), sticky="w")
+
         # Stage 5 options (CALPHAD + SISSO screen)
         s5_frame = ctk.CTkFrame(frame)
         s5_frame.grid(row=10, column=0, columnspan=3, padx=10, pady=(0, 5), sticky="ew")
-        ctk.CTkLabel(s5_frame, text="Stage 5:", font=ctk.CTkFont(size=13, weight="bold")).pack(side="left", padx=(10, 5))
+        ctk.CTkLabel(s5_frame, text="Stage 5:", font=ctk.CTkFont(size=13, weight="bold")).grid(row=0, column=0, padx=(10, 5), pady=(8, 2), sticky="w")
         self.stage5_proto_var = ctk.BooleanVar(value=True)
         ctk.CTkCheckBox(
             s5_frame, text="Nearest-prototype fallback", variable=self.stage5_proto_var
-        ).pack(side="left", padx=8)
-        ctk.CTkLabel(s5_frame, text="Site groups (opt-in):", font=ctk.CTkFont(size=13)).pack(side="left", padx=(15, 5))
+        ).grid(row=0, column=1, columnspan=2, padx=8, pady=(8, 2), sticky="w")
+        ctk.CTkLabel(s5_frame, text="Site groups (opt-in):", font=ctk.CTkFont(size=13)).grid(row=1, column=0, columnspan=2, padx=(10, 5), pady=2, sticky="w")
         self.stage5_site_groups_entry = ctk.CTkEntry(s5_frame, width=130, placeholder_text="e.g. FE,SI")
-        self.stage5_site_groups_entry.pack(side="left", padx=5)
+        self.stage5_site_groups_entry.grid(row=1, column=2, padx=5, pady=2, sticky="w")
         ctk.CTkLabel(
-            s5_frame, text="(elements sharing one site; empty = plain composition distance)",
+            s5_frame, text="elements sharing one site; empty = plain composition distance",
             font=ctk.CTkFont(size=11), text_color="gray60"
-        ).pack(side="left", padx=5)
+        ).grid(row=2, column=0, columnspan=3, padx=10, pady=0, sticky="w")
         self.stage5_auto_var = ctk.BooleanVar(value=True)
         ctk.CTkCheckBox(
             s5_frame, text="Also run with Calculate & Preview (ternary)", variable=self.stage5_auto_var
-        ).pack(side="left", padx=(15, 5))
+        ).grid(row=3, column=0, columnspan=3, padx=10, pady=2, sticky="w")
         self.stage5_force_var = ctk.BooleanVar(value=False)
-        ctk.CTkCheckBox(s5_frame, text="Force recompute", variable=self.stage5_force_var).pack(side="left", padx=15)
+        ctk.CTkCheckBox(s5_frame, text="Force recompute", variable=self.stage5_force_var).grid(row=4, column=0, columnspan=3, padx=10, pady=(2, 8), sticky="w")
 
         lit_frame = ctk.CTkFrame(frame)
         lit_frame.grid(row=11, column=0, columnspan=3, padx=10, pady=(0, 5), sticky="ew")
-        
-        ctk.CTkLabel(lit_frame, text="Literature DB:", font=ctk.CTkFont(size=13)).pack(side="left", padx=(10, 5))
-        
+
+        ctk.CTkLabel(lit_frame, text="Literature DB:", font=ctk.CTkFont(size=13)).grid(row=0, column=0, padx=(10, 5), pady=(8, 2), sticky="w")
+
         self.lit_db_var = ctk.StringVar(value='materials_project')
-        for db_key in ('materials_project', 'oqmd', 'alexandria'):
+        for col, db_key in enumerate(('materials_project', 'oqmd', 'alexandria'), start=1):
             ctk.CTkRadioButton(
                 lit_frame, text=LIT_DB_LABELS[db_key], variable=self.lit_db_var,
                 value=db_key, command=self.on_lit_db_change
-            ).pack(side="left", padx=8)
-        
-        ctk.CTkLabel(lit_frame, text="  Cutoff:", font=ctk.CTkFont(size=13)).pack(side="left", padx=(20, 5))
+            ).grid(row=0, column=col, padx=6, pady=(8, 2), sticky="w")
+
+        cutoff_row = ctk.CTkFrame(lit_frame, fg_color="transparent")
+        cutoff_row.grid(row=1, column=0, columnspan=4, padx=5, pady=(2, 8), sticky="w")
+        ctk.CTkLabel(cutoff_row, text="Cutoff:", font=ctk.CTkFont(size=13)).pack(side="left", padx=(5, 5))
         self.lit_cutoff_slider = ctk.CTkSlider(
-            lit_frame, from_=0.05, to=1.0, number_of_steps=19,
+            cutoff_row, from_=0.05, to=1.0, number_of_steps=19,
             command=self.on_lit_cutoff_change, width=180
         )
         self.lit_cutoff_slider.set(LIT_DB_DEFAULT_CUTOFFS['materials_project'])
         self.lit_cutoff_slider.pack(side="left", padx=5)
-        
-        self.lit_cutoff_label = ctk.CTkLabel(lit_frame, text="", font=ctk.CTkFont(size=13))
+
+        self.lit_cutoff_label = ctk.CTkLabel(cutoff_row, text="", font=ctk.CTkFont(size=13))
         self.lit_cutoff_label.pack(side="left", padx=10)
-        
-        self.result_text = scrolledtext.ScrolledText(frame, height=15, width=80, bg="#1e1e1e", fg="#ffffff", font=("Courier", 10))
-        self.result_text.grid(row=12, column=0, columnspan=3, padx=10, pady=10, sticky="nsew")
-        
-        frame.grid_rowconfigure(12, weight=1)
+
+        # Results pane: full height, optional line wrapping, horizontal scroll for the wide tables
+        results_pane.grid_rowconfigure(1, weight=1)
+        results_pane.grid_columnconfigure(0, weight=1)
+        toolbar = ctk.CTkFrame(results_pane, fg_color="transparent")
+        toolbar.grid(row=0, column=0, sticky="ew", padx=5, pady=(5, 0))
+        ctk.CTkLabel(toolbar, text="Results", font=ctk.CTkFont(size=14, weight="bold")).pack(side="left", padx=(5, 15))
+        self.result_wrap_var = ctk.BooleanVar(value=False)
+        ctk.CTkCheckBox(toolbar, text="Wrap lines", variable=self.result_wrap_var,
+                        command=self.on_result_wrap_toggle, width=90).pack(side="left", padx=5)
+        ctk.CTkButton(toolbar, text="Copy all", width=80, command=self.copy_results).pack(side="right", padx=5)
+
+        self.result_text = scrolledtext.ScrolledText(results_pane, wrap="none", bg="#1e1e1e", fg="#ffffff", font=("Courier", 10))
+        self.result_text.grid(row=1, column=0, padx=5, pady=5, sticky="nsew")
+        self.result_hscroll = tk.Scrollbar(results_pane, orient="horizontal", command=self.result_text.xview)
+        self.result_text.configure(xscrollcommand=self.result_hscroll.set)
+        self.result_hscroll.grid(row=2, column=0, padx=5, pady=(0, 5), sticky="ew")
+
         frame.grid_columnconfigure(1, weight=1)
         self.update_lit_cutoff_label()
     
+    def on_result_wrap_toggle(self):
+        """Wrap long lines (prose) or keep them intact with a horizontal scrollbar (tables)."""
+        wrap = bool(self.result_wrap_var.get())
+        self.result_text.configure(wrap="word" if wrap else "none")
+        if wrap:
+            self.result_hscroll.grid_remove()
+        else:
+            self.result_hscroll.grid()
+
+    def copy_results(self):
+        try:
+            self.clipboard_clear()
+            self.clipboard_append(self.result_text.get("1.0", "end-1c"))
+        except Exception:
+            pass
+
     # ============================================
     # Tab 2: Import Files
     # ============================================
