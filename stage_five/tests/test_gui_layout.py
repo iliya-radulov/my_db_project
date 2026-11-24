@@ -76,3 +76,25 @@ def test_divider_can_be_moved(app):
     app.new_entry_paned.sash_place(0, before + 80, 0)
     app.update()
     assert app.new_entry_paned.sash_coord(0)[0] != before
+
+
+def test_preview_and_stage5_tabs(app):
+    assert app.result_tabs.get() == "Preview"
+    app.result_text.insert("end", "preview text")
+    app._show_stage5("stage5 text", True)                    # shown, but the preview stays in front
+    assert app.result_tabs.get() == "Preview"
+    assert "stage5 text" in app.stage5_view.get("1.0", "end") and "stage5 text" not in app.result_text.get("1.0", "end")
+    app._show_stage5("stage5 result", True, focus=True)
+    app.update()
+    assert app.result_tabs.get() == "Stage 5" and app.stage5_view.winfo_ismapped()
+    app.copy_results()                                       # copies the visible tab
+    assert app.clipboard_get() == "stage5 result"
+    app.result_tabs.set("Preview")
+    app.copy_results()
+    assert app.clipboard_get() == "preview text"
+
+
+def test_wrap_applies_to_both_tabs(app):
+    app.result_wrap_var.set(True)
+    app.on_result_wrap_toggle()
+    assert str(app.stage5_view.cget("wrap")) == "word" and str(app.result_text.cget("wrap")) == "word"
