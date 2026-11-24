@@ -296,3 +296,22 @@ def test_methods_table_says_sisso_unavailable_when_the_step_failed():
     failed = {"formula": "X", "candidates": [], "match_type": "sisso_unavailable", "error": "RuntimeError: MP_API_KEY not found"}
     _, rows = M.build_table([("demo", ens, failed)], 800.0)
     assert rows[0]["SISSO entry (provenance)"].startswith("sisso_unavailable (RuntimeError: MP_API_KEY")
+
+
+def test_mp_key_is_read_from_a_dotenv_file(tmp_path, monkeypatch):
+    pytest.importorskip("pymatgen")
+    import dft_sisso_predictor as D
+    monkeypatch.delenv("MP_API_KEY", raising=False)
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(D, "mp_key_file_candidates", lambda: [tmp_path / "none.txt"])
+    monkeypatch.setattr(D, "mp_env_file_candidates", lambda: [tmp_path / ".env"])
+    (tmp_path / ".env").write_text('POSTGRES_PASSWORD=x\nOTHER_MP_API_KEY=no\nexport MP_API_KEY="abc123"  \n', encoding="utf-8")
+    assert D._resolve_mp_api_key() == "abc123"
+    (tmp_path / ".env").write_text("MP_API_KEY=plain # comment\n", encoding="utf-8")
+    assert D._resolve_mp_api_key() == "plain"
+    monkeypatch.setenv("MP_API_KEY", "fromenv")                          # the environment still wins
+    assert D._resolve_mp_api_key() == "fromenv"
+    monkeypatch.delenv("MP_API_KEY")
+    (tmp_path / ".env").write_text("POSTGRES_PASSWORD=x\n", encoding="utf-8")
+    with pytest.raises(RuntimeError, match="MP_API_KEY not found.*\\.env"):
+        D._resolve_mp_api_key()
