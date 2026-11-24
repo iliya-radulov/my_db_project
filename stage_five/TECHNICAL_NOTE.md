@@ -137,9 +137,10 @@ SISSO error and of the band width (about 4 kJ mol⁻¹ atom⁻¹ here), which is
   `v_stage5_screening`, run–sample links with `v_stage5_sample_runs`).
 * **Tests.** `pytest stage_five/tests` (76 tests, 6 skipped without tkinter; the full ensembles run with
   `RUN_SLOW=1` and `SGTE_BINARY_DIR` set; the window tests run under a virtual display).
-* **Environment of the frozen reports.** pycalphad 0.11.2; the SISSO side uses pymatgen's
-  `GibbsComputedStructureEntry` and the Materials Project API (versions of the desktop installation are recorded
-  with the release).
+* **Environment.** Desktop installation used for the SISSO runs: Python 3.13, pymatgen 2026.5.4, mp-api 0.46.5,
+  pycalphad 0.11.2 (the version that also produced the frozen ensemble reports). The SISSO side uses pymatgen's
+  `GibbsComputedStructureEntry` and the Materials Project API. The tests and the reproduction check of §7 were run
+  in a separate environment (Python 3.13, pycalphad 0.11.2, pymatgen 2026.10.24).
 
 ## 8. Versioning and planned items
 

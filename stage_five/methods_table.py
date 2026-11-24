@@ -80,7 +80,11 @@ def system_row(label: str, ensemble: dict, sisso: dict | None = None, T: float =
                     "ΔG_f^SISSO(T) kJ/mol-atom": "—", "Margin kJ/mol-atom": "—", "Verdict": "—"})
     elif not rows_T:
         note = sisso.get("match_type") or "no comparable row"
-        row.update({"SISSO entry (provenance)": "no_dft_entry" if note == "no_dft_entry" else f"none at {T:.0f} K",
+        if note == "sisso_unavailable":      # the Materials Project / SISSO step failed: say so, with the reason
+            prov = "sisso_unavailable" + (f" ({str(sisso.get('error'))[:70]})" if sisso.get("error") else "")
+        else:
+            prov = "no_dft_entry" if note == "no_dft_entry" else f"none at {T:.0f} K"
+        row.update({"SISSO entry (provenance)": prov,
                     "ΔG_f^SISSO(T) kJ/mol-atom": "—", "Margin kJ/mol-atom": "—",
                     "Verdict": "—" if g["gate_passed"] else "gate failed: no verdict"})
     else:

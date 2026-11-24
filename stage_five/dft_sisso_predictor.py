@@ -58,19 +58,51 @@ def mp_key_file_candidates() -> list[Path]:
     ]
 
 
+def mp_env_file_candidates() -> list[Path]:
+    """`.env` files that may hold MP_API_KEY: the working directory, then the repository root. The desktop app
+    reads the same file through db_config (python-dotenv); the command-line tools did not, so a key kept only in
+    `.env` was found by the app and missed by `screen_ternary.py`."""
+    return [Path.cwd() / ".env", Path(__file__).resolve().parents[1] / ".env"]
+
+
+def _mp_key_from_env_files() -> str:
+    for path in mp_env_file_candidates():
+        if not path.is_file():
+            continue
+        for line in path.read_text(encoding="utf-8", errors="replace").splitlines():
+            line = line.strip()
+            if line.startswith("export "):
+                line = line[7:].lstrip()
+            if line.startswith("MP_API_KEY") and "=" in line:
+                name, _, value = line.partition("=")
+                if name.strip() == "MP_API_KEY":
+                    value = value.strip()
+                    if value[:1] in "\"'" and value[-1:] == value[:1] and len(value) >= 2:
+                        value = value[1:-1]
+                    elif " #" in value:
+                        value = value.split(" #", 1)[0].strip()
+                    if value:
+                        return value
+    return ""
+
+
 def _resolve_mp_api_key(explicit_key: str | None = None) -> str:
     if explicit_key:
         return explicit_key.strip()
     env_key = os.environ.get("MP_API_KEY", "").strip()
     if env_key:
         return env_key
+    env_file_key = _mp_key_from_env_files()
+    if env_file_key:
+        return env_file_key
     for fallback in mp_key_file_candidates():
         if fallback.exists():
             key = fallback.read_text(encoding="utf-8").strip()
             if key:
                 return key
     raise RuntimeError(
-        "MP_API_KEY not found: set the MP_API_KEY environment variable or put the key in "
+        "MP_API_KEY not found: set the MP_API_KEY environment variable, add MP_API_KEY=... to a .env file ("
+        + " or ".join(str(c) for c in mp_env_file_candidates()) + ") or put the key in "
         + " or ".join(str(c) for c in mp_key_file_candidates())
     )
 
