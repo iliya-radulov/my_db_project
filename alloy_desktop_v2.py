@@ -44,6 +44,28 @@ LIT_DB_DEFAULT_CUTOFFS = {
 
 # Set theme
 ctk.set_appearance_mode("dark")
+
+
+def _harden_scrollable_frame():
+    """customtkinter's mouse-wheel handler walks `event.widget.master`; for widgets Tk reports as a plain
+    string (popup menus, drop-downs) that raises AttributeError on every wheel event. Treat such events as
+    'not over this frame' instead of printing a traceback."""
+    cls = getattr(ctk, "CTkScrollableFrame", None)
+    orig = getattr(cls, "_check_if_valid_scroll", None)
+    if orig is None or getattr(orig, "_alloy_hardened", False):
+        return
+
+    def safe(self, widget):
+        try:
+            return orig(self, widget)
+        except AttributeError:
+            return False
+
+    safe._alloy_hardened = True
+    cls._check_if_valid_scroll = safe
+
+
+_harden_scrollable_frame()
 ctk.set_default_color_theme("blue")
 
 class AlloyLabApp(ctk.CTk):
