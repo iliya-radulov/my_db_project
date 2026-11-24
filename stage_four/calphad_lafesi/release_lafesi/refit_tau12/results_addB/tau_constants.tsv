@@ -1,0 +1,7 @@
+model	parameter	published	fitted	delta_J_per_mol
+M3_full	TAU1 G(LA:FE)	2300	2675.84	+375.84
+M3_full	TAU1 G(LA:SI)	37000	36964.21	-35.79
+M3_full	TAU1 G(LA:FE,SI)	-242114	-242120.46	-6.46
+M3_full	TAU2 G(LA:FE)	6500	7096.44	+596.44
+M3_full	TAU2 G(LA:SI)	22500	22682.18	+182.18
+M3_full	TAU2 G(LA:FE,SI)	-241114	-240968.46	+145.54

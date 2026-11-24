@@ -1,0 +1,53 @@
+# Citation metadata for this record (code and calculated data of the La-Fe-Si audit).
+# Put this file in the root of the zip. Zenodo takes title and creators from the
+# upload form, so enter the same values there. Update `doi`, `version` and
+# `date-released` after the record exists.
+
+cff-version: 1.2.0
+message: "If you use this code or these data, please cite the record below and the paper it supplements."
+type: software
+title: "La-Fe-Si CALPHAD audit: code and calculated data"
+abstract: >
+    Code and calculated data behind the paper "Reconstructing a published
+    La-Fe-Si thermodynamic description from its printed tables: transcription
+    errors, a descriptor test against microstructure data, and failed
+    re-optimisation attempts". Contents: the merge builder for the binary
+    assessments plus the printed ternary terms, the check of tau3-tau6, the
+    B2/D03 ordering check, the driving-force descriptor with its 20-combination
+    band, the pre-registered rank-correlation test against dark-phase area
+    fractions from backscattered-electron images, the analysis scripts for the
+    area fractions, and the scripts, frozen rules and summary results of the
+    re-optimisation attempts. Every file is listed with its sha256 value in
+    HASHES.txt. Database files, the transcribed tables of the literature and
+    the microscopy images are not included.
+authors:
+  - given-names: "Iliya Angelov"
+    family-names: "Radulov"
+    orcid: "https://orcid.org/0000-0001-8943-5083"
+  - name: "Claude (Anthropic)"
+
+# doi: "10.5281/zenodo.XXXXXXXX"   # version DOI of this record, added after publication
+version: v1.0
+date-released: "2026-11-25"        # set to the day the record is published
+license: MIT
+
+# related paper: add its DOI here after the paper record exists
+# references:
+#   - type: article
+#     title: "Reconstructing a published La-Fe-Si thermodynamic description from its printed tables ..."
+#     authors:
+#       - given-names: "Iliya Angelov"
+#         family-names: "Radulov"
+#     doi: "10.5281/zenodo.YYYYYYYY"
+
+repository-code: "https://github.com/iliya-radulov/my_db_project"
+
+keywords:
+  - CALPHAD
+  - La-Fe-Si
+  - La(Fe,Si)13
+  - magnetocaloric
+  - thermodynamic assessment
+  - reproducibility
+  - pre-registration
+  - pycalphad

@@ -1,0 +1,27 @@
+combination | y_lo 1173/1373/1573 | y_hi 1173/1373/1573 | shift s | width 1373 | class
+FeLa-09Pov+LaSi-10Zho+FeSi-12Ohn | 0.090/0.085/0.085 | 0.235/0.235/0.240 | -0.005 | 0.150 | flat
+FeLa-09Pov+LaSi-10Zho+FeSi-14Yua | 0.090/0.085/0.085 | 0.235/0.235/0.240 | -0.005 | 0.150 | flat
+FeLa-09Pov+LaSi-10Zho+FeSi-17Cui | 0.090/0.085/0.085 | 0.235/0.235/0.240 | -0.005 | 0.150 | flat
+FeLa-09Pov+LaSi-10Zho+FeSi-23Wit | 0.090/0.085/0.085 | 0.235/0.235/0.240 | -0.005 | 0.150 | flat
+FeLa-09Pov+LaSi-10Zho+FeSi-91Lac-LB | 0.090/0.085/0.085 | 0.235/0.235/0.240 | -0.005 | 0.150 | flat
+FeLa-09Pov+LaSi-20Xu+FeSi-12Ohn | 0.070/0.065/0.065 | 0.235/0.235/0.240 | -0.005 | 0.170 | flat
+FeLa-09Pov+LaSi-20Xu+FeSi-14Yua | 0.070/0.065/0.065 | 0.235/0.235/0.240 | -0.005 | 0.170 | flat
+FeLa-09Pov+LaSi-20Xu+FeSi-17Cui | 0.070/0.065/0.065 | 0.235/0.235/0.240 | -0.005 | 0.170 | flat
+FeLa-09Pov+LaSi-20Xu+FeSi-23Wit | 0.070/0.065/0.065 | 0.235/0.235/0.240 | -0.005 | 0.170 | flat
+FeLa-09Pov+LaSi-20Xu+FeSi-91Lac-LB | 0.070/0.065/0.065 | 0.235/0.235/0.240 | -0.005 | 0.170 | flat
+FeLa-23Su+LaSi-10Zho+FeSi-12Ohn | 0.090/0.085/0.085 | 0.235/0.235/0.240 | -0.005 | 0.150 | flat
+FeLa-23Su+LaSi-10Zho+FeSi-14Yua | 0.090/0.085/0.085 | 0.235/0.235/0.240 | -0.005 | 0.150 | flat
+FeLa-23Su+LaSi-10Zho+FeSi-17Cui | 0.090/0.085/0.085 | 0.235/0.235/0.240 | -0.005 | 0.150 | flat
+FeLa-23Su+LaSi-10Zho+FeSi-23Wit | 0.090/0.085/0.085 | 0.235/0.235/0.240 | -0.005 | 0.150 | flat
+FeLa-23Su+LaSi-10Zho+FeSi-91Lac-LB | 0.090/0.085/0.085 | 0.235/0.235/0.240 | -0.005 | 0.150 | flat
+FeLa-23Su+LaSi-20Xu+FeSi-12Ohn | 0.070/0.070/0.070 | 0.235/0.235/0.240 | +0.000 | 0.165 | flat
+FeLa-23Su+LaSi-20Xu+FeSi-14Yua | 0.070/0.070/0.070 | 0.235/0.235/0.240 | +0.000 | 0.165 | flat
+FeLa-23Su+LaSi-20Xu+FeSi-17Cui | 0.070/0.070/0.070 | 0.235/0.235/0.240 | +0.000 | 0.165 | flat
+FeLa-23Su+LaSi-20Xu+FeSi-23Wit | 0.070/0.070/0.070 | 0.235/0.235/0.240 | +0.000 | 0.165 | flat
+FeLa-23Su+LaSi-20Xu+FeSi-91Lac-LB | 0.070/0.070/0.070 | 0.235/0.235/0.240 | +0.000 | 0.165 | flat
+
+n computed = 20 of 20; failures: 0 []
+classes: flat 20
+M0 consistency check (within 0.005): PASS  M0 = {1173: (0.09, 0.235), 1373: (0.085, 0.235), 1573: (0.085, 0.24)}
+y_lo(1373 K) range 0.065-0.085; width(1373 K) range 0.150-0.170 (measured: 0.096, 0.133); any combination reproducing measured shift (s>=0.04): False
+flat 20/20 = 1.00 -> the flat window is NOT a binary-choice effect (it comes with the Feng tau parameters)
