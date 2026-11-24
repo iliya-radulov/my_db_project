@@ -54,3 +54,10 @@ and `ensemble_unreliable` rows are excluded.
 * The GUI hands Stage 5 the typed formula when it equals the resolved composition, otherwise a 12-digit formula,
   so GUI and CLI share one cache entry.
 * `sisso_uncertainty_kJ` and `--sisso-uncertainty-kj` are removed.
+
+## Linking a run to a sample (migration 012)
+`Submit to Database` links the Stage 5 run of the submitted preview to the new sample (only if the run belongs to
+that exact preview; if Stage 5 is still running, the link is made when it finishes). `calphad_run_samples` is
+many-to-many because a cached run is reused for every sample with the same composition and options; the view
+`v_stage5_sample_runs` lists run, system, gates and survivors per sample code, and Quick Lookup shows them. Without
+012 the old single column is used and a run that already belongs to another sample is not re-linked.

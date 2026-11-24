@@ -234,3 +234,92 @@ def test_unavailable_rows_are_explained_in_the_preview():
     assert "-8.790" in txt                                                         # the CALPHAD band is still shown
     cached = {**base, "sisso_error": None}
     assert "[sisso_unavailable]" in H.format_screening_summary(cached)
+
+
+# ------------------------------------------------------------ linking runs to samples (scripted fake database)
+
+class ScriptCursor:
+    """Answers by substring of the SQL; records every statement."""
+    def __init__(self, conn):
+        self.conn, self.out = conn, None
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *a):
+        return False
+
+    def execute(self, sql, params=None):
+        sql = " ".join(sql.split())
+        self.conn.log.append((sql, params))
+        self.out = None
+        for needle, result in self.conn.script:
+            if needle in sql:
+                self.out = result
+                break
+
+    def fetchone(self):
+        return self.out[0] if self.out else None
+
+    def fetchall(self):
+        return list(self.out or [])
+
+
+class ScriptConn:
+    def __init__(self, script):
+        self.script, self.log = script, []
+
+    def cursor(self):
+        return ScriptCursor(self)
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *a):
+        return False
+
+    def close(self):
+        pass
+
+
+def _link(monkeypatch, script, run_id=7, code="S-1"):
+    conn = ScriptConn(script)
+    monkeypatch.setattr(H, "_connect_db", lambda: conn)
+    return H.link_run_to_sample(run_id, code), conn
+
+
+def test_link_with_the_link_table(monkeypatch):
+    msg, conn = _link(monkeypatch, [("FROM samples", [(3,)]), ("SELECT sample_id FROM calphad_ensemble_runs", [(9,)]),
+                                    ("information_schema.tables", [(1,)])])
+    assert "linked to sample S-1" in msg
+    assert any("INSERT INTO calphad_run_samples" in s for s, _ in conn.log)
+    assert not any("UPDATE calphad_ensemble_runs" in s for s, _ in conn.log)   # run already has an old-column owner
+
+
+def test_link_without_the_link_table_uses_the_old_column_once(monkeypatch):
+    msg, conn = _link(monkeypatch, [("FROM samples", [(3,)]), ("SELECT sample_id FROM calphad_ensemble_runs", [(None,)])])
+    assert "linked to sample" in msg and any("UPDATE calphad_ensemble_runs" in s for s, _ in conn.log)
+    msg, _ = _link(monkeypatch, [("FROM samples", [(3,)]), ("SELECT sample_id FROM calphad_ensemble_runs", [(4,)])])
+    assert "012" in msg and "not linked" in msg                                  # another sample owns it
+    msg, _ = _link(monkeypatch, [("FROM samples", [(3,)]), ("SELECT sample_id FROM calphad_ensemble_runs", [(3,)])])
+    assert "already linked" in msg
+
+
+def test_link_unknown_sample_or_run(monkeypatch):
+    assert "not found" in _link(monkeypatch, [("FROM samples", [])])[0]
+    assert "run not found" in _link(monkeypatch, [("FROM samples", [(3,)]),
+                                                  ("SELECT sample_id FROM calphad_ensemble_runs", [])])[0]
+
+
+def test_runs_for_sample_are_listed_and_formatted(monkeypatch):
+    import datetime
+    row = (7, "La7.1Fe82.1Si10.8", "FE-LA-SI", True, 16, 20, datetime.datetime(2026, 11, 24, 9, 40))
+    conn = ScriptConn([("FROM samples", [(3,)]), ("information_schema.tables", [(1,)]),
+                       ("FROM calphad_ensemble_runs WHERE", [row])])
+    monkeypatch.setattr(H, "_connect_db", lambda: conn)
+    runs = H.fetch_runs_for_sample("S-1")
+    assert runs[0]["run_id"] == 7 and runs[0]["system"] == "FE-LA-SI"
+    assert any("calphad_run_samples" in s for s, _ in conn.log)
+    text = "\n".join(H.format_sample_runs(runs))
+    assert "run 7" in text and "16/20" in text and "PASS" in text
+    assert H.format_sample_runs([]) == []
