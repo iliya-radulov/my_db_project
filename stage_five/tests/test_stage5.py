@@ -201,3 +201,49 @@ def test_stage5_formula_uses_typed_text_when_it_matches():
     assert H.stage5_formula("Nd2Fe14B", comp) == "Nd2Fe14B"
     assert H.stage5_formula("Nd2Fe13B", comp) == H.composition_to_formula(comp)
     assert H.stage5_formula("", comp) == "Nd2Fe14B" or True
+
+
+# ---------------------------------------------------------------- composition-matched threshold
+
+def _proto_sisso(dgf=-9.6):
+    return {"candidates": [{"material_id": "mp-9", "formula": "LaFe13", "match_type": "nearest_prototype",
+                            "prototype_formula": "LaFe13", "delta_x": 0.15,
+                            "composition_fractions": {"LA": 1 / 14, "FE": 13 / 14},
+                            "dGf_sisso_kJ_mol_atom": {"800.0": dgf}}]}
+
+
+def _matched(n_ok=8, n_in=10):
+    st = {"median_kJ": -9.2, "p05_kJ": -9.8, "p95_kJ": -8.9, "n": n_ok}
+    return {"mp-9": {"composition": {"LA": 0.0714, "FE": 0.9286}, "n_in": n_in, "n_ok": n_ok,
+                     "threshold_distribution": {"800.0": st}}}
+
+
+def test_matched_check_adds_class_but_row_stays_indicative():
+    pytest.importorskip("pymatgen")
+    from dft_sisso_predictor import compare_with_calphad_ensemble as cmp, format_comparison_table
+    r = cmp(_proto_sisso(), _ensemble(), matched=_matched())[0]
+    assert r["verdict"] == "prototype_indicative_only" and r["comparable"] is False
+    assert r["threshold_composition"]["margin_kJ"] == round(-9.6 + 9.2, 4)
+    assert r["verdict_at_prototype"] == "borderline_within_band"          # -9.8 <= -9.6 <= -8.9
+    assert any("Composition-matched" in l for l in format_comparison_table([r]))
+    # without `matched`: nothing added
+    r0 = cmp(_proto_sisso(), _ensemble())[0]
+    assert r0["verdict_at_prototype"] is None and r0["threshold_composition"] is None
+
+
+def test_matched_check_unreliable_when_too_few_combinations_evaluable():
+    pytest.importorskip("pymatgen")
+    from dft_sisso_predictor import compare_with_calphad_ensemble as cmp
+    r = cmp(_proto_sisso(), _ensemble(), matched=_matched(n_ok=2, n_in=10))[0]
+    assert r["verdict_at_prototype"] == "ensemble_unreliable"
+
+
+@pytest.mark.skipif(not (TDB_DIR.is_dir() and (TDB_DIR / "FeNd-16Wan.tdb").exists()), reason="needs SGTE_BINARY_DIR")
+def test_rethreshold_at_the_target_composition_reproduces_the_frozen_band():
+    import json
+    rep = json.loads((Path(__file__).resolve().parents[1] / "results" / "ensemble_B-Fe-Nd_Nd2Fe14B.json").read_text())
+    m = G.rethreshold_at_composition(rep, rep["target_composition"], tdb_dir=TDB_DIR, temperatures=[800.0], workers=4)
+    got, ref = m["threshold_distribution"]["800.0"], rep["threshold_distribution"]["800.0"]
+    assert m["n_ok"] == m["n_in"] == rep["gates"]["G1_survival"]["survived"]
+    for k in ("median_kJ", "p05_kJ", "p95_kJ"):
+        assert got[k] == pytest.approx(ref[k], abs=2e-4)

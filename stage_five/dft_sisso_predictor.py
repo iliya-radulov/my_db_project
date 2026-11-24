@@ -275,7 +275,16 @@ def sisso_reference_offset_kJ(
     return round(total, 4)
 
 
-def compare_with_calphad_ensemble(sisso_report: dict, ensemble_report: dict) -> list[dict]:
+MATCHED_MIN_FRACTION = 0.25     # fewer than this share of the surviving combinations evaluable at the prototype composition -> unreliable
+
+
+def _class_vs_band(dgf: float, st: dict) -> str:
+    return ('stable_across_band' if dgf < st['p05_kJ'] else
+            'metastable_above_band' if dgf > st['p95_kJ'] else 'borderline_within_band')
+
+
+def compare_with_calphad_ensemble(sisso_report: dict, ensemble_report: dict,
+                                  matched: dict | None = None) -> list[dict]:
     """
     Combine Bartel SISSO ΔG_f(T) with the CALPHAD binary-ensemble threshold ΔG_f*(T) (contract of 24 Nov 2026).
 
@@ -288,8 +297,11 @@ def compare_with_calphad_ensemble(sisso_report: dict, ensemble_report: dict) -> 
     folded into the class.
 
     ensemble_unreliable   the ensemble failed its gates: the band is shown if present, no margin, no class.
-    nearest_prototype     not at the target composition: verdict "prototype_indicative_only", comparable=False
-                          (the composition-matched check is a separate step).
+    nearest_prototype     not at the target composition: verdict "prototype_indicative_only", comparable=False.
+                          `matched` ({material_id: general_ensemble.rethreshold_at_composition(...)}) adds the
+                          composition-matched check: the threshold band at the PROTOTYPE's own composition,
+                          `verdict_at_prototype` (same class rule, band edges of that composition) and
+                          `threshold_composition` (composition + matched band + margin). The row stays indicative.
     listed_other_ternary  (include_subsystems) is skipped.
     """
     gate_ok = bool(ensemble_report.get("gates", {}).get("gate_passed"))
@@ -322,6 +334,18 @@ def compare_with_calphad_ensemble(sisso_report: dict, ensemble_report: dict) -> 
                     verdict = "metastable_above_band"
                 else:
                     verdict = "borderline_within_band"
+            at_proto = None
+            m = (matched or {}).get(cand["material_id"]) if match_type == NEAREST_PROTOTYPE else None
+            if m is not None and gate_ok:
+                ms = (m.get("threshold_distribution") or {}).get(t_key)
+                reliable = m["n_in"] > 0 and m["n_ok"] / m["n_in"] >= MATCHED_MIN_FRACTION
+                if ms is not None:
+                    at_proto = {
+                        "composition": m["composition"], "median_kJ": ms["median_kJ"], "p05_kJ": ms["p05_kJ"],
+                        "p95_kJ": ms["p95_kJ"], "n": ms["n"], "n_in": m["n_in"],
+                        "margin_kJ": round(dgf_sisso - ms["median_kJ"], 4),
+                        "verdict": _class_vs_band(dgf_sisso, ms) if reliable else "ensemble_unreliable",
+                    }
             rows.append({
                 "material_id": cand["material_id"],
                 "formula": cand["formula"],
@@ -341,6 +365,8 @@ def compare_with_calphad_ensemble(sisso_report: dict, ensemble_report: dict) -> 
                 "dGf_sisso_ser_kJ": None if ref is None else round(dgf_sisso + ref, 4),
                 "margin_ser_kJ": None if (ref is None or margin is None) else round(margin + ref, 4),
                 "verdict": verdict,
+                "threshold_composition": at_proto,
+                "verdict_at_prototype": at_proto["verdict"] if at_proto else None,
                 "competing_assemblage": t_stats["dominant_competing_assemblage"] if t_stats else None,
             })
     return rows
@@ -371,6 +397,16 @@ def format_comparison_table(rows: list[dict]) -> list[str]:
     if any(r.get("match_type") == NEAREST_PROTOTYPE for r in rows):
         lines.append("nearest_prototype rows: different composition from the target; energy and margin are "
                      "for orientation only, not a stability verdict.")
+    matched_rows = [r for r in rows if r.get("threshold_composition")]
+    if matched_rows:
+        lines.append("")
+        lines.append("Composition-matched check (band recomputed at the prototype's own composition; the row stays indicative):")
+        for r in matched_rows:
+            tc = r["threshold_composition"]
+            comp = " ".join(f"{k} {v:.3f}" for k, v in tc["composition"].items())
+            lines.append(f"  {r['material_id']} {r['T_K']:>5.0f} K  [{comp}]  band [{tc['p05_kJ']:+.2f}, {tc['p95_kJ']:+.2f}] "
+                         f"median {tc['median_kJ']:+.2f}  margin {tc['margin_kJ']:+.2f}  -> {r['verdict_at_prototype']}"
+                         f"  (n={tc['n']}/{tc['n_in']})")
     if with_ref:
         lines.append("Margin(ref): SISSO put on the SER axis of the CALPHAD side (approximate); the class uses the "
                      "CALPHAD band and the plain margin only.")
