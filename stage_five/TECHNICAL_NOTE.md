@@ -4,6 +4,9 @@ Technical note, contract version 1.0, 24 November 2026
 Iliya A. Radulov, Claude (Anthropic)
 Code: https://github.com/iliya-radulov/my_db_project (`stage_five/`), release tag `v5.0-stage5`.
 Earlier release of the project: Stage 4 Track A, DOI 10.5281/zenodo.24039719.
+This record: DOI to be added after Zenodo has archived the release.
+
+**Abstract.** Stage 5 answers one screening question for a ternary composition: is a candidate phase predicted to be more stable than the best combination of the three binary systems at that composition? The competing side is an ensemble of open binary CALPHAD assessments and carries an assessment-scatter band (median, 5th and 95th percentile), not a single number. The candidate side is a Materials Project 0 K entry with a Bartel SISSO finite-temperature correction, used as a secondary axis only. The survival and lineage gates are engineering defaults, not pre-registered values, and the SISSO side is not validated: on the Nd₂Fe₁₄B benchmark it places an experimentally stable phase above the competing binaries (§5). This note fixes what each stored number means, how labels are assigned and what the tool does not claim, so that results stay interpretable when the tool is extended.
 
 ## 1. Purpose
 
@@ -87,22 +90,29 @@ order (the first file wins on conflicts). In Al–Fe–Mn two third-generation F
 FeMn-89Lee fails the edge check in every combination; in Fe–La–Si FeSi-91Lac-LB fails it in all four of its
 combinations.
 
-**Table 2.** La₇.₁Fe₈₂.₁Si₁₀.₈ with the SISSO overlay (desktop run of 24 November 2026, database run 11, nearest
-prototypes with site group Fe,Si; values at 800 K unless stated; the numbers are taken from the application output, the
-JSON export of this run is listed under planned items).
+Al–Fe–Mn has 594 combinations here (11, 9 and 6 accepted files on the Al–Fe, Al–Mn and Fe–Mn edges, after excluding two third-generation Fe–Mn assessments) against 144 in the Stage 4 paper (78/144, 54 %) because the file selection differs. The Stage 4 paper restricted the set by hand, among other rules to files that carry the sublattice model of the target phase, whereas the Stage 5 audit applies only its general exclusion rules (§2) to a larger file collection, so more files enter and the edge check decides. The survivor counts of the two papers are therefore not comparable.
 
-| Prototype (Materials Project entry) | Euclidean distance to target | ΔG_f^SISSO | band at the prototype's composition, median [p05, p95] | margin | class at the prototype |
+**Table 2.** La₇.₁Fe₈₂.₁Si₁₀.₈ with the SISSO overlay (nearest prototypes with site group Fe,Si; values at 800 K unless
+stated). Source: the frozen export `results/screen_Fe-La-Si_La7.1Fe82.1Si10.8_sitegroup_FE-SI.json` (SHA-256 in
+`results/SHA256SUMS`), made with `screen_ternary.py --site-group FE,SI`; its ensemble block has the same specification
+hash, TDB-collection hash and bands as the frozen Fe–La–Si report, and its numbers are those of the desktop run of
+24 November 2026 (database run 11).
+
+| Prototype (Materials Project entry, space group) | Euclidean distance to target | ΔG_f^SISSO | band at the prototype's composition, median [p05, p95] | margin | class at the prototype |
 |---|---|---|---|---|---|
-| LaFe₉Si₄ (mp-662529) | 0.252 | −37.68 | −33.13 [−35.06, −31.21] | −4.55 | stable_across_band to 1300 K; borderline_within_band from 1375 K |
-| LaFe₈Si₅ (mp-1211378) | 0.353 | −41.92 | −36.38 [−38.50, −34.27] | −5.54 | stable_across_band to 1450 K; borderline at 1600 K |
-| LaFe₈Si₅ (mp-1223067) | 0.353 | −41.04 | −36.38 [−38.50, −34.27] | −4.66 | stable_across_band to 1375 K; borderline from 1450 K |
+| LaFe₉Si₄ (mp-662529, I4/mcm) | 0.252 | −37.68 | −33.13 [−35.06, −31.21] | −4.55 | stable_across_band to 1300 K; borderline_within_band from 1375 K |
+| LaFe₈Si₅ (mp-1211378, I4/mcm) | 0.353 | −41.92 | −36.38 [−38.50, −34.27] | −5.54 | stable_across_band to 1450 K; borderline at 1600 K |
+| LaFe₈Si₅ (mp-1223067, C2/m) | 0.353 | −41.04 | −36.38 [−38.50, −34.27] | −4.66 | stable_across_band to 1375 K; borderline from 1450 K |
 
-Reading: at its own Si-rich composition the La(Fe,Si)₁₃-type structure lies 4–6 kJ mol⁻¹ atom⁻¹ below the competing
-binaries and moves into the band (class `borderline_within_band`) at 1375–1600 K. This is evidence about the structure type; it is **not** a
-verdict on the target composition, which is 0.25–0.35 away. Without the site group the closest entry is LaFe₉
+Reading: at their own Si-rich compositions these La–Fe–Si entries (tetragonal I4/mcm and monoclinic C2/m, as recorded
+in the export; whether they derive from the NaZn₁₃ type was not checked here) lie 4–6 kJ mol⁻¹ atom⁻¹ below the
+competing binaries and move into the band (class `borderline_within_band`) at 1375–1600 K. This is evidence about
+these structures at those compositions; it is **not** a verdict on the target composition, which is 0.25–0.35 away. Without the site group the closest entry is LaFe₉
 (ΔG_f^SISSO = +14.5 kJ mol⁻¹ atom⁻¹ at 800 K, band at its composition −1.77, margin +16.3: `metastable_above_band`),
 a high-energy entry that is not a useful stand-in. The margins of 4–6 kJ mol⁻¹ atom⁻¹ are of the size of the usual
-SISSO error and of the band width (about 4 kJ mol⁻¹ atom⁻¹ here), which is why SISSO stays secondary.
+SISSO error and of the band width (about 4 kJ mol⁻¹ atom⁻¹ here), which is why SISSO stays secondary. Earlier displays that compared a prototype with the band at the target composition showed large negative margins (for LaFe₉Si₄ at 800 K −19.9 kJ mol⁻¹ atom⁻¹ against the band at the target composition, against −4.55 at its own composition). These were artifacts of the composition mismatch and no longer occur, because the band is evaluated at the prototype's own composition (§3, decision 1).
+
+**Benchmark.** Nd₂Fe₁₄B is stable experimentally. At 800 K its SISSO value is ΔG_SISSO = −3.0 kJ mol⁻¹ atom⁻¹ against a threshold of −8.8, that is 5.8 kJ mol⁻¹ atom⁻¹ above the competing binaries (class `metastable_above_band`). This run of 23 November is not part of the frozen files.
 
 ## 6. Limitations
 
@@ -129,13 +139,14 @@ SISSO error and of the band width (about 4 kJ mol⁻¹ atom⁻¹ here), which is
 * **Code and version.** Tag `v5.0-stage5`; engine rules version `stage5-engine/edge-rule-v2/fix1-2026-11-23`;
   contract 1.0 (`stage_five/CONTRACT.md`).
 * **Frozen reports.** `stage_five/results/ensemble_B-Fe-Nd_Nd2Fe14B.json`, `ensemble_Al-Fe-Mn_Al16Fe5Mn5.json`,
-  `ensemble_Fe-La-Si_La7.1Fe82.1Si10.8.json`, with SHA-256 in `results/SHA256SUMS`; each report stores its
+  `ensemble_Fe-La-Si_La7.1Fe82.1Si10.8.json`, and the screening export of Fe–La–Si with the SISSO overlay
+  (`screen_Fe-La-Si_La7.1Fe82.1Si10.8_sitegroup_FE-SI.json`), with SHA-256 in `results/SHA256SUMS`; each report stores its
   specification hash, the hash of the accepted TDB files, the merge order and every combination's result.
   The table and notes are generated from these files only (`methods_table.py`).
 * **Reproduction.** On 24 Nov 2026 the current code (after the contract changes; Python 3.13, pycalphad 0.11.2) re-ran all three ensembles from scratch and compared them with the frozen files. The same combinations survive (16/20, 78/84, 313/594), the specification hashes and the hashes of the accepted TDB collection are identical, and the largest differences of the bands (median, 5 %, 95 %, minimum, maximum at every temperature) and of every per-combination threshold are below 10⁻⁵ kJ mol⁻¹ atom⁻¹ (printed as 0.00000). Run times with four workers: 159 s (Fe–La–Si), 228 s (Nd–Fe–B), 4125 s (Al–Fe–Mn).
 * **Database.** Migrations 009–012 in `stage_five/` (tables, prototype provenance, secondary fields with the view
   `v_stage5_screening`, run–sample links with `v_stage5_sample_runs`).
-* **Tests.** `pytest stage_five/tests` (76 tests, 6 skipped without tkinter; the full ensembles run with
+* **Tests.** `pytest stage_five/tests` (78 tests, 6 skipped without tkinter; the full ensembles run with
   `RUN_SLOW=1` and `SGTE_BINARY_DIR` set; the window tests run under a virtual display).
 * **Environment.** Desktop installation used for the SISSO runs: Python 3.13, pymatgen 2026.5.4, mp-api 0.46.5,
   pycalphad 0.11.2 (the version that also produced the frozen ensemble reports). The SISSO side uses pymatgen's
@@ -144,8 +155,7 @@ SISSO error and of the band width (about 4 kJ mol⁻¹ atom⁻¹ here), which is
 
 ## 8. Versioning and planned items
 
-This is version 1.0. Planned, not part of it: export of the Fe–La–Si desktop run as JSON next to the frozen reports,
-SISSO overlays for the other two systems (needs a Materials Project key), a temperature-dependent SISSO calibration
+This is version 1.0. Planned, not part of it: SISSO overlays for the other two systems (needs a Materials Project key), a temperature-dependent SISSO calibration
 study (needs a validation set), and any rule that promotes a nearest prototype to a verdict. Each becomes a new
 version with a changelog entry in `CONTRACT.md`; results are always labelled with the version that produced them.
 
@@ -159,5 +169,3 @@ version with a changelog entry in `CONTRACT.md`; results are always labelled wit
    innovation, APL Mater. 1, 011002 (2013).
 5. S. P. Ong et al., Python Materials Genomics (pymatgen): a robust, open-source Python library for materials
    analysis, Comput. Mater. Sci. 68, 314 (2013).
-
-(Reference details to be checked against the publishers' records before deposit.)

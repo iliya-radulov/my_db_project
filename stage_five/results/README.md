@@ -28,6 +28,8 @@ python stage_five/methods_table.py --system "B-Fe-Nd (Nd2Fe14B)=ensemble_B-Fe-Nd
     --temp 800 --out methods_table_800K.md --tsv methods_table_800K.tsv
 ```
 
+**Screening export with the SISSO overlay (24 Nov 2026):** `screen_Fe-La-Si_La7.1Fe82.1Si10.8_sitegroup_FE-SI.json`, made with `screen_ternary.py --formula La7.1Fe82.1Si10.8 --site-group FE,SI`. Its ensemble block equals the frozen Fe–La–Si report (same `spec_sha256`, `tdb_collection_sha256`, bands); the table row of that system uses its composition-matched comparison rows.
+
 ## Notes on the numbers
 - **Merge priority matters.** The first file wins on conflicting parameters. Nd–Fe–B with the alphabetical edge order
   (B-Fe, B-Nd, Fe-Nd) gives 52 / 84 on the same data; with the order above 78 / 84 (the Stage 4 reference). Fe–La–Si
