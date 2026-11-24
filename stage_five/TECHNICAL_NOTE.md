@@ -146,7 +146,7 @@ SISSO error and of the band width (about 4 kJ mol⁻¹ atom⁻¹ here), which is
 * **Reproduction.** On 24 Nov 2026 the current code (after the contract changes; Python 3.13, pycalphad 0.11.2) re-ran all three ensembles from scratch and compared them with the frozen files. The same combinations survive (16/20, 78/84, 313/594), the specification hashes and the hashes of the accepted TDB collection are identical, and the largest differences of the bands (median, 5 %, 95 %, minimum, maximum at every temperature) and of every per-combination threshold are below 10⁻⁵ kJ mol⁻¹ atom⁻¹ (printed as 0.00000). Run times with four workers: 159 s (Fe–La–Si), 228 s (Nd–Fe–B), 4125 s (Al–Fe–Mn).
 * **Database.** Migrations 009–012 in `stage_five/` (tables, prototype provenance, secondary fields with the view
   `v_stage5_screening`, run–sample links with `v_stage5_sample_runs`).
-* **Tests.** `pytest stage_five/tests` (78 tests, 6 skipped without tkinter; the full ensembles run with
+* **Tests.** `pytest stage_five/tests` (78 passed, 6 skipped without tkinter; the full ensembles run with
   `RUN_SLOW=1` and `SGTE_BINARY_DIR` set; the window tests run under a virtual display).
 * **Environment.** Desktop installation used for the SISSO runs: Python 3.13, pymatgen 2026.5.4, mp-api 0.46.5,
   pycalphad 0.11.2 (the version that also produced the frozen ensemble reports). The SISSO side uses pymatgen's

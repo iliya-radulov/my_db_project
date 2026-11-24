@@ -183,6 +183,7 @@ def test_key_lookup_uses_env_then_the_apps_key_file(monkeypatch, tmp_path):
     key_dir.mkdir(parents=True)
     (key_dir / "MP_API_KEY.txt").write_text("  filekey \n")
     monkeypatch.chdir(kd)                                   # ../../back_up/API/MP_API_KEY.txt, as in the app
+    monkeypatch.setattr(D, "_mp_key_from_env_files", lambda *a, **k: None)   # ignore a real .env on this machine
     assert D._resolve_mp_api_key() == "filekey"
     monkeypatch.setenv("MP_API_KEY", "envkey")
     assert D._resolve_mp_api_key() == "envkey"
