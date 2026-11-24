@@ -112,6 +112,7 @@ many-to-many because a cached run is reused for every sample with the same compo
 |---|---|
 | engine rules version | `stage5-engine/edge-rule-v2/fix1-2026-11-23` (`ENGINE_RULES_VERSION`) |
 | ensemble reports | `results/ensemble_*.json`, hashes in `results/SHA256SUMS`; produced with pycalphad 0.11.2 |
+| screening export | `results/screen_Fe-La-Si_La7.1Fe82.1Si10.8_sitegroup_FE-SI.json` (ensemble, SISSO report, comparison rows with the composition-matched check, windows); same hash file |
 | three-system table | `results/methods_table_800K.md` / `.tsv` (regenerated from the reports above) |
 | migrations | 009 tables; 010 prototype provenance and `prototype_filter`; 011 secondary fields and view `v_stage5_screening`; 012 run-sample links and view `v_stage5_sample_runs` |
 | reproduction | the three reports are reproduced by the current engine (survivors per combination, bands; see `results/README.md`) |
