@@ -56,4 +56,4 @@ stage_four/mce_nims/test_set_edx.csv
 stage_four/mce_nims/SNAPSHOT_v1.pdf
 stage_three/stage4_step1/backup/
 stage_three/rag_benchmark_questions*.csv
-stage_five
+stage_five*.dump
