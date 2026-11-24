@@ -132,7 +132,7 @@ SISSO error and of the band width (about 4 kJ mol⁻¹ atom⁻¹ here), which is
   `ensemble_Fe-La-Si_La7.1Fe82.1Si10.8.json`, with SHA-256 in `results/SHA256SUMS`; each report stores its
   specification hash, the hash of the accepted TDB files, the merge order and every combination's result.
   The table and notes are generated from these files only (`methods_table.py`).
-* **Reproduction.** @@REPRO@@
+* **Reproduction.** On 24 Nov 2026 the current code (after the contract changes; Python 3.13, pycalphad 0.11.2) re-ran all three ensembles from scratch and compared them with the frozen files. The same combinations survive (16/20, 78/84, 313/594), the specification hashes and the hashes of the accepted TDB collection are identical, and the largest differences of the bands (median, 5 %, 95 %, minimum, maximum at every temperature) and of every per-combination threshold are below 10⁻⁵ kJ mol⁻¹ atom⁻¹ (printed as 0.00000). Run times with four workers: 159 s (Fe–La–Si), 228 s (Nd–Fe–B), 4125 s (Al–Fe–Mn).
 * **Database.** Migrations 009–012 in `stage_five/` (tables, prototype provenance, secondary fields with the view
   `v_stage5_screening`, run–sample links with `v_stage5_sample_runs`).
 * **Tests.** `pytest stage_five/tests` (76 tests, 6 skipped without tkinter; the full ensembles run with
