@@ -32,6 +32,7 @@ from dft_sisso_predictor import (
     prototype_filter_from_args,
 )
 from prototype_match import SISSO_UNAVAILABLE, PrototypeFilter, provenance_label
+from stability_window import format_windows, windows_from_rows
 from general_ensemble import DEFAULT_TEMPS, run_binary_ensemble
 
 
@@ -92,6 +93,30 @@ def parse_ternary_formula(formula: str) -> tuple[list[str], list[float], Composi
     return elements, fractions, comp
 
 
+_JSONB_COLUMNS = {"target_composition", "gate_summary", "audit_summary", "prototype_filter",
+                  "eta2_by_edge", "threshold_composition"}
+# columns added by migration 010 / 011: written only when the table has them
+_PROTOTYPE_COLUMNS = {"match_type", "prototype_formula", "delta_x", "comparable"}          # 010 (needed for prototype rows)
+
+
+def _table_columns(cur, table: str) -> set[str]:
+    cur.execute(
+        "SELECT column_name FROM information_schema.columns WHERE table_schema = 'alloy_lab' AND table_name = %s;",
+        (table,),
+    )
+    return {r[0] for r in cur.fetchall()}
+
+
+def _insert(cur, table: str, row: dict, available: set[str], returning: str | None = None):
+    """INSERT the entries of `row` whose column exists in the table (older schemas simply lack the newer ones)."""
+    cols = [c for c in row if c in available]
+    marks = ["%s::jsonb" if c in _JSONB_COLUMNS else "%s" for c in cols]
+    vals = [json.dumps(row[c]) if (c in _JSONB_COLUMNS and row[c] is not None) else row[c] for c in cols]
+    sql = f"INSERT INTO {table} ({', '.join(cols)}) VALUES ({', '.join(marks)})" + (f" RETURNING {returning}" if returning else "") + ";"
+    cur.execute(sql, vals)
+    return cur.fetchone()[0] if returning else None
+
+
 def save_screening_to_db(
     formula: str,
     ensemble_report: dict,
@@ -100,7 +125,10 @@ def save_screening_to_db(
     sample_code: str | None = None,
     prototype_filter: dict | None = None,
 ) -> int:
-    """Insert ensemble run + temperature-by-candidate comparison rows into PostgreSQL."""
+    """Insert ensemble run + temperature-by-candidate comparison rows into PostgreSQL.
+
+    Columns that a migration has not added yet are skipped (the secondary fields of 011, the prototype
+    provenance of 010); nearest-prototype rows are refused without migration 010."""
     conn = _connect_db()
     try:
         with conn, conn.cursor() as cur:
@@ -114,76 +142,62 @@ def save_screening_to_db(
 
             g = ensemble_report["gates"]
             excluded = [x for x in ensemble_report.get("audit_log", []) if x["status"] == "excluded"]
-
-            run_cols = ("sample_id, formula, system_name, target_composition, n_total_combos, n_survivors, "
-                        "gate_passed, gate_summary, audit_summary, spec_sha256, pycalphad_version")
-            run_marks = "%s, %s, %s, %s::jsonb, %s, %s, %s, %s::jsonb, %s::jsonb, %s, %s"
-            run_vals = [
-                sample_id, formula, ensemble_report["system"], json.dumps(ensemble_report["target_composition"]),
-                g["G1_survival"]["total"], g["G1_survival"]["survived"], g["gate_passed"], json.dumps(g),
-                json.dumps(excluded), ensemble_report["spec_sha256"], ensemble_report.get("pycalphad_version"),
-            ]
-            if _has_run_filter_column(cur):
+            run_cols = _table_columns(cur, "calphad_ensemble_runs")
+            run_id = _insert(cur, "calphad_ensemble_runs", {
+                "sample_id": sample_id, "formula": formula, "system_name": ensemble_report["system"],
+                "target_composition": ensemble_report["target_composition"],
+                "n_total_combos": g["G1_survival"]["total"], "n_survivors": g["G1_survival"]["survived"],
+                "gate_passed": g["gate_passed"], "gate_summary": g, "audit_summary": excluded,
+                "spec_sha256": ensemble_report["spec_sha256"],
+                "pycalphad_version": ensemble_report.get("pycalphad_version"),
                 # the prototype options decide which SISSO rows are stored, so they are part of the cache key
-                run_cols += ", prototype_filter"
-                run_marks += ", %s::jsonb"
-                run_vals.append(json.dumps(prototype_filter) if prototype_filter is not None else None)
-            cur.execute(f"INSERT INTO calphad_ensemble_runs ({run_cols}) VALUES ({run_marks}) RETURNING id;", run_vals)
-            run_id = cur.fetchone()[0]
+                "prototype_filter": prototype_filter,
+            }, run_cols, returning="id")
 
-            ehull_by_mp = {
-                c["material_id"]: c.get("e_above_hull_0K_eV_atom")
-                for c in sisso_report.get("candidates", [])
-            }
-
-            has_proto = _has_prototype_columns(cur)
-            if not has_proto and any(r.get("match_type", "exact_match") != "exact_match" for r in comparison_rows):
+            cmp_cols = _table_columns(cur, "calphad_dft_comparison")
+            if not _PROTOTYPE_COLUMNS <= cmp_cols and any(
+                    r.get("match_type", "exact_match") != "exact_match" for r in comparison_rows):
                 raise RuntimeError(
                     "Nearest-prototype rows need migration 010_prototype_provenance.sql "
                     "(columns match_type, prototype_formula, delta_x, comparable); apply it first."
                 )
+            ehull_by_mp = {c["material_id"]: c.get("e_above_hull_0K_eV_atom") for c in sisso_report.get("candidates", [])}
+            dist = ensemble_report.get("threshold_distribution", {})
 
-            common = (
-                "run_id, temperature_k, threshold_median_kj, threshold_q25_kj, threshold_q75_kj, "
-                "threshold_p05_kj, threshold_p95_kj, eta2_by_edge, competing_assemblage"
-            )
-            if comparison_rows:
-                for r in comparison_rows:
-                    t_stats = ensemble_report["threshold_distribution"][str(r["T_K"])]
-                    values = [
-                        run_id, r["T_K"], r["threshold_median_kJ"], t_stats["q25_kJ"], t_stats["q75_kJ"],
-                        r["threshold_p05_kJ"], r["threshold_p95_kJ"], json.dumps(t_stats["eta2_by_edge"]),
-                        r["competing_assemblage"],
-                        r["material_id"], r["formula"], ehull_by_mp.get(r["material_id"]),
-                        r["dGf_sisso_kJ"], r["stability_margin_kJ"], r["verdict"],
-                    ]
-                    cols = common + ", mp_id, candidate_formula, e_above_hull_0k_ev, dgf_sisso_kj, stability_margin_kj, verdict"
-                    marks = "%s, %s, %s, %s, %s, %s, %s, %s::jsonb, %s, %s, %s, %s, %s, %s, %s"
-                    if has_proto:
-                        cols += ", match_type, prototype_formula, delta_x, comparable"
-                        marks += ", %s, %s, %s, %s"
-                        values += [r.get("match_type", "exact_match"), r.get("prototype_formula", r["formula"]),
-                                   r.get("delta_x"), r.get("comparable", True)]
-                    cur.execute(f"INSERT INTO calphad_dft_comparison ({cols}) VALUES ({marks});", values)
-            elif g["gate_passed"]:
-                for t_str, t_stats in ensemble_report["threshold_distribution"].items():
+            for r in comparison_rows:
+                t_stats = dist.get(str(r["T_K"])) or {}
+                _insert(cur, "calphad_dft_comparison", {
+                    "run_id": run_id, "temperature_k": r["T_K"],
+                    "threshold_median_kj": r["threshold_median_kJ"], "threshold_q25_kj": t_stats.get("q25_kJ"),
+                    "threshold_q75_kj": t_stats.get("q75_kJ"), "threshold_p05_kj": r["threshold_p05_kJ"],
+                    "threshold_p95_kj": r["threshold_p95_kJ"], "eta2_by_edge": t_stats.get("eta2_by_edge"),
+                    "competing_assemblage": r["competing_assemblage"],
+                    "mp_id": r["material_id"], "candidate_formula": r["formula"],
+                    "e_above_hull_0k_ev": ehull_by_mp.get(r["material_id"]),
+                    "dgf_sisso_kj": r["dGf_sisso_kJ"], "stability_margin_kj": r["stability_margin_kJ"],
+                    "verdict": r["verdict"],
+                    "match_type": r.get("match_type", "exact_match"),
+                    "prototype_formula": r.get("prototype_formula", r["formula"]),
+                    "delta_x": r.get("delta_x"), "comparable": r.get("comparable", True),
+                    # secondary, approximate fields (migration 011)
+                    "ref_correction_kj": r.get("ref_correction_kJ"), "dgf_sisso_ser_kj": r.get("dGf_sisso_ser_kJ"),
+                    "margin_ser_kj": r.get("margin_ser_kJ"),
+                    "threshold_composition": r.get("threshold_composition"),
+                    "verdict_at_prototype": r.get("verdict_at_prototype"), "notes": r.get("notes"),
+                }, cmp_cols)
+            if not comparison_rows and g["gate_passed"]:
+                kind = SISSO_UNAVAILABLE if sisso_report.get("match_type") == SISSO_UNAVAILABLE else "no_dft_entry"
+                for t_str, t_stats in dist.items():
                     if not t_stats:
                         continue
-                    values = [
-                        run_id, float(t_str), t_stats["median_kJ"], t_stats["q25_kJ"], t_stats["q75_kJ"],
-                        t_stats["p05_kJ"], t_stats["p95_kJ"], json.dumps(t_stats["eta2_by_edge"]),
-                        t_stats["dominant_competing_assemblage"],
-                    ]
-                    unavailable = sisso_report.get("match_type") == SISSO_UNAVAILABLE
-                    kind = SISSO_UNAVAILABLE if unavailable else "no_dft_entry"
-                    cols = common + ", mp_id, verdict"
-                    marks = "%s, %s, %s, %s, %s, %s, %s, %s::jsonb, %s, 'NO_MP_ENTRY', %s"
-                    values.append(kind)
-                    if has_proto:
-                        cols += ", match_type, comparable"
-                        marks += ", %s, FALSE"
-                        values.append(kind)
-                    cur.execute(f"INSERT INTO calphad_dft_comparison ({cols}) VALUES ({marks});", values)
+                    _insert(cur, "calphad_dft_comparison", {
+                        "run_id": run_id, "temperature_k": float(t_str),
+                        "threshold_median_kj": t_stats["median_kJ"], "threshold_q25_kj": t_stats["q25_kJ"],
+                        "threshold_q75_kj": t_stats["q75_kJ"], "threshold_p05_kj": t_stats["p05_kJ"],
+                        "threshold_p95_kj": t_stats["p95_kJ"], "eta2_by_edge": t_stats["eta2_by_edge"],
+                        "competing_assemblage": t_stats["dominant_competing_assemblage"],
+                        "mp_id": "NO_MP_ENTRY", "verdict": kind, "match_type": kind, "comparable": False,
+                    }, cmp_cols)
         return run_id
     finally:
         conn.close()
@@ -197,7 +211,6 @@ def screen_ternary(
     workers: int = 4,
     include_subsystems: bool = False,
     progress_callback=None,
-    sisso_uncertainty_kJ: float = 0.0,
     prototype_filter: PrototypeFilter | None = PrototypeFilter(),
 ) -> dict:
     """prototype_filter=None disables the nearest-prototype fallback (exact matches only)."""
@@ -228,9 +241,7 @@ def screen_ternary(
             "error": f"{type(exc).__name__}: {exc}",
         }
 
-    comparison_rows = compare_with_calphad_ensemble(
-        sisso_report, ensemble_report, sisso_uncertainty_kJ=sisso_uncertainty_kJ
-    )
+    comparison_rows = compare_with_calphad_ensemble(sisso_report, ensemble_report)
 
     return {
         "input_formula": formula,
@@ -238,6 +249,7 @@ def screen_ternary(
         "ensemble": ensemble_report,
         "sisso": sisso_report,
         "comparison": comparison_rows,
+        "windows": windows_from_rows(comparison_rows),
     }
 
 
@@ -251,9 +263,6 @@ def main():
     ap.add_argument("--include-subsystems", action="store_true",
                     help="also list other ternary phases of the system (not compared)")
     add_prototype_arguments(ap)
-    ap.add_argument("--sisso-uncertainty-kj", type=float, default=0.0,
-                    help="SISSO model error in kJ/mol-atom used to widen the verdict (default 0 = none; "
-                         "the CALPHAD band alone is far narrower than a typical SISSO error)")
     ap.add_argument("--save-db", action="store_true", help="Persist results to alloy_lab PostgreSQL")
     ap.add_argument("--sample-code", default=None, help="Optional sample_id string in alloy_lab.samples")
     ap.add_argument("--out", type=Path, default=None, help="Optional combined JSON output path")
@@ -267,7 +276,6 @@ def main():
         suppress_phases=args.suppress,
         workers=args.workers,
         include_subsystems=args.include_subsystems,
-        sisso_uncertainty_kJ=args.sisso_uncertainty_kj,
         prototype_filter=flt,
     )
 
@@ -279,12 +287,13 @@ def main():
           f"Lineages: {g['G2_lineage_coverage']['surviving_lineages_per_edge']})")
 
     if not g["gate_passed"]:
-        print("Stop rule triggered: competing binary ensemble failed pre-registered gates.")
-    elif bundle["comparison"]:
-        if args.sisso_uncertainty_kj == 0.0:
-            print("NOTE: verdicts contain no SISSO model error (--sisso-uncertainty-kj 0).")
+        print("Ensemble failed its gates (ensemble_unreliable): the margin is not interpreted.")
+    if bundle["comparison"]:
         print()
         print("\n".join(format_comparison_table(bundle["comparison"])))
+        if bundle.get("windows"):
+            print()
+            print("\n".join(format_windows(bundle["windows"])))
     else:
         if bundle["sisso"].get("match_type") == SISSO_UNAVAILABLE:
             print(f"\n[{SISSO_UNAVAILABLE}] Materials Project / SISSO step failed: {bundle['sisso'].get('error')}")

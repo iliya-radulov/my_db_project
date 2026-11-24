@@ -28,6 +28,7 @@ from general_ensemble import (
 )
 from dft_sisso_predictor import format_comparison_table
 from prototype_match import SISSO_UNAVAILABLE, PrototypeFilter
+from stability_window import format_windows, windows_from_rows
 from screen_ternary import (
     _connect_db,
     _has_prototype_columns,
@@ -71,8 +72,28 @@ def composition_to_formula(at_composition: dict[str, float]) -> str:
     """{'Nd': 11.76, 'Fe': 82.35, 'B': 5.88} -> 'Nd11.76Fe82.35B5.88' (amounts are relative; the screening
     normalises them). Used to hand the FINAL atomic composition of the preview (unit and pre-alloy
     already resolved) to Stage 5, instead of the raw text of the formula field."""
-    parts = [f"{el}{format(float(v), '.10g')}" for el, v in at_composition.items() if float(v) > 0]
+    parts = [f"{el}{format(float(v), '.12g')}" for el, v in at_composition.items() if float(v) > 0]
     return "".join(parts)
+
+
+def stage5_formula(typed_text: str | None, at_composition: dict[str, float]) -> str:
+    """Formula handed to Stage 5 for the final atomic composition of the preview.
+
+    If the typed text is a plain atomic formula that gives the same fractions (to 1e-6), it is used as
+    typed, so the GUI and the CLI hit the same cache entry; otherwise (wt%, pre-alloy, rounded input)
+    the resolved composition is written out with 12 significant digits."""
+    text = (typed_text or "").strip()
+    if text:
+        try:
+            from pymatgen.core import Composition
+            typed = {str(k).upper(): v for k, v in Composition(text).fractional_composition.get_el_amt_dict().items()}
+            tot = sum(float(v) for v in at_composition.values() if float(v) > 0)
+            want = {str(k).upper(): float(v) / tot for k, v in at_composition.items() if float(v) > 0}
+            if set(typed) == set(want) and all(abs(typed[k] - want[k]) <= 1e-6 for k in want):
+                return text
+        except Exception:
+            pass
+    return composition_to_formula(at_composition)
 
 
 def stage5_applicable(at_composition: dict[str, float]) -> tuple[bool, str]:
@@ -112,6 +133,12 @@ def compute_spec_sha256(
     collection is not part of the key: after the binary files change, force a recompute."""
     elements, fractions, _ = parse_ternary_formula(formula)
     return _engine_spec_sha256(elements, fractions, temperatures, suppress, min_survival_frac, min_lineages_per_edge)
+
+
+def _comparison_columns(cur) -> set[str]:
+    cur.execute("SELECT column_name FROM information_schema.columns "
+                "WHERE table_schema = 'alloy_lab' AND table_name = 'calphad_dft_comparison';")
+    return {r[0] for r in cur.fetchall()}
 
 
 def fetch_cached_screening(
@@ -160,44 +187,24 @@ def fetch_cached_screening(
                 return None
 
             run_id, db_formula, sys_name, n_tot, n_surv, gate_passed, gate_summary, created_at = run
-            has_proto = _has_prototype_columns(cur)
-            extra = ", match_type, prototype_formula, delta_x, comparable" if has_proto else ""
-            cur.execute(
-                f"""
-                SELECT temperature_k, threshold_median_kj, threshold_p05_kj, threshold_p95_kj,
-                       competing_assemblage, mp_id, candidate_formula, dgf_sisso_kj,
-                       stability_margin_kj, verdict{extra}
-                FROM calphad_dft_comparison
-                WHERE run_id = %s
-                ORDER BY comparable DESC NULLS LAST, delta_x NULLS FIRST, mp_id, temperature_k;
-                """ if has_proto else """
-                SELECT temperature_k, threshold_median_kj, threshold_p05_kj, threshold_p95_kj,
-                       competing_assemblage, mp_id, candidate_formula, dgf_sisso_kj,
-                       stability_margin_kj, verdict
-                FROM calphad_dft_comparison
-                WHERE run_id = %s
-                ORDER BY mp_id, temperature_k;
-                """,
-                (run_id,),
-            )
-            rows = []
-            for r in cur.fetchall():
-                row = {
-                    "T_K": r[0],
-                    "threshold_median_kJ": r[1],
-                    "threshold_p05_kJ": r[2],
-                    "threshold_p95_kJ": r[3],
-                    "competing_assemblage": r[4],
-                    "material_id": r[5],
-                    "formula": r[6],
-                    "dGf_sisso_kJ": r[7],
-                    "stability_margin_kJ": r[8],
-                    "verdict": r[9],
-                }
-                if has_proto:
-                    row.update({"match_type": r[10], "prototype_formula": r[11], "delta_x": r[12],
-                                "comparable": r[13]})
-                rows.append(row)
+            avail = _comparison_columns(cur)
+            want = ["temperature_k", "threshold_median_kj", "threshold_p05_kj", "threshold_p95_kj",
+                    "competing_assemblage", "mp_id", "candidate_formula", "dgf_sisso_kj",
+                    "stability_margin_kj", "verdict"]
+            optional = ["match_type", "prototype_formula", "delta_x", "comparable",
+                        "ref_correction_kj", "dgf_sisso_ser_kj", "margin_ser_kj",
+                        "threshold_composition", "verdict_at_prototype", "notes"]
+            cols = want + [c for c in optional if c in avail]
+            order = ("ORDER BY comparable DESC NULLS LAST, delta_x NULLS FIRST, mp_id, temperature_k"
+                     if "comparable" in avail else "ORDER BY mp_id, temperature_k")
+            cur.execute(f"SELECT {', '.join(cols)} FROM calphad_dft_comparison WHERE run_id = %s {order};", (run_id,))
+            names = {"temperature_k": "T_K", "threshold_median_kj": "threshold_median_kJ",
+                     "threshold_p05_kj": "threshold_p05_kJ", "threshold_p95_kj": "threshold_p95_kJ",
+                     "mp_id": "material_id", "candidate_formula": "formula", "dgf_sisso_kj": "dGf_sisso_kJ",
+                     "stability_margin_kj": "stability_margin_kJ", "ref_correction_kj": "ref_correction_kJ",
+                     "dgf_sisso_ser_kj": "dGf_sisso_ser_kJ", "margin_ser_kj": "margin_ser_kJ"}
+            rows = [{names.get(c, c): v for c, v in zip(cols, r)} for r in cur.fetchall()]
+            has_proto = "match_type" in avail
 
             return {
                 "cached": True,
@@ -230,8 +237,9 @@ def format_screening_summary(result: dict) -> str:
         lines.append(f"Nearest-prototype fallback: {describe_prototype_filter(result.get('prototype_filter'))}")
     lines.append("")
     if not result["gate_passed"]:
-        lines.append("STOP RULE TRIGGERED: Competing binary ensemble failed pre-registered gates (G1/G2).")
-        return "\n".join(lines)
+        lines.append("ensemble_unreliable: the competing-binary ensemble failed its gates (G1/G2); "
+                     "the margin is not interpreted.")
+        lines.append("")
 
     rows = result.get("rows", [])
     if not rows:
@@ -261,6 +269,10 @@ def format_screening_summary(result: dict) -> str:
             )
     else:
         lines.extend(format_comparison_table(rows))
+        wins = windows_from_rows(rows)
+        if wins:
+            lines.append("")
+            lines.extend(format_windows(wins))
     return "\n".join(lines)
 
 

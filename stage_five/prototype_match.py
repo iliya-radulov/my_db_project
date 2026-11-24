@@ -58,6 +58,8 @@ class PrototypeFilter:
     site_groups: tuple[tuple[str, ...], ...] = ()   # elements that substitute on one site
     max_prototypes: int = 3
     exact_tol: float = 5e-4
+    dopant_max: float = 0.03       # elements below this fraction are dopants: never anchors (e.g. 1 at.% C in Mn45Al54C1)
+    anchor_max: float = 0.25       # the smallest non-dopant element is an anchor only if it is a real minority (<= this)
 
     def as_dict(self) -> dict:
         d = asdict(self)
@@ -70,10 +72,22 @@ def fractions(comp: Composition) -> dict[str, float]:
     return {str(el).upper(): float(a) for el, a in comp.fractional_composition.get_el_amt_dict().items()}
 
 
-def default_anchors(target: dict[str, float], tol: float = 1e-9) -> list[str]:
-    """Minority element(s) of the target (smallest positive fraction)."""
-    pos = {e: x for e, x in target.items() if x > 0}
+def default_anchors(target: dict[str, float], tol: float = 1e-9,
+                    dopant_max: float = 0.03, anchor_max: float = 0.25) -> list[str]:
+    """Minority element(s) of the target that a prototype must contain.
+
+    Elements below `dopant_max` (a 1 at.% carbon addition, say) are dopants and never anchors: a
+    prototype without them is the right comparison (MnAl for Mn45Al54C1). Among the others the
+    smallest fraction is the anchor, but only if it is a real minority (<= `anchor_max`); in a
+    near-equiatomic target (Mn 0.45 / Al 0.54) there is no anchor and the composition distance alone
+    decides. Ties give several anchors (La and Si in LaFe12Si).
+    """
+    pos = {e: x for e, x in target.items() if x >= dopant_max}
+    if not pos:
+        return []
     m = min(pos.values())
+    if m > anchor_max:
+        return []
     return sorted(e for e, x in pos.items() if x - m <= tol)
 
 
@@ -105,7 +119,8 @@ def classify(target: Composition, cand: Composition, flt: PrototypeFilter | None
     if euclid <= flt.exact_tol:
         return {"match_type": EXACT_MATCH, "delta_x": 0.0, "delta_x_euclid": round(euclid, 6),
                 "anchor_delta": 0.0}
-    anchors = [a.upper() for a in (flt.anchors or default_anchors(t))]
+    anchors = [a.upper() for a in (flt.anchors or default_anchors(t, dopant_max=flt.dopant_max,
+                                                                   anchor_max=flt.anchor_max))]
     for a in anchors:
         if c.get(a, 0.0) <= 0.0 or abs(c[a] - t.get(a, 0.0)) > flt.anchor_tol:
             return None
@@ -113,7 +128,7 @@ def classify(target: Composition, cand: Composition, flt: PrototypeFilter | None
     if dx > flt.max_dx:
         return None
     return {"match_type": NEAREST_PROTOTYPE, "delta_x": round(dx, 6), "delta_x_euclid": round(euclid, 6),
-            "anchor_delta": round(max(abs(c[a] - t.get(a, 0.0)) for a in anchors), 6)}
+            "anchor_delta": round(max((abs(c[a] - t.get(a, 0.0)) for a in anchors), default=0.0), 6)}
 
 
 def _lowest_t_dgf(cand: dict) -> float:
