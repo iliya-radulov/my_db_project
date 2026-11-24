@@ -13,7 +13,7 @@ import pytest
 pytest.importorskip("pymatgen")
 ROOT = Path(__file__).resolve().parents[2]
 APP = ROOT / "alloy_desktop_v2.py"
-NAMES = ["_preview_key", "_show_stage5", "_start_stage5", "_auto_stage5", "run_stage5_screen"]
+NAMES = ["_preview_key", "_show_stage5", "_start_stage5", "_auto_stage5", "run_stage5_screen", "_link_stage5_to_sample"]
 
 
 class Var:
@@ -209,3 +209,51 @@ def test_invalid_site_group_shows_a_warning_and_does_not_start(app):
     app._auto_stage5()
     assert not app.calls and app.msg.calls and "site group" in app.msg.calls[-1][1][1].lower()
     assert getattr(app, "stage5_running", False) is False
+
+
+# ------------------------------------------------------------ linking a Stage 5 run to the submitted sample
+
+def test_run_of_the_preview_is_linked_when_that_preview_is_submitted(app, monkeypatch):
+    import stage_five.desktop_screening_hook as H
+    links = []
+    monkeypatch.setattr(H, "link_run_to_sample", lambda rid, code: links.append((rid, code)) or f"linked {rid}")
+    _preview(app, {"Fe": 82.35, "Nd": 11.76, "B": 5.88})
+    assert app._link_stage5_to_sample("S-1") is None                    # no Stage 5 run yet
+    app._auto_stage5()
+    app.calls[0]["on_run_id"](41)                                       # worker reports the run id
+    app.calls[0]["on_complete"]("RESULT")
+    assert app._link_stage5_to_sample("S-1") == "linked 41" and links == [(41, "S-1")]
+
+
+def test_run_of_another_preview_is_not_linked(app, monkeypatch):
+    import stage_five.desktop_screening_hook as H
+    monkeypatch.setattr(H, "link_run_to_sample", lambda *a: pytest.fail("must not link"))
+    _preview(app, {"Fe": 82.35, "Nd": 11.76, "B": 5.88})
+    app._auto_stage5()
+    app.calls[0]["on_run_id"](41)
+    app.formula_entry.text = "Fe70Nd20B10"
+    _preview(app, {"Fe": 70.0, "Nd": 20.0, "B": 10.0})                   # a different composition is submitted
+    assert app._link_stage5_to_sample("S-2") is None
+
+
+def test_submit_while_stage5_still_runs_links_when_it_finishes(app, monkeypatch):
+    import stage_five.desktop_screening_hook as H
+    links = []
+    monkeypatch.setattr(H, "link_run_to_sample", lambda rid, code: links.append((rid, code)) or f"linked {rid} to {code}")
+    _preview(app, {"Fe": 82.35, "Nd": 11.76, "B": 5.88})
+    app._auto_stage5()
+    assert "still running" in app._link_stage5_to_sample("S-9")
+    assert not links
+    app.calls[0]["on_run_id"](77)
+    assert links == [(77, "S-9")] and "linked 77 to S-9" in app.result_text.parts[-1]
+
+
+def test_link_failure_is_reported_not_raised(app, monkeypatch):
+    import stage_five.desktop_screening_hook as H
+    def boom(*a):
+        raise RuntimeError("db down")
+    monkeypatch.setattr(H, "link_run_to_sample", boom)
+    _preview(app, {"Fe": 82.35, "Nd": 11.76, "B": 5.88})
+    app._auto_stage5()
+    app.calls[0]["on_run_id"](5)
+    assert "not linked" in app._link_stage5_to_sample("S-1")

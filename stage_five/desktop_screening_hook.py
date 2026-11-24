@@ -135,6 +135,85 @@ def compute_spec_sha256(
     return _engine_spec_sha256(elements, fractions, temperatures, suppress, min_survival_frac, min_lineages_per_edge)
 
 
+def _table_exists(cur, table: str) -> bool:
+    cur.execute("SELECT 1 FROM information_schema.tables WHERE table_schema = 'alloy_lab' AND table_name = %s;", (table,))
+    return cur.fetchone() is not None
+
+
+def link_run_to_sample(run_id: int, sample_code: str) -> str:
+    """Link a Stage 5 run to a sample (after the sample has been submitted). Returns a one-line message.
+
+    With migration 012 one run can belong to several samples (a cached run is reused for the same composition);
+    without it only the old single column is available, so a run that already belongs to another sample is
+    not re-linked."""
+    conn = _connect_db()
+    try:
+        with conn, conn.cursor() as cur:
+            cur.execute("SET search_path TO alloy_lab;")
+            cur.execute("SELECT id FROM samples WHERE sample_id = %s;", (sample_code,))
+            row = cur.fetchone()
+            if row is None:
+                return f"Stage 5 run {run_id} not linked: sample {sample_code} not found in the database"
+            sid = row[0]
+            cur.execute("SELECT sample_id FROM calphad_ensemble_runs WHERE id = %s;", (run_id,))
+            run = cur.fetchone()
+            if run is None:
+                return f"Stage 5 run {run_id} not linked: run not found"
+            old = run[0]
+            if _table_exists(cur, "calphad_run_samples"):
+                cur.execute("INSERT INTO calphad_run_samples (run_id, sample_id) VALUES (%s, %s) ON CONFLICT DO NOTHING;",
+                            (run_id, sid))
+                if old is None:
+                    cur.execute("UPDATE calphad_ensemble_runs SET sample_id = %s WHERE id = %s;", (sid, run_id))
+                return f"Stage 5 run {run_id} linked to sample {sample_code}"
+            if old is None:
+                cur.execute("UPDATE calphad_ensemble_runs SET sample_id = %s WHERE id = %s;", (sid, run_id))
+                return f"Stage 5 run {run_id} linked to sample {sample_code}"
+            if old == sid:
+                return f"Stage 5 run {run_id} is already linked to sample {sample_code}"
+            return (f"Stage 5 run {run_id} belongs to another sample and was not linked "
+                    "(apply migration 012_stage5_sample_links.sql to link one run to several samples)")
+    finally:
+        conn.close()
+
+
+def fetch_runs_for_sample(sample_code: str) -> list[dict]:
+    """Stage 5 runs linked to a sample (link table if present, plus the old single column), newest first."""
+    conn = _connect_db()
+    try:
+        with conn.cursor() as cur:
+            cur.execute("SET search_path TO alloy_lab;")
+            cur.execute("SELECT id FROM samples WHERE sample_id = %s;", (sample_code,))
+            row = cur.fetchone()
+            if row is None:
+                return []
+            sid = row[0]
+            via_link = ("id IN (SELECT run_id FROM calphad_run_samples WHERE sample_id = %s) OR "
+                        if _table_exists(cur, "calphad_run_samples") else "")
+            params = ([sid] if via_link else []) + [sid]
+            cur.execute(
+                f"""SELECT id, formula, system_name, gate_passed, n_survivors, n_total_combos, created_at
+                    FROM calphad_ensemble_runs WHERE {via_link}sample_id = %s ORDER BY created_at DESC;""",
+                tuple(params),
+            )
+            keys = ("run_id", "formula", "system", "gate_passed", "n_survivors", "n_total", "created_at")
+            return [dict(zip(keys, r)) for r in cur.fetchall()]
+    finally:
+        conn.close()
+
+
+def format_sample_runs(runs: list[dict]) -> list[str]:
+    """Lines for the Quick Lookup tab."""
+    if not runs:
+        return []
+    lines = [f"\nStage 5 screening runs ({len(runs)}):"]
+    for r in runs:
+        lines.append(f"  run {r['run_id']}: {r['formula']} ({r['system']}), gates {'PASS' if r['gate_passed'] else 'FAIL'}, "
+                     f"{r['n_survivors']}/{r['n_total']} combinations, {str(r['created_at'])[:16]}")
+    lines.append("  (press 'CALPHAD + SISSO Screen' with the same composition to show the result)")
+    return lines
+
+
 def _comparison_columns(cur) -> set[str]:
     cur.execute("SELECT column_name FROM information_schema.columns "
                 "WHERE table_schema = 'alloy_lab' AND table_name = 'calphad_dft_comparison';")
@@ -287,6 +366,7 @@ def run_screening_async(
     on_progress: Callable[[int, int], None] | None = None,
     schedule: Callable[[Callable[[], None]], None] | None = None,
     prototype_filter=_DEFAULT_FILTER,
+    on_run_id: Callable[[int], None] | None = None,
 ) -> None:
     """
     Background worker for alloy_desktop_v2.py:
@@ -315,6 +395,7 @@ def run_screening_async(
             if not force_recompute:
                 cached = fetch_cached_screening(formula, prototype_filter=flt)
                 if cached is not None:
+                    _post(on_run_id, cached["run_id"])
                     _post(on_complete, format_screening_summary(cached))
                     return
 
@@ -333,6 +414,7 @@ def run_screening_async(
                 sample_code=sample_code,
                 prototype_filter=flt.as_dict() if flt else None,
             )
+            _post(on_run_id, run_id)
             fresh = {
                 "cached": False,
                 "run_id": run_id,

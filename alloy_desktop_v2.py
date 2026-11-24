@@ -707,6 +707,12 @@ class AlloyLabApp(ctk.CTk):
                     known = "known" if row['experimentally_known'] else "theoretical"
                     output.append(f"  {row['source_db']}: {row['match_formula']} (Tier {row['tier']}) - {stable}, {known}")
             
+            try:
+                from stage_five.desktop_screening_hook import fetch_runs_for_sample, format_sample_runs
+                output.extend(format_sample_runs(fetch_runs_for_sample(sample_id)))
+            except Exception as _s5_err:
+                output.append(f"\n(Stage 5 runs not shown: {_s5_err})")
+
             self.search_result.insert("end", "\n".join(output))
             self.status_label.configure(text=f"Found sample: {sample_id}")
             db.close()
@@ -922,6 +928,7 @@ class AlloyLabApp(ctk.CTk):
 
         self.stage5_running = True
         key = self.last_preview_key if into_preview else None
+        self.stage5_running_key = key            # which preview the running screening belongs to
         self.stage5_btn.configure(state="disabled")
         self.status_label.configure(text=f"Stage 5 screening {formula} (checking DB cache / running ensemble)...")
         self._show_stage5(
@@ -949,6 +956,19 @@ class AlloyLabApp(ctk.CTk):
                 text=f"Stage 5 screening {formula}: {done}/{total} binary combos evaluated..."
             ))
 
+        def _on_run_id(run_id):
+            def _ui():
+                # `key` is the preview this run belongs to; it is linked to the sample when that preview is submitted
+                self.stage5_run = {"run_id": run_id, "key": key}
+                pending = getattr(self, "stage5_pending_link", None)
+                if pending and key is not None and pending["key"] == key:
+                    self.stage5_pending_link = None
+                    msg = self._link_stage5_to_sample(pending["sample_code"])
+                    if msg:
+                        self.result_text.insert("end", "\n" + msg)
+                        self.status_label.configure(text=msg)
+            self.after(0, _ui)
+
         run_screening_async(
             formula=formula,
             sample_code=sample_code,
@@ -957,7 +977,24 @@ class AlloyLabApp(ctk.CTk):
             on_progress=_prog,
             prototype_filter=proto_filter,
             force_recompute=bool(self.stage5_force_var.get()),
+            on_run_id=_on_run_id,
         )
+
+    def _link_stage5_to_sample(self, sample_code):
+        """After 'Submit to Database': link the Stage 5 run of the submitted preview to the new sample.
+        Returns a one-line message, or None when there is no Stage 5 run for this preview."""
+        run = getattr(self, "stage5_run", None)
+        key = getattr(self, "last_preview_key", None)
+        if run and run.get("key") is not None and run["key"] == key:
+            from stage_five.desktop_screening_hook import link_run_to_sample
+            try:
+                return link_run_to_sample(run["run_id"], sample_code)
+            except Exception as exc:
+                return f"Stage 5 run {run['run_id']} not linked: {type(exc).__name__}: {exc}"
+        if getattr(self, "stage5_running", False) and key is not None and getattr(self, "stage5_running_key", None) == key:
+            self.stage5_pending_link = {"sample_code": sample_code, "key": key}
+            return "Stage 5 is still running; its run is linked to the sample when it has finished"
+        return None
 
     def _auto_stage5(self):
         """Called at the end of 'Calculate & Preview': Stage 5 for the FINAL atomic composition of the
@@ -1497,6 +1534,12 @@ class AlloyLabApp(ctk.CTk):
                 self.result_text.insert("end", f"\n(RAG skipped: {_rag_err})")
 
             self.result_text.insert("end", f"\n\nSuccessfully added sample: {sample_id}")
+            try:
+                _s5 = self._link_stage5_to_sample(sample_id)
+                if _s5:
+                    self.result_text.insert("end", "\n" + _s5)
+            except Exception as _s5_err:
+                self.result_text.insert("end", f"\n(Stage 5 link skipped: {_s5_err})")
             self.status_label.configure(text=f"Sample {sample_id} added to database")
             self.submit_btn.configure(state="disabled")
             
