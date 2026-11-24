@@ -4,7 +4,7 @@ Technical note, contract version 1.0, 24 November 2026
 Iliya A. Radulov, Claude (Anthropic)
 Code: https://github.com/iliya-radulov/my_db_project (`stage_five/`), release tag `v5.0-stage5`.
 Earlier release of the project: Stage 4 Track A, DOI 10.5281/zenodo.24039719.
-This record: DOI to be added after Zenodo has archived the release.
+This record: DOI 10.5281/zenodo.24507546.
 
 **Abstract.** Stage 5 answers one screening question for a ternary composition: is a candidate phase predicted to be more stable than the best combination of the three binary systems at that composition? The competing side is an ensemble of open binary CALPHAD assessments and carries an assessment-scatter band (median, 5th and 95th percentile), not a single number. The candidate side is a Materials Project 0 K entry with a Bartel SISSO finite-temperature correction, used as a secondary axis only. The survival and lineage gates are engineering defaults, not pre-registered values, and the SISSO side is not validated: on the Nd₂Fe₁₄B benchmark it places an experimentally stable phase above the competing binaries (§5). This note fixes what each stored number means, how labels are assigned and what the tool does not claim, so that results stay interpretable when the tool is extended.
 
