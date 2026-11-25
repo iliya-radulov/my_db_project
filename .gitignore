@@ -58,3 +58,6 @@ stage_three/stage4_step1/backup/
 stage_three/rag_benchmark_questions*.csv
 stage_five*.dump
 stage_five/backup/
+
+# session wrap-ups are working notes: private documentation repo only
+stage_five/*Wrap-Up*.md
