@@ -1,4 +1,4 @@
- Session Wrap-Up — Stage 5: Generalized CALPHAD Ensemble & DFT-SISSO Screening
+# Session Wrap-Up — Stage 5: Generalized CALPHAD Ensemble & DFT-SISSO Screening
 
 **Date:** 21–22 November 2026  
 **Directory:** `stage_five/`
@@ -144,3 +144,37 @@ This is the best possible outcome from that check. It tells us three things:
 The one documentation item this leaves is the survivor-count reconciliation. The Stage 5 methods section needs one sentence: "The Stage 5 engine applies Audit Rule v2 (excludes -3g, GHSER-conflicting, and interstitial-defect files), which reduces the Nd–Fe–B survivor count from the Stage 4 reference of 78 to 52 out of 84. The 800 K median (−8.798 vs −8.79) and the 5%–95% band ([−9.26, −8.33]) are unchanged, so the stricter audit does not affect the central result." That sentence turns the 52-vs-78 difference from a reader question into a documented method choice.
 
 The engine is working, it is deterministic, and the central numbers match Stage 4. The next step is the dft_sisso_predictor.py sanity check on Nd₂Fe₁₄B, then the screen_ternary.py orchestrator. You are on track.
+
+
+
+-----
+
+# Errata and fixes (23 Nov 2026) — found by running the engine on Fe–Nd–B and reading the code
+
+These corrections supersede the statements above that they refer to.
+
+1. **The 52-vs-78 gap is not the audit.** The audit excluded **0 files** (all 14 binary files accepted, 7 × 4 × 3 = 84 combinations). All 32 non-survivors fail the **edge check**: every one of the 28 combinations that use FeNd-16Che (3 mismatches on the Fe–Nd edge) and 4 more that use FeB-19Wit (1 mismatch). Cause: `merge_databases` keeps the *first* file when two files define a parameter differently (here G(FCC_A1,ND:VA) in NdB-19Che vs FeNd-16Che), and the engine merged the edges alphabetically (B–Fe, B–Nd, Fe–Nd), whereas Stage 4 used Fe–Nd, Fe–B, Nd–B. With the Stage 4 order the same engine gives **78 of 84**, median **−8.7896**, min/max −9.2623/−8.3244 at 800 K — the Stage 4 reference. The sentence proposed above ("Audit Rule v2 reduces the survivor count from 78 to 52") is **false and must not be used**. The survivor set depends on the merge priority; the order is now explicit (follows the order of the elements; `screen_ternary` puts the majority element first, which gives FE, ND, B), recorded in the report (`edge_priority`, per-combination `merge_priority` and `merge_conflicts`) and part of the spec hash.
+2. **Band comparison.** Stage 4's [−9.26, −8.33] at 800 K is the min–max over the 78 survivors, not a 5–95 % band. The 5–95 % band of the 78 survivors is [−9.20, −8.40]; the 52-survivor run's p05/p95 only happen to coincide with the min/max.
+3. **Lineages.** "Exactly the 7/4/3 split" holds only with the Stage 4 order. With the alphabetical order the surviving Fe–Nd lineages were 2 (Hal95, Wan16), exactly the G2 minimum.
+4. **The "borderline" verdict is not a safety net for the SISSO error.** The verdict compared the SISSO value with the CALPHAD band only (about 0.9 kJ/mol-atom wide at 800 K); the model error of SISSO is not in it. *(Superseded 24 Nov: the `sisso_uncertainty_kJ` option was removed; classes come from the CALPHAD band only, see `CONTRACT.md`.)*
+5. **Gates.** The defaults (25 % survival, ≥ 2 lineages per edge) are engineering defaults, **not** the pre-registered numbers of the Stage 4 pilots; they are written to the report (`preregistered: false`) and are part of the cache key. Register the values before using them in a study.
+
+Code fixes in this change: `--suppress` now really removes the phases from the competing-phase calculation (it was built and never passed to the solver); the cache key is one function shared by engine and hook (normalised, rounded, with rules version and gate parameters); `--include-subsystems` lists other ternary phases but no longer compares them with the threshold at the target composition; `e_above_hull` is computed from the 0 K hull (the entry data key is not set by mp-api); the hook can marshal callbacks to the Tk main thread (`schedule=`) and logs errors; per-combination merge conflicts, a physical-bound flag (threshold above +0.05 kJ/mol-atom) and a failure summary by stage and by file are recorded. Tests: `python -m pytest stage_five/tests -q` (`RUN_SLOW=1` adds the two Fe–Nd–B end-to-end checks).
+
+
+-----
+
+# Nearest-prototype fallback and three-system table (23 Nov 2026)
+
+## Review of the plan before building
+
+1. **Guard against La-free entries: valid, and more necessary than the plan says.** The figure sqrt(0.071² + 0.108²) = 0.129 for a pure Fe–Si entry leaves out the Fe component. The nearest Fe–Si *composition* to La7.1Fe82.1Si10.8 is **0.087** away, closer than LaFe13 (0.152). Plain Euclidean ranking would therefore prefer a La-free entry; the minority-element (anchor) guard prevents it. The Materials Project entries of the Fe–Si system are farther (Fe 0.221, Fe3Si 0.174), so for this target the guard matters mainly for other systems.
+2. **The 0.16 cutoff is tuned to one composition.** Si substitutes on the Fe site, so the Euclidean distance of LaFe13 to La(Fe13−xSix) is √2·x_Si: 0.121 (x = 1.2), 0.152 (x = 1.5), **0.162 (x = 1.6), 0.182 (1.8), 0.202 (2.0)**. The prototype is lost for three of the five compositions of the annealing series. Option added: `--site-group FE,SI` treats Fe and Si as one site; LaFe13 then differs from every composition of the series by < 0.002, and the Euclidean distance is still reported (`delta_x_euclid`). The default stays the plan's rule.
+3. **A prototype's energy is not at the target composition.** LaFe13 (Δx = 0.15, 11 at.% Si less) compared with the CALPHAD threshold at the target composition is not a stability margin. Nearest-prototype rows therefore carry `verdict = prototype_indicative_only` and `comparable = FALSE`; the margin is printed with a † for orientation only. Only exact matches get a stability verdict.
+4. **Ranking as planned** (exact before prototype; then 0 K energy above hull with a 0.01 eV/atom tie band, then the lowest-temperature SISSO energy, then Δx). A NaZn13-type check is **not** part of the ranking (the structure type is not enforced); the space group is reported as provenance (Fm-3c for NaZn13-type).
+5. **Ties.** When the two smallest fractions are equal, both elements are anchors (e.g. LaFe12Si); `--anchor` overrides.
+
+## What was built
+`stage_five/prototype_match.py` (filter, ranking, provenance label; offline), `dft_sisso_predictor.py` (candidates tagged `match_type` / `prototype_formula` / `delta_x` / `spacegroup`, `no_dft_entry` when nothing passes, CLI options `--no-prototype-fallback --max-dx --anchor-tol --anchor --site-group --max-prototypes`), `screen_ternary.py` (options, provenance in the printed table, PostgreSQL rows), `desktop_screening_hook.py` (preview table with `mp-XXXX (LaFe13, nearest_prototype Δx=0.152)`; the existing callbacks of `alloy_desktop_v2.py` already marshal to the Tk thread), `010_prototype_provenance.sql` (columns `match_type`, `prototype_formula`, `delta_x`, `comparable`; apply after 009; without it exact rows are still saved, nearest-prototype rows are refused with an explanatory error), `methods_table.py` (table from saved JSON reports). Tests: `stage_five/tests/test_prototype.py` (synthetic Materials Project entries; no key needed).
+
+**Not run:** anything that needs the Materials Project (no API key here), so no SISSO value of LaFe13 or of any prototype has been computed. The SISSO columns of the table say "not run" until a SISSO report is supplied.
