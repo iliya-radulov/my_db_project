@@ -1,5 +1,6 @@
 """Tests for sisso_t_calibration.py: the decision logic offline, the CALPHAD path on a toy TDB."""
 import json
+import sys
 
 import numpy as np
 import pytest
@@ -189,3 +190,81 @@ def test_g_els_path_refuses_copies_with_different_content(monkeypatch, tmp_path)
     _fake_namespace_pymatgen(monkeypatch, tmp_path, ['{"300": {"Fe": 0.0}}', '{"300": {"Fe": 1.0}}'])
     with pytest.raises(RuntimeError):
         cal.g_els_path()
+
+
+# ---- provenance of the Materials Project query (offline, with a fake MPRester)
+def _fake_mp(monkeypatch, entries, version="2099.01.01"):
+    import sys
+    import types
+    calls = {}
+
+    class FakeMPRester:
+        def __init__(self, key=None):
+            calls["key"] = key
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *a):
+            return False
+
+        def get_entries_in_chemsys(self, elements, additional_criteria=None):
+            calls["elements"], calls["criteria"] = list(elements), additional_criteria
+            return list(entries)
+
+        def get_database_version(self):
+            if version is None:
+                raise RuntimeError("offline")
+            return version
+
+    client = types.ModuleType("mp_api.client")
+    client.MPRester = FakeMPRester
+    monkeypatch.setitem(sys.modules, "mp_api.client", client)
+    if "mp_api" not in sys.modules:
+        monkeypatch.setitem(sys.modules, "mp_api", types.ModuleType("mp_api"))
+    return calls
+
+
+def _synthetic_entries():
+    pytest.importorskip("pymatgen")
+    from pymatgen.core import Composition, Lattice, Structure
+    from pymatgen.entries.computed_entries import ComputedStructureEntry
+
+    def entry(formula, e_per_atom, mid, a=5.0):
+        comp = Composition(formula)
+        n = int(round(comp.num_atoms))
+        species = [str(el) for el, amt in comp.items() for _ in range(int(round(amt)))]
+        coords = [[(i * 0.37) % 1, (i * 0.61) % 1, (i * 0.83) % 1] for i in range(n)]
+        s = Structure(Lattice.cubic(a * (n / 4) ** (1 / 3)), species, coords)
+        return ComputedStructureEntry(s, e_per_atom * n, entry_id=mid)
+    return [entry("Fe", -8.30, "mp-fe", 2.9), entry("Si", -5.42, "mp-si", 5.4), entry("Fe3Si", -7.40, "mp-fe3si")]
+
+
+def test_sisso_dgf_records_the_release_and_entries_and_matches_the_predictor(monkeypatch):
+    entries = _synthetic_entries()
+    calls = _fake_mp(monkeypatch, entries)
+    sys.path.insert(0, str(cal.HERE))
+    import dft_sisso_predictor as dsp
+    monkeypatch.setattr(dsp, "_resolve_mp_api_key", lambda key=None: "dummy-key")
+    comp = {"name": "Fe3Si", "formula": "Fe3Si", "mp_id": "mp-fe3si"}
+    temps = [800.0, 1000.0]
+    vals, eid, prov = cal.sisso_dgf(comp, temps)
+    assert eid == "mp-fe3si" and set(vals) == set(temps) and all(v is not None for v in vals.values())
+    assert prov["mp_database_version"] == "2099.01.01"
+    assert prov["chemsys"] == ["Fe", "Si"] and prov["n_entries"] == 3
+    assert calls["criteria"] == {"thermo_types": ["GGA_GGA+U"]} and calls["key"] == "dummy-key"
+    assert {e["entry_id"] for e in prov["entries"]} == {"mp-fe", "mp-si", "mp-fe3si"}
+    assert all(e["energy_per_atom_eV"] is not None for e in prov["entries"])
+    # the recorded values are exactly what the Stage-5 predictor gives for the same entries
+    rep = dsp.predict_sisso_formation_gibbs("Fe3Si", temps, api_key="dummy-key", nearest_prototype=False)
+    ref = cal.pick_sisso_candidate(rep, "mp-fe3si")["dGf_sisso_kJ_mol_atom"]
+    assert vals == {T: ref[str(T)] for T in temps}
+
+
+def test_missing_database_version_is_recorded_not_fatal(monkeypatch):
+    _fake_mp(monkeypatch, _synthetic_entries(), version=None)
+    sys.path.insert(0, str(cal.HERE))
+    import dft_sisso_predictor as dsp
+    monkeypatch.setattr(dsp, "_resolve_mp_api_key", lambda key=None: "dummy-key")
+    _, _, prov = cal.sisso_dgf({"name": "Fe3Si", "formula": "Fe3Si", "mp_id": "mp-fe3si"}, [800.0])
+    assert prov["mp_database_version"].startswith("unavailable: RuntimeError")

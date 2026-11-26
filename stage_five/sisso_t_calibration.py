@@ -334,21 +334,56 @@ def check_calphad(roots: list[Path]) -> dict:
 # ---------------------------------------------------------------------------
 # SISSO side + study
 # ---------------------------------------------------------------------------
-def sisso_dgf(comp: dict, temps) -> tuple[dict[float, float], str]:
+def mp_entry_record(entry) -> dict:
+    """What the SISSO side saw for one Materials Project entry (JSON-able, defensive)."""
+    def _num(name):
+        v = getattr(entry, name, None)
+        try:
+            return None if v is None else round(float(v), 6)
+        except Exception:
+            return None
+    comp = entry.composition
+    return {"entry_id": str(entry.entry_id), "formula": comp.reduced_formula,
+            "n_atoms": float(comp.num_atoms),
+            "energy_per_atom_eV": _num("energy_per_atom"),
+            "uncorrected_energy_per_atom_eV": _num("uncorrected_energy_per_atom")}
+
+
+def sisso_dgf(comp: dict, temps) -> tuple[dict[float, float], str, dict]:
+    """SISSO values of the named Materials Project entry, its id, and the provenance of the query.
+
+    Same query and same report function as predict_sisso_formation_gibbs(..., nearest_prototype=False),
+    but the entries and the database release are kept: the live database cannot be hashed, so the
+    results file has to carry what was seen."""
     sys.path.insert(0, str(HERE))
-    from dft_sisso_predictor import predict_sisso_formation_gibbs
-    rep = predict_sisso_formation_gibbs(comp["formula"], list(temps), nearest_prototype=False)
+    import dft_sisso_predictor as dsp
+    from mp_api.client import MPRester
+    from prototype_match import PrototypeFilter
+    from pymatgen.core import Composition
+    elements = sorted(str(el) for el in Composition(comp["formula"]).elements)
+    thermo = ["GGA_GGA+U"]
+    with MPRester(dsp._resolve_mp_api_key(None)) as mpr:
+        entries = mpr.get_entries_in_chemsys(elements, additional_criteria={"thermo_types": thermo})
+        try:
+            db_version = str(mpr.get_database_version())
+        except Exception as exc:  # recorded, not fatal
+            db_version = f"unavailable: {type(exc).__name__}: {exc}"
+    rep = dsp.sisso_report_from_entries(comp["formula"], entries, list(temps), False,
+                                        PrototypeFilter(max_dx=0.0, max_prototypes=0))
     cand = pick_sisso_candidate(rep, comp["mp_id"])
     if cand is None:
         raise RuntimeError(f"{comp['name']}: {comp['mp_id']} not among the SISSO candidates "
                            f"{[c.get('material_id') for c in rep.get('candidates', [])]}")
     vals = {float(T): cand["dGf_sisso_kJ_mol_atom"].get(str(float(T))) for T in temps}
-    return vals, str(cand["material_id"])
+    prov = {"mp_database_version": db_version, "chemsys": elements, "thermo_types": thermo,
+            "n_entries": len(entries), "entries": [mp_entry_record(e) for e in entries], "candidate": cand}
+    return vals, str(cand["material_id"]), prov
 
 
 def run_study(roots: list[Path]) -> dict:
     cal = check_calphad(roots)
     residuals, table, excluded = {}, {}, {}
+    mp_versions = set()
     for comp in COMPOUNDS:
         c = cal["compounds"][comp["name"]]
         if c.get("error"):
@@ -357,7 +392,8 @@ def run_study(roots: list[Path]) -> dict:
             excluded[comp["name"]] = f"{c['n_retained']} retained grid points (< {MIN_POINTS})"
             continue
         temps = [r["T"] for r in c["rows"] if r["retained"]]
-        sisso, entry_id = sisso_dgf(comp, temps)
+        sisso, entry_id, prov = sisso_dgf(comp, temps)
+        mp_versions.add(prov["mp_database_version"])
         pts = {}
         for r in c["rows"]:
             if not r["retained"]:
@@ -368,6 +404,7 @@ def run_study(roots: list[Path]) -> dict:
             pts[r["T"]] = s - r["dG_calphad_kJ"]
             r.update(dG_sisso_kJ=s, residual_kJ=pts[r["T"]])
         c["sisso_entry_id"] = entry_id
+        c["sisso_provenance"] = prov
         if len(pts) < MIN_POINTS:
             excluded[comp["name"]] = f"{len(pts)} points with a SISSO value (< {MIN_POINTS})"
             continue
@@ -379,6 +416,7 @@ def run_study(roots: list[Path]) -> dict:
     slopes = primary["slopes_J_mol_atom_K"]
     return {
         "calphad": cal, "excluded": excluded,
+        "mp_database_versions": sorted(mp_versions), "versions": versions(),
         "residuals_kJ": {c: {str(T): r for T, r in p.items()} for c, p in residuals.items()},
         "primary": primary,
         "secondary": {
@@ -450,7 +488,10 @@ def markdown_report(res: dict) -> str:
              f"- Condition 1: {p['condition_1']['text']} → {'pass' if p['condition_1']['pass'] else 'fail'}",
              f"- Condition 2: {p['condition_2']['text']} → {'pass' if p['condition_2']['pass'] else 'fail'}",
              f"- alpha = {p['alpha_J_mol_atom_K']:+.2f} J/mol-atom/K (scatter SD {p['slope_scatter_sd']:.2f}, "
-             f"n = {p['n_compounds']})", "",
+             f"n = {p['n_compounds']})",
+             f"- Materials Project database: {', '.join(res.get('mp_database_versions', [])) or 'not recorded'}; "
+             f"pymatgen {res.get('versions', {}).get('pymatgen')}, pycalphad {res.get('versions', {}).get('pycalphad')}",
+             "",
              "| Compound | Points | Slope (J/mol-atom/K) | MAE before (kJ) | MAE after (kJ) |",
              "|---|---:|---:|---:|---:|"]
     for c, s in p["slopes_J_mol_atom_K"].items():
