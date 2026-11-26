@@ -66,6 +66,7 @@ DECISION_RULE = "v1.4"                # "v1.4": no compound worsened by more tha
 ELEMENT_PHASES = {"B": ["BETA_RHOMBO_B"]}
 EXCLUDED_PHASE_WORDS = ("GAS",)       # condensed phases only
 UNARY_TDB = "unary50.tdb"
+PYCALPHAD_OF_RECORD = "0.11.2"        # environment of record (0.12.0 changes ordered/disordered label ties)
 
 # Fit set (note v1.5, section 3). x = mole fractions; tdb = first file of the preference list that
 # loaded in test4.py (selection rule recorded in the note).
@@ -183,6 +184,17 @@ def pick_sisso_candidate(report: dict, mp_id: str) -> dict | None:
     return None
 
 
+def pycalphad_version_problem(installed: str | None = None) -> str | None:
+    """None if the installed pycalphad is the version of record, else a message."""
+    if installed is None:
+        import importlib.metadata as md
+        installed = md.version("pycalphad")
+    if installed != PYCALPHAD_OF_RECORD:
+        return (f"pycalphad {installed} is installed, the version of record is {PYCALPHAD_OF_RECORD} "
+                f"(other versions can change phase labels at ordered/disordered ties)")
+    return None
+
+
 def sha256_file(path: Path) -> str:
     h = hashlib.sha256()
     with open(path, "rb") as f:
@@ -209,11 +221,14 @@ def find_file(name: str, roots: list[Path]) -> Path:
 
 
 def g_els_path() -> Path:
+    """g_els.json of the installed pymatgen. pymatgen is a namespace package (no __file__), so
+    search its __path__. pymatgen ships a copy in more than one folder; they must be identical."""
     import pymatgen
-    root = Path(pymatgen.__file__).resolve().parent
-    hits = sorted(root.rglob("g_els.json"))
+    hits = sorted({h.resolve() for r in pymatgen.__path__ for h in Path(r).rglob("g_els.json")})
     if not hits:
         raise FileNotFoundError("g_els.json not found in the installed pymatgen")
+    if len({sha256_file(h) for h in hits}) > 1:
+        raise RuntimeError(f"g_els.json: {len(hits)} copies with different content: {hits}")
     return hits[0]
 
 
@@ -300,7 +315,10 @@ def check_calphad(roots: list[Path]) -> dict:
     out = {"grid": GRID, "compounds": {}, "phase_fraction_min": PHASE_FRACTION_MIN}
     for comp in COMPOUNDS:
         path = find_file(comp["tdb"], roots)
-        res = compound_calphad(Database(str(path)), comp, GRID)
+        try:
+            res = compound_calphad(Database(str(path)), comp, GRID)
+        except Exception as exc:  # reported per compound; --run refuses to continue on it
+            res = {"rows": [], "n_retained": 0, "error": f"{type(exc).__name__}: {exc}"}
         for r in res["rows"]:
             # reference noise actually used: g_els - GM_eq(element) in THIS TDB, and TDB vs unary50
             r["g_els_minus_gm_tdb_kJ"] = {el: float(gels[el][GRID.index(r["T"])] - r["element_gm_kJ"][el])
@@ -333,6 +351,8 @@ def run_study(roots: list[Path]) -> dict:
     residuals, table, excluded = {}, {}, {}
     for comp in COMPOUNDS:
         c = cal["compounds"][comp["name"]]
+        if c.get("error"):
+            raise RuntimeError(f"{comp['name']}: CALPHAD side failed ({c['error']}); not a result, fix first")
         if c["dropped"]:
             excluded[comp["name"]] = f"{c['n_retained']} retained grid points (< {MIN_POINTS})"
             continue
@@ -448,9 +468,9 @@ def markdown_report(res: dict) -> str:
     return "\n".join(lines) + "\n"
 
 
-def main(argv=None) -> int:
+def build_parser() -> argparse.ArgumentParser:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    mode = ap.add_mutually_exclusive_group(required=True)
+    mode = ap.add_mutually_exclusive_group()
     mode.add_argument("--check-calphad", action="store_true")
     mode.add_argument("--run", action="store_true")
     ap.add_argument("--manifest", type=Path, help="write (without --run) or verify (with --run)")
@@ -458,7 +478,14 @@ def main(argv=None) -> int:
     ap.add_argument("--note-sha256", help="expected SHA-256 of --note (required with --run)")
     ap.add_argument("--roots", type=Path, nargs="+", default=[REPO_ROOT], help="where to look for TDB files")
     ap.add_argument("--out", type=Path, default=REPO_ROOT / "stage_five" / "results" / "sisso_t_calibration")
+    return ap
+
+
+def main(argv=None) -> int:
+    ap = build_parser()
     args = ap.parse_args(argv)
+    if not (args.check_calphad or args.run or args.manifest):
+        ap.error("choose --check-calphad, --run or --manifest")
 
     if args.manifest and not args.run:
         data = write_manifest(args.manifest, args.roots, args.note)
@@ -468,6 +495,13 @@ def main(argv=None) -> int:
         if not args.check_calphad:
             return 0
 
+    problem = pycalphad_version_problem() if (args.check_calphad or args.run) else None
+    if problem and args.run:
+        print(f"Refusing to run: {problem}.")
+        return 2
+    if problem:
+        print(f"WARNING: {problem}.")
+
     if args.check_calphad:
         res = check_calphad(args.roots)
         args.out.parent.mkdir(parents=True, exist_ok=True)
@@ -476,7 +510,8 @@ def main(argv=None) -> int:
         for name, c in res["compounds"].items():
             kept = [int(r["T"]) for r in c["rows"] if r["retained"]]
             print(f"{name:7s} {Path(c['tdb_path']).name:22s} retained {c['n_retained']}/8 {kept}"
-                  + ("  -> DROPPED" if c["dropped"] else ""))
+                  + ("  -> DROPPED" if c["dropped"] else "")
+                  + (f"  ERROR: {c['error']}" if c.get("error") else ""))
         print(f"Details: {path}")
         return 0
 

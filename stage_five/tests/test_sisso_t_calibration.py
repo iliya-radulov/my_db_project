@@ -134,3 +134,58 @@ def test_calphad_path_on_a_toy_fe_b_database():
         assert r["dG_calphad_kJ"] == pytest.approx((-60000 + 3 * r["T"]) / 3 / 1000, abs=1e-3)
         assert r["element_phase"]["B"] == "BETA_RHOMBO_B"
         assert r["phases"] == ["M2B_C16"]
+
+
+def test_manifest_alone_is_a_valid_command_and_no_mode_is_an_error():
+    args = cal.build_parser().parse_args(["--note", "n.md", "--manifest", "m.json"])
+    assert args.manifest and not args.run and not args.check_calphad
+    with pytest.raises(SystemExit):
+        cal.main([])
+
+
+def test_pycalphad_version_guard():
+    assert cal.pycalphad_version_problem(cal.PYCALPHAD_OF_RECORD) is None
+    assert "0.12.0" in cal.pycalphad_version_problem("0.12.0")
+
+
+def test_a_failing_compound_is_reported_not_dropped(monkeypatch, tmp_path):
+    pycalphad = pytest.importorskip("pycalphad")
+    tdb = tmp_path / "FeB-02Rom.tdb"
+    tdb.write_text(TOY_TDB)
+
+    def boom(*a, **k):
+        raise ValueError("no usable phase for B")
+
+    monkeypatch.setattr(cal, "COMPOUNDS", [c for c in cal.COMPOUNDS if c["name"] == "Fe2B"])
+    monkeypatch.setattr(cal, "find_file", lambda name, roots: tdb)
+    monkeypatch.setattr(cal, "g_els_kJ", lambda els, temps: {e: [0.0] * len(temps) for e in els})
+    monkeypatch.setattr(cal, "element_gm_kJ", lambda db, el, temps: ([0.0] * len(temps), [""] * len(temps)))
+    monkeypatch.setattr(cal, "compound_calphad", boom)
+    res = cal.check_calphad([tmp_path])
+    assert res["compounds"]["Fe2B"]["error"].startswith("ValueError")
+    assert res["compounds"]["Fe2B"]["dropped"] is True
+    with pytest.raises(RuntimeError):
+        cal.run_study([tmp_path])
+
+
+def _fake_namespace_pymatgen(monkeypatch, tmp_path, contents):
+    import sys
+    import types
+    mod = types.ModuleType("pymatgen")          # namespace-package style: no __file__
+    mod.__path__ = [str(tmp_path)]
+    monkeypatch.setitem(sys.modules, "pymatgen", mod)
+    for i, text in enumerate(contents):
+        d = tmp_path / f"sub{i}" / "data"
+        d.mkdir(parents=True)
+        (d / "g_els.json").write_text(text)
+
+
+def test_g_els_path_works_without_a_file_attribute_and_accepts_identical_copies(monkeypatch, tmp_path):
+    _fake_namespace_pymatgen(monkeypatch, tmp_path, ['{"300": {"Fe": 0.0}}', '{"300": {"Fe": 0.0}}'])
+    assert cal.g_els_path().name == "g_els.json"
+
+
+def test_g_els_path_refuses_copies_with_different_content(monkeypatch, tmp_path):
+    _fake_namespace_pymatgen(monkeypatch, tmp_path, ['{"300": {"Fe": 0.0}}', '{"300": {"Fe": 1.0}}'])
+    with pytest.raises(RuntimeError):
+        cal.g_els_path()
