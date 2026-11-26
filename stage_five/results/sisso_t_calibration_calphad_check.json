@@ -1,0 +1,1878 @@
+{
+  "grid": [
+    800.0,
+    1000.0,
+    1100.0,
+    1200.0,
+    1300.0,
+    1375.0,
+    1450.0,
+    1600.0
+  ],
+  "compounds": {
+    "Fe3Si": {
+      "rows": [
+        {
+          "T": 800.0,
+          "phases": [
+            "B2_BCC"
+          ],
+          "expected_fraction": 1.0,
+          "retained": true,
+          "dG_calphad_kJ": -24.237615391441324,
+          "element_phase": {
+            "Fe": "B2_BCC",
+            "Si": "DIAMOND_A4"
+          },
+          "element_gm_kJ": {
+            "Fe": -29.906585629736334,
+            "Si": -21.475489931920713
+          },
+          "g_els_minus_gm_tdb_kJ": {
+            "Fe": -0.00011731558141647724,
+            "Si": -0.006584014008144123
+          },
+          "gm_tdb_minus_unary50_kJ": {
+            "Fe": 0.0,
+            "Si": 0.0
+          }
+        },
+        {
+          "T": 1000.0,
+          "phases": [
+            "B2_BCC"
+          ],
+          "expected_fraction": 1.0,
+          "retained": true,
+          "dG_calphad_kJ": -24.733372968772713,
+          "element_phase": {
+            "Fe": "B2_BCC",
+            "Si": "DIAMOND_A4"
+          },
+          "element_gm_kJ": {
+            "Fe": -42.272482522879365,
+            "Si": -30.3817033864928
+          },
+          "g_els_minus_gm_tdb_kJ": {
+            "Fe": -0.00016298867810604634,
+            "Si": -0.0078012207323396865
+          },
+          "gm_tdb_minus_unary50_kJ": {
+            "Fe": 0.0,
+            "Si": 0.0
+          }
+        },
+        {
+          "T": 1100.0,
+          "phases": [
+            "B2_BCC"
+          ],
+          "expected_fraction": 1.0,
+          "retained": true,
+          "dG_calphad_kJ": -24.882585160680925,
+          "element_phase": {
+            "Fe": "B2_BCC",
+            "Si": "DIAMOND_A4"
+          },
+          "element_gm_kJ": {
+            "Fe": -49.2324360980947,
+            "Si": -35.2422884770038
+          },
+          "g_els_minus_gm_tdb_kJ": {
+            "Fe": 0.10016697423420595,
+            "Si": -0.008432863577141347
+          },
+          "gm_tdb_minus_unary50_kJ": {
+            "Fe": 0.0,
+            "Si": 0.0
+          }
+        },
+        {
+          "T": 1200.0,
+          "phases": [
+            "B2_BCC"
+          ],
+          "expected_fraction": 1.0,
+          "retained": true,
+          "dG_calphad_kJ": -24.96550410137425,
+          "element_phase": {
+            "Fe": "FCC_A1",
+            "Si": "DIAMOND_A4"
+          },
+          "element_gm_kJ": {
+            "Fe": -56.631827466057416,
+            "Si": -40.34653754698115
+          },
+          "g_els_minus_gm_tdb_kJ": {
+            "Fe": -0.00016747347585521766,
+            "Si": -0.009101365826410301
+          },
+          "gm_tdb_minus_unary50_kJ": {
+            "Fe": 7.105427357601002e-14,
+            "Si": 0.0
+          }
+        },
+        {
+          "T": 1300.0,
+          "phases": [
+            "B2_BCC"
+          ],
+          "expected_fraction": 1.0,
+          "retained": true,
+          "dG_calphad_kJ": -25.002336852424925,
+          "element_phase": {
+            "Fe": "FCC_A1",
+            "Si": "DIAMOND_A4"
+          },
+          "element_gm_kJ": {
+            "Fe": -64.41583787711303,
+            "Si": -45.67772682350802
+          },
+          "g_els_minus_gm_tdb_kJ": {
+            "Fe": -0.00018385671826592898,
+            "Si": -0.009730442567558839
+          },
+          "gm_tdb_minus_unary50_kJ": {
+            "Fe": 7.105427357601002e-14,
+            "Si": 0.0
+          }
+        },
+        {
+          "T": 1375.0,
+          "phases": [
+            "B2_BCC"
+          ],
+          "expected_fraction": 1.0,
+          "retained": true,
+          "dG_calphad_kJ": -25.047406401392962,
+          "element_phase": {
+            "Fe": "FCC_A1",
+            "Si": "DIAMOND_A4"
+          },
+          "element_gm_kJ": {
+            "Fe": -70.4310943826329,
+            "Si": -49.816415164267504
+          },
+          "g_els_minus_gm_tdb_kJ": {
+            "Fe": -0.024698141391283457,
+            "Si": -0.02950641613858096
+          },
+          "gm_tdb_minus_unary50_kJ": {
+            "Fe": 5.684341886080802e-14,
+            "Si": 0.0
+          }
+        },
+        {
+          "T": 1450.0,
+          "phases": [
+            "B2_BCC"
+          ],
+          "expected_fraction": 1.0,
+          "retained": true,
+          "dG_calphad_kJ": -25.107117306615535,
+          "element_phase": {
+            "Fe": "FCC_A1",
+            "Si": "DIAMOND_A4"
+          },
+          "element_gm_kJ": {
+            "Fe": -76.59197129927668,
+            "Si": -54.069470686888536
+          },
+          "g_els_minus_gm_tdb_kJ": {
+            "Fe": -0.031492455201302505,
+            "Si": -0.035115552759236834
+          },
+          "gm_tdb_minus_unary50_kJ": {
+            "Fe": 5.684341886080802e-14,
+            "Si": 0.0
+          }
+        },
+        {
+          "T": 1600.0,
+          "phases": [
+            "LIQUID"
+          ],
+          "expected_fraction": 0.0,
+          "retained": false,
+          "dG_calphad_kJ": -26.17102977933736,
+          "element_phase": {
+            "Fe": "FCC_A1",
+            "Si": "DIAMOND_A4"
+          },
+          "element_gm_kJ": {
+            "Fe": -89.33098132012904,
+            "Si": -62.9002750362578
+          },
+          "g_els_minus_gm_tdb_kJ": {
+            "Fe": -0.00032617748620111797,
+            "Si": -0.011741520463502297
+          },
+          "gm_tdb_minus_unary50_kJ": {
+            "Fe": 2.842170943040401e-14,
+            "Si": 0.0
+          }
+        }
+      ],
+      "n_retained": 7,
+      "tdb_path": "/home/iliya-radulov/Documents/github/active/my_db_project/data/tdb/sgte_binary/FeSi-14Yua.tdb",
+      "dropped": false
+    },
+    "Fe2B": {
+      "rows": [
+        {
+          "T": 800.0,
+          "phases": [
+            "M2B_C16"
+          ],
+          "expected_fraction": 1.0,
+          "retained": true,
+          "dG_calphad_kJ": -23.84998870514768,
+          "element_phase": {
+            "Fe": "BCC_A2",
+            "B": "BETA_RHOMBO_B"
+          },
+          "element_gm_kJ": {
+            "Fe": -29.906585629736334,
+            "B": -9.42540436469053
+          },
+          "g_els_minus_gm_tdb_kJ": {
+            "Fe": -0.00011731558141647724,
+            "B": 0.06477214337679449
+          },
+          "gm_tdb_minus_unary50_kJ": {
+            "Fe": 0.0,
+            "B": 0.0
+          }
+        },
+        {
+          "T": 1000.0,
+          "phases": [
+            "M2B_C16"
+          ],
+          "expected_fraction": 1.0,
+          "retained": true,
+          "dG_calphad_kJ": -22.895316816803934,
+          "element_phase": {
+            "Fe": "BCC_A2",
+            "B": "BETA_RHOMBO_B"
+          },
+          "element_gm_kJ": {
+            "Fe": -42.272482522879365,
+            "B": -14.70198346550409
+          },
+          "g_els_minus_gm_tdb_kJ": {
+            "Fe": -0.00016298867810604634,
+            "B": 0.06463308058907202
+          },
+          "gm_tdb_minus_unary50_kJ": {
+            "Fe": 0.0,
+            "B": 0.0
+          }
+        },
+        {
+          "T": 1100.0,
+          "phases": [
+            "M2B_C16"
+          ],
+          "expected_fraction": 1.0,
+          "retained": true,
+          "dG_calphad_kJ": -22.518725011488463,
+          "element_phase": {
+            "Fe": "BCC_A2",
+            "B": "BETA_RHOMBO_B"
+          },
+          "element_gm_kJ": {
+            "Fe": -49.2324360980947,
+            "B": -17.723829668877435
+          },
+          "g_els_minus_gm_tdb_kJ": {
+            "Fe": 0.10016697423420595,
+            "B": 0.06316887707633967
+          },
+          "gm_tdb_minus_unary50_kJ": {
+            "Fe": 0.0,
+            "B": 0.0
+          }
+        },
+        {
+          "T": 1200.0,
+          "phases": [
+            "M2B_C16"
+          ],
+          "expected_fraction": 1.0,
+          "retained": true,
+          "dG_calphad_kJ": -22.117146778088298,
+          "element_phase": {
+            "Fe": "FCC_A1",
+            "B": "BETA_RHOMBO_B"
+          },
+          "element_gm_kJ": {
+            "Fe": -56.631827466057416,
+            "B": -20.97914744465995
+          },
+          "g_els_minus_gm_tdb_kJ": {
+            "Fe": -0.00016747347585521766,
+            "B": 0.0622754442780149
+          },
+          "gm_tdb_minus_unary50_kJ": {
+            "Fe": 7.105427357601002e-14,
+            "B": 0.0
+          }
+        },
+        {
+          "T": 1300.0,
+          "phases": [
+            "M2B_C16"
+          ],
+          "expected_fraction": 1.0,
+          "retained": true,
+          "dG_calphad_kJ": -21.68100980150291,
+          "element_phase": {
+            "Fe": "FCC_A1",
+            "B": "BETA_RHOMBO_B"
+          },
+          "element_gm_kJ": {
+            "Fe": -64.41583787711303,
+            "B": -24.45385438597551
+          },
+          "g_els_minus_gm_tdb_kJ": {
+            "Fe": -0.00018385671826592898,
+            "B": 0.062470425574499444
+          },
+          "gm_tdb_minus_unary50_kJ": {
+            "Fe": 7.105427357601002e-14,
+            "B": 0.0
+          }
+        },
+        {
+          "T": 1375.0,
+          "phases": [
+            "M2B_C16"
+          ],
+          "expected_fraction": 1.0,
+          "retained": true,
+          "dG_calphad_kJ": -21.36604845461929,
+          "element_phase": {
+            "Fe": "FCC_A1",
+            "B": "BETA_RHOMBO_B"
+          },
+          "element_gm_kJ": {
+            "Fe": -70.4310943826329,
+            "B": -27.196235751125688
+          },
+          "g_els_minus_gm_tdb_kJ": {
+            "Fe": -0.024698141391283457,
+            "B": 0.04506729095157169
+          },
+          "gm_tdb_minus_unary50_kJ": {
+            "Fe": 5.684341886080802e-14,
+            "B": 0.0
+          }
+        },
+        {
+          "T": 1450.0,
+          "phases": [
+            "M2B_C16"
+          ],
+          "expected_fraction": 1.0,
+          "retained": true,
+          "dG_calphad_kJ": -21.057255405797036,
+          "element_phase": {
+            "Fe": "FCC_A1",
+            "B": "BETA_RHOMBO_B"
+          },
+          "element_gm_kJ": {
+            "Fe": -76.59197129927668,
+            "B": -30.050084871529403
+          },
+          "g_els_minus_gm_tdb_kJ": {
+            "Fe": -0.031492455201302505,
+            "B": 0.04218157785823706
+          },
+          "gm_tdb_minus_unary50_kJ": {
+            "Fe": 5.684341886080802e-14,
+            "B": 0.0
+          }
+        },
+        {
+          "T": 1600.0,
+          "phases": [
+            "M2B_C16"
+          ],
+          "expected_fraction": 1.0,
+          "retained": true,
+          "dG_calphad_kJ": -20.44857990168866,
+          "element_phase": {
+            "Fe": "FCC_A1",
+            "B": "BETA_RHOMBO_B"
+          },
+          "element_gm_kJ": {
+            "Fe": -89.33098132012904,
+            "B": -36.074718891168125
+          },
+          "g_els_minus_gm_tdb_kJ": {
+            "Fe": -0.00032617748620111797,
+            "B": 0.07249496375330011
+          },
+          "gm_tdb_minus_unary50_kJ": {
+            "Fe": 2.842170943040401e-14,
+            "B": 0.0
+          }
+        }
+      ],
+      "n_retained": 8,
+      "tdb_path": "/home/iliya-radulov/Documents/github/active/my_db_project/data/tdb/sgte_binary/FeB-02Rom.tdb",
+      "dropped": false
+    },
+    "CoSi": {
+      "rows": [
+        {
+          "T": 800.0,
+          "phases": [
+            "COSI_B20"
+          ],
+          "expected_fraction": 1.0,
+          "retained": true,
+          "dG_calphad_kJ": -44.48604551690957,
+          "element_phase": {
+            "Co": "FCC_A1",
+            "Si": "DIAMOND_A4"
+          },
+          "element_gm_kJ": {
+            "Co": -31.947303816409445,
+            "Si": -21.475489931920713
+          },
+          "g_els_minus_gm_tdb_kJ": {
+            "Co": -0.00010615346174702722,
+            "Si": -0.006584014008144123
+          },
+          "gm_tdb_minus_unary50_kJ": {
+            "Co": 0.0,
+            "Si": 0.0
+          }
+        },
+        {
+          "T": 1000.0,
+          "phases": [
+            "COSI_B20"
+          ],
+          "expected_fraction": 1.0,
+          "retained": true,
+          "dG_calphad_kJ": -43.75225147524499,
+          "element_phase": {
+            "Co": "FCC_A1",
+            "Si": "DIAMOND_A4"
+          },
+          "element_gm_kJ": {
+            "Co": -44.44234270515898,
+            "Si": -30.3817033864928
+          },
+          "g_els_minus_gm_tdb_kJ": {
+            "Co": -0.00011027534349494772,
+            "Si": -0.0078012207323396865
+          },
+          "gm_tdb_minus_unary50_kJ": {
+            "Co": 0.0,
+            "Si": 0.0
+          }
+        },
+        {
+          "T": 1100.0,
+          "phases": [
+            "COSI_B20"
+          ],
+          "expected_fraction": 1.0,
+          "retained": true,
+          "dG_calphad_kJ": -43.38191892271674,
+          "element_phase": {
+            "Co": "FCC_A1",
+            "Si": "DIAMOND_A4"
+          },
+          "element_gm_kJ": {
+            "Co": -51.25341653057585,
+            "Si": -35.2422884770038
+          },
+          "g_els_minus_gm_tdb_kJ": {
+            "Co": -0.00015989528161952649,
+            "Si": -0.008432863577141347
+          },
+          "gm_tdb_minus_unary50_kJ": {
+            "Co": 0.0,
+            "Si": 0.0
+          }
+        },
+        {
+          "T": 1200.0,
+          "phases": [
+            "COSI_B20"
+          ],
+          "expected_fraction": 1.0,
+          "retained": true,
+          "dG_calphad_kJ": -43.01251638356367,
+          "element_phase": {
+            "Co": "FCC_A1",
+            "Si": "DIAMOND_A4"
+          },
+          "element_gm_kJ": {
+            "Co": -58.42889707017504,
+            "Si": -40.34653754698115
+          },
+          "g_els_minus_gm_tdb_kJ": {
+            "Co": -0.0002040553850903848,
+            "Si": -0.009101365826410301
+          },
+          "gm_tdb_minus_unary50_kJ": {
+            "Co": 0.0,
+            "Si": 0.0
+          }
+        },
+        {
+          "T": 1300.0,
+          "phases": [
+            "COSI_B20"
+          ],
+          "expected_fraction": 1.0,
+          "retained": true,
+          "dG_calphad_kJ": -42.64209116280229,
+          "element_phase": {
+            "Co": "FCC_A1",
+            "Si": "DIAMOND_A4"
+          },
+          "element_gm_kJ": {
+            "Co": -65.97101189813094,
+            "Si": -45.67772682350802
+          },
+          "g_els_minus_gm_tdb_kJ": {
+            "Co": -0.00021518905239759079,
+            "Si": -0.009730442567558839
+          },
+          "gm_tdb_minus_unary50_kJ": {
+            "Co": 0.0,
+            "Si": 0.0
+          }
+        },
+        {
+          "T": 1375.0,
+          "phases": [
+            "COSI_B20"
+          ],
+          "expected_fraction": 1.0,
+          "retained": true,
+          "dG_calphad_kJ": -42.35941779701274,
+          "element_phase": {
+            "Co": "FCC_A1",
+            "Si": "DIAMOND_A4"
+          },
+          "element_gm_kJ": {
+            "Co": -71.87612036843987,
+            "Si": -49.816415164267504
+          },
+          "g_els_minus_gm_tdb_kJ": {
+            "Co": -0.037302173061021904,
+            "Si": -0.02950641613858096
+          },
+          "gm_tdb_minus_unary50_kJ": {
+            "Co": 0.0,
+            "Si": 0.0
+          }
+        },
+        {
+          "T": 1450.0,
+          "phases": [
+            "COSI_B20"
+          ],
+          "expected_fraction": 1.0,
+          "retained": true,
+          "dG_calphad_kJ": -42.0742454487211,
+          "element_phase": {
+            "Co": "FCC_A1",
+            "Si": "DIAMOND_A4"
+          },
+          "element_gm_kJ": {
+            "Co": -77.99087665747494,
+            "Si": -54.069470686888536
+          },
+          "g_els_minus_gm_tdb_kJ": {
+            "Co": -0.03614192834129426,
+            "Si": -0.035115552759236834
+          },
+          "gm_tdb_minus_unary50_kJ": {
+            "Co": 0.0,
+            "Si": 0.0
+          }
+        },
+        {
+          "T": 1600.0,
+          "phases": [
+            "COSI_B20"
+          ],
+          "expected_fraction": 1.0,
+          "retained": true,
+          "dG_calphad_kJ": -41.57317283070641,
+          "element_phase": {
+            "Co": "FCC_A1",
+            "Si": "DIAMOND_A4"
+          },
+          "element_gm_kJ": {
+            "Co": -90.69648691328733,
+            "Si": -62.9002750362578
+          },
+          "g_els_minus_gm_tdb_kJ": {
+            "Co": -0.00032528468942416566,
+            "Si": -0.011741520463502297
+          },
+          "gm_tdb_minus_unary50_kJ": {
+            "Co": 0.0,
+            "Si": 0.0
+          }
+        }
+      ],
+      "n_retained": 8,
+      "tdb_path": "/home/iliya-radulov/Documents/github/active/my_db_project/data/tdb/sgte_binary/CoSi-06Zha.tdb",
+      "dropped": false
+    },
+    "TiB2": {
+      "rows": [
+        {
+          "T": 800.0,
+          "phases": [
+            "TIB2_C32"
+          ],
+          "expected_fraction": 1.0,
+          "retained": true,
+          "dG_calphad_kJ": -99.56487258205887,
+          "element_phase": {
+            "Ti": "HCP_A3",
+            "B": "BETA_RHOMBO_B"
+          },
+          "element_gm_kJ": {
+            "Ti": -32.38894066036391,
+            "B": -9.42540436469053
+          },
+          "g_els_minus_gm_tdb_kJ": {
+            "Ti": 0.002229178322217251,
+            "B": 0.06477214337679449
+          },
+          "gm_tdb_minus_unary50_kJ": {
+            "Ti": 0.0,
+            "B": 0.0
+          }
+        },
+        {
+          "T": 1000.0,
+          "phases": [
+            "TIB2_C32"
+          ],
+          "expected_fraction": 1.0,
+          "retained": true,
+          "dG_calphad_kJ": -98.08201957640574,
+          "element_phase": {
+            "Ti": "HCP_A3",
+            "B": "BETA_RHOMBO_B"
+          },
+          "element_gm_kJ": {
+            "Ti": -44.7833120609188,
+            "B": -14.70198346550409
+          },
+          "g_els_minus_gm_tdb_kJ": {
+            "Ti": 0.09425823156305313,
+            "B": 0.06463308058907202
+          },
+          "gm_tdb_minus_unary50_kJ": {
+            "Ti": 0.0,
+            "B": 0.0
+          }
+        },
+        {
+          "T": 1100.0,
+          "phases": [
+            "TIB2_C32"
+          ],
+          "expected_fraction": 1.0,
+          "retained": true,
+          "dG_calphad_kJ": -97.3165036678684,
+          "element_phase": {
+            "Ti": "HCP_A3",
+            "B": "BETA_RHOMBO_B"
+          },
+          "element_gm_kJ": {
+            "Ti": -51.48696916430989,
+            "B": -17.723829668877435
+          },
+          "g_els_minus_gm_tdb_kJ": {
+            "Ti": 0.15529246961446574,
+            "B": 0.06316887707633967
+          },
+          "gm_tdb_minus_unary50_kJ": {
+            "Ti": 0.0,
+            "B": 0.0
+          }
+        },
+        {
+          "T": 1200.0,
+          "phases": [
+            "TIB2_C32"
+          ],
+          "expected_fraction": 1.0,
+          "retained": true,
+          "dG_calphad_kJ": -96.48392913043479,
+          "element_phase": {
+            "Ti": "BCC_A2",
+            "B": "BETA_RHOMBO_B"
+          },
+          "element_gm_kJ": {
+            "Ti": -58.65651528754753,
+            "B": -20.97914744465995
+          },
+          "g_els_minus_gm_tdb_kJ": {
+            "Ti": 0.2517142456335364,
+            "B": 0.0622754442780149
+          },
+          "gm_tdb_minus_unary50_kJ": {
+            "Ti": 0.0,
+            "B": 0.0
+          }
+        },
+        {
+          "T": 1300.0,
+          "phases": [
+            "TIB2_C32"
+          ],
+          "expected_fraction": 1.0,
+          "retained": true,
+          "dG_calphad_kJ": -95.58432689089909,
+          "element_phase": {
+            "Ti": "BCC_A2",
+            "B": "BETA_RHOMBO_B"
+          },
+          "element_gm_kJ": {
+            "Ti": -66.27768954952161,
+            "B": -24.45385438597551
+          },
+          "g_els_minus_gm_tdb_kJ": {
+            "Ti": 0.3055624592402637,
+            "B": 0.062470425574499444
+          },
+          "gm_tdb_minus_unary50_kJ": {
+            "Ti": 0.0,
+            "B": 0.0
+          }
+        },
+        {
+          "T": 1375.0,
+          "phases": [
+            "TIB2_C32"
+          ],
+          "expected_fraction": 1.0,
+          "retained": true,
+          "dG_calphad_kJ": -94.91109927503857,
+          "element_phase": {
+            "Ti": "BCC_A2",
+            "B": "BETA_RHOMBO_B"
+          },
+          "element_gm_kJ": {
+            "Ti": -72.14662240475305,
+            "B": -27.196235751125688
+          },
+          "g_els_minus_gm_tdb_kJ": {
+            "Ti": 0.32477517847411264,
+            "B": 0.04506729095157169
+          },
+          "gm_tdb_minus_unary50_kJ": {
+            "Ti": 0.0,
+            "B": 0.0
+          }
+        },
+        {
+          "T": 1450.0,
+          "phases": [
+            "TIB2_C32"
+          ],
+          "expected_fraction": 1.0,
+          "retained": true,
+          "dG_calphad_kJ": -94.23941379871243,
+          "element_phase": {
+            "Ti": "BCC_A2",
+            "B": "BETA_RHOMBO_B"
+          },
+          "element_gm_kJ": {
+            "Ti": -78.14137332138866,
+            "B": -30.050084871529403
+          },
+          "g_els_minus_gm_tdb_kJ": {
+            "Ti": 0.35890557736912854,
+            "B": 0.04218157785823706
+          },
+          "gm_tdb_minus_unary50_kJ": {
+            "Ti": 0.0,
+            "B": 0.0
+          }
+        },
+        {
+          "T": 1600.0,
+          "phases": [
+            "TIB2_C32"
+          ],
+          "expected_fraction": 1.0,
+          "retained": true,
+          "dG_calphad_kJ": -92.9010200808525,
+          "element_phase": {
+            "Ti": "BCC_A2",
+            "B": "BETA_RHOMBO_B"
+          },
+          "element_gm_kJ": {
+            "Ti": -90.49349897448943,
+            "B": -36.074718891168125
+          },
+          "g_els_minus_gm_tdb_kJ": {
+            "Ti": 0.46538907833013354,
+            "B": 0.07249496375330011
+          },
+          "gm_tdb_minus_unary50_kJ": {
+            "Ti": 0.0,
+            "B": 0.0
+          }
+        }
+      ],
+      "n_retained": 8,
+      "tdb_path": "/home/iliya-radulov/Documents/github/active/my_db_project/data/tdb/sgte_binary/TiB-04Ma.tdb",
+      "dropped": false
+    },
+    "LaB6": {
+      "rows": [
+        {
+          "T": 800.0,
+          "phases": [
+            "LAB6_D21"
+          ],
+          "expected_fraction": 1.0,
+          "retained": true,
+          "dG_calphad_kJ": -57.337428085820726,
+          "element_phase": {
+            "La": "FCC_A1",
+            "B": "BETA_RHOMBO_B"
+          },
+          "element_gm_kJ": {
+            "La": -53.60125532653336,
+            "B": -9.42540436469053
+          },
+          "g_els_minus_gm_tdb_kJ": {
+            "La": -0.00022918132980009887,
+            "B": 0.06477214337679449
+          },
+          "gm_tdb_minus_unary50_kJ": {
+            "La": 0.0,
+            "B": 0.0
+          }
+        },
+        {
+          "T": 1000.0,
+          "phases": [
+            "LAB6_D21"
+          ],
+          "expected_fraction": 1.0,
+          "retained": true,
+          "dG_calphad_kJ": -57.502576826706104,
+          "element_phase": {
+            "La": "FCC_A1",
+            "B": "BETA_RHOMBO_B"
+          },
+          "element_gm_kJ": {
+            "La": -71.33518826405083,
+            "B": -14.70198346550409
+          },
+          "g_els_minus_gm_tdb_kJ": {
+            "La": -0.0002572879287043861,
+            "B": 0.06463308058907202
+          },
+          "gm_tdb_minus_unary50_kJ": {
+            "La": 0.0,
+            "B": 0.0
+          }
+        },
+        {
+          "T": 1100.0,
+          "phases": [
+            "LAB6_D21"
+          ],
+          "expected_fraction": 1.0,
+          "retained": true,
+          "dG_calphad_kJ": -57.60971006595423,
+          "element_phase": {
+            "La": "FCC_A1",
+            "B": "BETA_RHOMBO_B"
+          },
+          "element_gm_kJ": {
+            "La": -80.70886035346156,
+            "B": -17.723829668877435
+          },
+          "g_els_minus_gm_tdb_kJ": {
+            "La": -0.0003174649248762762,
+            "B": 0.06316887707633967
+          },
+          "gm_tdb_minus_unary50_kJ": {
+            "La": 0.0,
+            "B": 0.0
+          }
+        },
+        {
+          "T": 1200.0,
+          "phases": [
+            "LAB6_D21"
+          ],
+          "expected_fraction": 1.0,
+          "retained": true,
+          "dG_calphad_kJ": -57.700857107606296,
+          "element_phase": {
+            "La": "LIQUID",
+            "B": "BETA_RHOMBO_B"
+          },
+          "element_gm_kJ": {
+            "La": -90.6223205719297,
+            "B": -20.97914744465995
+          },
+          "g_els_minus_gm_tdb_kJ": {
+            "La": -0.00029137063377504546,
+            "B": 0.0622754442780149
+          },
+          "gm_tdb_minus_unary50_kJ": {
+            "La": 0.0,
+            "B": 0.0
+          }
+        },
+        {
+          "T": 1300.0,
+          "phases": [
+            "LAB6_D21"
+          ],
+          "expected_fraction": 1.0,
+          "retained": true,
+          "dG_calphad_kJ": -57.72580419219251,
+          "element_phase": {
+            "La": "LIQUID",
+            "B": "BETA_RHOMBO_B"
+          },
+          "element_gm_kJ": {
+            "La": -101.415700309996,
+            "B": -24.45385438597551
+          },
+          "g_els_minus_gm_tdb_kJ": {
+            "La": -0.0003487859046202857,
+            "B": 0.062470425574499444
+          },
+          "gm_tdb_minus_unary50_kJ": {
+            "La": 0.0,
+            "B": 0.0
+          }
+        },
+        {
+          "T": 1375.0,
+          "phases": [
+            "LAB6_D21"
+          ],
+          "expected_fraction": 1.0,
+          "retained": true,
+          "dG_calphad_kJ": -57.75804955174375,
+          "element_phase": {
+            "La": "LIQUID",
+            "B": "BETA_RHOMBO_B"
+          },
+          "element_gm_kJ": {
+            "La": -109.6851809428951,
+            "B": -27.196235751125688
+          },
+          "g_els_minus_gm_tdb_kJ": {
+            "La": -0.024021699827571297,
+            "B": 0.04506729095157169
+          },
+          "gm_tdb_minus_unary50_kJ": {
+            "La": 0.0,
+            "B": 0.0
+          }
+        },
+        {
+          "T": 1450.0,
+          "phases": [
+            "LAB6_D21"
+          ],
+          "expected_fraction": 1.0,
+          "retained": true,
+          "dG_calphad_kJ": -57.80294002231943,
+          "element_phase": {
+            "La": "LIQUID",
+            "B": "BETA_RHOMBO_B"
+          },
+          "element_gm_kJ": {
+            "La": -118.09508543768604,
+            "B": -30.050084871529403
+          },
+          "g_els_minus_gm_tdb_kJ": {
+            "La": -0.029971174219980412,
+            "B": 0.04218157785823706
+          },
+          "gm_tdb_minus_unary50_kJ": {
+            "La": 0.0,
+            "B": 0.0
+          }
+        },
+        {
+          "T": 1600.0,
+          "phases": [
+            "LAB6_D21"
+          ],
+          "expected_fraction": 1.0,
+          "retained": true,
+          "dG_calphad_kJ": -57.93430947691144,
+          "element_phase": {
+            "La": "LIQUID",
+            "B": "BETA_RHOMBO_B"
+          },
+          "element_gm_kJ": {
+            "La": -135.30780212897346,
+            "B": -36.074718891168125
+          },
+          "g_els_minus_gm_tdb_kJ": {
+            "La": -0.0004636312421837374,
+            "B": 0.07249496375330011
+          },
+          "gm_tdb_minus_unary50_kJ": {
+            "La": 0.0,
+            "B": 0.0
+          }
+        }
+      ],
+      "n_retained": 8,
+      "tdb_path": "/home/iliya-radulov/Documents/github/active/my_db_project/data/tdb/sgte_binary/LaB-13Tan.tdb",
+      "dropped": false
+    },
+    "NiAl": {
+      "rows": [
+        {
+          "T": 800.0,
+          "phases": [
+            "B2_BCC"
+          ],
+          "expected_fraction": 1.0,
+          "retained": true,
+          "dG_calphad_kJ": -59.570416886962,
+          "element_phase": {
+            "Ni": "FCC_4SL",
+            "Al": "FCC_4SL"
+          },
+          "element_gm_kJ": {
+            "Ni": -32.193541880948665,
+            "Al": -30.17322843163002
+          },
+          "g_els_minus_gm_tdb_kJ": {
+            "Ni": -6.893639891103476e-05,
+            "Al": 0.04212471387644001
+          },
+          "gm_tdb_minus_unary50_kJ": {
+            "Ni": 0.0,
+            "Al": 0.0
+          }
+        },
+        {
+          "T": 1000.0,
+          "phases": [
+            "B2_BCC"
+          ],
+          "expected_fraction": 1.0,
+          "retained": true,
+          "dG_calphad_kJ": -57.410773952501245,
+          "element_phase": {
+            "Ni": "FCC_4SL",
+            "Al": "LIQUID"
+          },
+          "element_gm_kJ": {
+            "Ni": -44.814728776416224,
+            "Al": -42.67452288613844
+          },
+          "g_els_minus_gm_tdb_kJ": {
+            "Ni": -0.00012548597172212794,
+            "Al": 0.07997626652796441
+          },
+          "gm_tdb_minus_unary50_kJ": {
+            "Ni": 0.0,
+            "Al": 0.0
+          }
+        },
+        {
+          "T": 1100.0,
+          "phases": [
+            "B2_BCC"
+          ],
+          "expected_fraction": 1.0,
+          "retained": true,
+          "dG_calphad_kJ": -55.95894631008798,
+          "element_phase": {
+            "Ni": "FCC_4SL",
+            "Al": "LIQUID"
+          },
+          "element_gm_kJ": {
+            "Ni": -51.62103147083645,
+            "Al": -50.19089455153278
+          },
+          "g_els_minus_gm_tdb_kJ": {
+            "Ni": -0.00014622038381162383,
+            "Al": 0.10242213621445018
+          },
+          "gm_tdb_minus_unary50_kJ": {
+            "Ni": 0.0,
+            "Al": 0.0
+          }
+        },
+        {
+          "T": 1200.0,
+          "phases": [
+            "B2_BCC"
+          ],
+          "expected_fraction": 1.0,
+          "retained": true,
+          "dG_calphad_kJ": -54.51522832544256,
+          "element_phase": {
+            "Ni": "FCC_4SL",
+            "Al": "LIQUID"
+          },
+          "element_gm_kJ": {
+            "Ni": -58.727056733858056,
+            "Al": -57.99628501236622
+          },
+          "g_els_minus_gm_tdb_kJ": {
+            "Ni": -0.0002454181742734818,
+            "Al": 0.12498580688054517
+          },
+          "gm_tdb_minus_unary50_kJ": {
+            "Ni": 7.105427357601002e-15,
+            "Al": 0.0
+          }
+        },
+        {
+          "T": 1300.0,
+          "phases": [
+            "B2_BCC"
+          ],
+          "expected_fraction": 1.0,
+          "retained": true,
+          "dG_calphad_kJ": -53.080005083667075,
+          "element_phase": {
+            "Ni": "FCC_4SL",
+            "Al": "LIQUID"
+          },
+          "element_gm_kJ": {
+            "Ni": -66.11528037682436,
+            "Al": -66.0665508069085
+          },
+          "g_els_minus_gm_tdb_kJ": {
+            "Ni": -0.000247207072405331,
+            "Al": 0.1474238990652026
+          },
+          "gm_tdb_minus_unary50_kJ": {
+            "Ni": 0.0,
+            "Al": 0.0
+          }
+        },
+        {
+          "T": 1375.0,
+          "phases": [
+            "B2_BCC"
+          ],
+          "expected_fraction": 1.0,
+          "retained": true,
+          "dG_calphad_kJ": -52.0097747729713,
+          "element_phase": {
+            "Ni": "FCC_4SL",
+            "Al": "LIQUID"
+          },
+          "element_gm_kJ": {
+            "Ni": -71.83276521691397,
+            "Al": -72.2806763666083
+          },
+          "g_els_minus_gm_tdb_kJ": {
+            "Ni": -0.02463213173615486,
+            "Al": 0.14230305077835226
+          },
+          "gm_tdb_minus_unary50_kJ": {
+            "Ni": 0.0,
+            "Al": 0.0
+          }
+        },
+        {
+          "T": 1450.0,
+          "phases": [
+            "B2_BCC"
+          ],
+          "expected_fraction": 1.0,
+          "retained": true,
+          "dG_calphad_kJ": -50.94542820866809,
+          "element_phase": {
+            "Ni": "FCC_4SL",
+            "Al": "LIQUID"
+          },
+          "element_gm_kJ": {
+            "Ni": -77.69539965029432,
+            "Al": -78.62474537314169
+          },
+          "g_els_minus_gm_tdb_kJ": {
+            "Ni": -0.031467902337368514,
+            "Al": 0.1536252586322746
+          },
+          "gm_tdb_minus_unary50_kJ": {
+            "Ni": 1.4210854715202004e-14,
+            "Al": 0.0
+          }
+        },
+        {
+          "T": 1600.0,
+          "phases": [
+            "B2_BCC"
+          ],
+          "expected_fraction": 1.0,
+          "retained": true,
+          "dG_calphad_kJ": -48.8367732030146,
+          "element_phase": {
+            "Ni": "FCC_4SL",
+            "Al": "LIQUID"
+          },
+          "element_gm_kJ": {
+            "Ni": -89.8375930580545,
+            "Al": -91.67646675700618
+          },
+          "g_els_minus_gm_tdb_kJ": {
+            "Ni": -0.00031618339315286903,
+            "Al": 0.2145519253812438
+          },
+          "gm_tdb_minus_unary50_kJ": {
+            "Ni": 0.0,
+            "Al": 0.0
+          }
+        }
+      ],
+      "n_retained": 8,
+      "tdb_path": "/home/iliya-radulov/Documents/github/active/my_db_project/data/tdb/sgte_binary/AlNi-01Dup-4sl.tdb",
+      "dropped": false
+    },
+    "YAl2": {
+      "rows": [
+        {
+          "T": 800.0,
+          "phases": [
+            "AL2Y_C15"
+          ],
+          "expected_fraction": 1.0,
+          "retained": true,
+          "dG_calphad_kJ": -45.935264,
+          "element_phase": {
+            "Y": "HCP_A3",
+            "Al": "FCC_A1"
+          },
+          "element_gm_kJ": {
+            "Y": -43.70973338467588,
+            "Al": -30.17322843163002
+          },
+          "g_els_minus_gm_tdb_kJ": {
+            "Y": 0.2697838550063665,
+            "Al": 0.04212471387644001
+          },
+          "gm_tdb_minus_unary50_kJ": {
+            "Y": 0.0,
+            "Al": 0.0
+          }
+        },
+        {
+          "T": 1000.0,
+          "phases": [
+            "AL2Y_C15"
+          ],
+          "expected_fraction": 1.0,
+          "retained": true,
+          "dG_calphad_kJ": -44.31291281333331,
+          "element_phase": {
+            "Y": "HCP_A3",
+            "Al": "LIQUID"
+          },
+          "element_gm_kJ": {
+            "Y": -58.878421045295795,
+            "Al": -42.67452288613844
+          },
+          "g_els_minus_gm_tdb_kJ": {
+            "Y": 0.3336195214699629,
+            "Al": 0.07997626652796441
+          },
+          "gm_tdb_minus_unary50_kJ": {
+            "Y": 0.0,
+            "Al": 0.0
+          }
+        },
+        {
+          "T": 1100.0,
+          "phases": [
+            "AL2Y_C15"
+          ],
+          "expected_fraction": 1.0,
+          "retained": true,
+          "dG_calphad_kJ": -42.99983422572876,
+          "element_phase": {
+            "Y": "HCP_A3",
+            "Al": "LIQUID"
+          },
+          "element_gm_kJ": {
+            "Y": -66.9508421304213,
+            "Al": -50.19089455153278
+          },
+          "g_els_minus_gm_tdb_kJ": {
+            "Y": 0.3662129317756637,
+            "Al": 0.10242213621445018
+          },
+          "gm_tdb_minus_unary50_kJ": {
+            "Y": 0.0,
+            "Al": 0.0
+          }
+        },
+        {
+          "T": 1200.0,
+          "phases": [
+            "AL2Y_C15"
+          ],
+          "expected_fraction": 1.0,
+          "retained": true,
+          "dG_calphad_kJ": -41.68959108525409,
+          "element_phase": {
+            "Y": "HCP_A3",
+            "Al": "LIQUID"
+          },
+          "element_gm_kJ": {
+            "Y": -75.31901274686567,
+            "Al": -57.99628501236622
+          },
+          "g_els_minus_gm_tdb_kJ": {
+            "Y": 0.4004548610411689,
+            "Al": 0.12498580688054517
+          },
+          "gm_tdb_minus_unary50_kJ": {
+            "Y": 0.0,
+            "Al": 0.0
+          }
+        },
+        {
+          "T": 1300.0,
+          "phases": [
+            "AL2Y_C15"
+          ],
+          "expected_fraction": 1.0,
+          "retained": true,
+          "dG_calphad_kJ": -40.38042091437768,
+          "element_phase": {
+            "Y": "HCP_A3",
+            "Al": "LIQUID"
+          },
+          "element_gm_kJ": {
+            "Y": -83.96556154423803,
+            "Al": -66.0665508069085
+          },
+          "g_els_minus_gm_tdb_kJ": {
+            "Y": 0.43717402152411466,
+            "Al": 0.1474238990652026
+          },
+          "gm_tdb_minus_unary50_kJ": {
+            "Y": 0.0,
+            "Al": 0.0
+          }
+        },
+        {
+          "T": 1375.0,
+          "phases": [
+            "AL2Y_C15"
+          ],
+          "expected_fraction": 1.0,
+          "retained": true,
+          "dG_calphad_kJ": -39.39884890833487,
+          "element_phase": {
+            "Y": "HCP_A3",
+            "Al": "LIQUID"
+          },
+          "element_gm_kJ": {
+            "Y": -90.62428183254822,
+            "Al": -72.2806763666083
+          },
+          "g_els_minus_gm_tdb_kJ": {
+            "Y": 0.4431464096420825,
+            "Al": 0.14230305077835226
+          },
+          "gm_tdb_minus_unary50_kJ": {
+            "Y": 0.0,
+            "Al": 0.0
+          }
+        },
+        {
+          "T": 1450.0,
+          "phases": [
+            "AL2Y_C15"
+          ],
+          "expected_fraction": 1.0,
+          "retained": true,
+          "dG_calphad_kJ": -38.41740611521742,
+          "element_phase": {
+            "Y": "HCP_A3",
+            "Al": "LIQUID"
+          },
+          "element_gm_kJ": {
+            "Y": -97.42598079785013,
+            "Al": -78.62474537314169
+          },
+          "g_els_minus_gm_tdb_kJ": {
+            "Y": 0.46844704912034274,
+            "Al": 0.1536252586322746
+          },
+          "gm_tdb_minus_unary50_kJ": {
+            "Y": 0.0,
+            "Al": 0.0
+          }
+        },
+        {
+          "T": 1600.0,
+          "phases": [
+            "AL2Y_C15"
+          ],
+          "expected_fraction": 1.0,
+          "retained": true,
+          "dG_calphad_kJ": -36.454705252713495,
+          "element_phase": {
+            "Y": "HCP_A3",
+            "Al": "LIQUID"
+          },
+          "element_gm_kJ": {
+            "Y": -111.43972723359707,
+            "Al": -91.67646675700618
+          },
+          "g_els_minus_gm_tdb_kJ": {
+            "Y": 0.5699455959113493,
+            "Al": 0.2145519253812438
+          },
+          "gm_tdb_minus_unary50_kJ": {
+            "Y": 0.0,
+            "Al": 0.0
+          }
+        }
+      ],
+      "n_retained": 8,
+      "tdb_path": "/home/iliya-radulov/Documents/github/active/my_db_project/data/tdb/sgte_binary/AlY-95Gro-LB.tdb",
+      "dropped": false
+    },
+    "Ti5Si3": {
+      "rows": [
+        {
+          "T": 800.0,
+          "phases": [
+            "SI3TI5_D88"
+          ],
+          "expected_fraction": 1.0,
+          "retained": true,
+          "dG_calphad_kJ": -72.67702817245566,
+          "element_phase": {
+            "Ti": "HCP_A3",
+            "Si": "DIAMOND_A4"
+          },
+          "element_gm_kJ": {
+            "Ti": -32.38894066036391,
+            "Si": -21.475489931920713
+          },
+          "g_els_minus_gm_tdb_kJ": {
+            "Ti": 0.002229178322217251,
+            "Si": -0.006584014008144123
+          },
+          "gm_tdb_minus_unary50_kJ": {
+            "Ti": 0.0,
+            "Si": 0.0
+          }
+        },
+        {
+          "T": 1000.0,
+          "phases": [
+            "SI3TI5_D88"
+          ],
+          "expected_fraction": 1.0,
+          "retained": true,
+          "dG_calphad_kJ": -72.60994429158143,
+          "element_phase": {
+            "Ti": "HCP_A3",
+            "Si": "DIAMOND_A4"
+          },
+          "element_gm_kJ": {
+            "Ti": -44.7833120609188,
+            "Si": -30.3817033864928
+          },
+          "g_els_minus_gm_tdb_kJ": {
+            "Ti": 0.09425823156305313,
+            "Si": -0.0078012207323396865
+          },
+          "gm_tdb_minus_unary50_kJ": {
+            "Ti": 0.0,
+            "Si": 0.0
+          }
+        },
+        {
+          "T": 1100.0,
+          "phases": [
+            "SI3TI5_D88"
+          ],
+          "expected_fraction": 1.0,
+          "retained": true,
+          "dG_calphad_kJ": -72.57645932204505,
+          "element_phase": {
+            "Ti": "HCP_A3",
+            "Si": "DIAMOND_A4"
+          },
+          "element_gm_kJ": {
+            "Ti": -51.48696916430989,
+            "Si": -35.2422884770038
+          },
+          "g_els_minus_gm_tdb_kJ": {
+            "Ti": 0.15529246961446574,
+            "Si": -0.008432863577141347
+          },
+          "gm_tdb_minus_unary50_kJ": {
+            "Ti": 0.0,
+            "Si": 0.0
+          }
+        },
+        {
+          "T": 1200.0,
+          "phases": [
+            "SI3TI5_D88"
+          ],
+          "expected_fraction": 1.0,
+          "retained": true,
+          "dG_calphad_kJ": -72.44424726030013,
+          "element_phase": {
+            "Ti": "BCC_A2",
+            "Si": "DIAMOND_A4"
+          },
+          "element_gm_kJ": {
+            "Ti": -58.65651528754753,
+            "Si": -40.34653754698115
+          },
+          "g_els_minus_gm_tdb_kJ": {
+            "Ti": 0.2517142456335364,
+            "Si": -0.009101365826410301
+          },
+          "gm_tdb_minus_unary50_kJ": {
+            "Ti": 0.0,
+            "Si": 0.0
+          }
+        },
+        {
+          "T": 1300.0,
+          "phases": [
+            "SI3TI5_D88"
+          ],
+          "expected_fraction": 1.0,
+          "retained": true,
+          "dG_calphad_kJ": -72.21130850626878,
+          "element_phase": {
+            "Ti": "BCC_A2",
+            "Si": "DIAMOND_A4"
+          },
+          "element_gm_kJ": {
+            "Ti": -66.27768954952161,
+            "Si": -45.67772682350802
+          },
+          "g_els_minus_gm_tdb_kJ": {
+            "Ti": 0.3055624592402637,
+            "Si": -0.009730442567558839
+          },
+          "gm_tdb_minus_unary50_kJ": {
+            "Ti": 0.0,
+            "Si": 0.0
+          }
+        },
+        {
+          "T": 1375.0,
+          "phases": [
+            "SI3TI5_D88"
+          ],
+          "expected_fraction": 1.0,
+          "retained": true,
+          "dG_calphad_kJ": -72.05460077365268,
+          "element_phase": {
+            "Ti": "BCC_A2",
+            "Si": "DIAMOND_A4"
+          },
+          "element_gm_kJ": {
+            "Ti": -72.14662240475305,
+            "Si": -49.816415164267504
+          },
+          "g_els_minus_gm_tdb_kJ": {
+            "Ti": 0.32477517847411264,
+            "Si": -0.02950641613858096
+          },
+          "gm_tdb_minus_unary50_kJ": {
+            "Ti": 0.0,
+            "Si": 0.0
+          }
+        },
+        {
+          "T": 1450.0,
+          "phases": [
+            "SI3TI5_D88"
+          ],
+          "expected_fraction": 1.0,
+          "retained": true,
+          "dG_calphad_kJ": -71.91303623564983,
+          "element_phase": {
+            "Ti": "BCC_A2",
+            "Si": "DIAMOND_A4"
+          },
+          "element_gm_kJ": {
+            "Ti": -78.14137332138866,
+            "Si": -54.069470686888536
+          },
+          "g_els_minus_gm_tdb_kJ": {
+            "Ti": 0.35890557736912854,
+            "Si": -0.035115552759236834
+          },
+          "gm_tdb_minus_unary50_kJ": {
+            "Ti": 0.0,
+            "Si": 0.0
+          }
+        },
+        {
+          "T": 1600.0,
+          "phases": [
+            "SI3TI5_D88"
+          ],
+          "expected_fraction": 1.0,
+          "retained": true,
+          "dG_calphad_kJ": -71.67346792085468,
+          "element_phase": {
+            "Ti": "BCC_A2",
+            "Si": "DIAMOND_A4"
+          },
+          "element_gm_kJ": {
+            "Ti": -90.49349897448943,
+            "Si": -62.9002750362578
+          },
+          "g_els_minus_gm_tdb_kJ": {
+            "Ti": 0.46538907833013354,
+            "Si": -0.011741520463502297
+          },
+          "gm_tdb_minus_unary50_kJ": {
+            "Ti": 0.0,
+            "Si": 0.0
+          }
+        }
+      ],
+      "n_retained": 8,
+      "tdb_path": "/home/iliya-radulov/Documents/github/active/my_db_project/data/tdb/sgte_binary/SiTi-96Sei-LB.tdb",
+      "dropped": false
+    },
+    "Mg2Si": {
+      "rows": [
+        {
+          "T": 800.0,
+          "phases": [
+            "MG2SI_C1"
+          ],
+          "expected_fraction": 1.0,
+          "retained": true,
+          "dG_calphad_kJ": -17.413520000000002,
+          "element_phase": {
+            "Mg": "HCP_A3",
+            "Si": "DIAMOND_A4"
+          },
+          "element_gm_kJ": {
+            "Mg": -33.75999131955923,
+            "Si": -21.475489931920713
+          },
+          "g_els_minus_gm_tdb_kJ": {
+            "Mg": -0.00032489072600583313,
+            "Si": -0.006584014008144123
+          },
+          "gm_tdb_minus_unary50_kJ": {
+            "Mg": 0.0,
+            "Si": 0.0
+          }
+        },
+        {
+          "T": 1000.0,
+          "phases": [
+            "MG2SI_C1"
+          ],
+          "expected_fraction": 1.0,
+          "retained": true,
+          "dG_calphad_kJ": -15.899584053333335,
+          "element_phase": {
+            "Mg": "LIQUID",
+            "Si": "DIAMOND_A4"
+          },
+          "element_gm_kJ": {
+            "Mg": -47.11260631554233,
+            "Si": -30.3817033864928
+          },
+          "g_els_minus_gm_tdb_kJ": {
+            "Mg": -0.0006558584610587559,
+            "Si": -0.0078012207323396865
+          },
+          "gm_tdb_minus_unary50_kJ": {
+            "Mg": 0.0,
+            "Si": 0.0
+          }
+        },
+        {
+          "T": 1100.0,
+          "phases": [
+            "MG2SI_C1"
+          ],
+          "expected_fraction": 1.0,
+          "retained": true,
+          "dG_calphad_kJ": -14.757866168302577,
+          "element_phase": {
+            "Mg": "LIQUID",
+            "Si": "DIAMOND_A4"
+          },
+          "element_gm_kJ": {
+            "Mg": -54.87685573365426,
+            "Si": -35.2422884770038
+          },
+          "g_els_minus_gm_tdb_kJ": {
+            "Mg": -0.0008331671795005491,
+            "Si": -0.008432863577141347
+          },
+          "gm_tdb_minus_unary50_kJ": {
+            "Mg": 0.0,
+            "Si": 0.0
+          }
+        },
+        {
+          "T": 1200.0,
+          "phases": [
+            "MG2SI_C1"
+          ],
+          "expected_fraction": 1.0,
+          "retained": true,
+          "dG_calphad_kJ": -13.613756209567129,
+          "element_phase": {
+            "Mg": "LIQUID",
+            "Si": "DIAMOND_A4"
+          },
+          "element_gm_kJ": {
+            "Mg": -62.9534343719297,
+            "Si": -40.34653754698115
+          },
+          "g_els_minus_gm_tdb_kJ": {
+            "Mg": -0.0010823310862662083,
+            "Si": -0.009101365826410301
+          },
+          "gm_tdb_minus_unary50_kJ": {
+            "Mg": 0.0,
+            "Si": 0.0
+          }
+        },
+        {
+          "T": 1300.0,
+          "phases": [
+            "MG2SI_C1"
+          ],
+          "expected_fraction": 1.0,
+          "retained": true,
+          "dG_calphad_kJ": -12.468741059429888,
+          "element_phase": {
+            "Mg": "LIQUID",
+            "Si": "DIAMOND_A4"
+          },
+          "element_gm_kJ": {
+            "Mg": -71.31625150999598,
+            "Si": -45.67772682350802
+          },
+          "g_els_minus_gm_tdb_kJ": {
+            "Mg": -0.0012939803676772499,
+            "Si": -0.009730442567558839
+          },
+          "gm_tdb_minus_unary50_kJ": {
+            "Mg": 0.0,
+            "Si": 0.0
+          }
+        },
+        {
+          "T": 1375.0,
+          "phases": [
+            "LIQUID"
+          ],
+          "expected_fraction": 0.0,
+          "retained": false,
+          "dG_calphad_kJ": -12.043647011891025,
+          "element_phase": {
+            "Mg": "LIQUID",
+            "Si": "DIAMOND_A4"
+          },
+          "element_gm_kJ": {
+            "Mg": -77.76281019289506,
+            "Si": -49.816415164267504
+          },
+          "g_els_minus_gm_tdb_kJ": {
+            "Mg": -2.2862653532770736,
+            "Si": -0.02950641613858096
+          },
+          "gm_tdb_minus_unary50_kJ": {
+            "Mg": 0.0,
+            "Si": 0.0
+          }
+        },
+        {
+          "T": 1450.0,
+          "phases": [
+            "LIQUID"
+          ],
+          "expected_fraction": 0.0,
+          "retained": false,
+          "dG_calphad_kJ": -12.773802612444925,
+          "element_phase": {
+            "Mg": "LIQUID",
+            "Si": "DIAMOND_A4"
+          },
+          "element_gm_kJ": {
+            "Mg": -84.34979273768602,
+            "Si": -54.069470686888536
+          },
+          "g_els_minus_gm_tdb_kJ": {
+            "Mg": -7.6805240505009635,
+            "Si": -0.035115552759236834
+          },
+          "gm_tdb_minus_unary50_kJ": {
+            "Mg": 0.0,
+            "Si": 0.0
+          }
+        },
+        {
+          "T": 1600.0,
+          "phases": [
+            "LIQUID"
+          ],
+          "expected_fraction": 0.0,
+          "retained": false,
+          "dG_calphad_kJ": -14.230626375761744,
+          "element_phase": {
+            "Mg": "LIQUID",
+            "Si": "DIAMOND_A4"
+          },
+          "element_gm_kJ": {
+            "Mg": -97.91666552897345,
+            "Si": -62.9002750362578
+          },
+          "g_els_minus_gm_tdb_kJ": {
+            "Mg": -21.464445406542268,
+            "Si": -0.011741520463502297
+          },
+          "gm_tdb_minus_unary50_kJ": {
+            "Mg": 0.0,
+            "Si": 0.0
+          }
+        }
+      ],
+      "n_retained": 5,
+      "tdb_path": "/home/iliya-radulov/Documents/github/active/my_db_project/data/tdb/sgte_binary/MgSi-04Kev.tdb",
+      "dropped": false
+    }
+  },
+  "phase_fraction_min": 0.999
+}

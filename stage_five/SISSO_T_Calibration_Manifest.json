@@ -1,0 +1,221 @@
+{
+  "files": {
+    "script": {
+      "path": "/home/iliya-radulov/Documents/github/active/my_db_project/stage_five/sisso_t_calibration.py",
+      "sha256": "96e797e994955767f14b511d815a9e98b420c7a719325fb989fc6b3073c3566b"
+    },
+    "g_els.json": {
+      "path": "/home/iliya-radulov/Documents/github/active/my_db_project/venv/lib/python3.13/site-packages/pymatgen/analysis/compatibility/data/g_els.json",
+      "sha256": "ec61dbb86389ebfde2b16ce3917291128e6326fe3b9f4cd6ee56af5630cc1d2a"
+    },
+    "unary50.tdb": {
+      "path": "/home/iliya-radulov/Documents/github/active/my_db_project/data/other_tdb/old_tdb/unary50.tdb",
+      "sha256": "8e38dcefbeaad1f8ed83ed1f8ccceb0e1701fb584f1bf3798f217488253d4b3f"
+    },
+    "FeSi-14Yua.tdb": {
+      "path": "/home/iliya-radulov/Documents/github/active/my_db_project/data/tdb/sgte_binary/FeSi-14Yua.tdb",
+      "sha256": "b45ac7c1e94df43853b00f85aca124c47a7473ee1e3cfae89ca2cf76d1094d3b"
+    },
+    "FeB-02Rom.tdb": {
+      "path": "/home/iliya-radulov/Documents/github/active/my_db_project/data/tdb/sgte_binary/FeB-02Rom.tdb",
+      "sha256": "76003da4f9d7a948978d07416cd8c6fc6849efd95bd33ef34a5216ede742c992"
+    },
+    "CoSi-06Zha.tdb": {
+      "path": "/home/iliya-radulov/Documents/github/active/my_db_project/data/tdb/sgte_binary/CoSi-06Zha.tdb",
+      "sha256": "849716b03f938610d110fb62984db7ff0726ff00bd2e68a5a0e5c47433af5179"
+    },
+    "TiB-04Ma.tdb": {
+      "path": "/home/iliya-radulov/Documents/github/active/my_db_project/data/tdb/sgte_binary/TiB-04Ma.tdb",
+      "sha256": "1bea624752196864f1c8fb32976f16d622372f4aea1dea1b6351c9c7e108e7c1"
+    },
+    "LaB-13Tan.tdb": {
+      "path": "/home/iliya-radulov/Documents/github/active/my_db_project/data/tdb/sgte_binary/LaB-13Tan.tdb",
+      "sha256": "0355c303dc2e9bd68d6fb5e67c9344cb13572ddaa730ad768cb7a4fe055bad1d"
+    },
+    "AlNi-01Dup-4sl.tdb": {
+      "path": "/home/iliya-radulov/Documents/github/active/my_db_project/data/tdb/sgte_binary/AlNi-01Dup-4sl.tdb",
+      "sha256": "de7e77f0f98a25d4f01716630697881b4db651d22139b8f0d5f3720c31c5ca26"
+    },
+    "AlY-95Gro-LB.tdb": {
+      "path": "/home/iliya-radulov/Documents/github/active/my_db_project/data/tdb/sgte_binary/AlY-95Gro-LB.tdb",
+      "sha256": "5a2e7289e9fb1d714490186484d072795e81c1002fbfe12235e21bd638b2a727"
+    },
+    "SiTi-96Sei-LB.tdb": {
+      "path": "/home/iliya-radulov/Documents/github/active/my_db_project/data/tdb/sgte_binary/SiTi-96Sei-LB.tdb",
+      "sha256": "04320d8e6f0d87ccd45d3114f4ec97bbc4b8bbcfc9fa67db69952fca1cca6884"
+    },
+    "MgSi-04Kev.tdb": {
+      "path": "/home/iliya-radulov/Documents/github/active/my_db_project/data/tdb/sgte_binary/MgSi-04Kev.tdb",
+      "sha256": "8a16b2608533d0410bf1308a14792d53ea882323537c98fcad84aa15c1149874"
+    },
+    "dft_sisso_predictor.py": {
+      "path": "/home/iliya-radulov/Documents/github/active/my_db_project/stage_five/dft_sisso_predictor.py",
+      "sha256": "0e61257a2d72ff5feee9b0fb0bf906532fe547a27cf2e7ffd22f5a0e6b2d986f"
+    },
+    "prototype_match.py": {
+      "path": "/home/iliya-radulov/Documents/github/active/my_db_project/stage_five/prototype_match.py",
+      "sha256": "3768c47c58854dcc7d2d0c6aa7a1b9f502b7a13b970df98405e23cd4c344e1c0"
+    },
+    "note": {
+      "path": "/home/iliya-radulov/Documents/github/active/my_db_project/stage_five/SISSO_T_Calibration_PreReg.md",
+      "sha256": "22e867c35c68d68742e05484576fb00c93c6084046a163eca7d8c236b5eb0ea4"
+    }
+  },
+  "versions": {
+    "python": "3.13.18",
+    "pymatgen": "2026.5.4",
+    "pycalphad": "0.11.2",
+    "mp-api": "0.46.5",
+    "numpy": "2.5.3"
+  },
+  "settings": {
+    "grid": [
+      800.0,
+      1000.0,
+      1100.0,
+      1200.0,
+      1300.0,
+      1375.0,
+      1450.0,
+      1600.0
+    ],
+    "T0": 800.0,
+    "phase_fraction_min": 0.999,
+    "min_points": 3,
+    "mae_gain_min": 1.5,
+    "decision_rule": "v1.4",
+    "element_phases": {
+      "B": [
+        "BETA_RHOMBO_B"
+      ]
+    },
+    "compounds": [
+      {
+        "name": "Fe3Si",
+        "formula": "Fe3Si",
+        "mp_id": "mp-2199",
+        "tdb": "FeSi-14Yua.tdb",
+        "x": {
+          "Fe": 0.75,
+          "Si": 0.25
+        },
+        "phase": [
+          "B2_BCC"
+        ],
+        "magnetic": true
+      },
+      {
+        "name": "Fe2B",
+        "formula": "Fe2B",
+        "mp_id": "mp-1915",
+        "tdb": "FeB-02Rom.tdb",
+        "x": {
+          "Fe": 0.6666666666666666,
+          "B": 0.3333333333333333
+        },
+        "phase": [
+          "M2B_C16"
+        ],
+        "magnetic": true
+      },
+      {
+        "name": "CoSi",
+        "formula": "CoSi",
+        "mp_id": "mp-7577",
+        "tdb": "CoSi-06Zha.tdb",
+        "x": {
+          "Co": 0.5,
+          "Si": 0.5
+        },
+        "phase": [
+          "COSI_B20"
+        ],
+        "magnetic": false
+      },
+      {
+        "name": "TiB2",
+        "formula": "TiB2",
+        "mp_id": "mp-1145",
+        "tdb": "TiB-04Ma.tdb",
+        "x": {
+          "Ti": 0.3333333333333333,
+          "B": 0.6666666666666666
+        },
+        "phase": [
+          "TIB2_C32"
+        ],
+        "magnetic": false
+      },
+      {
+        "name": "LaB6",
+        "formula": "LaB6",
+        "mp_id": "mp-2680",
+        "tdb": "LaB-13Tan.tdb",
+        "x": {
+          "La": 0.14285714285714285,
+          "B": 0.8571428571428571
+        },
+        "phase": [
+          "LAB6_D21"
+        ],
+        "magnetic": false
+      },
+      {
+        "name": "NiAl",
+        "formula": "NiAl",
+        "mp_id": "mp-1487",
+        "tdb": "AlNi-01Dup-4sl.tdb",
+        "x": {
+          "Ni": 0.5,
+          "Al": 0.5
+        },
+        "phase": [
+          "B2_BCC"
+        ],
+        "magnetic": false
+      },
+      {
+        "name": "YAl2",
+        "formula": "YAl2",
+        "mp_id": "mp-2322",
+        "tdb": "AlY-95Gro-LB.tdb",
+        "x": {
+          "Y": 0.3333333333333333,
+          "Al": 0.6666666666666666
+        },
+        "phase": [
+          "AL2Y_C15"
+        ],
+        "magnetic": false
+      },
+      {
+        "name": "Ti5Si3",
+        "formula": "Ti5Si3",
+        "mp_id": "mp-2108",
+        "tdb": "SiTi-96Sei-LB.tdb",
+        "x": {
+          "Ti": 0.625,
+          "Si": 0.375
+        },
+        "phase": [
+          "SI3TI5_D88"
+        ],
+        "magnetic": false
+      },
+      {
+        "name": "Mg2Si",
+        "formula": "Mg2Si",
+        "mp_id": "mp-1367",
+        "tdb": "MgSi-04Kev.tdb",
+        "x": {
+          "Mg": 0.6666666666666666,
+          "Si": 0.3333333333333333
+        },
+        "phase": [
+          "MG2SI_C1"
+        ],
+        "magnetic": false
+      }
+    ]
+  }
+}
