@@ -36,6 +36,23 @@ The app shows a "Qualitative demo" line under the title, and lists every estimat
 - Visible "Qualitative demo" label; surface toggles renamed "Liquidus (T₀)" and "Solidus (approx.)"; probe hint no longer says "CALPHAD equilibria".
 - Imported systems record where data was invented (`buildNotes`), shown in the header.
 
-## Later: connection to the Stage 5 code (planned, not started)
+## Computed datasets from real TDB files (in progress)
+
+Step 1 of the connection to the real pipeline is done: `tools/export_ternary.py` computes a ternary dataset with pycalphad from a TDB file and writes it as JSON (`datasets/` is git-ignored; regenerate from the TDB and the command below).
+
+```bash
+pip install -r demo/calphad-3d-explorer/tools/requirements.txt
+python demo/calphad-3d-explorer/tools/export_ternary.py \
+    --tdb stage_four/calphad_lafesi/refit_tau12/results_addD/paperbuild_FeLa-23Su_LaSi-10Zho_FeSi-12Ohn.tdb \
+    --elements FE LA SI --tmin 800 --tmax 2000 --dt 10 --grid 30 --workers 4 \
+    --out demo/calphad-3d-explorer/datasets/lafesi_paperbuild.json
+python -m pytest demo/calphad-3d-explorer/tools/test_export_ternary.py
+```
+
+Per composition (triangular grid) and temperature: equilibrium phases and fractions, molar Gibbs energy. Per composition: liquidus and solidus temperature (from the liquid fraction, resolution = temperature step), primary phase, solid assemblage below the solidus. Provenance in the file: TDB name, path and SHA-256, script SHA-256, package versions, command line, grid, number of points where pycalphad did not converge (stored as missing, not filled).
+
+Next: step 2, "Load computed dataset" in the front-end; step 3, checks (binary edges, known La–Fe–Si temperatures).
+
+## Later: connection to the Stage 5 code (planned)
 
 Keep this front-end; replace `src/calphad/solver.ts` by results from pycalphad (the engine and TDB files Stage 5 already uses): a small Python backend computes isothermal sections and the liquidus surface for a ternary, cached, and the 3D scene draws them. Estimated 3–5 days plus about a day of checking against published diagrams.
