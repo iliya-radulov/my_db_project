@@ -275,7 +275,8 @@ export default function App() {
             Liquidus/solidus resolution {activeSystem.computed.temperatureStepK} K; values at the
             nearest grid point and temperature.{' '}
             {activeSystem.computed.failedPoints} of {activeSystem.computed.totalPoints} points did not
-            converge (grey in the slice).
+            converge and {activeSystem.computed.rejectedPoints} were rejected as not the minimum (grey in
+            the slice).
             {activeSystem.computed.liquidusAboveRange > 0 &&
               ` Liquidus above ${activeSystem.tempMaxK} K at ${activeSystem.computed.liquidusAboveRange} grid points (drawn at ${activeSystem.tempMaxK} K).`}
             {activeSystem.computed.solidusBelowRange > 0 &&

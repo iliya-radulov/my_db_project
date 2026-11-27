@@ -19,6 +19,7 @@ export interface TernaryDatasetFile {
     pycalphad?: string;
     created_utc?: string;
     failed_points?: number;
+    rejected_points?: number;
   };
   nodes: Array<{
     i: number; // steps of element B (dataset convention)
@@ -186,6 +187,7 @@ export function systemFromDataset(ds: TernaryDatasetFile): CalphadSystem {
     pycalphadVersion: String(prov.pycalphad ?? 'unknown'),
     createdUtc: String(prov.created_utc ?? 'unknown'),
     failedPoints: Number(prov.failed_points ?? 0),
+    rejectedPoints: Number(prov.rejected_points ?? 0),
     totalPoints,
     liquidusAboveRange,
     solidusBelowRange,

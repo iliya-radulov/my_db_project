@@ -48,6 +48,11 @@ VERTEX_EPS = 1e-4      # compositions are kept this far from 0 (pycalphad needs 
 LIQ_FULL = 0.999       # liquid fraction counted as "all liquid"
 LIQ_NONE = 0.001       # liquid fraction counted as "no liquid"
 FRACTION_DIGITS = 4
+# G(T) of an equilibrium is concave (d2G/dT2 = -Cp/T < 0, also across phase transitions), so it can
+# lie only slightly above the chord between neighbouring temperatures (~Cp dT^2 / 8T, a few J/mol
+# for 10 K steps, plus a few tens at a transition). A point far above the chord is a solver result
+# that is not the minimum (seen in La-Fe at 1070 K: "all liquid", 5.6 kJ/mol above the chord).
+CHORD_TOL_J = 200.0
 
 
 # ---------------------------------------------------------------------------
@@ -100,6 +105,29 @@ def crossing_down(temps, values, level):
             t0, t1 = temps[k], temps[k + 1]
             return float(t0 + (level - val) / (nxt - val) * (t1 - t0))
     return None
+
+
+def non_minimal_points(temps, gms, tol=CHORD_TOL_J) -> list[int]:
+    """Indices k whose G lies more than `tol` J/mol above the chord through the nearest valid
+    neighbours on both sides. End points (one neighbour only) are not judged."""
+    valid = [k for k, g in enumerate(gms) if g is not None and np.isfinite(g)]
+    bad = []
+    for pos in range(1, len(valid) - 1):
+        k0, k, k1 = valid[pos - 1], valid[pos], valid[pos + 1]
+        w = (temps[k] - temps[k0]) / (temps[k1] - temps[k0])
+        chord = gms[k0] + w * (gms[k1] - gms[k0])
+        if gms[k] - chord > tol:
+            bad.append(k)
+    return bad
+
+
+def reject_non_minimal(temps, states, gms):
+    """Sets non-minimal points (see non_minimal_points) to None in place; returns how many."""
+    bad = non_minimal_points(temps, gms)
+    for k in bad:
+        states[k] = None
+        gms[k] = None
+    return len(bad)
 
 
 def liquid_names(phases) -> set[str]:
@@ -180,6 +208,48 @@ def compute_row(args):
     return _states_from_arrays(arr("Phase"), arr("NP"), arr("GM"))
 
 
+def compute_subsystem(args):
+    """Pure element (one component) or binary (two components, X of the second given) at all
+    temperatures. Used for the corners and edges of the triangle, so that they are exactly the
+    unary and binary systems: a ternary calculation needs X > 0 for every element, and even a
+    1e-4 trace of the third element can precipitate a ternary compound and move the liquidus."""
+    tdb, comps, x_el, xs, phases, temps = args
+    warnings.filterwarnings("ignore")
+    from pycalphad import Database, equilibrium, variables as v
+    db = Database(tdb)
+    conds = {v.T: list(temps), v.P: 101325, v.N: 1}
+    if x_el:
+        conds[v.X(x_el)] = list(xs)
+    eq = equilibrium(db, list(comps) + ["VA"], phases, conds)
+    keep = ["T"] + ([f"X_{x_el}"] if x_el else [])
+
+    def arr(name):
+        da = eq[name]
+        da = da.isel({d: 0 for d in da.dims if d not in keep and d != "vertex"})
+        a = np.asarray(da.transpose(*keep, *[d for d in da.dims if d not in keep]).values)
+        return a if x_el else a[:, None, ...]   # unary: one composition
+
+    return _states_from_arrays(arr("Phase"), arr("NP"), arr("GM"))
+
+
+def subsystem_of(i: int, j: int, n: int):
+    """Which unary/binary a grid point belongs to: ('A',) corners, ('A','B') edges, None inside.
+    Dataset convention: i = steps of B, j = steps of C."""
+    if (i, j) == (0, 0):
+        return ("A",)
+    if (i, j) == (n, 0):
+        return ("B",)
+    if (i, j) == (0, n):
+        return ("C",)
+    if j == 0:
+        return ("A", "B")
+    if i == 0:
+        return ("A", "C")
+    if i + j == n:
+        return ("B", "C")
+    return None
+
+
 def build_dataset(tdb: Path, elements, tmin, tmax, dt, grid, workers, exclude, argv) -> dict:
     from pycalphad import Database
     import pycalphad
@@ -198,15 +268,46 @@ def build_dataset(tdb: Path, elements, tmin, tmax, dt, grid, workers, exclude, a
     row_keys = sorted(rows)
     t0 = time.time()
     jobs = [(str(tdb), elements, phases, temps, rows[i]) for i in row_keys]
+    # corners and edges as true unary / binary systems (see compute_subsystem)
+    letter = dict(zip("ABC", elements))
+    sub_points: dict[tuple, list] = {}
+    for p in pts:
+        sub = subsystem_of(p[0], p[1], grid)
+        if sub:
+            sub_points.setdefault(sub, []).append(p)
+    sub_keys = sorted(sub_points, key=lambda k: (len(k), k))
+    sub_jobs = []
+    for sub in sub_keys:
+        comps = [letter[c] for c in sub]
+        if len(sub) == 1:
+            sub_jobs.append((str(tdb), comps, None, None, phases, temps))
+        else:
+            # X of the second element of the pair: B on A-B (i/n), C on A-C and B-C (j/n)
+            xs = [(p[0] if sub == ("A", "B") else p[1]) / grid for p in sub_points[sub]]
+            sub_jobs.append((str(tdb), comps, comps[1], xs, phases, temps))
     if workers > 1:
         with Pool(workers) as pool:
             results = pool.map(compute_row, jobs)
+            sub_results = pool.map(compute_subsystem, sub_jobs)
     else:
         results = [compute_row(j) for j in jobs]
+        sub_results = [compute_subsystem(j) for j in sub_jobs]
+    replace = {}
+    for sub, (st_list, gm_list) in zip(sub_keys, sub_results):
+        for p, st, gm in zip(sub_points[sub], st_list, gm_list):
+            replace[(p[0], p[1])] = (st, gm)
     liquids = liquid_names(phases)
     nodes, seen = [], set()
+    failed = rejected = 0
     for i, (states_rows, gm_rows) in zip(row_keys, results):
         for p, states, gms in zip(rows[i], states_rows, gm_rows):
+            if (p[0], p[1]) in replace:
+                states, gms = replace[(p[0], p[1])]
+                xb, xc = p[0] / grid, p[1] / grid
+                p = (p[0], p[1], 1.0 - xb - xc, xb, xc)   # exact composition, no trace element
+            failed_here = sum(1 for st in states if st is None)
+            rejected += reject_non_minimal(temps, states, gms)
+            failed += failed_here
             summ = node_summary(temps, states, liquids)
             for s in states:
                 if s:
@@ -215,7 +316,6 @@ def build_dataset(tdb: Path, elements, tmin, tmax, dt, grid, workers, exclude, a
                           **{k: summ[k] for k in ("t_liquidus_K", "t_solidus_K", "primary_phase",
                                                   "solid_assemblage")},
                           "states": states, "gm_J": gms})
-    failed = sum(1 for n in nodes for s in n["states"] if s is None)
     script = Path(__file__).resolve()
     return {
         "schema": SCHEMA,
@@ -224,7 +324,9 @@ def build_dataset(tdb: Path, elements, tmin, tmax, dt, grid, workers, exclude, a
             "label": f"{'–'.join(e.capitalize() for e in elements)} · {tdb.stem}",
             "source": {"tdb_file": tdb.name, "tdb_path": str(tdb), "tdb_sha256": sha256_file(tdb)},
         },
-        "grid": {"subdivisions": grid, "vertex_eps": VERTEX_EPS, "temperatures_K": temps,
+        "grid": {"subdivisions": grid, "vertex_eps": VERTEX_EPS,
+                 "edges": "corners and edges computed as pure-element and binary systems; interior ternary",
+                 "temperatures_K": temps,
                  "temperature_step_K": dt, "liquid_full": LIQ_FULL, "liquid_none": LIQ_NONE},
         "phases": {"considered": phases, "appearing": sorted(seen), "liquid": sorted(liquids),
                    "excluded": sorted(exclude)},
@@ -237,6 +339,8 @@ def build_dataset(tdb: Path, elements, tmin, tmax, dt, grid, workers, exclude, a
             "created_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
             "runtime_s": round(time.time() - t0, 1),
             "failed_points": failed,
+            "rejected_points": rejected,
+            "rejection_rule": f"G above the chord of its temperature neighbours by > {CHORD_TOL_J} J/mol",
         },
         "nodes": nodes,
     }
@@ -262,7 +366,8 @@ def main(argv=None) -> int:
     a.out.write_text(json.dumps(data, separators=(",", ":")))
     p = data["provenance"]
     print(f"{a.out}: {len(data['nodes'])} compositions x {len(data['grid']['temperatures_K'])} temperatures, "
-          f"{p['runtime_s']} s, failed points {p['failed_points']}, phases {data['phases']['appearing']}")
+          f"{p['runtime_s']} s, failed points {p['failed_points']}, rejected (non-minimal) {p['rejected_points']}, "
+          f"phases {data['phases']['appearing']}")
     return 0
 
 

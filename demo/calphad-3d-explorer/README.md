@@ -52,7 +52,7 @@ python demo/calphad-3d-explorer/tools/export_ternary.py \
 python -m pytest demo/calphad-3d-explorer/tools/test_export_ternary.py
 ```
 
-Per composition (triangular grid) and temperature: equilibrium phases and fractions, molar Gibbs energy. Per composition: liquidus and solidus (from the liquid fraction; resolution = temperature step), primary phase, solid assemblage below the solidus. Provenance in the file: TDB name, path and SHA-256, script SHA-256, package versions, command line, grid, number of points where pycalphad did not converge (stored as missing, not filled). Choose `--tmax` above the highest liquidus: in the paper-build La–Fe–Si file, LaSi₂ (`LASI2_X`) and TAU1 are still solid at 2000 K over a large part of the triangle, so 2600 K is used above (grid 30, 10 K steps: about 80 s on 4 cores).
+Per composition (triangular grid) and temperature: equilibrium phases and fractions, molar Gibbs energy. Corners and edges are computed as pure-element and binary systems, so the triangle edges are exactly the binary diagrams (a ternary calculation needs X > 0 for every element, and in La–Fe–Si even 1e-4 La precipitates TAU1/TAU2 on the Fe–Si edge and moves the liquidus by up to ~250 K). Results that are not the minimum are rejected: an equilibrium G(T) is concave, so a point more than 200 J/mol above the chord of its temperature neighbours is a solver failure (seen in La–Fe at 1070 K: "all liquid", 5.6 kJ/mol too high); such points are stored as missing and counted separately. Per composition: liquidus and solidus (from the liquid fraction; resolution = temperature step), primary phase, solid assemblage below the solidus. Provenance in the file: TDB name, path and SHA-256, script SHA-256, package versions, command line, grid, number of points where pycalphad did not converge (stored as missing, not filled). Choose `--tmax` above the highest liquidus: in the paper-build La–Fe–Si file, LaSi₂ (`LASI2_X`) and TAU1 are still solid at 2000 K over a large part of the triangle, so 2600 K is used above (grid 30, 10 K steps: about 80 s on 4 cores).
 
 **2. Load it** with the *Load dataset* button. With a dataset:
 
@@ -65,11 +65,25 @@ Per composition (triangular grid) and temperature: equilibrium phases and fracti
 
 **3. Check the mapping** (TypeScript, from `demo/calphad-3d-explorer`): `npx tsx tools/check_viewer_mapping.ts datasets/<file>.json` compares the probe at grid-node compositions with the stored states (paper-build La–Fe–Si, 2600 K: 355 checks, 0 mismatches).
 
-Still to do (step 3): compare the triangle edges with the binary diagrams, and spot-check known La–Fe–Si temperatures.
+**4. Check the dataset against the model and reference data** (`tools/check_dataset.py`):
+
+```bash
+python demo/calphad-3d-explorer/tools/check_dataset.py \
+    --dataset demo/calphad-3d-explorer/datasets/lafesi_paperbuild.json \
+    --tdb stage_four/calphad_lafesi/refit_tau12/results_addD/paperbuild_FeLa-23Su_LaSi-10Zho_FeSi-12Ohn.tdb \
+    [--refs my_reference_points.csv] --workers 4 --out demo/calphad-3d-explorer/datasets/lafesi_paperbuild_check
+```
+
+Two kinds of check, reported separately:
+
+- **A. Pipeline (pass/fail):** TDB hash; corners and every edge point against an independent pure-element / binary calculation from the same TDB (coarse scan, then 1 K steps), for liquidus, solidus and primary phase, tolerance = step + 2 K. Exit code 1 if the hash, a corner or an edge liquidus fails.
+- **B. Model vs reference data (comparison only):** pure-element melting points against the SGTE unary values; optional sourced reference points from a CSV (`tools/reference_points_TEMPLATE.csv`: liquidus/solidus at a composition, or the phase set at a composition and temperature, each with tolerance and source).
+
+Paper-build La–Fe–Si (grid 30, 800–2600 K, 10 K): **A passes** — hash yes, corners 3/3, edge liquidus 87/87, solidus 86/87, primary phase 86/87 (the two differences are within one or two grid steps: two solids appearing within one 10 K step at Fe–Si x(Si) = 0.30, and a rejected neighbour point at La-rich Fe–La). 160 of 89 776 points did not converge, 17 were rejected as not the minimum. B: Fe 1811 / La 1194 / Si 1688 K against SGTE 1811 / 1193 / 1687 K. No reference points yet: they need sourced values (e.g. from the La–Fe–Si paper), which is why the template contains none.
 
 ## Status of the connection to the real pipeline
 
 - Step 1, pycalphad export (`tools/export_ternary.py`): done.
 - Step 2, loading datasets in the explorer: done.
-- Step 3, checks against binary diagrams and known La–Fe–Si temperatures: next.
+- Step 3, checks: done for the pipeline (A); the comparison with sourced La–Fe–Si reference points (B2) waits for the values.
 - Later: link datasets to the project database (dataset hash, TDB hash), and decide which files are shown for the hand-in.
