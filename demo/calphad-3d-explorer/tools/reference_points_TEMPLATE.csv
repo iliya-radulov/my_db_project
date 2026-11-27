@@ -1,15 +1,24 @@
-# Reference points for check_dataset.py --refs (copy this file, fill in sourced values).
-# One row per value. Lines starting with # are ignored.
-#   id          short name, e.g. TAU1_formation
-#   quantity    t_liquidus_K | t_solidus_K | phases_at_T
-#   composition mole fractions, e.g. FE:0.857;LA:0.0714;SI:0.0714 (semicolons; normalised by the script)
-#   T_K         only for phases_at_T: the temperature
-#   value       K for t_liquidus_K / t_solidus_K; for phases_at_T the expected phase set as in the TDB, e.g. FCC_A1+TAU1
-#   tolerance   K (ignored for phases_at_T, which must match exactly)
+# Reference points for check_dataset.py --refs (copy this file, fill in sourced values; filled copies stay private).
+# One row per value. Lines starting with # are ignored. Every point is computed directly with pycalphad
+# at the given composition (not read from the dataset grid).
+#   id          short name, e.g. TAU1_Si_poor_1373
+#   quantity    t_liquidus_K | t_solidus_K | phases_at_T | solubility_limit | t_upper_stability_K
+#   composition mole fractions, e.g. FE:0.857;LA:1/14;SI:0.0714 (semicolons; fractions like 1/14 allowed; normalised)
+#               solubility_limit: only the FIXED elements, e.g. LA:1/14 (the third element is the balance)
+#   T_K         phases_at_T and solubility_limit: the temperature
+#   value       K for t_liquidus_K / t_solidus_K / t_upper_stability_K; mole fraction of 'vary' for solubility_limit;
+#               for phases_at_T the expected phase set with TDB names, e.g. FCC_A1+TAU1
+#   tolerance   K, or mole fraction for solubility_limit (ignored for phases_at_T, which must match;
+#               phases below --min-fraction, default 0.01, are listed but not counted)
+#   phase       solubility_limit / t_upper_stability_K: the phase, as in the TDB (e.g. TAU1)
+#   vary        solubility_limit: the element scanned (e.g. SI)
+#   side        solubility_limit: low or high edge of the single-phase region in x(vary)
+#   class       optional: hard or soft (reported separately)
 #   source      where the value comes from (paper, table, figure); required
-#   note        free text
-# The dataset value is taken at the grid point nearest to the composition, so choose a grid fine enough.
+#   note        free text, e.g. a conversion (Niitsu's x in La(Fe1-xSix)13 is not x(Si): x(Si) = 13/14 x)
 # Examples (format only, not data):
-# TAU1_example,phases_at_T,FE:0.82;LA:0.07;SI:0.11,1400,FCC_A1+TAU1,,<your source>,<note>
-# liquidus_example,t_liquidus_K,FE:0.80;LA:0.10;SI:0.10,,1600,20,<your source>,<note>
-id,quantity,composition,T_K,value,tolerance,source,note
+# example_set,phases_at_T,FE:0.82;LA:0.07;SI:0.11,1400,BCC_A2+TAU1,,,,,hard,<your source>,<note>
+# example_liq,t_liquidus_K,FE:0.80;LA:0.10;SI:0.10,,1600,20,,,,soft,<your source>,<note>
+# example_edge,solubility_limit,LA:1/14,1373,0.09,0.01,TAU1,SI,low,hard,<your source>,<note>
+# example_top,t_upper_stability_K,FE:0.82;LA:0.07;SI:0.11,,1650,15,TAU1,,,hard,<your source>,<note>
+id,quantity,composition,T_K,value,tolerance,phase,vary,side,class,source,note

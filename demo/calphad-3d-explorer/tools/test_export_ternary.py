@@ -115,14 +115,96 @@ def test_check_reads_reference_points(tmp_path):
     refs = tmp_path / "refs.csv"
     refs.write_text(
         "# comment\n"
-        "id,quantity,composition,T_K,value,tolerance,source,note\n"
-        "al_melt,t_liquidus_K,AL:1;CU:0;NI:0,,1000,15,toy construction,\n"
-        "al_wrong,t_liquidus_K,AL:1;CU:0;NI:0,,1100,15,deliberately wrong,\n"
-        "ni_solid,phases_at_T,AL:0;CU:0;NI:1,1300,FCC_A1,,toy construction,\n")
-    rows = {r["id"]: r for r in chk.run_checks(ds, tdb, refs, 1)["B2_reference_points"]}
-    assert rows["al_melt"]["within_tolerance"]
+        "id,quantity,composition,T_K,value,tolerance,phase,vary,side,class,source,note\n"
+        "al_melt,t_liquidus_K,AL:1;CU:0;NI:0,,1000,15,,,,hard,toy construction,\n"
+        "al_wrong,t_liquidus_K,AL:1;CU:0;NI:0,,1100,15,,,,soft,deliberately wrong,\n"
+        "ni_solid,phases_at_T,AL:0;CU:0;NI:1,1300,FCC_A1,,,,,,toy construction,\n"
+        "al_fcc_top,t_upper_stability_K,AL:1,,1000,3,FCC_A1,,,hard,toy construction,\n")
+    b2 = chk.run_checks(ds, tdb, refs, 1)["B2"]
+    rows = {r["id"]: r for r in b2["points"]}
+    assert rows["al_melt"]["within_tolerance"] and rows["al_melt"]["class"] == "hard"
     assert not rows["al_wrong"]["within_tolerance"]
     assert rows["ni_solid"]["within_tolerance"] and rows["ni_solid"]["model"] == "FCC_A1"
+    assert rows["ni_solid"]["class"] == "unclassified"
+    assert rows["al_fcc_top"]["model"] == pytest.approx(1000, abs=1.5)
+    assert b2["summary"]["hard"] == {"rows": 2, "within": 2, "errors": 0}
+    assert b2["tdb_sha256"] == ex.sha256_file(tdb)
+    assert "| al_fcc_top |" in "\n".join(chk.markdown_b2(b2))
+
+
+# Two ideal solutions, no liquid: AL prefers FCC by 2000 J/mol, CU prefers BCC by 2000 J/mol.
+TOY_FB = """
+ELEMENT VA VACUUM 0 0 0 !
+ELEMENT AL FCC_A1 27 0 0 !
+ELEMENT CU FCC_A1 63.5 0 0 !
+ELEMENT NI FCC_A1 58.7 0 0 !
+FUNCTION GHSERAL 298.15 -1000-20*T; 4000 N !
+FUNCTION GHSERCU 298.15 -2000-22*T; 4000 N !
+FUNCTION GHSERNI 298.15 -3000-24*T; 4000 N !
+TYPE_DEFINITION % SEQ * !
+PHASE FCC_A1 % 1 1 !
+CONSTITUENT FCC_A1 :AL,CU,NI: !
+PARAMETER G(FCC_A1,AL;0) 298.15 +GHSERAL; 4000 N !
+PARAMETER G(FCC_A1,CU;0) 298.15 +GHSERCU; 4000 N !
+PARAMETER G(FCC_A1,NI;0) 298.15 +GHSERNI; 4000 N !
+PHASE BCC_A2 % 1 1 !
+CONSTITUENT BCC_A2 :AL,CU,NI: !
+PARAMETER G(BCC_A2,AL;0) 298.15 +GHSERAL+2000; 4000 N !
+PARAMETER G(BCC_A2,CU;0) 298.15 +GHSERCU-2000; 4000 N !
+PARAMETER G(BCC_A2,NI;0) 298.15 +GHSERNI+5000; 4000 N !
+"""
+
+
+def _ideal_two_phase_edges(dga, dgb, T, R=8.314462618):
+    """Ideal FCC/BCC: x(B) of the FCC and BCC edges, dg = G(BCC) - G(FCC) of each element."""
+    import math
+    ka, kb = math.exp(dga / (R * T)), math.exp(dgb / (R * T))
+    xb = (ka - 1) / (ka - kb)
+    return kb * xb, xb
+
+
+def test_solubility_limit_and_minimum_fraction_on_an_analytic_toy(tmp_path):
+    pytest.importorskip("pycalphad")
+    tdb = tmp_path / "fb.tdb"
+    tdb.write_text(TOY_FB)
+    x_fcc, x_bcc = _ideal_two_phase_edges(2000, -2000, 1000)      # 0.4401, 0.5599
+    # just above the FCC edge: lever rule 0.0008 / 0.1198 = 0.7 % BCC, below the default minimum 0.01
+    x_tiny = x_fcc + 0.0008
+    refs = tmp_path / "refs.csv"
+    refs.write_text(
+        "id,quantity,composition,T_K,value,tolerance,phase,vary,side,class,source,note\n"
+        f"fcc_edge,solubility_limit,NI:0,1000,{x_fcc:.4f},0.001,FCC_A1,CU,high,hard,analytic,\n"
+        f"bcc_edge,solubility_limit,NI:0,1000,{x_bcc:.4f},0.001,BCC_A2,CU,low,hard,analytic,\n"
+        "fcc_low,solubility_limit,NI:0,1000,0.0,0.001,FCC_A1,CU,low,soft,analytic,\n"
+        "bcc_off,solubility_limit,NI:0,1000,0.50,0.01,BCC_A2,CU,low,soft,deliberately wrong,\n"
+        f"tiny,phases_at_T,AL:{1 - x_tiny:.5f};CU:{x_tiny:.5f};NI:0,1000,FCC_A1,,,,,hard,analytic,\n"
+        f"ternary_ok,solubility_limit,NI:0.05,1000,0.45,0.05,FCC_A1,CU,high,soft,smoke test,\n")
+    b2 = chk.run_reference_points(tdb, ["AL", "CU", "NI"], refs, 800, 1200)
+    rows = {r["id"]: r for r in b2["points"]}
+    assert rows["fcc_edge"]["model"] == pytest.approx(x_fcc, abs=2e-4) and rows["fcc_edge"]["within_tolerance"]
+    assert rows["bcc_edge"]["model"] == pytest.approx(x_bcc, abs=2e-4) and rows["bcc_edge"]["within_tolerance"]
+    assert rows["fcc_edge"]["balance"] == "AL"
+    assert rows["fcc_low"]["detail"] == "edge at the end of the scan"
+    # too-wide/too-narrow both fail: the signed difference is reported
+    assert not rows["bcc_off"]["within_tolerance"]
+    assert rows["bcc_off"]["difference"] == pytest.approx(x_bcc - 0.50, abs=2e-4)
+    assert rows["tiny"]["model"] == "FCC_A1" and rows["tiny"]["minor_phases"] == ["BCC_A2"]
+    assert rows["tiny"]["within_tolerance"]
+    assert "error" not in rows["ternary_ok"] and rows["ternary_ok"]["model"] is not None
+    # with a stricter minimum fraction the small BCC fraction counts and the row fails
+    strict = chk.run_reference_points(tdb, ["AL", "CU", "NI"], refs, 800, 1200, min_fraction=0.001)
+    tiny = [r for r in strict["points"] if r["id"] == "tiny"][0]
+    assert tiny["model"] == "BCC_A2+FCC_A1" and not tiny["within_tolerance"]
+
+
+def test_single_phase_regions_bridges_one_point_gaps():
+    xs = [0.1 * k for k in range(10)]
+    fr = [0, 1, 1, None, 1, 1, 0, 0, 1, 1]
+    regions, bridged = chk.single_phase_regions(xs, fr)
+    assert regions == [(1, 5), (8, 9)] and bridged == 1
+    assert chk.pick_region(xs, regions, 0.85) == (8, 9)
+    assert chk.pick_region(xs, regions, 0.65) == (1, 5)   # nearest edge (0.5 vs 0.8)
+    assert chk.parse_number("1/14") == pytest.approx(0.0714286, abs=1e-6)
 
 
 def test_non_minimal_points_flags_a_point_far_above_the_chord():
