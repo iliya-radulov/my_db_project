@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { CalphadSystem, ComputedPhaseDiagram } from '../calphad/types';
 import { sampleDiagramGrid } from '../calphad/solver';
+import { computedStateAt, phaseSetKey } from '../calphad/computedLookup';
 
 /**
  * Generates a high-resolution procedural Gibbs ternary triangle coordinate grid
@@ -207,6 +208,8 @@ export function createIsothermSliceTexture(
   // Store region codes for crisp boundary edge detection
   const regionCode = new Int16Array(size * size).fill(-1);
   const phaseIdToIdx = new Map<string, number>();
+  const phaseSetCodes = new Map<string, number>(); // computed datasets: one region code per phase set
+  const liquidPhaseId = diagram.system.phases[0]?.id;
   diagram.system.phases.forEach((p, idx) => phaseIdToIdx.set(p.id, idx));
 
   for (let py = 0; py < size; py++) {
@@ -227,6 +230,39 @@ export function createIsothermSliceTexture(
       const cxB = Math.max(0, xB);
       const cxC = Math.max(0, xC);
       const sum = cxA + cxB + cxC || 1;
+      const computed = diagram.system.computed;
+      if (computed) {
+        // Real equilibrium at the nearest grid point and temperature: colour by the phase set
+        const st = computedStateAt(computed, cxA / sum, cxB / sum, tempK);
+        let rr = 100;
+        let gg = 100;
+        let bb = 110;
+        let aa = 90; // grey: pycalphad did not converge here
+        let code = 1;
+        if (st.phases) {
+          const key = phaseSetKey(st.phases);
+          if (!phaseSetCodes.has(key)) phaseSetCodes.set(key, phaseSetCodes.size + 2);
+          code = phaseSetCodes.get(key)!;
+          const parts = Object.entries(st.phases).sort((p1, p2) => p2[1] - p1[1]);
+          const rgbOf = (id: string) =>
+            id === liquidPhaseId ? liquidRgb : phaseColors.get(id) ?? [148, 163, 184];
+          if (parts.length === 1) {
+            [rr, gg, bb] = rgbOf(parts[0][0]);
+          } else {
+            // two or more phases: stripes of the two largest, so phase fields stay readable
+            const stripe = ((px + py) % 10) < 5;
+            [rr, gg, bb] = rgbOf(stripe ? parts[0][0] : parts[1][0]);
+          }
+          aa = parts.some(([id]) => id === liquidPhaseId) ? 150 : 215;
+        }
+        regionCode[py * size + px] = code;
+        data[idx4] = rr;
+        data[idx4 + 1] = gg;
+        data[idx4 + 2] = bb;
+        data[idx4 + 3] = aa;
+        continue;
+      }
+
       const sample = sampleDiagramGrid(diagram, cxA / sum, cxB / sum, cxC / sum);
 
       let r = liquidRgb[0];

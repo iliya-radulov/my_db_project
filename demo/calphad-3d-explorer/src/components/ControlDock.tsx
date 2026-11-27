@@ -74,7 +74,11 @@ export function ControlDock({
   const { system } = diagram;
   const [e0, e1, e2] = system.elements;
 
-  const tdbText = system.rawTdb ?? formatSystemAsTdb(system, deltaInteractionJ);
+  const computed = system.computed;
+  const tdbText = computed
+    ? JSON.stringify(computed.provenance, null, 2) // dataset: show its provenance, not TDB text
+    : system.rawTdb ?? formatSystemAsTdb(system, deltaInteractionJ);
+  const fmt = (v: number, digits: number) => (Number.isFinite(v) ? v.toFixed(digits) : '—');
 
   const handleCopyTdb = () => {
     navigator.clipboard?.writeText(tdbText).catch(() => {});
@@ -83,8 +87,8 @@ export function ControlDock({
   };
 
   const layerItems: Array<{ key: keyof LayerVisibility; label: string }> = [
-    { key: 'liquidus', label: 'Liquidus (T₀)' },
-    { key: 'solidus', label: 'Solidus (approx.)' },
+    { key: 'liquidus', label: computed ? 'Liquidus' : 'Liquidus (T₀)' },
+    { key: 'solidus', label: computed ? 'Solidus' : 'Solidus (sketch)' },
     { key: 'solvus', label: 'Solvus' },
     { key: 'monovariant', label: 'Valleys' },
     { key: 'isotherm', label: 'Isotherm' },
@@ -170,7 +174,7 @@ export function ControlDock({
                 <span className="hidden sm:inline whitespace-nowrap">
                   Gₘ{' '}
                   <span className="text-slate-100">
-                    {probe.gibbsKJ.toFixed(2)}
+                    {fmt(probe.gibbsKJ, 2)}
                   </span>{' '}
                   <span className="text-slate-500">kJ/mol</span>
                 </span>
@@ -436,11 +440,13 @@ export function ControlDock({
                   onChange={(e) =>
                     onDeltaInteractionChange(Number(e.target.value))
                   }
-                  className="calphad-slider w-full"
+                  disabled={Boolean(computed)}
+                  className="calphad-slider w-full disabled:opacity-40"
                 />
                 <p className="text-[11px] text-slate-400">
-                  Perturbs Redlich-Kister excess Gibbs energy and recomputes
-                  liquidus &amp; monovariant boundaries live.
+                  {computed
+                    ? 'Not available for a computed dataset: its equilibria come from the TDB file as it is.'
+                    : 'Perturbs Redlich-Kister excess Gibbs energy and recomputes liquidus & monovariant boundaries live.'}
                 </p>
               </div>
 
@@ -463,8 +469,9 @@ export function ControlDock({
                         Chemical Potentials (kJ/mol)
                       </div>
                       <div className="mt-1 font-mono text-slate-100">
-                        μ({e0.symbol}) {probe.chemicalPotentialsKJ[0].toFixed(1)}{' '}
-                        · μ({e1.symbol}) {probe.chemicalPotentialsKJ[1].toFixed(1)}
+                        {computed
+                          ? 'not stored in the dataset'
+                          : `μ(${e0.symbol}) ${fmt(probe.chemicalPotentialsKJ[0], 1)} · μ(${e1.symbol}) ${fmt(probe.chemicalPotentialsKJ[1], 1)}`}
                       </div>
                     </div>
                     <div>
@@ -524,12 +531,12 @@ export function ControlDock({
                     {copiedTdb ? (
                       <>
                         <Check className="w-3.5 h-3.5 text-emerald-400" />
-                        <span>Copied TDB</span>
+                        <span>{computed ? 'Copied' : 'Copied TDB'}</span>
                       </>
                     ) : (
                       <>
                         <Copy className="w-3.5 h-3.5" />
-                        <span>Copy TDB</span>
+                        <span>{computed ? 'Copy provenance' : 'Copy TDB'}</span>
                       </>
                     )}
                   </button>
