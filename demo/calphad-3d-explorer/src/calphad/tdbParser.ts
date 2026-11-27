@@ -4,7 +4,7 @@ import { CalphadSystem, ElementSpec, PhaseDefinition } from './types';
  * Standard Periodic Table lookup for element names, atomic masses (g/mol),
  * and reference melting points (K) when a TDB omits mass or melting metadata.
  */
-const ELEMENT_LOOKUP: Record<
+export const ELEMENT_LOOKUP: Record<
   string,
   { name: string; mass: number; tmK: number; hfJ: number }
 > = {
@@ -53,7 +53,7 @@ const ELEMENT_LOOKUP: Record<
   ZR: { name: 'Zirconium', mass: 91.224, tmK: 2128, hfJ: 14000 },
 };
 
-const PHASE_PALETTE = [
+export const PHASE_PALETTE = [
   '#3B82F6', // Cobalt
   '#10B981', // Emerald
   '#F59E0B', // Amber
@@ -66,7 +66,7 @@ const PHASE_PALETTE = [
   '#06B6D4', // Cyan
 ];
 
-const ELEMENT_PALETTE = ['#38BDF8', '#E2E8F0', '#F59E0B'];
+export const ELEMENT_PALETTE = ['#38BDF8', '#E2E8F0', '#F59E0B'];
 
 interface PiecewisePiece {
   tLow: number;

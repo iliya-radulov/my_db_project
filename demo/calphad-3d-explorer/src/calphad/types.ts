@@ -87,6 +87,32 @@ export interface CalphadSystem {
   isCustomTdb?: boolean;
   /** Places where the importer had to invent data the TDB did not contain (shown in the header) */
   buildNotes?: string[];
+  /** Present when the system comes from a pycalphad dataset (tools/export_ternary.py), not the toy solver */
+  computed?: ComputedSource;
+}
+
+/** Equilibrium data of a loaded pycalphad dataset, indexed like the diagram grid */
+export interface ComputedSource {
+  subdivisions: number;
+  temperaturesK: number[];
+  temperatureStepK: number;
+  /** nodeIndexMap[i * (N + 1) + j] -> index into states/gmJ, i = xA steps, j = xB steps (front-end convention) */
+  nodeIndexMap: Int32Array;
+  /** per node, per temperature: {phase: fraction} or null where pycalphad did not converge */
+  states: Array<Array<Record<string, number> | null>>;
+  gmJ: Array<Array<number | null>>;
+  /** grid nodes with computed liquidus/solidus, ready for the 3D surfaces */
+  nodes: GridNode[];
+  tdbFile: string;
+  tdbSha256: string;
+  pycalphadVersion: string;
+  createdUtc: string;
+  failedPoints: number;
+  totalPoints: number;
+  /** nodes whose liquidus (solidus) lies outside the computed temperature range */
+  liquidusAboveRange: number;
+  solidusBelowRange: number;
+  provenance: Record<string, unknown>;
 }
 
 export interface GridNode {

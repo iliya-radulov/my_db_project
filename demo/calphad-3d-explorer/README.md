@@ -20,7 +20,8 @@ No API key or server is needed; everything runs in the browser.
 | Item | In this demo | Correct CALPHAD treatment |
 |---|---|---|
 | "Liquidus" surface | **T₀ surface**: temperature where the liquid and the most stable solid have equal Gibbs energy *at the same composition* | Common-tangent / lower-convex-hull construction; gives two-phase regions. Temperatures can differ by tens to hundreds of K. |
-| Solidus, solvus, valleys, invariant points | Derived from the T₀ surface and the change of the most stable solid | From the equilibrium calculation |
+| Solidus and solvus surfaces | **Not computed**: drawn by rule-of-thumb shapes (a solidus placed a fixed fraction above an assumed eutectic floor, a power-law "solvus dome") | From the equilibrium calculation |
+| Valleys, invariant points | From changes of the most stable solid on the T₀ surface | From the equilibrium calculation |
 | Compounds | Parabola around the formula composition (curvature 32 000 J/mol by default) plus ¼ of the ideal mixing entropy | Line compound (or sublattice model) |
 | Models | One substitutional lattice per phase, Redlich–Kister + Muggianu; site ratios of compound end-members are used to convert to per-atom energies | Full compound-energy formalism: sublattices, vacancies, ordering, magnetic contribution |
 | Built-in systems | Hand-made parameters, linear in T, illustrative only (e.g. the Sn–Ag–Cu ternary eutectic comes out at 420 K; the real one is about 490 K / 217 °C) | Published assessments |
@@ -36,23 +37,39 @@ The app shows a "Qualitative demo" line under the title, and lists every estimat
 - Visible "Qualitative demo" label; surface toggles renamed "Liquidus (T₀)" and "Solidus (approx.)"; probe hint no longer says "CALPHAD equilibria".
 - Imported systems record where data was invented (`buildNotes`), shown in the header.
 
-## Computed datasets from real TDB files (in progress)
+## Computed datasets from real TDB files
 
-Step 1 of the connection to the real pipeline is done: `tools/export_ternary.py` computes a ternary dataset with pycalphad from a TDB file and writes it as JSON (`datasets/` is git-ignored; regenerate from the TDB and the command below).
+The explorer can show real equilibria computed with pycalphad instead of the toy solver.
+
+**1. Compute a dataset** (Python, from the repository root; `datasets/` is git-ignored, the file is regenerated from the TDB and the command):
 
 ```bash
 pip install -r demo/calphad-3d-explorer/tools/requirements.txt
 python demo/calphad-3d-explorer/tools/export_ternary.py \
     --tdb stage_four/calphad_lafesi/refit_tau12/results_addD/paperbuild_FeLa-23Su_LaSi-10Zho_FeSi-12Ohn.tdb \
-    --elements FE LA SI --tmin 800 --tmax 2000 --dt 10 --grid 30 --workers 4 \
+    --elements FE LA SI --tmin 800 --tmax 2600 --dt 10 --grid 30 --workers 4 \
     --out demo/calphad-3d-explorer/datasets/lafesi_paperbuild.json
 python -m pytest demo/calphad-3d-explorer/tools/test_export_ternary.py
 ```
 
-Per composition (triangular grid) and temperature: equilibrium phases and fractions, molar Gibbs energy. Per composition: liquidus and solidus temperature (from the liquid fraction, resolution = temperature step), primary phase, solid assemblage below the solidus. Provenance in the file: TDB name, path and SHA-256, script SHA-256, package versions, command line, grid, number of points where pycalphad did not converge (stored as missing, not filled).
+Per composition (triangular grid) and temperature: equilibrium phases and fractions, molar Gibbs energy. Per composition: liquidus and solidus (from the liquid fraction; resolution = temperature step), primary phase, solid assemblage below the solidus. Provenance in the file: TDB name, path and SHA-256, script SHA-256, package versions, command line, grid, number of points where pycalphad did not converge (stored as missing, not filled). Choose `--tmax` above the highest liquidus: in the paper-build La–Fe–Si file, LaSi₂ (`LASI2_X`) and TAU1 are still solid at 2000 K over a large part of the triangle, so 2600 K is used above (grid 30, 10 K steps: about 80 s on 4 cores).
 
-Next: step 2, "Load computed dataset" in the front-end; step 3, checks (binary edges, known La–Fe–Si temperatures).
+**2. Load it** with the *Load dataset* button. With a dataset:
 
-## Later: connection to the Stage 5 code (planned)
+- liquidus and solidus surfaces, valleys and the primary-phase colouring come from the computed grid;
+- the isothermal slice is coloured by the actual equilibrium phase set at the nearest grid point and temperature (stripes = two or more phases, grey = not converged);
+- the probe shows the computed phases, fractions and molar Gibbs energy at the nearest grid point and temperature (chemical potentials are not stored);
+- invariant-point markers are only grid extrema ("lowest liquidus"), not identified invariant reactions;
+- the header shows the TDB file, its SHA-256, the pycalphad version, the resolution and how many points did not converge or lie outside the temperature range (drawn at the range edge);
+- the interaction slider is disabled (the equilibria come from the TDB as it is); the data tab shows the dataset provenance.
 
-Keep this front-end; replace `src/calphad/solver.ts` by results from pycalphad (the engine and TDB files Stage 5 already uses): a small Python backend computes isothermal sections and the liquidus surface for a ternary, cached, and the 3D scene draws them. Estimated 3–5 days plus about a day of checking against published diagrams.
+**3. Check the mapping** (TypeScript, from `demo/calphad-3d-explorer`): `npx tsx tools/check_viewer_mapping.ts datasets/<file>.json` compares the probe at grid-node compositions with the stored states (paper-build La–Fe–Si, 2600 K: 355 checks, 0 mismatches).
+
+Still to do (step 3): compare the triangle edges with the binary diagrams, and spot-check known La–Fe–Si temperatures.
+
+## Status of the connection to the real pipeline
+
+- Step 1, pycalphad export (`tools/export_ternary.py`): done.
+- Step 2, loading datasets in the explorer: done.
+- Step 3, checks against binary diagrams and known La–Fe–Si temperatures: next.
+- Later: link datasets to the project database (dataset hash, TDB hash), and decide which files are shown for the hand-in.

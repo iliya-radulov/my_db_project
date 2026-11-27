@@ -7,6 +7,7 @@ import {
   PhaseDefinition,
   ThermodynamicProbeResult,
 } from './types';
+import { probeComputed } from './computedLookup';
 
 export const R_GAS = 8.314462618; // J/(mol·K)
 
@@ -455,6 +456,28 @@ export function computePhaseDiagram(
     }
   }
 
+  return assembleDiagram(system, N, nodes, nodeIndexMap, hasSolvus);
+}
+
+/**
+ * Triangles, monovariant curves and invariant points from a filled grid. Shared by the toy
+ * solver and by pycalphad datasets (dataset.ts), so both are drawn the same way.
+ */
+export function assembleDiagram(
+  system: CalphadSystem,
+  N: number,
+  nodes: GridNode[],
+  nodeIndexMap: Int32Array,
+  hasSolvus: boolean,
+): ComputedPhaseDiagram {
+  const stride = N + 1;
+  let minLiquidusK = Infinity;
+  let maxLiquidusK = -Infinity;
+  for (const n of nodes) {
+    if (n.tLiquidus < minLiquidusK) minLiquidusK = n.tLiquidus;
+    if (n.tLiquidus > maxLiquidusK) maxLiquidusK = n.tLiquidus;
+  }
+
   // Pass 3: Build barycentric triangle index array
   const triList: number[] = [];
   for (let i = 0; i < N; i++) {
@@ -476,8 +499,12 @@ export function computePhaseDiagram(
   // Pass 4: Extract Monovariant Phase Boundary Curves via triangle edge marching
   const monovariantCurves = extractMonovariantCurves(nodes, triangles);
 
-  // Pass 5: Detect Invariant Points (Ternary Eutectic, Binary Eutectics, Congruent Peaks)
-  const invariantPoints = detectInvariantPoints(system, nodes, monovariantCurves);
+  // Pass 5: Detect Invariant Points (Ternary Eutectic, Binary Eutectics, Congruent Peaks).
+  // For computed datasets only grid extrema are marked, with neutral labels: a lowest
+  // liquidus on a grid is not proof of a eutectic.
+  const invariantPoints = system.computed
+    ? detectGridExtrema(system, nodes)
+    : detectInvariantPoints(system, nodes, monovariantCurves);
 
   return {
     system,
@@ -657,6 +684,41 @@ function extractMonovariantCurves(
   return curves;
 }
 
+/** Lowest interior liquidus and lowest liquidus on each binary edge of a computed grid. */
+function detectGridExtrema(system: CalphadSystem, nodes: GridNode[]): InvariantPoint[] {
+  const [e0, e1, e2] = system.elements;
+  const step = system.computed?.temperatureStepK ?? 0;
+  const out: InvariantPoint[] = [];
+  const pick = (filter: (n: GridNode) => boolean) => {
+    let best: GridNode | null = null;
+    for (const n of nodes) {
+      if (filter(n) && Number.isFinite(n.tLiquidus) && (!best || n.tLiquidus < best.tLiquidus)) best = n;
+    }
+    return best;
+  };
+  const tol = 1e-3;
+  const add = (n: GridNode | null, id: string, label: string, kind: InvariantPoint['kind']) => {
+    if (!n) return;
+    // the same grid corner can be the minimum of two searches: mark it once
+    if (out.some((p) => Math.hypot(p.xA - n.xA, p.xB - n.xB, p.xC - n.xC) < 0.15)) return;
+    out.push({
+      id,
+      label,
+      kind,
+      xA: n.xA,
+      xB: n.xB,
+      xC: n.xC,
+      tempK: n.tLiquidus,
+      reaction: `Lowest liquidus on the grid (± ${step} K), primary ${n.primaryPhaseId}; not identified as an invariant reaction`,
+    });
+  };
+  add(pick((n) => n.xA > tol && n.xB > tol && n.xC > tol), 'grid-min-ternary', 'Lowest liquidus (interior)', 'eutectic');
+  add(pick((n) => n.xC < tol), 'grid-min-ab', `Lowest liquidus ${e0.symbol}–${e1.symbol}`, 'binary-eutectic');
+  add(pick((n) => n.xA < tol), 'grid-min-bc', `Lowest liquidus ${e1.symbol}–${e2.symbol}`, 'binary-eutectic');
+  add(pick((n) => n.xB < tol), 'grid-min-ca', `Lowest liquidus ${e2.symbol}–${e0.symbol}`, 'binary-eutectic');
+  return out;
+}
+
 function detectInvariantPoints(
   system: CalphadSystem,
   nodes: GridNode[],
@@ -783,6 +845,9 @@ export function probeThermodynamics(
   surface: ThermodynamicProbeResult['surface'],
 ): ThermodynamicProbeResult {
   const { system } = diagram;
+  if (system.computed) {
+    return probeComputed(diagram, xA, xB, xC, tempK, surface, sampleDiagramGrid(diagram, xA, xB, xC));
+  }
   const [e0, e1, e2] = system.elements;
 
   // Weight percent conversion

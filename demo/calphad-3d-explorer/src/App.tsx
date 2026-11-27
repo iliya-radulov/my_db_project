@@ -1,6 +1,7 @@
-import { RotateCcw, Upload } from 'lucide-react';
+import { Database, RotateCcw, Upload } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { computePhaseDiagram } from './calphad/solver';
+import { assembleDiagram, computePhaseDiagram } from './calphad/solver';
+import { systemFromDataset } from './calphad/dataset';
 import { CALPHAD_SYSTEMS } from './calphad/systems';
 import {
   CalphadSystem,
@@ -52,10 +53,15 @@ export default function App() {
   const [probePinned, setProbePinned] = useState<boolean>(false);
 
   // Recompute exact 3D CALPHAD Gibbs equilibria whenever system or Redlich-Kister offset changes
-  const diagram = useMemo(
-    () => computePhaseDiagram(activeSystem, deltaInteractionJ, 46),
-    [activeSystem, deltaInteractionJ],
-  );
+  const diagram = useMemo(() => {
+    const c = activeSystem.computed;
+    // pycalphad dataset: the grid is already computed; only triangles, curves and labels are built
+    if (c) return assembleDiagram(activeSystem, c.subdivisions, c.nodes, c.nodeIndexMap, false);
+    return computePhaseDiagram(activeSystem, deltaInteractionJ, 46);
+  }, [activeSystem, deltaInteractionJ]);
+
+  const datasetInputRef = useRef<HTMLInputElement | null>(null);
+  const [datasetError, setDatasetError] = useState<string | null>(null);
 
   const handleSelectSystem = useCallback(
     (nextId: string) => {
@@ -84,6 +90,20 @@ export default function App() {
       setProbePinned(false);
     },
     [],
+  );
+
+  const handleDatasetFile = useCallback(
+    async (file: File | undefined) => {
+      if (!file) return;
+      try {
+        const sys = systemFromDataset(JSON.parse(await file.text()));
+        setDatasetError(null);
+        handleImportSystem(sys, 'add');
+      } catch (err) {
+        setDatasetError(`${file.name}: ${err instanceof Error ? err.message : String(err)}`);
+      }
+    },
+    [handleImportSystem],
   );
 
   const handleRestoreDefaults = useCallback(() => {
@@ -206,6 +226,28 @@ export default function App() {
             <span>Import .TDB</span>
           </button>
 
+          {/* pycalphad dataset written by tools/export_ternary.py */}
+          <button
+            type="button"
+            onClick={() => datasetInputRef.current?.click()}
+            className="inline-flex items-center gap-1.5 rounded-md border border-slate-700/80 bg-[#0E1522]/94 px-2.5 py-1.5 text-xs font-medium text-slate-200 hover:border-emerald-500/70 hover:text-white transition-colors cursor-pointer whitespace-nowrap"
+            title="Load a dataset computed with pycalphad (tools/export_ternary.py)"
+          >
+            <Database className="w-3.5 h-3.5 text-emerald-400" />
+            <span>Load dataset</span>
+          </button>
+          <input
+            ref={datasetInputRef}
+            type="file"
+            accept=".json,application/json"
+            className="hidden"
+            data-testid="dataset-input"
+            onChange={(e) => {
+              void handleDatasetFile(e.target.files?.[0]);
+              e.target.value = '';
+            }}
+          />
+
           {hasReplacedDefaults && (
             <button
               type="button"
@@ -219,13 +261,35 @@ export default function App() {
           )}
         </div>
 
-        {/* What the surfaces are (and are not): keep visible until the pycalphad backend replaces the solver */}
+        {datasetError && (
+          <p className="text-[11px] text-rose-300 max-w-xl" role="alert">
+            Dataset not loaded: {datasetError}
+          </p>
+        )}
+
+        {activeSystem.computed ? (
+          <p className="text-[11px] text-emerald-300/90 max-w-2xl" data-testid="computed-note">
+            Computed with pycalphad {activeSystem.computed.pycalphadVersion} from{' '}
+            <span className="font-mono">{activeSystem.computed.tdbFile}</span> (sha256{' '}
+            <span className="font-mono">{activeSystem.computed.tdbSha256.slice(0, 12)}…</span>).
+            Liquidus/solidus resolution {activeSystem.computed.temperatureStepK} K; values at the
+            nearest grid point and temperature.{' '}
+            {activeSystem.computed.failedPoints} of {activeSystem.computed.totalPoints} points did not
+            converge (grey in the slice).
+            {activeSystem.computed.liquidusAboveRange > 0 &&
+              ` Liquidus above ${activeSystem.tempMaxK} K at ${activeSystem.computed.liquidusAboveRange} grid points (drawn at ${activeSystem.tempMaxK} K).`}
+            {activeSystem.computed.solidusBelowRange > 0 &&
+              ` Solidus below ${activeSystem.tempMinK} K at ${activeSystem.computed.solidusBelowRange} grid points (drawn at ${activeSystem.tempMinK} K).`}
+          </p>
+        ) : (
+        /* What the surfaces are (and are not): keep visible until the pycalphad backend replaces the solver */
         <p
           className="text-[11px] text-amber-300/90 max-w-xl"
           title="The solver finds, at each composition, the temperature where the liquid and the most stable solid have equal Gibbs energy (the T0 surface). A real liquidus needs the common-tangent (convex-hull) construction, so two-phase regions are not shown and temperatures can differ by tens to hundreds of K. Compounds are approximated by narrow parabolas."
         >
           Qualitative demo: surfaces are T₀ (equal-G) surfaces, not equilibrium liquidus or phase boundaries.
         </p>
+        )}
         {activeSystem.buildNotes && activeSystem.buildNotes.length > 0 && (
           <ul className="text-[11px] text-amber-200/80 list-disc pl-4 max-w-xl">
             {activeSystem.buildNotes.map((n) => (
@@ -241,7 +305,11 @@ export default function App() {
             ·
           </span>
           <span className="font-mono text-[11px] text-slate-400">
-            {activeSystem.isCustomTdb ? 'Custom .TDB' : 'Redlich-Kister-Muggianu'}
+            {activeSystem.computed
+              ? 'pycalphad dataset'
+              : activeSystem.isCustomTdb
+                ? 'Custom .TDB'
+                : 'Redlich-Kister-Muggianu'}
           </span>
         </p>
       </header>
