@@ -1,7 +1,7 @@
 import { CalphadSystem } from './types';
 
 /**
- * Curated CALPHAD ternary alloy assessments using SGTE-referenced unary
+ * Illustrative ternary systems: the parameters are NOT the published assessments. They use SGTE-style unary
  * lattice stabilities (relative to LIQUID) and Redlich-Kister-Muggianu
  * excess Gibbs energy polynomials (in J/mol).
  */
@@ -10,7 +10,7 @@ export const CALPHAD_SYSTEMS: CalphadSystem[] = [
     id: 'sn-ag-cu',
     name: 'Sn–Ag–Cu',
     subtitle: 'Lead-Free SAC Solder Ternary Eutectic',
-    reference: 'NIST / Moon et al. (2000) CALPHAD Assessment',
+    reference: 'Illustrative parameters, not the published assessment',
     elements: [
       {
         symbol: 'Sn',
@@ -129,7 +129,7 @@ export const CALPHAD_SYSTEMS: CalphadSystem[] = [
     id: 'al-mg-si',
     name: 'Al–Mg–Si',
     subtitle: '6xxx Series Precipitation-Hardened Aluminum',
-    reference: 'COST 507 / Lacaze & Sundman CALPHAD Assessment',
+    reference: 'Illustrative parameters, not the published assessment',
     elements: [
       {
         symbol: 'Al',
@@ -256,7 +256,7 @@ export const CALPHAD_SYSTEMS: CalphadSystem[] = [
     id: 'fe-cr-ni',
     name: 'Fe–Cr–Ni',
     subtitle: 'Austenitic & Duplex Stainless Steel System',
-    reference: 'SGTE / Miettinen (1999) Stainless CALPHAD',
+    reference: 'Illustrative parameters, not the published assessment',
     elements: [
       {
         symbol: 'Fe',
