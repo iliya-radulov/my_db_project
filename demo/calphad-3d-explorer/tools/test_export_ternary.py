@@ -82,3 +82,58 @@ def test_toy_ternary_reproduces_the_constructed_melting_points(tmp_path):
         if n["t_liquidus_K"] is not None and n["t_solidus_K"] is not None:
             assert n["t_solidus_K"] <= n["t_liquidus_K"] + 1e-6
     json.dumps(data)  # serialisable
+
+
+# --- check_dataset.py -------------------------------------------------------
+import check_dataset as chk  # noqa: E402
+
+
+def _toy_dataset(tmp_path):
+    tdb = tmp_path / "toy.tdb"
+    tdb.write_text(TOY)
+    return tdb, ex.build_dataset(tdb, ["AL", "CU", "NI"], 900, 1500, 10, 4, 1, [], ["test"])
+
+
+def test_check_passes_on_a_correct_dataset_and_catches_a_wrong_liquidus(tmp_path):
+    pytest.importorskip("pycalphad")
+    tdb, ds = _toy_dataset(tmp_path)
+    res = chk.run_checks(ds, tdb, None, 1)
+    assert res["A1_tdb_hash"]["pass"]
+    assert res["A_summary"]["edges_liquidus_ok"] == res["A_summary"]["edge_points"] == 9
+    assert res["A_pass"]
+    sgte_al = [m for m in res["B1_melting_points"] if m["element"] == "AL"][0]
+    assert sgte_al["model_K"] == pytest.approx(1000, abs=2)   # toy model, not the real Al (933 K)
+    # corrupt one edge liquidus by 50 K: the check must fail
+    edge = [n for n in ds["nodes"] if n["j"] == 0 and 0 < n["i"] < 4][0]
+    edge["t_liquidus_K"] += 50
+    assert not chk.run_checks(ds, tdb, None, 1)["A_pass"]
+
+
+def test_check_reads_reference_points(tmp_path):
+    pytest.importorskip("pycalphad")
+    tdb, ds = _toy_dataset(tmp_path)
+    refs = tmp_path / "refs.csv"
+    refs.write_text(
+        "# comment\n"
+        "id,quantity,composition,T_K,value,tolerance,source,note\n"
+        "al_melt,t_liquidus_K,AL:1;CU:0;NI:0,,1000,15,toy construction,\n"
+        "al_wrong,t_liquidus_K,AL:1;CU:0;NI:0,,1100,15,deliberately wrong,\n"
+        "ni_solid,phases_at_T,AL:0;CU:0;NI:1,1300,FCC_A1,,toy construction,\n")
+    rows = {r["id"]: r for r in chk.run_checks(ds, tdb, refs, 1)["B2_reference_points"]}
+    assert rows["al_melt"]["within_tolerance"]
+    assert not rows["al_wrong"]["within_tolerance"]
+    assert rows["ni_solid"]["within_tolerance"] and rows["ni_solid"]["model"] == "FCC_A1"
+
+
+def test_non_minimal_points_flags_a_point_far_above_the_chord():
+    temps = [1040, 1050, 1060, 1070, 1080, 1090]
+    # La-Fe x=0.1 from the paper-build file: 1070 K came back "all liquid", 5.6 kJ/mol too high
+    gms = [-48030.3, -48751.8, -49478.1, -44617.4, -50955.6, -51706.6]
+    assert ex.non_minimal_points(temps, gms) == [3]
+    states = [{"A": 1.0}] * 6
+    states = list(states)
+    assert ex.reject_non_minimal(temps, states, gms) == 1 and states[3] is None and gms[3] is None
+    # a smooth concave G (with a small kink, like a phase transition) is kept
+    smooth = [-1000 - 50 * t - 0.001 * t * t for t in temps]
+    smooth[3] += 20
+    assert ex.non_minimal_points(temps, smooth) == []

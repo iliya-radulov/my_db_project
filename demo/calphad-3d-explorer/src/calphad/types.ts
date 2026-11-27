@@ -108,6 +108,8 @@ export interface ComputedSource {
   pycalphadVersion: string;
   createdUtc: string;
   failedPoints: number;
+  /** results rejected as not the minimum (G far above the chord of its temperature neighbours) */
+  rejectedPoints: number;
   totalPoints: number;
   /** nodes whose liquidus (solidus) lies outside the computed temperature range */
   liquidusAboveRange: number;
