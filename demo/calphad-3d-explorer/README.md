@@ -72,18 +72,27 @@ python demo/calphad-3d-explorer/tools/check_dataset.py \
     --dataset demo/calphad-3d-explorer/datasets/lafesi_paperbuild.json \
     --tdb stage_four/calphad_lafesi/refit_tau12/results_addD/paperbuild_FeLa-23Su_LaSi-10Zho_FeSi-12Ohn.tdb \
     [--refs my_reference_points.csv] --workers 4 --out demo/calphad-3d-explorer/datasets/lafesi_paperbuild_check
+# reference points only (no dataset needed, e.g. to compare several TDBs):
+python demo/calphad-3d-explorer/tools/check_dataset.py --tdb <file.tdb> --elements FE LA SI \
+    --refs my_reference_points.csv --tmin 800 --tmax 2600 --workers 4 --out <report>
 ```
 
 Two kinds of check, reported separately:
 
 - **A. Pipeline (pass/fail):** TDB hash; corners and every edge point against an independent pure-element / binary calculation from the same TDB (coarse scan, then 1 K steps), for liquidus, solidus and primary phase, tolerance = step + 2 K. Exit code 1 if the hash, a corner or an edge liquidus fails.
-- **B. Model vs reference data (comparison only):** pure-element melting points against the SGTE unary values; optional sourced reference points from a CSV (`tools/reference_points_TEMPLATE.csv`: liquidus/solidus at a composition, or the phase set at a composition and temperature, each with tolerance and source).
+- **B. Model vs reference data (comparison only):** pure-element melting points against the SGTE unary values; optional sourced reference points from a CSV (`tools/reference_points_TEMPLATE.csv`), each with tolerance, source and an optional class (hard / soft, reported separately). Reference points are **computed directly with pycalphad at the given composition**, not read from the dataset grid (on a grid of 30, x(La) = 1/14 never occurs). Quantities:
+  - `t_liquidus_K`, `t_solidus_K` at a composition;
+  - `phases_at_T`: phase set at a composition and T; phases below a minimum fraction (default 0.01, `--min-fraction`) are listed but not counted;
+  - `solubility_limit`: edge of the single-phase region of a phase along one element with the others fixed (e.g. TAU1, x(La) = 1/14, low edge in x(Si)); scan in steps of 0.002, edge refined to 0.0001, reported with the signed difference. A single-phase test at the nominal edge (`phases_at_T`) would only fail models that are too narrow, never ones that are too wide;
+  - `t_upper_stability_K`: highest temperature at which a phase is present (fraction ≥ 0.001), 10 K scan then 1 K.
 
-Paper-build La–Fe–Si (grid 30, 800–2600 K, 10 K): **A passes** — hash yes, corners 3/3, edge liquidus 87/87, solidus 86/87, primary phase 86/87 (the two differences are within one or two grid steps: two solids appearing within one 10 K step at Fe–Si x(Si) = 0.30, and a rejected neighbour point at La-rich Fe–La). 160 of 89 776 points did not converge, 17 were rejected as not the minimum. B: Fe 1811 / La 1194 / Si 1688 K against SGTE 1811 / 1193 / 1687 K. No reference points yet: they need sourced values (e.g. from the La–Fe–Si paper), which is why the template contains none.
+  Thresholds (single phase ≥ 0.999, present ≥ 0.001, minimum fraction 0.01) are defaults and are written into the report.
+
+Paper-build La–Fe–Si (grid 30, 800–2600 K, 10 K): **A passes** — hash yes, corners 3/3, edge liquidus 87/87, solidus 86/87, primary phase 86/87 (the two differences are within one or two grid steps: two solids appearing within one 10 K step at Fe–Si x(Si) = 0.30, and a rejected neighbour point at La-rich Fe–La). 160 of 89 776 points did not converge, 17 were rejected as not the minimum. B: Fe 1811 / La 1194 / Si 1688 K against SGTE 1811 / 1193 / 1687 K. Sourced La–Fe–Si reference points (Niitsu 2012, Feng 2023) are kept outside the repository (filled CSVs stay private); the template contains format examples only.
 
 ## Status of the connection to the real pipeline
 
 - Step 1, pycalphad export (`tools/export_ternary.py`): done.
 - Step 2, loading datasets in the explorer: done.
-- Step 3, checks: done for the pipeline (A); the comparison with sourced La–Fe–Si reference points (B2) waits for the values.
+- Step 3, checks: done for the pipeline (A) and for sourced reference points (B2, direct evaluation).
 - Later: link datasets to the project database (dataset hash, TDB hash), and decide which files are shown for the hand-in.
