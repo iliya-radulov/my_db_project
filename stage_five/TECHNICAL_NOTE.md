@@ -1,12 +1,12 @@
 # Stage 5 screening tool: CALPHAD binary-ensemble threshold with an optional DFT + SISSO overlay
 
-Technical note, contract version 1.0, 24 November 2026
+Technical note, contract version 1.0, 24 November 2026. *Draft update to contract version 1.1 (28 November 2026, not yet released): adds the result of the SISSO temperature calibration; no rule or number of version 1.0 changes.*
 Iliya A. Radulov, Claude (Anthropic)
 Code: https://github.com/iliya-radulov/my_db_project (`stage_five/`), release tag `v5.0-stage5`.
 Earlier release of the project: Stage 4 Track A, DOI 10.5281/zenodo.24039719.
 This record: DOI 10.5281/zenodo.24507546.
 
-**Abstract.** Stage 5 answers one screening question for a ternary composition: is a candidate phase predicted to be more stable than the best combination of the three binary systems at that composition? The competing side is an ensemble of open binary CALPHAD assessments and carries an assessment-scatter band (median, 5th and 95th percentile), not a single number. The candidate side is a Materials Project 0 K entry with a Bartel SISSO finite-temperature correction, used as a secondary axis only. The survival and lineage gates are engineering defaults, not pre-registered values, and the SISSO side is not validated: on the Nd₂Fe₁₄B benchmark it places an experimentally stable phase above the competing binaries (§5). This note fixes what each stored number means, how labels are assigned and what the tool does not claim, so that results stay interpretable when the tool is extended.
+**Abstract.** Stage 5 answers one screening question for a ternary composition: is a candidate phase predicted to be more stable than the best combination of the three binary systems at that composition? The competing side is an ensemble of open binary CALPHAD assessments and carries an assessment-scatter band (median, 5th and 95th percentile), not a single number. The candidate side is a Materials Project 0 K entry with a Bartel SISSO finite-temperature correction, used as a secondary axis only. The survival and lineage gates are engineering defaults, not pre-registered values, and the SISSO side is not validated: on the Nd₂Fe₁₄B benchmark it places an experimentally stable phase above the competing binaries (§5). A pre-registered calibration on nine binary intermetallics found no common temperature slope (per-compound slopes −7.3 to +11.9 J mol⁻¹ atom⁻¹ K⁻¹, mean +1.6, SD 6.7), so no temperature correction is applied. This note fixes what each stored number means, how labels are assigned and what the tool does not claim, so that results stay interpretable when the tool is extended.
 
 ## 1. Purpose
 
@@ -123,7 +123,14 @@ SISSO error and of the band width (about 4 kJ mol⁻¹ atom⁻¹ here), which is
   Nd₂Fe₁₄B the difference ΔG_f^SISSO − ΔG_f* grows with temperature by about +15 J mol⁻¹ atom⁻¹ K⁻¹ (23 November run, not
   part of the frozen files), which would correspond to an implausible formation entropy; the cause is untested and
   nothing in the code compensates for it. The reference-axis correction explains only about 1.6 of the 5.8 kJ mol⁻¹
-  atom⁻¹ margin at 800 K in that case.
+  atom⁻¹ margin at 800 K in that case. A pre-registered calibration on nine binary intermetallics (27 November 2026;
+  CALPHAD assessments as the reference; 68 compound–temperature points) found no common temperature slope: per-compound
+  slopes between −7.3 and +11.9 J mol⁻¹ atom⁻¹ K⁻¹, mean +1.6, SD 6.7. The registered rule (adopt a correction only if
+  the mean absolute error falls by at least 1.5 kJ mol⁻¹ atom⁻¹) failed with a mean gain of +0.003, so the correction
+  was not adopted and SISSO stays uncorrected. The error in that set is mainly an offset, not a slope (mean absolute
+  residual 2.8 kJ mol⁻¹ atom⁻¹ at 800 K; CoSi about −11). The +15 of Nd₂Fe₁₄B is larger than any slope in the set
+  (maximum +11.9, Fe₃Si). The two magnetic compounds had slopes of about +10 to +12 and the seven non-magnetic ones
+  averaged −1.2; this was noticed after the result, rests on two compounds and is a hypothesis only.
 * **A prototype is not the target.** Prototype rows are indicative; the class at the prototype describes the structure
   type at its composition.
 * **The band depends on specification choices:** the merge order, the gate defaults, and the open assessments that
@@ -148,6 +155,9 @@ SISSO error and of the band width (about 4 kJ mol⁻¹ atom⁻¹ here), which is
   `v_stage5_screening`, run–sample links with `v_stage5_sample_runs`).
 * **Tests.** `pytest stage_five/tests` (78 passed, 6 skipped without tkinter; the full ensembles run with
   `RUN_SLOW=1` and `SGTE_BINARY_DIR` set; the window tests run under a virtual display).
+* **Calibration study (version 1.1).** Pre-registration `stage_five/SISSO_T_Calibration_PreReg.md` (sha256 `22e867c3…`,
+  decision rule v1.4, freeze commit `6e0014a`), script `stage_five/sisso_t_calibration.py` (sha256 `96e797e9…`), results
+  `stage_five/results/sisso_t_calibration.md` and `.json`; no file of the study was changed between freeze and run.
 * **Environment.** Desktop installation used for the SISSO runs: Python 3.13, pymatgen 2026.5.4, mp-api 0.46.5,
   pycalphad 0.11.2 (the version that also produced the frozen ensemble reports). The SISSO side uses pymatgen's
   `GibbsComputedStructureEntry` and the Materials Project API. The tests and the reproduction check of §7 were run
@@ -155,8 +165,11 @@ SISSO error and of the band width (about 4 kJ mol⁻¹ atom⁻¹ here), which is
 
 ## 8. Versioning and planned items
 
-This is version 1.0. Planned, not part of it: SISSO overlays for the other two systems (needs a Materials Project key), a temperature-dependent SISSO calibration
-study (needs a validation set), and any rule that promotes a nearest prototype to a verdict. Each becomes a new
+This is contract version 1.0 plus the calibration result of 27 November (version 1.1, a documentation update; no rule
+changed). The temperature-dependent SISSO calibration planned for 1.0 has been done and was negative (§6). Planned, not
+part of it: SISSO overlays for the other two systems (needs a Materials Project key), a test of the magnetic-compound
+hypothesis (a new pre-registration with more magnetic compounds that have a CALPHAD description), and any rule that
+promotes a nearest prototype to a verdict. Each becomes a new
 version with a changelog entry in `CONTRACT.md`; results are always labelled with the version that produced them.
 
 ## References

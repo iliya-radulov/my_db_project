@@ -14,7 +14,7 @@ Replaces the numbers and statements of the 24 Nov plan text that the code and th
 | "ΔΔG more negative than the lower edge of the band"; half-width pseudo-code | ΔG_f^SISSO < p05 → stable_across_band; > p95 → metastable_above_band; otherwise borderline_within_band. Edge comparison, no half-width | contract decision 4 |
 | "if no suitable prototype is found the comparison is not performed" | No entry within the filter: `no_dft_entry`. A nearest prototype is reported as `prototype_indicative_only` (never a stability verdict) with its own-composition check (`verdict_at_prototype`) | contract decision 1 |
 | "`gf_sisso()` returns eV; verify the conversion" | The code takes the formation energy per atom from the phase diagram built with `GibbsComputedStructureEntry` and multiplies by 96.485 (eV/atom → kJ/mol-atom); the element references are the pymatgen `g_els` | `dft_sisso_predictor.py` |
-| "SISSO deviates from QHA by up to ~0.1 eV/atom by 1800 K" | Not checked here and outside our grid (max 1600 K). What we observe: ΔG_f^SISSO − ΔG_f* grows with T by about +15 J mol⁻¹ atom⁻¹ K⁻¹ for Nd₂Fe₁₄B (a formation entropy of about −15 J K⁻¹ mol⁻¹ atom⁻¹, implausible; cause untested) | 23 Nov Nd₂Fe₁₄B run |
+| "SISSO deviates from QHA by up to ~0.1 eV/atom by 1800 K" | Not checked here and outside our grid (max 1600 K). What we observe: ΔG_f^SISSO − ΔG_f* grows with T by about +15 J mol⁻¹ atom⁻¹ K⁻¹ for Nd₂Fe₁₄B (a formation entropy of about −15 J K⁻¹ mol⁻¹ atom⁻¹, implausible; cause untested). A pre-registered calibration on nine binary intermetallics (27 Nov) found no common slope (−7.3 to +11.9, mean +1.6, SD 6.7); the correction was not adopted | 23 Nov Nd₂Fe₁₄B run; `results/sisso_t_calibration.md` |
 | "A candidate above the binary band is unlikely to be rescued by ternary interactions" | The candidate energy is a DFT value and already contains its own ternary interactions. What is missing are ternary competing phases and ternary terms of the competing assemblage, so a candidate below the band can still lose to a ternary competitor, and one above it is not strictly excluded either. Keep "necessary, not sufficient" and drop the rescue claim | scope of the method |
 | Merge order not mentioned | The three edges are merged in the order of the element list and the first file wins on conflicting parameters; the order is part of the specification (Nd–Fe–B: 78/84 survivors in order Fe, Nd, B against 52/84 in alphabetical order) | `edge_priority` |
 
@@ -47,7 +47,9 @@ runs with ΔG_f^SISSO ≤ p95 and < p05, and any change of class are reported as
 
 **Limitations.** (i) The SISSO margin is approximate: its model error is not part of the class and is usually larger
 than the band (band width 0.4–3.6 kJ mol⁻¹ atom⁻¹ over our three systems); for Nd₂Fe₁₄B the difference to the
-CALPHAD threshold grows with temperature by about 15 J mol⁻¹ atom⁻¹ K⁻¹. (ii) Only binary competitors are
+CALPHAD threshold grows with temperature by about 15 J mol⁻¹ atom⁻¹ K⁻¹; a pre-registered calibration on nine binary
+intermetallics found no common temperature slope (per-compound slopes −7.3 to +11.9 J mol⁻¹ atom⁻¹ K⁻¹, mean +1.6,
+SD 6.7), so no temperature correction is applied. (ii) Only binary competitors are
 considered. (iii) Merge order and the gate thresholds are specification choices and are recorded with each result.
 (iv) With site groups, a nearest prototype may be far from the target in Euclidean terms (LaFe₉Si₄: 0.252 for
 La₇.₁Fe₈₂.₁Si₁₀.₈); its result describes the structure type at its own composition, not the target.
