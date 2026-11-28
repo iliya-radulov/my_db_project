@@ -26,7 +26,7 @@ This file is the reference for the technical note (`TECHNICAL_NOTE.md`) and for 
    An element missing from the prototype is held at 1e-6 and the composition renormalised. No new migration.
 2. **SISSO is a soft, secondary axis.** The three classes come from the CALPHAD band only. SISSO error and the
    reference-axis correction never move a row between classes. Known limitation: the observed temperature slope
-   of ΔG_f^SISSO against the CALPHAD threshold is about +15 J mol⁻¹ atom⁻¹ K⁻¹ (Nd2Fe14B); the cause is untested
+   of ΔG_f^SISSO against the CALPHAD threshold is about +15 J mol⁻¹ atom⁻¹ K⁻¹ (Nd2Fe14B); it comes entirely from the temperature dependence of the SISSO term itself (slope +15.11 against +0.19 for the threshold), its physical cause is untested
    and nothing in the screening code compensates for it. A pre-registered calibration on nine binary intermetallics
    (27 Nov 2026) found no common temperature slope and the correction was not adopted (section "Calibration study").
 3. **Labels.** `stable_across_band` (ΔG_f^SISSO < p05), `borderline_within_band` (p05 ≤ ΔG_f^SISSO ≤ p95),

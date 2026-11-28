@@ -4,7 +4,7 @@ Technical note, contract version 1.0, 24 November 2026. *Draft update to contrac
 Iliya A. Radulov, Claude (Anthropic)
 Code: https://github.com/iliya-radulov/my_db_project (`stage_five/`), release tag `v5.0-stage5`.
 Earlier release of the project: Stage 4 Track A, DOI 10.5281/zenodo.24039719.
-This record: DOI 10.5281/zenodo.24507546.
+This record: DOI 10.5281/zenodo.24516683 (all versions: 10.5281/zenodo.24516682). Code release v5.0-stage5: DOI 10.5281/zenodo.24507546.
 
 **Abstract.** Stage 5 answers one screening question for a ternary composition: is a candidate phase predicted to be more stable than the best combination of the three binary systems at that composition? The competing side is an ensemble of open binary CALPHAD assessments and carries an assessment-scatter band (median, 5th and 95th percentile), not a single number. The candidate side is a Materials Project 0 K entry with a Bartel SISSO finite-temperature correction, used as a secondary axis only. The survival and lineage gates are engineering defaults, not pre-registered values, and the SISSO side is not validated: on the Nd₂Fe₁₄B benchmark it places an experimentally stable phase above the competing binaries (§5). A pre-registered calibration on nine binary intermetallics found no common temperature slope (per-compound slopes −7.3 to +11.9 J mol⁻¹ atom⁻¹ K⁻¹, mean +1.6, SD 6.7), so no temperature correction is applied. This note fixes what each stored number means, how labels are assigned and what the tool does not claim, so that results stay interpretable when the tool is extended.
 
@@ -81,7 +81,7 @@ check.
 
 | System (target) | Merge priority | Survivors | Gates | ΔG_f*(800 K) median [p05, p95] | Width 800 K (range over grid) | SISSO overlay |
 |---|---|---|---|---|---|---|
-| Nd₂Fe₁₄B (Fe 0.824, Nd 0.118, B 0.059) | Fe–Nd > B–Fe > B–Nd | 78/84 (93 %) | pass | −8.79 [−9.20, −8.40] | 0.80 (0.67–2.00) | not run in the frozen table |
+| Nd₂Fe₁₄B (Fe 0.824, Nd 0.118, B 0.059) | Fe–Nd > B–Fe > B–Nd | 78/84 (92.9 %) | pass | −8.79 [−9.20, −8.40] | 0.80 (0.67–2.00) | not run in the frozen table |
 | Al₁₆Fe₅Mn₅ (Al 0.615, Fe 0.192, Mn 0.192) | Al–Fe > Al–Mn > Fe–Mn | 313/594 (53 %) | pass | −25.51 [−26.52, −24.06] | 2.46 (0.44–2.46) | not run in the frozen table |
 | La₇.₁Fe₈₂.₁Si₁₀.₈ (Fe 0.821, Si 0.108, La 0.071) | Fe–Si > Fe–La > La–Si | 16/20 (80 %) | pass | −17.78 [−19.00, −16.47] | 2.53 (2.53–3.60) | run on the desktop; see Table 2 |
 
@@ -121,7 +121,7 @@ SISSO error and of the band width (about 4 kJ mol⁻¹ atom⁻¹ here), which is
   comparison is a necessary, not a sufficient, screen.
 * **SISSO is approximate.** Its model error is not part of the class and is usually larger than the band. For
   Nd₂Fe₁₄B the difference ΔG_f^SISSO − ΔG_f* grows with temperature by about +15 J mol⁻¹ atom⁻¹ K⁻¹ (23 November run, not
-  part of the frozen files), which would correspond to an implausible formation entropy; the cause is untested and
+  part of the frozen files), which would correspond to an implausible formation entropy; it comes entirely from the temperature dependence of the SISSO term itself (slope +15.11 against +0.19 J mol⁻¹ atom⁻¹ K⁻¹ for the CALPHAD threshold; the stored values were reproduced identically on 27 November), its physical cause is untested and
   nothing in the code compensates for it. The reference-axis correction explains only about 1.6 of the 5.8 kJ mol⁻¹
   atom⁻¹ margin at 800 K in that case. A pre-registered calibration on nine binary intermetallics (27 November 2026;
   CALPHAD assessments as the reference; 68 compound–temperature points) found no common temperature slope: per-compound
