@@ -1,4 +1,4 @@
-# Stage 5 screening contract, version 1.0 (frozen 2026-11-24)
+# Stage 5 screening contract, version 1.1 (1.0 frozen 2026-11-24; 1.1 is a documentation update of 2026-11-28)
 
 The meaning of the numbers that `general_ensemble.py` (CALPHAD side) and `dft_sisso_predictor.py`
 (DFT + SISSO side) exchange. The decisions below were taken on 24 Nov 2026; code and database follow them.
@@ -27,7 +27,8 @@ This file is the reference for the technical note (`TECHNICAL_NOTE.md`) and for 
 2. **SISSO is a soft, secondary axis.** The three classes come from the CALPHAD band only. SISSO error and the
    reference-axis correction never move a row between classes. Known limitation: the observed temperature slope
    of ΔG_f^SISSO against the CALPHAD threshold is about +15 J mol⁻¹ atom⁻¹ K⁻¹ (Nd2Fe14B); the cause is untested
-   and nothing in the screening code compensates for it.
+   and nothing in the screening code compensates for it. A pre-registered calibration on nine binary intermetallics
+   (27 Nov 2026) found no common temperature slope and the correction was not adopted (section "Calibration study").
 3. **Labels.** `stable_across_band` (ΔG_f^SISSO < p05), `borderline_within_band` (p05 ≤ ΔG_f^SISSO ≤ p95),
    `metastable_above_band` (> p95), `ensemble_unreliable` (gates failed: rows are written, margin NULL),
    `sisso_unavailable`, `no_dft_entry`, `prototype_indicative_only`.
@@ -106,7 +107,28 @@ many-to-many because a cached run is reused for every sample with the same compo
 `v_stage5_sample_runs` lists run, system, gates and survivors per sample code, and Quick Lookup shows them. Without
 012 the old single column is used and a run that already belongs to another sample is not re-linked.
 
-## Frozen artefacts (contract version 1.0)
+## Calibration study (27 Nov 2026; recorded in contract version 1.1)
+A pre-registered test of whether a global linear temperature correction α of ΔG_f^SISSO helps, with the CALPHAD
+assessments as the reference: nine binary intermetallics (Fe₃Si, Fe₂B, CoSi, TiB₂, LaB₆, NiAl, YAl₂, Ti₅Si₃, Mg₂Si),
+68 compound–temperature points, one Materials Project entry per compound (E_hull 0), database release 2026.09.28.
+Decision rule v1.4 (frozen before the run): adopt α only if the mean absolute error falls by at least
+1.5 kJ mol⁻¹ atom⁻¹ and no compound worsens by more than the mean gain.
+
+* **Outcome: the correction is not adopted; SISSO stays uncorrected.** α = +1.56 J mol⁻¹ atom⁻¹ K⁻¹ (scatter SD 6.72);
+  mean gain +0.003 kJ mol⁻¹ atom⁻¹ against the required 1.5; largest worsening 0.666 kJ mol⁻¹ atom⁻¹. Without Fe₃Si
+  α = +0.27; for 800–1300 K only α = −0.42 (exploratory; neither would be adopted).
+* **There is no common slope**: six compounds have positive and three negative slopes, between −7.3 and +11.9
+  J mol⁻¹ atom⁻¹ K⁻¹. The error is mainly an offset (mean absolute residual 2.8 kJ mol⁻¹ atom⁻¹ at 800 K; CoSi about
+  −11, cause not investigated), which a temperature term cannot remove. The +15 of Nd₂Fe₁₄B is larger than any slope in
+  the set.
+* **Hypothesis, not a finding** (noticed after the result, two compounds): the two magnetic compounds have slopes of
+  about +10 to +12 and the seven non-magnetic ones average −1.2, which could point to a magnetic contribution on the
+  CALPHAD side that the SISSO temperature term does not know. Testing it needs a new pre-registration with more
+  magnetic compounds that have a CALPHAD description.
+* **Consequence for the screening:** nothing changes. Classes, margins and stored values are as in 1.0; the observed
+  slopes and their scatter are a documented limitation.
+
+## Frozen artefacts (contract versions 1.0 and 1.1)
 
 | item | value |
 |---|---|
@@ -117,13 +139,18 @@ many-to-many because a cached run is reused for every sample with the same compo
 | migrations | 009 tables; 010 prototype provenance and `prototype_filter`; 011 secondary fields and view `v_stage5_screening`; 012 run-sample links and view `v_stage5_sample_runs` |
 | reproduction | the three reports are reproduced by the current engine (survivors per combination, bands; see `results/README.md`) |
 | release tag | `v5.0-stage5` (proposed; the tag, not this file, identifies the archived code) |
+| calibration study (1.1) | pre-registration `SISSO_T_Calibration_PreReg.md` (sha256 `22e867c3…`, rule v1.4, freeze commit `6e0014a`), manifest `SISSO_T_Calibration_Manifest.json`, script `sisso_t_calibration.py` (sha256 `96e797e9…`), results `results/sisso_t_calibration.md` / `.json` and `results/sisso_t_calibration_calphad_check.json` |
 
 ## Change control
-Version 1.0 fixes the definitions above. A change to a label, a class rule, the gate defaults, the merge-order rule,
+Versions 1.0 and 1.1 fix the definitions above (1.1 changes no definition). A change to a label, a class rule, the gate defaults, the merge-order rule,
 the prototype filter or the units is a new contract version with a changelog entry here, and old results stay
 labelled with the version they were produced under (`engine_rules_version`, `spec_sha256`). Additive display
-changes do not need a new version. Planned and explicitly not part of 1.0: the T-dependent SISSO calibration study
-and any promotion of nearest-prototype rows to verdicts.
+changes do not need a new version. Not part of 1.0 or 1.1: any promotion of nearest-prototype rows to verdicts, and
+any SISSO temperature correction (the calibration of 27 Nov 2026 did not support one).
 
 ### Changelog
 * 1.0 (2026-11-24): first frozen version.
+* 1.1 (2026-11-28): documentation update. The SISSO temperature calibration of 27 Nov 2026 (nine compounds, α = +1.56
+  J mol⁻¹ atom⁻¹ K⁻¹, SD 6.7; correction not adopted) is recorded under decision 2 and in "Calibration study", the
+  frozen study files are listed, and the planned items are updated. No label, class rule, gate, merge-order rule,
+  prototype filter, unit, engine rules version or stored value changed.
